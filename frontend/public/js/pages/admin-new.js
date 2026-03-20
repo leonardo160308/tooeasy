@@ -2,7 +2,7 @@
 import { protectRoute, getAuthData, logout, isAdmin } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 // ========================================
 // IMÁGENES DISPONIBLES

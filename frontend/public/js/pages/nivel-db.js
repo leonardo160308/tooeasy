@@ -1,7 +1,7 @@
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaError } from '../modules/alerts.js';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 let flashcards = [];
 let currentIndex = 0;

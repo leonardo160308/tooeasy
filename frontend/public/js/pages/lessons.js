@@ -3,7 +3,7 @@ import { getUserData } from '../modules/api.js';
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaError } from '../modules/alerts.js';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // ========================================

@@ -4,7 +4,7 @@ import { updateUserData, getUserData } from '../modules/api.js';
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { SKIN_REWARDS } from '../data/preguntas.js';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!protectRoute()) return;
