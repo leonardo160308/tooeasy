@@ -1,15 +1,24 @@
 import { Router } from 'express';
-import { createMovement, getMovementData, deleteMovement } from '../controllers/movementController.js';
+import {
+    createMovement,
+    updateMovement,
+    getMovementData,
+    deleteMovement
+} from '../controllers/movementController.js';
 
 const router = Router();
 
-// C: Crea un nuevo movimiento (Ingreso o Gasto)
+// C: Crea un nuevo movimiento
 // POST /api/movements
 router.post('/movements', createMovement);
 
-// R: Obtiene el historial y los totales del usuario
+// R: Obtiene historial y totales del usuario
 // GET /api/movements/user/:userId
 router.get('/movements/user/:userId', getMovementData);
+
+// U: Actualiza un movimiento (tipo, categoría, monto)
+// PUT /api/movements/:movementId
+router.put('/movements/:movementId', updateMovement);
 
 // D: Borrar un movimiento por ID
 // DELETE /api/movements/:movementId

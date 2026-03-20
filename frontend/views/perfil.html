@@ -10,12 +10,9 @@
     <link rel="stylesheet" href="../public/css/alerts.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Font Awesome y Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
 
@@ -24,262 +21,324 @@
         <h1>TOO-EASY</h1>
         <p>JUEGA HOY, TRIUNFA MAÑANA</p>
     </div>
-
     <nav class="nav">
         <a href="/dashboard.html">DASHBOARD</a>
         <a href="/retos.html">RETOS</a>
         <a href="/lecciones.html">LECCIONES</a>
         <a href="/perfil.html">PERFIL</a>
-        <!-- ✅ BOTÓN DE SALIR CON ID ESPECÍFICO -->
         <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
             <img src="../public/img/Salida.png" alt="Salir">
         </a>
     </nav>
 </header>
 
-<!-- ========================================
-     SCRIPT PARA EL BOTÓN DE SALIR
-     Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
-     ======================================== -->
-
 <script type="module">
-    import { logout } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js'; // ✅ NUEVO
+    import { logout, isAdmin } from '/public/js/modules/auth.js';
+    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
+    
+    if (isAdmin()) {
+        const nav = document.querySelector('.nav');
+        const adminLink = document.createElement('a');
+        adminLink.href = '/admin.html';
+        adminLink.textContent = 'ADMIN';
+        adminLink.style.color = '#f39c12';
+        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
+    }
     
     const logoutBtn = document.getElementById('logout-btn-perfil');
-    
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
-            // ✅ Alerta de confirmación visual
             const confirmar = await alertaConfirmacion(
                 '¿Estás seguro de que deseas cerrar sesión?',
                 '👋 Salir de TOO-EASY'
             );
-            
-            if (confirmar) {
-                logout();
-            }
+            if (confirmar) logout();
         });
     }
 </script>
 
-<!-- ========================================
-     CONTENEDOR PRINCIPAL (2 COLUMNAS)
-     ======================================== -->
 <div class="main-container">
     
-    <!-- ========================================
-         COLUMNA IZQUIERDA: INFO Y MEJORAS
-         ======================================== -->
     <div class="left-column">
         
-        <!-- Saludo Personalizado -->
         <div class="header-card">
             <h2 id="welcome-msg">Cargando...</h2>
         </div>
 
-       <!-- Tarjeta de Información del Usuario -->
-<div class="info-card">
-    <div class="avatar-container">
-        <img 
-            src="/public/img/icono_perfil-removebg-preview.png" 
-            alt="Avatar" 
-            id="user-avatar" 
-            onerror="this.src='https://via.placeholder.com/100'"
-        >
-        <button class="btn-edit" id="btn-change-avatar" title="Cambiar Avatar">✏️</button>
-    </div>
-    
-    <div class="user-details">
-        <div class="detail-row">
-            <span class="label">Nombre:</span>
-            <span class="value" id="user-name">...</span>
+        <div class="info-card">
+            <div class="avatar-container">
+                <img 
+                    src="/public/img/icono_perfil-removebg-preview.png" 
+                    alt="Avatar" 
+                    id="user-avatar" 
+                    onerror="this.src='https://via.placeholder.com/100'"
+                >
+                <button class="btn-edit" onclick="openProfileModal()" title="Editar Perfil"><p>Editar</p></button>
+            </div>
+            
+            <div class="user-details">
+                <div class="detail-row">
+                    <span class="label">Nombre:</span>
+                    <span class="value" id="user-name">...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Género:</span>
+                    <span class="value" id="user-genero">...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Edad:</span>
+                    <span class="value" id="user-edad">...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Nivel Educativo:</span>
+                    <span class="value" id="user-level">1</span>
+                </div>
+            </div>
         </div>
-        <div class="detail-row">
-            <span class="label">Nivel Educativo:</span>
-            <span class="value" id="user-level">1</span>
-        </div>
-        <div class="detail-row">
-            <span class="label">Nivel Casa:</span>
-            <span class="value" id="lbl-house-level">1</span>
-        </div>
-        <div class="detail-row">
-            <span class="label">Nivel Castor:</span>
-            <span class="value" id="lbl-beaver-level">1</span>
-        </div>
-    </div>
-</div>
 
-<!-- ========================================
-     MODAL DE SELECCIÓN DE AVATAR
-     ======================================== -->
-<div id="avatar-modal" class="avatar-modal" style="display: none;">
-    <div class="avatar-modal-content">
-        <div class="avatar-modal-header">
-            <h2>Elige tu Avatar</h2>
-            <button class="avatar-close-btn" id="close-avatar-modal">&times;</button>
-        </div>
-        
-        <div class="avatar-grid">
-            <div class="avatar-option" data-avatar="avatar1">
-                <img src="/public/img/avatars/avatar1.png" alt="Avatar 1" 
-                     onerror="this.src='https://via.placeholder.com/100/FF6B6B/fff?text=1'">
-            </div>
-            <div class="avatar-option" data-avatar="avatar2">
-                <img src="/public/img/avatars/avatar2.png" alt="Avatar 2"
-                     onerror="this.src='https://via.placeholder.com/100/4ECDC4/fff?text=2'">
-            </div>
-            <div class="avatar-option" data-avatar="avatar3">
-                <img src="/public/img/avatars/avatar3.png" alt="Avatar 3"
-                     onerror="this.src='https://via.placeholder.com/100/45B7D1/fff?text=3'">
-            </div>
-            <div class="avatar-option" data-avatar="avatar4">
-                <img src="/public/img/avatars/avatar4.png" alt="Avatar 4"
-                     onerror="this.src='https://via.placeholder.com/100/FFA07A/fff?text=4'">
-            </div>
-            <div class="avatar-option" data-avatar="avatar5">
-                <img src="/public/img/avatars/avatar5.png" alt="Avatar 5"
-                     onerror="this.src='https://via.placeholder.com/100/98D8C8/fff?text=5'">
+        <!-- MODAL AVATAR -->
+        <div id="avatar-modal" class="avatar-modal" style="display: none;">
+            <div class="avatar-modal-content">
+                <div class="avatar-modal-header">
+                    <h2>Elige tu Avatar</h2>
+                    <button class="avatar-close-btn" id="close-avatar-modal">&times;</button>
+                </div>
+                <div class="avatar-grid">
+                    <div class="avatar-option" data-avatar="avatar1">
+                        <img src="/public/img/avatars/perfil1.png" alt="Avatar 1" 
+                             onerror="this.src='https://via.placeholder.com/100/FF6B6B/fff?text=1'">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar2">
+                        <img src="/public/img/avatars/perfil2.png" alt="Avatar 2"
+                             onerror="this.src='https://via.placeholder.com/100/4ECDC4/fff?text=2'">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar3">
+                        <img src="/public/img/avatars/perfil3.png" alt="Avatar 3"
+                             onerror="this.src='https://via.placeholder.com/100/45B7D1/fff?text=3'">
+                    </div>
+                    <div class="avatar-option" data-avatar="avatar4">
+                        <img src="/public/img/avatars/perfil4.png" alt="Avatar 4"
+                             onerror="this.src='https://via.placeholder.com/100/FFA07A/fff?text=4'">
+                    </div>
+                </div>
+                <button class="btn-select-avatar" id="btn-confirm-avatar">
+                    Guardar Avatar
+                </button>
             </div>
         </div>
-        
-        <button class="btn-select-avatar" id="btn-confirm-avatar">
-            Guardar Avatar
-        </button>
-    </div>
-</div>
             
-            
+        <div class="stats-bar">
+            <div class="stat-item">
+                <img src="../public/img/moneda.png" alt="Monedas" class="stat-icon">
+                <span id="coin-count">0</span>
+            </div>
+            <div class="stat-item">
+                <img src="../public/img/madera.png" alt="Madera" class="stat-icon">
+                <span id="wood-count">0</span>
+            </div>
+        </div>
 
-            <div class="upgrade-actions">
-            
-            <!-- Botón Mejorar Casa -->
+        <div class="upgrade-actions">
             <button id="btn-upgrade-house" class="btn-upgrade btn-wood">
-                <div class="btn-icon">🏠</div>
                 <div class="btn-text">
                     <span>Mejorar Casa</span>
                     <small>Costo: <span id="cost-house">20</span> 🪵</small>
                 </div>
             </button>
-
-            <!-- Botón Entrenar Castor -->
             <button id="btn-upgrade-beaver" class="btn-upgrade btn-coin">
-                <div class="btn-icon">🦫</div>
                 <div class="btn-text">
                     <span>Entrenar Castor</span>
                     <small>Costo: <span id="cost-beaver">34</span> 🪙</small>
                 </div>
             </button>
-
-        </div>
-            <div class="stats-bar">
-            <div class="stat-item">
-                <i class="fas fa-coins coin-icon"></i>
-                <span id="coin-count">0</span>
-            </div>
-            <div class="stat-item">
-                <i class="fas fa-tree wood-icon"></i>
-                <span id="wood-count">0</span>
-            </div>
-        </div>
-        <button id="btn-delete-account" class="btn-delete-account">
-            Eliminar Cuenta
-        </button>
         </div>
 
-        <!-- Barra de Recursos -->
         
-
-        <!-- Botones de Mejora -->
-        
-
-        <!-- Caja Azul (Placeholder para futuras funciones) -->
-   
-
-        <!-- Botón Eliminar Cuenta -->
-        
-
-    <!-- ========================================
-         COLUMNA DERECHA: VISORES DE SKINS
-         ======================================== -->
+    </div>
     <div class="right-column"> 
-        
-        <!-- ========================================
-             VISOR DE LA CASA
-             ======================================== -->
-        <div class="skin-viewer-container">
-            <h3>Tu Hogar</h3>
-            
-            <!-- Imagen de la Casa -->
-            <div class="skin-display">
-                <img id="house-img" src="../public/img/casaN1.jpg" alt="Casa">
-                <!-- Badge de "Equipado" (se oculta si no está activo) -->
-                <div class="skin-status" id="house-status" style="display: none;">
-                    ✅ Equipado
-                </div>
+            <div class="profile-visual-zone">          
+                <div class="scene">
+                    <img 
+                        id="house-img"
+                        class="house-img"
+                        src="../public/img/casaBase.png"
+                        alt="Casa"
+                        onerror="this.src='https://via.placeholder.com/400x300?text=Casa'"
+                    >      
+                    <img 
+                        id="beaver-img"
+                        class="beaver-img"
+                        src="../public/img/mapacheBase.png"
+                        alt="Castor"
+                        onerror="this.src='https://via.placeholder.com/150?text=Castor'"
+                    >
+                </div>  
+
+                <div class="skin-controls-container">
+                    <!-- CASA -->
+                    <div class="skin-controls house-controls">           
+                        <button id="btn-prev-house" class="nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="skin-info-center">
+                            <span id="house-name-lbl">Choza Inicial</span>
+                            <button id="btn-equip-house" class="btn-equip">Equipar</button>
+                        </div>
+                        <div class="skin-status" id="house-status" style="display: none;">
+                            ✅ Equipado
+                        </div>
+                        <button id="btn-next-house" class="nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                 
+                    <!-- CASTOR -->
+                    <div class="skin-controls beaver-controls">
+                        <button id="btn-prev-beaver" class="nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="skin-info-center">
+                            <span id="beaver-name-lbl">Castor Bebé</span>
+                            <button id="btn-equip-beaver" class="btn-equip">Equipar</button>
+                        </div>
+                        <div class="skin-status" id="beaver-status" style="display: none;">
+                            ✅ Equipado
+                        </div>
+                        <button id="btn-next-beaver" class="nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>        
+                </div>   
             </div>
-            
-            <!-- Controles del Carrusel -->
-            <div class="skin-controls">
-                <button id="btn-prev-house" class="nav-btn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                
-                <div class="skin-info-center">
-                    <span id="house-name-lbl">Choza Inicial</span>
-                    <button id="btn-equip-house" class="btn-equip">Equipar</button>
-                </div>
-                
-                <button id="btn-next-house" class="nav-btn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- ========================================
-             VISOR DEL CASTOR
-             ======================================== -->
-        <div class="skin-viewer-container">
-            <h3>Tu Castor</h3>
-            
-            <!-- Imagen del Castor -->
-            <div class="skin-display">
-                <img id="beaver-img" src="../public/img/mapacheBase.jpg" alt="Castor">
-                <!-- Badge de "Equipado" -->
-                <div class="skin-status" id="beaver-status" style="display: none;">
-                    ✅ Equipado
-                </div>
-            </div>
-            
-            <!-- Controles del Carrusel -->
-            <div class="skin-controls">
-                <button id="btn-prev-beaver" class="nav-btn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                
-                <div class="skin-info-center">
-                    <span id="beaver-name-lbl">Castor Bebé</span>
-                    <button id="btn-equip-beaver" class="btn-equip">Equipar</button>
-                </div>
-                
-                <button id="btn-next-beaver" class="nav-btn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-    </div>
-    </div>
-
-    </div>
-
-
+        </div> 
 </div>
 
+<!-- MODAL EDITAR PERFIL -->
+<div class="overlay" id="profileOverlay">
+    <div class="modal-perfil" id="profileModal">
+        <button class="btn-close-modal" onclick="closeProfileModal()">✕</button>
+        <div class="modal-title">Editar Datos del Perfil</div>
 
+        <!-- Avatar con picker -->
+        <div class="avatar-wrap-modal">
+            <div class="avatar-container-modal" id="avatarContainerModal">
+                <img src="/public/img/icono_perfil-removebg-preview.png" id="avatarPreview" class="avatar-preview-modal" alt="Avatar">
+                <div class="avatar-edit-btn-modal" onclick="toggleAvatarPickerModal(event)">✏️</div>
+                <div class="avatar-picker-modal" id="avatarPickerModal">
+                    <p>Elige tu avatar</p>
+                    <div class="avatar-options-modal">
+                        <div class="avatar-opt" onclick="selectAvatarModal('avatar1')"><img src="/public/img/avatars/perfil1.png" onerror="this.src='https://via.placeholder.com/60/FF6B6B/fff?text=1'"></div>
+                        <div class="avatar-opt" onclick="selectAvatarModal('avatar2')"><img src="/public/img/avatars/perfil2.png" onerror="this.src='https://via.placeholder.com/60/4ECDC4/fff?text=2'"></div>
+                        <div class="avatar-opt" onclick="selectAvatarModal('avatar3')"><img src="/public/img/avatars/perfil3.png" onerror="this.src='https://via.placeholder.com/60/45B7D1/fff?text=3'"></div>
+                        <div class="avatar-opt" onclick="selectAvatarModal('avatar4')"><img src="/public/img/avatars/perfil4.png" onerror="this.src='https://via.placeholder.com/60/FFA07A/fff?text=4'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fields-label-modal">Campos Editables</div>
+
+        <div class="field-modal"><input type="text" id="inputUsername" placeholder="Nombre de usuario" /></div>
+        <div class="field-modal select-wrap-modal">
+            <select id="selectGenero">
+                <option value="" disabled selected>Género</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+                <option value="Prefiero no decir">Prefiero no decir</option>
+            </select>
+        </div>
+        <div class="field-modal">
+            <input 
+                type="number"
+                id="inputEdad"
+                placeholder="Edad (15-99)"
+                min="15"
+                max="99"
+                step="1"
+                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)"
+                onkeydown="return event.key !== 'e' && event.key !== '.' && event.key !== '-'"
+            >
+        </div>
+
+        <div class="modal-footer-perfil">
+            <button class="btn-delete-modal" onclick="openConfirmDelete()">Eliminar Cuenta</button>
+            <button class="btn-accept-modal" onclick="saveProfile()">ACEPTAR</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRMAR ELIMINAR -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <div class="confirm-icon">⚠️</div>
+        <div class="confirm-title">¿Eliminar cuenta?</div>
+        <div class="confirm-text">Esta acción es permanente y no se puede deshacer. ¿Estás seguro?</div>
+        <div class="confirm-actions">
+            <button class="btn-cancel-confirm" onclick="closeConfirmDelete()">No, cancelar</button>
+            <button class="btn-confirm-delete" onclick="deleteAccountFromModal()">Sí, eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-perfil" id="toastPerfil"></div>
+
+<!-- Hidden elements requeridos por profile.js -->
+<span id="lbl-house-level" style="display:none"></span>
+<span id="lbl-beaver-level" style="display:none"></span>
+<button id="btn-delete-account" style="display: none;"></button>
+
+<script>
+    // Solo las funciones puramente de UI del modal (sin acceso a módulos)
+    function openConfirmDelete() {
+        document.getElementById('confirmOverlay').classList.add('active');
+    }
+    function closeConfirmDelete() {
+        document.getElementById('confirmOverlay').classList.remove('active');
+    }
+
+    // Avatar picker del modal de edición
+    function toggleAvatarPickerModal(e) {
+        e.stopPropagation();
+        document.getElementById('avatarPickerModal').classList.toggle('open');
+    }
+    function closeAvatarPickerModal() {
+        document.getElementById('avatarPickerModal').classList.remove('open');
+    }
+    function selectAvatarModal(avatarKey) {
+        const paths = {
+            avatar1: '/public/img/avatars/perfil1.png',
+            avatar2: '/public/img/avatars/perfil2.png',
+            avatar3: '/public/img/avatars/perfil3.png',
+            avatar4: '/public/img/avatars/perfil4.png',
+        };
+        document.getElementById('avatarPreview').src = paths[avatarKey];
+        document.getElementById('user-avatar').src   = paths[avatarKey];
+        closeAvatarPickerModal();
+    }
+    document.addEventListener('click', function(e) {
+        const container = document.getElementById('avatarContainerModal');
+        if (container && !container.contains(e.target)) closeAvatarPickerModal();
+    });
+
+    // Toast
+    function showToastPerfil(msg) {
+        const t = document.getElementById('toastPerfil');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // Cerrar overlay al click fuera
+    document.getElementById('profileOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            if (window.closeProfileModal) window.closeProfileModal();
+        }
+    });
+</script>
+
+<!-- El módulo profile.js expone openProfileModal, closeProfileModal, saveProfile, deleteAccountFromModal al scope global -->
 <script type="module" src="../public/js/pages/profile.js"></script>
-
 </body>
 </html>

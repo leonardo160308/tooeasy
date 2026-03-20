@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const btnAceptar = document.createElement("button");
         btnAceptar.textContent = "Aceptar Términos";
         btnAceptar.style.cssText = `
-            background: #10B981; /* Un color de acento verde para aceptación */
+            background: #4A3728; /* Un color de acento verde para aceptación */
             border: none;
             color: white;
             font-weight: bold;

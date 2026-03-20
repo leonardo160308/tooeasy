@@ -10,19 +10,23 @@
 </head>
 <body>
     <div class="auth-container">
-        <form id="registerForm" class="formulario"> <!-- ID REQUERIDO: registerForm -->
+        <form id="registerForm" class="formulario">
+            <div class="avatar-header">
+        <img src="../public/img/avatars/perfil1.png" alt="Avatar" class="avatar-img">
+    </div>
+            <!-- ID REQUERIDO: registerForm -->
             <h2>Crear Cuenta</h2>
             <p>¡Completa tu perfil para empezar tu aventura financiera!</p>
             
             <!-- Nombre de Usuario -->
-            <input type="text" id="registerNombre" placeholder="Nombre de Usuario" required> 
+            <input type="text" id="registerNombre" minlength="3" maxlength="16" placeholder="Nombre de Usuario" required> 
             
             <!-- Correo Electrónico -->
-            <input type="email" id="registerEmail" placeholder="Correo Electrónico" required>
+            <input type="email" id="registerEmail" minlength="6" maxlength="254" placeholder="Correo Electrónico" required>
             
             <!-- Contraseña -->
-            <input type="password" id="registerContraseña" placeholder="Contraseña" required>
-
+            <input type="password" id="registerContraseña" minlength="6" maxlength="16" placeholder="Contraseña" required>
+            <div class="alinear">
             <!-- Edad -->
             <input type="number" id="registerEdad" placeholder="Edad" min="15" max="99" required>
 
@@ -34,7 +38,7 @@
                 <option value="otro">Otro</option>
                 <option value="no-decir">Prefiero no decir</option>
             </select>
-            
+            </div>
             <!-- NUEVO: TÉRMINOS Y CONDICIONES -->
             <div class="terms-group" style="margin: 10px 0; display: flex; align-items: center;">
                 <!-- El checkbox tiene el atributo 'required' -->
@@ -47,9 +51,12 @@
             <p id="auth-message" style="color: red; margin-top: 10px;"></p>
         </form>
 
-        <p>¿Ya tienes cuenta? <a href="login.html">Iniciar Sesión</a></p>
+        <p class="login-ask">¿Ya tienes cuenta? <a href="login.html" class="login">Iniciar Sesión</a></p>
     </div>
-
+    <div class="footer-navigation">
+            <a href="./index.html" class="btn-back">← Regresar</a>
+        </div>
+        </div>
     <!-- Scripts necesarios: auth.js para el registro y terminos.js para el modal -->
     <script type="module" src="/public/js/pages/auth.js"></script>
     <script src="../public/js/data/terminos.js"></script>

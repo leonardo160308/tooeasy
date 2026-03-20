@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Financiero - TOO-EASY</title>
-        <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+    <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
 
-    <!-- ✅ CSS CORREGIDOS -->
     <link rel="stylesheet" href="../public/css/dashboard.css"> 
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Chart.js para las gráficas -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<!-- ========================================
-     ENCABEZADO CON NAVEGACIÓN
-     ======================================== -->
 <header class="header">
     <div class="logo">
         <h1>TOO-EASY</h1>
@@ -30,210 +29,218 @@
         <a href="/retos.html">RETOS</a>
         <a href="/lecciones.html">LECCIONES</a>
         <a href="/perfil.html">PERFIL</a>
-        <!-- ✅ BOTÓN DE SALIR CON ID ESPECÍFICO -->
         <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
             <img src="../public/img/Salida.png" alt="Salir">
         </a>
     </nav>
 </header>
 
-<!-- ========================================
-     SCRIPT PARA EL BOTÓN DE SALIR
-     Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
-     ======================================== -->
-
 <script type="module">
-    import { logout } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js'; // ✅ NUEVO
+    import { logout, isAdmin } from '/public/js/modules/auth.js';
+    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
+    
+    if (isAdmin()) {
+        const nav = document.querySelector('.nav');
+        const adminLink = document.createElement('a');
+        adminLink.href = '/admin.html';
+        adminLink.textContent = 'ADMIN';
+        adminLink.style.color = '#f39c12';
+        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
+    }
     
     const logoutBtn = document.getElementById('logout-btn-perfil');
-    
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
-            // ✅ Alerta de confirmación visual
             const confirmar = await alertaConfirmacion(
                 '¿Estás seguro de que deseas cerrar sesión?',
                 '👋 Salir de TOO-EASY'
             );
-            
-            if (confirmar) {
-                logout();
-            }
+            if (confirmar) logout();
         });
     }
 </script>
 
-<!-- ========================================
-     CONTENEDOR PRINCIPAL
-     ======================================== -->
 <div class="app-container">
-    
-    <!-- ✅ Saludo Personalizado (Se llena con JS) -->
-    <div class="main-header" style="padding: 1rem;">
-        <h1 id="user-greeting">Cargando...</h1>
-    </div>
 
-    <!-- ========================================
-         COLUMNA IZQUIERDA: RESUMEN Y GRÁFICAS
-         ======================================== -->
+    <!-- COLUMNA IZQUIERDA -->
     <div class="izquierda">
         <section class="card module-calculator">
             <h2>Resumen Mensual y Metas</h2>
             
-            <!-- Datos Fijos: Ingreso y Egreso -->
             <div class="fixed-data-grid">
                 <div class="input-group">
                     <label for="fixed-income">Ingreso Fijo Mensual ($)</label>
                     <input type="number" id="fixed-income" placeholder="0.00" step="10.00">
                 </div>
-                
                 <div class="input-group">
                     <label for="fixed-expense">Egreso Fijo Mensual ($)</label>
                     <input type="number" id="fixed-expense" placeholder="0.00" step="10.00">
                 </div>
             </div>
 
-            <!-- Datos de Meta -->
             <div class="goal-data-grid">
                 <div class="input-group">
                     <label for="goal-name">Nombre de Meta</label>
                     <input type="text" id="goal-name" placeholder="Ej: Vacaciones" maxlength="50">
                 </div>
-                
                 <div class="input-group">
                     <label for="goal-amount">Monto de Meta ($)</label>
                     <input type="number" id="goal-amount" placeholder="0.00" step="10.00">
                 </div>
             </div>
 
-            <!-- Resumen de Resultados -->
             <div class="summary-results">
                 <div class="result-item">
-                    <span>Ahorro Actual:</span>
+                    <span>Ahorro Actual</span>
                     <strong id="calculated-savings">$0.00</strong>
                 </div>
                 <div class="result-item">
-                    <span>Falta para Meta:</span>
+                    <span>Falta para Meta</span>
                     <strong id="calculated-remaining">$0.00</strong>
                 </div>
                 <div class="result-item">
-                    <span>Estado:</span>
+                    <span>Estado</span>
                     <strong id="goal-status">Sin datos</strong>
                 </div>
             </div>
 
-            <!-- Gráfica de Barras -->
+            <!-- PESTAÑAS DE GRÁFICO -->
+            <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-chart-type="1">Balance neto</button>
+                <button class="chart-tab-btn" data-chart-type="2">Ingresos por categoría</button>
+                <button class="chart-tab-btn" data-chart-type="3">Egresos por categoría</button>
+            </div>
+
+            <!-- LEYENDA -->
+            <div class="chart-legend" id="chart-legend">
+                <span class="legend-balance">
+                    <span class="legend-dot" style="background:#2e7d32;"></span>Ingresos
+                </span>
+                <span class="legend-balance">
+                    <span class="legend-dot" style="background:#c62828;"></span>Egresos
+                </span>
+                <span class="legend-balance">
+                    <span class="legend-dot" style="background:#1565C0;"></span>Balance neto
+                </span>
+                <span class="legend-ingresos" style="display:none;">
+                    <span class="legend-dot" style="background:#2e7d32;"></span>Monto por categoría
+                </span>
+                <span class="legend-egresos" style="display:none;">
+                    <span class="legend-dot" style="background:#c62828;"></span>Monto por categoría
+                </span>
+            </div>
+
             <div class="chart-container">
                 <canvas id="monthlyChart"></canvas>
             </div>
         </section>
     </div>
         
-    <!-- ========================================
-         COLUMNA DERECHA: CALENDARIO
-         ======================================== -->
+    <!-- COLUMNA DERECHA: CALENDARIO -->
     <div class="derecha">
         <section class="card module-calendar">
             <h2>Calendario de Movimientos</h2>
             
-            <!-- Controles del Calendario -->
             <div class="calendar-header">
                 <button id="prev-month">&lt;</button>
                 <h2 id="current-month-year">Cargando...</h2>
                 <button id="next-month">&gt;</button>
             </div>
             
-            <!-- Grid del Calendario (Se llena con JS) -->
-            <div id="calendar-grid" class="calendar-grid">
-                <!-- Los días se inyectan dinámicamente -->
-            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
         </section>
     </div>
 
-    <!-- ========================================
-         MODAL DE DETALLE DEL DÍA
-         ======================================== -->
+    <!-- MODAL DE DETALLE DEL DÍA -->
     <div id="day-modal" class="modal hidden">
         <div class="modal-content">
-            <!-- Botón Cerrar -->
             <span id="close-modal" class="close-btn">&times;</span>
-            
-            <!-- Título del Día -->
             <h2 id="modal-date-title">Detalle del Día</h2>
             
-            <!-- Resumen del Balance del Día -->
             <div class="day-balance-summary">
                 <div class="balance-item">
-                    <span>Ingresos:</span> 
+                    <span>Ingresos</span> 
                     <span id="day-income" class="text-green">$0</span>
                 </div>
                 <div class="balance-item">
-                    <span>Egresos:</span> 
+                    <span>Egresos</span> 
                     <span id="day-expense" class="text-red">$0</span>
                 </div>
-                <div class="balance-item total">
-                    <span>Balance:</span> 
+                <div class="balance-item">
+                    <span>Balance</span> 
                     <strong id="day-total">$0</strong>
                 </div>
             </div>
 
-            <!-- Recomendaciones Financieras -->
-            <div class="recommendations-section">
-                <h3>💡Recomendaciones del día</h3>
-                <ul id="recommendations-list">
-                    <!-- Se llenan con JS -->
-                </ul>
-            </div>
-
-            <!-- Lista de Movimientos del Día -->
             <div class="movements-list-section">
-                <h3>Movimientos Registrados</h3>
-                <ul id="movements-list">
-                    <!-- Se llenan con JS -->
-                </ul>
+                <h3>Movimientos del día</h3>
+                <ul id="movements-list"></ul>
             </div>
 
-            <!-- Formulario para Agregar Movimiento -->
+            <!-- ✅ FORM EDICIÓN CON BOTÓN CERRAR -->
+            <div class="edit-movement-form" id="edit-movement-container" style="display:none;">
+                <div class="edit-form-header">
+                    <h3>✏️ Editar Movimiento</h3>
+                    <button type="button" class="btn-close-edit" id="btn-close-edit" title="Cancelar edición">✕</button>
+                </div>
+                <form id="edit-transaction-form">
+                    <select id="edit-trans-type" required>
+                        <option value="expense">Egreso (−)</option>
+                        <option value="income">Ingreso (+)</option>
+                    </select>
+                    <select id="edit-trans-category" required>
+                        <option value="">-- Selecciona una categoría --</option>
+                    </select>
+                    <input type="text" id="edit-trans-amount" placeholder="Monto"
+                           inputmode="decimal" maxlength="11" required>
+                    <div class="edit-actions">
+                        <button type="button" class="btn-edit-delete" id="edit-btn-delete">🗑️ Eliminar</button>
+                        <button type="submit" class="btn-edit-save">✔ Guardar</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="add-movement-form">
                 <h3>➕ Nuevo Movimiento</h3>
                 <form id="transaction-form">
-                    <!-- Tipo de Movimiento -->
                     <select id="trans-type" required>
-                        <option value="expense">Egreso (-)</option>
+                        <option value="expense">Egreso (−)</option>
                         <option value="income">Ingreso (+)</option>
                     </select>
-                    
-                    <!-- Categoría -->
-                    <input 
-                        type="text" 
-                        id="trans-category" 
-                        placeholder="Categoría (ej: Comida, Transporte, Deuda)" 
-                        required
-                    >
-
-                    <!-- Monto -->
-                    <input 
-                        type="number" 
-                        id="trans-amount" 
-                        placeholder="Monto" 
-                        step="0.01" 
-                        min="0.01"
-                        required
-                    >
-                    
-                    <!-- Botón Agregar -->
+                    <select id="trans-category" required>
+                        <option value="">-- Selecciona una categoría --</option>
+                    </select>
+                    <input type="text" id="trans-amount" placeholder="Monto"
+                           inputmode="decimal" maxlength="11" required>
                     <button type="submit" class="btn-add">Agregar Movimiento</button>
                 </form>
             </div>
+
         </div>
     </div>
 </div>
 
-<!-- ========================================
-     SCRIPT CONECTADO AL BACKEND
-     ======================================== -->
+<!-- Script leyenda -->
+<script>
+document.querySelectorAll('.chart-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const type = parseInt(btn.dataset.chartType);
+        const legend = document.getElementById('chart-legend');
+        legend.querySelectorAll('span[class^="legend-"]').forEach(el => el.style.display = 'none');
+        if (type === 1) {
+            legend.querySelectorAll('.legend-balance').forEach(el => el.style.display = 'flex');
+        } else if (type === 2) {
+            legend.querySelectorAll('.legend-ingresos').forEach(el => el.style.display = 'flex');
+        } else {
+            legend.querySelectorAll('.legend-egresos').forEach(el => el.style.display = 'flex');
+        }
+    });
+});
+// Mostrar leyenda inicial
+document.querySelectorAll('.legend-balance').forEach(el => el.style.display = 'flex');
+</script>
+
 <script type="module" src="../public/js/pages/dashboard.js"></script>
 
 </body>

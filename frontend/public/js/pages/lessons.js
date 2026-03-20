@@ -1,61 +1,112 @@
-/* assets/js/pages/lessons.js */
-
+// frontend/public/js/pages/lessons.js
 import { getUserData } from '../modules/api.js';
 import { protectRoute, getAuthData } from '../modules/auth.js';
+import { alertaError } from '../modules/alerts.js';
+
+const API_URL = 'http://localhost:3000/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Seguridad
+    // ========================================
+    // 1. SEGURIDAD
+    // ========================================
     if (!protectRoute()) return;
+    
     const sessionUser = getAuthData();
     const userId = sessionUser.id;
 
-    // 2. MAPEO GLOBAL DE LECCIONES → NIVELES
-    const lessonsConfig = {
-        fundamentos: { start: 1, end: 3 },
-        'cuentas-bancarias': { start: 4, end: 6 },
-        tarjetas: { start: 7, end: 10 },
-        administracion: { start: 11, end: 13 },
-        'deudas-creditos': { start: 14, end: 17 }
+    // ========================================
+    // 2. MAPEO HTML → BD (CRÍTICO)
+    // ========================================
+    const categoryMap = {
+        'fundamentos': 1,
+        'cuentas-bancarias': 2,
+        'tarjetas': 3,
+        'administracion': 4,
+        'deudas-creditos': 5
     };
 
-    // 3. Progreso global
     let userLevel = 1;
+    let allLevelsDB = [];
 
     try {
-        const userData = await getUserData(userId);
-        userLevel = userData.level || 1;
-        console.log('Nivel global actual:', userLevel);
+        // ========================================
+        // 3. CARGAR DATOS DEL USUARIO Y NIVELES
+        // ========================================
+        const loadingEl = document.querySelector('.loading-levels');
+        
+        const [userData, levelsResponse] = await Promise.all([
+            getUserData(userId),
+            fetch(`${API_URL}/levels`) // ✅ RUTA PÚBLICA
+        ]);
 
-        // ✅ QUITAR LOADING REAL
-        const loading = document.querySelector('.loading-levels');
-        if (loading) loading.remove();
+        const levelsResult = await levelsResponse.json();
+
+        userLevel = userData.level || 1;
+        
+        if (levelsResult.success) {
+            allLevelsDB = levelsResult.data;
+            console.log('✅ Niveles cargados:', allLevelsDB.length);
+        } else {
+            alertaError('No se pudieron cargar los niveles');
+        }
+
+        // Quitar loading
+        if (loadingEl) loadingEl.remove();
 
     } catch (error) {
-        console.error('Error cargando progreso:', error);
+        console.error('❌ Error cargando datos:', error);
+        alertaError('Error de conexión al cargar lecciones');
+        
+        const loadingEl = document.querySelector('.loading-levels');
+        if (loadingEl) {
+            loadingEl.innerHTML = '<p style="color: red;">Error al cargar. Recarga la página.</p>';
+        }
+        return;
     }
 
-    // 4. Renderizar niveles de una lección
+    // ========================================
+    // 4. FUNCIÓN PARA RENDERIZAR NIVELES
+    // ========================================
     function renderizarLeccion(card) {
-        const category = card.dataset.category;
-        const config = lessonsConfig[category];
-        if (!config) return;
+        const categorySlug = card.dataset.category;
+        const categoryId = categoryMap[categorySlug];
+
+        if (!categoryId) {
+            console.error('❌ Categoría no mapeada:', categorySlug);
+            return;
+        }
+
+        // Filtrar niveles de esta categoría
+        const levelsForThisCard = allLevelsDB.filter(l => Number(l.category_id) === Number(categoryId));
+        
+        console.log(`📚 ${categorySlug} (ID: ${categoryId}): ${levelsForThisCard.length} niveles encontrados`);
 
         const levelsContainer = card.querySelector('.levels-container');
-
-        // 🔴 IMPORTANTE: conservar la barra
         const progressBar = levelsContainer.querySelector('.progress-bar');
-
+        
+        // Limpiar contenido previo
         levelsContainer.innerHTML = '';
         if (progressBar) levelsContainer.appendChild(progressBar);
 
-        const totalLevels = config.end - config.start + 1;
+        if (levelsForThisCard.length === 0) {
+            const msg = document.createElement('p');
+            msg.textContent = "Próximamente...";
+            msg.style.cssText = "padding: 10px; color: #666; text-align: center;";
+            levelsContainer.insertBefore(msg, progressBar);
+            return;
+        }
+
+        // Contadores para barra de progreso
         let completedInLesson = 0;
+        const totalLevels = levelsForThisCard.length;
 
-        for (let globalLevel = config.start; globalLevel <= config.end; globalLevel++) {
-            const localLevel = globalLevel - config.start + 1;
-
-            const isCompleted = globalLevel < userLevel;
-            const isActive = globalLevel === userLevel;
+        // Generar HTML de niveles
+        levelsForThisCard.forEach(nivel => {
+            const globalOrden = nivel.orden;
+            
+            const isCompleted = globalOrden < userLevel;
+            const isActive = globalOrden === userLevel;
+            const isLocked = globalOrden > userLevel;
 
             if (isCompleted) completedInLesson++;
 
@@ -66,40 +117,46 @@ document.addEventListener('DOMContentLoaded', async () => {
             else if (isActive) levelDiv.classList.add('active');
             else levelDiv.classList.add('locked');
 
-            // ✅ BOTÓN EN COMPLETADOS Y ACTIVO
             levelDiv.innerHTML = `
-                <span>Nivel ${localLevel}</span>
+                <div class="level-info">
+                    <span class="level-num">Nivel ${globalOrden}</span>
+                    <span class="level-name">${nivel.nombre}</span>
+                </div>
                 ${
                     (isActive || isCompleted)
-                        ? `<button>Estudiar</button>`
+                        ? `<button class="btn-play">Jugar</button>`
                         : `<i class="fa-solid fa-lock"></i>`
                 }
             `;
 
-            // 👉 Click en estudiar
+            // Evento click
             if (isActive || isCompleted) {
-                levelDiv.querySelector('button').addEventListener('click', (e) => {
+                const btn = levelDiv.querySelector('button');
+                btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    window.location.href = `/nivel.html?level=${globalLevel}`;
+                    window.location.href = `/nivel.html?level=${nivel.id}`; // ✅ USA EL ID REAL
                 });
             }
 
-            // Insertar antes de la barra
             levelsContainer.insertBefore(levelDiv, progressBar);
-        }
+        });
 
-        // 5. Barra de progreso por lección
+        // Actualizar barra de progreso
         const progressFill = progressBar?.querySelector('.progress-fill');
         if (progressFill) {
-            const percent = (completedInLesson / totalLevels) * 100;
+            const percent = totalLevels === 0 ? 0 : (completedInLesson / totalLevels) * 100;
             progressFill.style.width = `${percent}%`;
         }
     }
 
-    // 6. Click en tarjeta
-        document.querySelectorAll('.category-card').forEach(card => {
-        card.addEventListener('click', () => {
+    // ========================================
+    // 5. EVENTOS CLICK EN TARJETAS
+    // ========================================
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') return;
 
+            // Cerrar otras tarjetas
             document.querySelectorAll('.category-card').forEach(otherCard => {
                 if (otherCard !== card) {
                     const otherLevels = otherCard.querySelector('.levels-container');
@@ -107,17 +164,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
 
-            const levels = card.querySelector('.levels-container');
-            const isHidden = levels.classList.contains('hidden');
+            const levelsContainer = card.querySelector('.levels-container');
+            const isHidden = levelsContainer.classList.contains('hidden');
 
-            // Toggle SOLO de la tarjeta clickeada
-            levels.classList.toggle('hidden');
+            levelsContainer.classList.toggle('hidden');
 
-            // Renderizar solo si se acaba de abrir
+            // Renderizar solo cuando se abre
             if (isHidden) {
                 renderizarLeccion(card);
             }
         });
     });
-
 });

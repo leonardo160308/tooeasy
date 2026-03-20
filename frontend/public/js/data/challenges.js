@@ -1,57 +1,212 @@
 /* assets/js/data/challenges.js */
 
 export const challengesData = [
+
+    // ==========================================
+    // NIVEL PRINCIPIANTE
+    // ==========================================
     {
         id: 1,
-        title: "Registro de Gastos Semanales",
-        description: "Registra todos tus movimientos (ingresos y egresos) durante una semana completa.",
-        reward_wood: 10,
-        reward_coins: 5,
-        required_data: "7_movements"
+        title: "Primer Registro",
+        description: "Registra tu primer movimiento financiero en el dashboard.",
+        reward_wood: 5
     },
     {
         id: 2,
-        title: "Fondo de Emergencia Básico",
-        description: "Ahorra el equivalente a 10% de tu ingreso mensual en la categoría 'Ahorro'.",
-        reward_wood: 15,
-        reward_coins: 10,
-        required_data: "10%_saved"
+        title: "Semana Organizada",
+        description: "Registra al menos 5 movimientos en total.",
+        reward_wood: 5
     },
     {
         id: 3,
-        title: "Eliminar Deuda Pequeña",
-        description: "Realiza un movimiento para pagar una deuda pendiente.",
-        reward_wood: 25,
-        reward_coins: 15,
-        required_data: "debt_payment"
+        title: "Control Semanal",
+        description: "Registra al menos 7 movimientos en total.",
+        reward_wood: 5
+    },
+    {
+        id: 4,
+        title: "Primer Ingreso",
+        description: "Registra tu primer ingreso de cualquier categoría.",
+        reward_wood: 5
+    },
+    {
+        id: 5,
+        title: "Balance Positivo",
+        description: "Logra que tus ingresos superen tus gastos en el mes actual.",
+        reward_wood: 5
     },
 
-    // ───────────────────────────────
-    // 🔥 NUEVOS RETOS MASIVOS 🔥
-    // ───────────────────────────────
+    // ==========================================
+    // NIVEL INTERMEDIO
+    // ==========================================
+    {
+        id: 6,
+        title: "Registrador Activo",
+        description: "Registra al menos 15 movimientos en total.",
+        reward_wood: 6
+    },
+    {
+        id: 7,
+        title: "Experto en Registros",
+        description: "Alcanza 25 movimientos registrados en total.",
+        reward_wood: 6
+    },
+    {
+        id: 8,
+        title: "Controlador Financiero",
+        description: "Registra 40 movimientos en total.",
+        reward_wood: 6
+    },
+    {
+        id: 9,
+        title: "Maestro de las Finanzas",
+        description: "Logra registrar 60 movimientos en total.",
+        reward_wood: 6
+    },
+    {
+        id: 10,
+        title: "Gurú Financiero",
+        description: "Registra 100 movimientos en total.",
+        reward_wood: 6
+    },
 
-    { id: 4, title: "Gasto Cero por 24h", description: "Pasa un día completo sin gastar dinero.", reward_wood: 12, reward_coins: 0, required_data: "24h_no_spend" },
-    { id: 5, title: "Control de Café y Snacks", description: "Evita comprar comida o bebida en la calle por 3 días.", reward_wood: 18, reward_coins: 0, required_data: "no_snacks_3d" },
-    { id: 6, title: "Semana sin Compras Impulsivas", description: "Evita compras no necesarias durante 7 días.", reward_wood: 22, reward_coins: 0, required_data: "no_impulsive_7d" },
-    { id: 7, title: "Log de Gastos Diario", description: "Registra gastos durante 14 días continuos.", reward_wood: 40, reward_coins: 5, required_data: "14_days_logging" },
-    { id: 8, title: "Categorías Definidas", description: "Crea mínimo 5 categorías para organizar tus gastos.", reward_wood: 8, reward_coins: 0, required_data: "set_categories" },
-    { id: 9, title: "Tope Semanal", description: "Define un límite máximo de gasto semanal y cúmplelo.", reward_wood: 30, reward_coins: 0, required_data: "weekly_limit_reached" },
-    { id: 10, title: "No usar tarjeta por 72h", description: "Solo paga en efectivo durante 3 días.", reward_wood: 20, reward_coins: 0, required_data: "cash_only_3d" },
-    { id: 11, title: "Registrar 20 movimientos", description: "Registra un total de 20 movimientos financieros.", reward_wood: 50, reward_coins: 5, required_data: "20_movements" },
-    { id: 12, title: "Eliminar un gasto recurrente", description: "Cancela una suscripción o gasto repetitivo innecesario.", reward_wood: 35, reward_coins: 10, required_data: "cancel_subscription" },
-    { id: 13, title: "1 Semana con presupuesto exacto", description: "Planea un presupuesto y no te pases ni un peso durante 7 días.", reward_wood: 45, reward_coins: 0, required_data: "perfect_budget_week" },
-    { id: 14, title: "Micro-Ahorro diario", description: "Ahorra $10 al día durante una semana.", reward_wood: 25, reward_coins: 0, required_data: "micro_save_7d" },
-    { id: 15, title: "Reto Frijolito", description: "Ahorra cualquier cantidad, mínimo 5 veces en el mes.", reward_wood: 35, reward_coins: 0, required_data: "save_5_times" },
-    { id: 16, title: "No Uber por 5 días", description: "No usar transporte por aplicación durante 5 días seguidos.", reward_wood: 30, reward_coins: 0, required_data: "no_uber_5d" },
-    { id: 17, title: "Revisión de Gastos Fantasma", description: "Analiza tus gastos y elimina al menos 2 innecesarios.", reward_wood: 40, reward_coins: 10, required_data: "remove_ghost_expenses" },
-    { id: 18, title: "Ahorro por meta específica", description: "Define una meta (ej. compu, viaje) y ahorra para ella 3 veces.", reward_wood: 55, reward_coins: 10, required_data: "goal_saving" },
-    { id: 19, title: "Mes del Control Total", description: "Registra todos los movimientos de un mes completo.", reward_wood: 90, reward_coins: 15, required_data: "full_month_tracking" },
-    { id: 20, title: "Reto No Antojos", description: "Evita comprar comida antojadiza por 7 días.", reward_wood: 28, reward_coins: 0, required_data: "no_cravings_7d" },
-    { id: 21, title: "Venta de algo que no uses", description: "Vende algo que ya no necesites.", reward_wood: 42, reward_coins: 10, required_data: "sell_unused_item" },
-    { id: 22, title: "Consumo de agua económica", description: "Evita comprar bebidas caras por 5 días, usa agua simple.", reward_wood: 18, reward_coins: 0, required_data: "water_only_5d" },
-    { id: 23, title: "No supermercado 1 semana", description: "Usa lo que ya tienes en casa sin compras de despensa.", reward_wood: 35, reward_coins: 0, required_data: "no_grocery_7d" },
-    { id: 24, title: "Plan de Ahorro 30 días", description: "Ahorra una cantidad diaria durante 30 días.", reward_wood: 100, reward_coins: 20, required_data: "save_30d" },
-    { id: 25, title: "Ahorro Nivel Dios", description: "Ahorra el 20% de tu ingreso mensual.", reward_wood: 120, reward_coins: 30, required_data: "20%_saved" }
+    // ==========================================
+    // RETOS DE INGRESOS
+    // ==========================================
+    {
+        id: 11,
+        title: "Generador de Ingresos",
+        description: "Registra 3 ingresos de cualquier categoría.",
+        reward_wood: 6
+    },
+    {
+        id: 12,
+        title: "Ingresos Constantes",
+        description: "Registra 5 ingresos de cualquier categoría.",
+        reward_wood: 6
+    },
+    {
+        id: 13,
+        title: "Flujo de Ingresos",
+        description: "Registra 10 ingresos de cualquier categoría.",
+        reward_wood: 6
+    },
+    {
+        id: 14,
+        title: "Mes Productivo",
+        description: "Acumula $500 o más en ingresos durante el mes actual.",
+        reward_wood: 6
+    },
+    {
+        id: 15,
+        title: "Gran Mes de Ingresos",
+        description: "Acumula $1,000 o más en ingresos durante el mes actual.",
+        reward_wood: 6
+    },
+
+    // ==========================================
+    // RETOS DE CONTROL DE GASTOS
+    // ==========================================
+    {
+        id: 16,
+        title: "Control de Vivienda",
+        description: "Registra un gasto en 'Renta / Hipoteca'.",
+        reward_wood: 6
+    },
+    {
+        id: 17,
+        title: "Control de Alimentación",
+        description: "Registra al menos 5 gastos de comida (Supermercado, Restaurantes, Comida rápida, Delivery o Café / Snacks).",
+        reward_wood: 6
+    },
+    {
+        id: 18,
+        title: "Control de Transporte",
+        description: "Registra 5 gastos de transporte (Gasolina, Transporte público, Taxi / Uber, Estacionamiento o Peajes).",
+        reward_wood: 6
+    },
+    {
+        id: 19,
+        title: "Control de Servicios",
+        description: "Registra 3 gastos de servicios del hogar (Electricidad, Agua, Gas o Internet).",
+        reward_wood: 6
+    },
+    {
+        id: 20,
+        title: "Gastos Diversificados",
+        description: "Registra movimientos en al menos 5 categorías diferentes.",
+        reward_wood: 6
+    },
+
+    // ==========================================
+    // RETOS DE FUENTES DE INGRESO
+    // ==========================================
+    {
+        id: 21,
+        title: "Primer Salario Registrado",
+        description: "Registra tu primer ingreso en la categoría 'Salario'.",
+        reward_wood: 9
+    },
+    {
+        id: 22,
+        title: "Ingresos Extra",
+        description: "Registra un ingreso en Freelance, Ventas, Trabajo extra, Comisiones, Propinas o Negocio propio.",
+        reward_wood: 9
+    },
+    {
+        id: 23,
+        title: "Inversionista Inicial",
+        description: "Registra un movimiento en 'Inversiones', 'Dividendos' o 'Intereses'.",
+        reward_wood: 9
+    },
+    {
+        id: 24,
+        title: "Múltiples Fuentes de Ingreso",
+        description: "Registra ingresos en al menos 3 categorías distintas.",
+        reward_wood: 9
+    },
+
+    // ==========================================
+    // RETOS DE BALANCE
+    // ==========================================
+    {
+        id: 25,
+        title: "Mes Equilibrado",
+        description: "Termina el mes con un balance de exactamente $0 (margen ±$10).",
+        reward_wood: 9
+    },
+    {
+        id: 26,
+        title: "Mes Rentable",
+        description: "Termina el mes con un balance positivo de $100 o más.",
+        reward_wood: 9
+    },
+    {
+        id: 27,
+        title: "Mes Altamente Rentable",
+        description: "Termina el mes con un balance positivo de $500 o más.",
+        reward_wood: 9
+    },
+    {
+        id: 28,
+        title: "Campeón de Ahorro",
+        description: "Termina el mes con un balance positivo de $1,000 o más.",
+        reward_wood: 9
+    },
+
+    // ==========================================
+    // RETOS ESPECIALES
+    // ==========================================
+    {
+        id: 29,
+        title: "Educación Financiera",
+        description: "Registra un gasto en 'Cursos', 'Libros' o 'Material escolar'.",
+        reward_wood: 9
+    },
+    {
+        id: 30,
+        title: "Cuida tu Salud",
+        description: "Registra un gasto en 'Medicamentos', 'Consultas médicas', 'Seguro médico' o 'Gimnasio'.",
+        reward_wood: 9
+    }
 ];
-
-// Ejemplo de cómo debería ser tu template string en JS:

@@ -1,54 +1,63 @@
-import db from '../config/db.js';
+import { supabase } from '../config/supabase.js';
 
 class Skin {
-    // R: Obtener todas las skins disponibles (para mostrar en la tienda)
+
+    // Obtener todas las skins
     static async getAll() {
-        // Podrías añadir un WHERE si solo quieres mostrar skins comprables
-        const query = 'SELECT id, tipo, nombre, imagen, unlock_level FROM skins ORDER BY tipo, unlock_level ASC';
-        try {
-            const [rows] = await db.execute(query);
-            return rows;
-        } catch (error) {
-            throw error;
-        }
+        const { data, error } = await supabase
+            .from('skins')
+            .select('id, tipo, nombre, imagen, unlock_level')
+            .order('tipo')
+            .order('unlock_level');
+
+        if (error) throw error;
+        return data || [];
     }
 
-    // R: Obtener una skin específica por ID (para verificar precio antes de comprar)
+    // Obtener skin por ID
     static async getById(skinId) {
-        const query = 'SELECT id, tipo, nombre, imagen, unlock_level FROM skins WHERE id = ?';
-        try {
-            const [rows] = await db.execute(query, [skinId]);
-            return rows[0];
-        } catch (error) {
+        const { data, error } = await supabase
+            .from('skins')
+            .select('id, tipo, nombre, imagen, unlock_level')
+            .eq('id', skinId)
+            .single();
+
+        if (error) {
+            if (error.code === 'PGRST116') return null;
             throw error;
         }
-    }
-    
-    // R: Verificar si el usuario ya tiene la skin
-    static async userHasSkin(userId, skinId) {
-        const query = 'SELECT 1 FROM user_skins WHERE user_id = ? AND skin_id = ?';
-        try {
-            const [rows] = await db.execute(query, [userId, skinId]);
-            // Si rows tiene un elemento, significa que la encontró (TRUE)
-            return rows.length > 0;
-        } catch (error) {
-            throw error;
-        }
+
+        return data;
     }
 
-    // C: Registrar la compra de la skin (Añadir a la tabla user_skins)
+    // Verificar si el usuario ya tiene la skin
+    static async userHasSkin(userId, skinId) {
+        const { data, error } = await supabase
+            .from('user_skins')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('skin_id', skinId);
+
+        if (error) throw error;
+        return data && data.length > 0;
+    }
+
+    // Agregar skin al usuario
     static async addSkinToUser(userId, skinId) {
-        const query = 'INSERT INTO user_skins (user_id, skin_id) VALUES (?, ?)';
-        try {
-            const [result] = await db.execute(query, [userId, skinId]);
-            return result.insertId;
-        } catch (error) {
-            // Manejar error de duplicidad (si el usuario ya tiene la skin)
-            if (error.code === 'ER_DUP_ENTRY') {
-                throw new Error("Ya posees esta skin.");
+        const { data, error } = await supabase
+            .from('user_skins')
+            .insert({ user_id: userId, skin_id: skinId })
+            .select()
+            .single();
+
+        if (error) {
+            if (error.code === '23505') {
+                throw new Error('Ya posees esta skin.');
             }
             throw error;
         }
+
+        return data.id;
     }
 }
 

@@ -1,18 +1,9 @@
-// frontend/public/js/modules/api.js
-// Funciones para comunicarse con el Backend
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
 // ========================================
 // 1. AUTENTICACIÓN
 // ========================================
-
-/**
- * Inicia sesión con credenciales
- * @param {string} nombre - Nombre de usuario
- * @param {string} password - Contraseña
- * @returns {Promise<Object>} { success, user, message }
- */
 export async function login(nombre, password) {
     try {
         const response = await fetch(`${API_BASE_URL}/login`, {
@@ -21,34 +12,26 @@ export async function login(nombre, password) {
             body: JSON.stringify({ nombre, password })
         });
 
-        const data = await response.json();
-        
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Respuesta NO es JSON:', text);
+            return { success: false, message: 'Error del servidor: Respuesta inválida' };
+        }
+
         if (response.ok) {
-            return { 
-                success: true, 
-                user: data.user, 
-                message: 'Inicio de sesión exitoso.' 
-            };
+            return { success: true, user: data.user, message: 'Inicio de sesión exitoso.' };
         } else {
-            return { 
-                success: false, 
-                message: data.message || 'Credenciales incorrectas.' 
-            };
+            return { success: false, message: data.message || 'Credenciales incorrectas.' };
         }
     } catch (error) {
         console.error('Error en login:', error);
-        return { 
-            success: false, 
-            message: 'Error de conexión con el servidor.' 
-        };
+        return { success: false, message: 'Error de conexión con el servidor.' };
     }
 }
 
-/**
- * Registra un nuevo usuario
- * @param {Object} userData - Datos del nuevo usuario
- * @returns {Promise<Object>} { success, data, message }
- */
 export async function register(userData) {
     try {
         const response = await fetch(`${API_BASE_URL}/users`, {
@@ -57,25 +40,29 @@ export async function register(userData) {
             body: JSON.stringify(userData)
         });
 
-        return await response.json();
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Respuesta NO es JSON:', text);
+            return { success: false, message: 'Error interno del servidor (respuesta inválida)' };
+        }
+
+        if (!response.ok) {
+            return { success: false, message: data.message || 'Error al crear usuario.' };
+        }
+
+        return data;
     } catch (error) {
         console.error('Error en register:', error);
-        return { 
-            success: false, 
-            message: 'Error al crear usuario.' 
-        };
+        return { success: false, message: 'No se pudo conectar con el servidor.' };
     }
 }
 
 // ========================================
 // 2. USUARIOS
 // ========================================
-
-/**
- * Obtiene los datos completos de un usuario
- * @param {number} userId - ID del usuario
- * @returns {Promise<Object>} Datos del usuario
- */
 export async function getUserData(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/users/${userId}`);
@@ -86,44 +73,26 @@ export async function getUserData(userId) {
     }
 }
 
-/**
- * Actualiza datos del usuario
- * @param {number} userId - ID del usuario
- * @param {Object} updateData - Datos a actualizar
- * @returns {Promise<Object>}
- */
-export async function updateUserData(userId, updateData) {
+export async function updateUserData(userId, data) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        const res = await fetch(`/api/users/${userId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updateData)
+            body: JSON.stringify(data)
         });
-        return await response.json();
+        return await res.json();
     } catch (error) {
-        console.error('Error actualizando usuario:', error);
-        throw error;
+        console.error('Error updateUserData:', error);
+        return { success: false, message: 'Error de conexión' };
     }
 }
 
-/**
- * Actualiza el avatar del usuario
- * NOTA: Internamente usa equipSkin del backend con type='avatar'
- * @param {number} userId - ID del usuario
- * @param {string} avatar - Nombre del avatar (ej: "avatar1", "avatar2")
- * @returns {Promise<Object>}
- */
 export async function updateAvatar(userId, avatar) {
     try {
-        // Usamos la misma ruta de equipSkin pero la llamamos desde aquí
         const response = await fetch(`${API_BASE_URL}/equip`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                userId: userId, 
-                skinId: avatar, 
-                type: 'avatar' 
-            })
+            body: JSON.stringify({ userId, skinId: avatar, type: 'avatar' })
         });
         return await response.json();
     } catch (error) {
@@ -132,11 +101,6 @@ export async function updateAvatar(userId, avatar) {
     }
 }
 
-/**
- * Elimina (baja lógica) la cuenta de un usuario
- * @param {number} userId - ID del usuario
- * @returns {Promise<Object>}
- */
 export async function deleteUser(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
@@ -150,17 +114,9 @@ export async function deleteUser(userId) {
     }
 }
 
-
-
 // ========================================
 // 3. DASHBOARD Y MOVIMIENTOS
 // ========================================
-
-/**
- * Obtiene los datos fijos del dashboard (Meta y Sueldo)
- * @param {number} userId
- * @returns {Promise<Object>}
- */
 export async function getDashboardFixed(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard-fixed/${userId}`);
@@ -171,12 +127,6 @@ export async function getDashboardFixed(userId) {
     }
 }
 
-/**
- * Actualiza los datos fijos del dashboard
- * @param {number} userId
- * @param {Object} goalData - { ingreso_fijo, egreso_fijo, meta_nombre, meta_cantidad }
- * @returns {Promise<Object>}
- */
 export async function updateGoal(userId, goalData) {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard-fixed/${userId}`, {
@@ -191,11 +141,6 @@ export async function updateGoal(userId, goalData) {
     }
 }
 
-/**
- * Obtiene el historial de movimientos del usuario
- * @param {number} userId
- * @returns {Promise<Object>} { success, totals, history }
- */
 export async function getDashboardData(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/movements/user/${userId}`);
@@ -206,11 +151,6 @@ export async function getDashboardData(userId) {
     }
 }
 
-/**
- * Crea un nuevo movimiento (Ingreso o Gasto)
- * @param {Object} movementData - { user_id, fecha, tipo, categoria, monto, descripcion }
- * @returns {Promise<Object>}
- */
 export async function createMovement(movementData) {
     try {
         const response = await fetch(`${API_BASE_URL}/movements`, {
@@ -226,11 +166,24 @@ export async function createMovement(movementData) {
 }
 
 /**
- * Elimina un movimiento
+ * Actualiza tipo, categoría y monto de un movimiento existente
  * @param {number} movementId
- * @param {number} userId
- * @returns {Promise<Object>}
+ * @param {Object} updateData - { tipo, categoria, monto }
  */
+export async function updateMovement(movementId, updateData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/movements/${movementId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateData)
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error actualizando movimiento:', error);
+        throw error;
+    }
+}
+
 export async function deleteMovement(movementId, userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/movements/${movementId}`, {
@@ -248,13 +201,6 @@ export async function deleteMovement(movementId, userId) {
 // ========================================
 // 4. PERFIL Y MEJORAS
 // ========================================
-
-/**
- * Mejora Casa o Castor
- * @param {number} userId
- * @param {string} type - 'house' o 'beaver'
- * @returns {Promise<Object>}
- */
 export async function upgradeItem(userId, type) {
     try {
         const response = await fetch(`${API_BASE_URL}/upgrade`, {
@@ -269,13 +215,6 @@ export async function upgradeItem(userId, type) {
     }
 }
 
-/**
- * Equipar una skin
- * @param {number} userId
- * @param {string} skinId
- * @param {string} type - 'house' o 'beaver'
- * @returns {Promise<Object>}
- */
 export async function equipSkin(userId, skinId, type) {
     try {
         const response = await fetch(`${API_BASE_URL}/equip`, {
@@ -293,18 +232,10 @@ export async function equipSkin(userId, skinId, type) {
 // ========================================
 // 5. RETOS (CHALLENGES)
 // ========================================
-
-/**
- * Obtiene el estado de los retos del usuario
- * @param {number} userId
- * @returns {Promise<Object>} { success, completedIds: [] }
- */
 export async function getChallengesStatus(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/challenges/status/${userId}`);
-        if (!response.ok) {
-            throw new Error('No se pudo obtener el estado de los retos.');
-        }
+        if (!response.ok) throw new Error('No se pudo obtener el estado de los retos.');
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo retos:', error);
@@ -312,12 +243,6 @@ export async function getChallengesStatus(userId) {
     }
 }
 
-/**
- * Intenta completar un reto
- * @param {number} userId
- * @param {number} challengeId
- * @returns {Promise<Object>} { success, message, new_stats }
- */
 export async function completeChallenge(userId, challengeId) {
     try {
         const response = await fetch(`${API_BASE_URL}/challenges/complete`, {
@@ -325,31 +250,18 @@ export async function completeChallenge(userId, challengeId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, challengeId })
         });
-        
         const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.message || 'Error al completar el reto');
-        }
-        
+        if (!response.ok) throw new Error(data.message || 'Error al completar el reto');
         return data;
     } catch (error) {
         console.error('Error completando reto:', error);
-        return { 
-            success: false, 
-            message: error.message || 'Error de red/servidor.' 
-        };
+        return { success: false, message: error.message || 'Error de red/servidor.' };
     }
 }
 
 // ========================================
 // 6. TIENDA DE SKINS
 // ========================================
-
-/**
- * Obtiene el catálogo de skins disponibles
- * @returns {Promise<Object>}
- */
 export async function getShopSkins() {
     try {
         const response = await fetch(`${API_BASE_URL}/skins`);
@@ -360,14 +272,6 @@ export async function getShopSkins() {
     }
 }
 
-/**
- * Compra una skin
- * @param {number} userId
- * @param {number} skinId
- * @param {number} cost
- * @param {string} currency - 'coins' o 'wood'
- * @returns {Promise<Object>}
- */
 export async function purchaseSkin(userId, skinId, cost, currency) {
     try {
         const response = await fetch(`${API_BASE_URL}/skins/purchase`, {
@@ -379,5 +283,16 @@ export async function purchaseSkin(userId, skinId, cost, currency) {
     } catch (error) {
         console.error('Error comprando skin:', error);
         throw error;
+    }
+}
+
+export async function getChallengesProgress(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/challenges/progress/${userId}`);
+        if (!response.ok) throw new Error('No se pudo obtener el progreso de los retos.');
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo progreso de retos:', error);
+        return { success: false, progress: {} };
     }
 }

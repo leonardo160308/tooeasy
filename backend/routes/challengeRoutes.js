@@ -1,17 +1,17 @@
 /* backend/routes/challengeRoutes.js */
 
 import { Router } from 'express';
-// Importamos las funciones que acabamos de crear en el controlador
-import { getChallenges, claimChallenge } from '../controllers/challengeController.js';
+import { getChallenges, getAllChallengesProgress, claimChallenge } from '../controllers/challengeController.js';
 
 const router = Router();
 
-// 1. Ruta para ver qué retos ya completó el usuario
-// URL: http://localhost:3000/api/challenges/status/1
+// Retos completados (claimed) del usuario
 router.get('/challenges/status/:userId', getChallenges);
 
-// 2. Ruta para intentar completar un reto y ganar premio
-// URL: http://localhost:3000/api/challenges/complete
+// Progreso real de todos los retos del usuario
+router.get('/challenges/progress/:userId', getAllChallengesProgress);
+
+// Reclamar un reto
 router.post('/challenges/complete', claimChallenge);
 
 export default router;

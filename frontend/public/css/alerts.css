@@ -1,209 +1,147 @@
 /* ========================================
-   SISTEMA DE ALERTAS MODERNAS - TOO-EASY
-   Archivo: frontend/public/css/alerts.css
+   ALERTAS MODERNAS - TOO-EASY (v2)
    ======================================== */
 
-/* Contenedor de alertas (posición fija) */
 .alerts-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 24px;
+    right: 24px;
     z-index: 99999;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     pointer-events: none;
-    max-width: 400px;
+    max-width: 380px;
 }
 
-/* Alerta individual */
 .alert-box {
     pointer-events: all;
     background: white;
     border-radius: 16px;
-    padding: 18px 24px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 16px 20px;
+    box-shadow: 0 10px 40px rgba(26,35,50,0.16), 0 2px 8px rgba(26,35,50,0.08);
     display: flex;
     align-items: center;
-    gap: 14px;
-    min-width: 320px;
+    gap: 12px;
+    min-width: 300px;
     position: relative;
     overflow: hidden;
-    transform: translateX(120%);
+    transform: translateX(calc(100% + 28px));
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* Animación de entrada */
 .alert-box.show {
     transform: translateX(0);
     opacity: 1;
 }
 
-/* Animación de salida */
 .alert-box.hide {
-    transform: translateX(120%);
+    transform: translateX(calc(100% + 28px));
     opacity: 0;
+    transition: all 0.35s ease-in;
 }
 
-/* Barra lateral de color */
+/* Barra lateral */
 .alert-box::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 5px;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
 }
 
-/* Icono de la alerta */
+/* Icono */
 .alert-icon {
-    font-size: 28px;
+    font-size: 22px;
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-weight: 800;
+}
+
+.alert-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+
+.alert-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin: 0;
+    color: #1a2332;
+    letter-spacing: -0.1px;
+}
+
+.alert-message {
+    font-size: 0.82rem;
+    margin: 0;
+    color: #5a6878;
+    line-height: 1.45;
+    font-weight: 600;
+}
+
+.alert-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #aab4be;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    width: 28px; height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    font-family: inherit;
 }
 
-/* Contenido de texto */
-.alert-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+.alert-close:hover { background: #f0f4f8; color: #333; transform: rotate(90deg); }
 
-.alert-title {
-    font-weight: 700;
-    font-size: 15px;
-    margin: 0;
-    color: #1a1a1a;
-}
+/* ── TIPOS ── */
+.alert-box.success::before { background: #10b981; }
+.alert-box.success .alert-icon { background: rgba(16,185,129,0.12); color: #059669; }
 
-.alert-message {
-    font-size: 14px;
-    margin: 0;
-    color: #666;
-    line-height: 1.4;
-}
+.alert-box.error::before { background: #ef4444; }
+.alert-box.error .alert-icon { background: rgba(239,68,68,0.12); color: #dc2626; }
 
-/* Botón de cerrar */
-.alert-close {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #999;
-    cursor: pointer;
-    padding: 4px;
-    line-height: 1;
-    transition: color 0.2s, transform 0.2s;
-    flex-shrink: 0;
-}
+.alert-box.warning::before { background: #f59e0b; }
+.alert-box.warning .alert-icon { background: rgba(245,158,11,0.12); color: #d97706; }
 
-.alert-close:hover {
-    color: #333;
-    transform: rotate(90deg);
-}
+.alert-box.info::before { background: #6585AA; }
+.alert-box.info .alert-icon { background: rgba(101,133,170,0.12); color: #2C405B; }
 
-/* ========================================
-   VARIANTES DE TIPO
-   ======================================== */
-
-/* ÉXITO (Success) */
-.alert-box.success::before {
-    background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.alert-box.success .alert-icon {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-}
-
-/* ERROR */
-.alert-box.error::before {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-}
-
-.alert-box.error .alert-icon {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-}
-
-/* ADVERTENCIA (Warning) */
-.alert-box.warning::before {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
-.alert-box.warning .alert-icon {
-    background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-}
-
-/* INFO */
-.alert-box.info::before {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-}
-
-.alert-box.info .alert-icon {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-}
-
-/* ========================================
-   BARRA DE PROGRESO (AUTO-DISMISS)
-   ======================================== */
-
+/* ── PROGRESS BAR ── */
 .alert-progress {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    bottom: 0; left: 0;
     height: 3px;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0,0,0,0.08);
     transform-origin: left;
     animation: progressBar 5s linear forwards;
+    border-radius: 0 0 16px 16px;
 }
 
 @keyframes progressBar {
     from { transform: scaleX(1); }
-    to { transform: scaleX(0); }
+    to   { transform: scaleX(0); }
 }
 
-/* ========================================
-   RESPONSIVE
-   ======================================== */
-
-@media (max-width: 480px) {
-    .alerts-container {
-        right: 10px;
-        left: 10px;
-        top: 10px;
-        max-width: none;
-    }
-
-    .alert-box {
-        min-width: auto;
-    }
-}
-
-/* ========================================
-   ANIMACIONES ADICIONALES
-   ======================================== */
-
+/* ── ICON ANIMATION ── */
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-8px);
-    }
-    60% {
-        transform: translateY(-4px);
-    }
+    0%, 100% { transform: translateY(0); }
+    40%       { transform: translateY(-6px); }
+    60%       { transform: translateY(-3px); }
 }
 
-.alert-box.show .alert-icon {
-    animation: bounce 0.6s ease 0.2s;
+.alert-box.show .alert-icon { animation: bounce 0.5s ease 0.15s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+    .alerts-container { right: 12px; left: 12px; top: 12px; max-width: none; }
+    .alert-box { min-width: auto; }
 }

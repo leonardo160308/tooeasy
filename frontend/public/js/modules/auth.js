@@ -12,11 +12,16 @@ export function saveAuthData(userData) {
         id: userData.id,
         nombre: userData.nombre,
         level: userData.level || 1,
+        role:userData.role || 'user',
         // Si tu backend enviara un Token JWT, también lo guardarías aquí:
         // token: userData.token,
     };
     localStorage.setItem(USER_KEY, JSON.stringify(sessionData));
     console.log('✅ Sesión guardada:', sessionData);
+}
+export function isAdmin() {
+    const data = getAuthData();
+    return data && data.role === 'admin';
 }
 
 /**
@@ -100,4 +105,10 @@ export function updateLocalUserData(updates) {
     const updatedData = { ...currentData, ...updates };
     localStorage.setItem(USER_KEY, JSON.stringify(updatedData));
     console.log('🔄 Datos locales actualizados:', updatedData);
+}
+export async function deleteMovement(movementId, userId) {
+    const response = await fetch(`${API_URL}/movements/${movementId}?user_id=${userId}`, {
+        method: 'DELETE'
+    });
+    return await response.json();
 }

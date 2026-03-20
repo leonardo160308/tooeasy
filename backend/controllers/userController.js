@@ -1,63 +1,63 @@
-// backend/controllers/userController.js
-
 import User from '../models/UserModel.js';
-import db from '../config/db.js'; // ⬅️ AÑADIDO: Importación necesaria para login
+import { supabase } from '../config/supabase.js';
 
 // ========================================
 // REGISTRO DE USUARIO
 // ========================================
 export const registerUser = async (req, res) => {
     try {
-        const { nombre, password, edad, genero } = req.body;
+        const { nombre, email, password, edad, genero } = req.body;
 
-        // 1. Validaciones básicas
-        if (!nombre || !password) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Nombre y contraseña son obligatorios' 
-            });
+        if (!nombre || !email || !password || edad === undefined) {
+            return res.status(400).json({ success: false, message: 'Todos los campos son obligatorios' });
         }
 
-        // TODO: Encriptar la contraseña con bcrypt antes de guardarla
-        // import bcrypt from 'bcrypt';
-        // const password_hash = await bcrypt.hash(password, 10);
-        const password_hash = password; // ⚠️ TEMPORAL - En producción DEBE estar encriptada
+        if (nombre.length < 3 || nombre.length > 16) {
+            return res.status(400).json({ success: false, message: 'El nombre de usuario debe tener entre 3 y 16 caracteres' });
+        }
 
-        // 2. Preparar datos para el modelo
+        if (password.length < 6 || password.length > 16) {
+            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 6 y 16 caracteres' });
+        }
+
+        if (email.length < 6 || email.length > 254) {
+            return res.status(400).json({ success: false, message: 'El correo debe tener entre 6 y 254 caracteres' });
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ success: false, message: 'El formato del correo electrónico no es válido' });
+        }
+
+        const edadNum = Number(edad);
+        if (!Number.isInteger(edadNum)) {
+            return res.status(400).json({ success: false, message: 'La edad debe ser un número entero (sin decimales)' });
+        }
+        if (edadNum < 15 || edadNum > 99) {
+            return res.status(400).json({ success: false, message: 'La edad debe estar entre 15 y 99 años' });
+        }
+
         const newUser = {
             nombre,
-            password_hash,
-            edad: edad || 0,
+            email,
+            password_hash: password, // ⚠️ Recuerda usar bcrypt
+            edad: edadNum,
             genero: genero || 'no_especificado',
-            foto: null // El frontend decidirá la imagen default si es null
+            foto: null
         };
 
-        // 3. Llamar al modelo
         const createdUser = await User.create(newUser);
 
-        // 4. Responder al frontend
-        res.status(201).json({
-            success: true,
-            message: 'Usuario creado exitosamente',
-            data: createdUser
-        });
+        res.status(201).json({ success: true, message: 'Usuario creado exitosamente', data: createdUser });
 
     } catch (error) {
         console.error('Error en registerUser:', error);
-        
-        // Manejar error de nombre duplicado (código MySQL 1062)
+
         if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({
-                success: false,
-                message: 'El nombre de usuario ya existe. Elige otro.'
-            });
+            return res.status(409).json({ success: false, message: 'Ese nombre de usuario o email ya están registrados' });
         }
-        
-        res.status(500).json({
-            success: false,
-            message: 'Error en el servidor al crear usuario',
-            error: error.message
-        });
+
+        res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
     }
 };
 
@@ -68,42 +68,23 @@ export const loginUser = async (req, res) => {
     try {
         const { nombre, password } = req.body;
 
-        // 1. Validaciones
         if (!nombre || !password) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Nombre y contraseña son obligatorios' 
-            });
+            return res.status(400).json({ success: false, message: 'Nombre y contraseña requeridos' });
         }
 
-        // 2. Buscar usuario por nombre en la BD
-        const [users] = await db.execute(
-            'SELECT * FROM users WHERE nombre = ?', 
-            [nombre]
-        );
-        
-        const user = users[0];
+        const { data: users, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('nombre', nombre);
 
-        if (!user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Usuario no encontrado' 
-            });
+        if (error) throw error;
+
+        const user = users && users[0];
+
+        if (!user || user.password_hash !== password) {
+            return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos' });
         }
 
-        // 3. Verificar contraseña
-        // TODO: Usar bcrypt.compare() cuando las contraseñas estén encriptadas
-        // const isValidPassword = await bcrypt.compare(password, user.password_hash);
-        const isValidPassword = (user.password_hash === password); // ⚠️ TEMPORAL
-        
-        if (!isValidPassword) {
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Contraseña incorrecta' 
-            });
-        }
-
-        // 4. Login exitoso - Responder con datos del usuario
         res.json({
             success: true,
             message: 'Bienvenido',
@@ -113,130 +94,77 @@ export const loginUser = async (req, res) => {
                 level: user.level,
                 coins: user.coins,
                 wood: user.wood,
-                foto: user.foto
+                foto: user.foto,
+                role: user.role || 'user'
             }
         });
 
     } catch (error) {
         console.error('Error en loginUser:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Error en el servidor al iniciar sesión',
-            error: error.message
-        });
+        res.status(500).json({ success: false, message: 'Error en el servidor' });
     }
 };
 
 // ========================================
-// OBTENER PERFIL DE USUARIO
+// PERFIL, UPDATE, DELETE
 // ========================================
 export const getUserProfile = async (req, res) => {
     try {
-        const id = req.params.id;
-        const user = await User.findById(id);
-
-        if (!user) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'Usuario no encontrado' 
-            });
-        }
-
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ success: false, message: 'No encontrado' });
         res.json(user);
     } catch (error) {
-        console.error('Error en getUserProfile:', error);
-        res.status(500).json({ 
-            success: false,
-            message: error.message 
-        });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
-// ========================================
-// ACTUALIZAR DATOS DEL USUARIO
-// ========================================
+// ============================================================
+// REEMPLAZA la función updateUser en backend/controllers/userController.js
+// ============================================================
+
 export const updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        const dataToUpdate = req.body;
-
-        // Evitar que actualicen campos críticos por seguridad
+        const dataToUpdate = { ...req.body };
         delete dataToUpdate.id;
-        delete dataToUpdate.created_at;
-        delete dataToUpdate.password_hash; // La contraseña se cambia en otra ruta
+        delete dataToUpdate.password_hash;
+        delete dataToUpdate.role;          // nunca permitir cambiar role desde aquí
+        delete dataToUpdate.email;         // nunca cambiar email desde perfil
 
-        const result = await User.update(id, dataToUpdate);
+        const result = await User.update(req.params.id, dataToUpdate);
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ 
+        if (!result || result.affectedRows === 0) {
+            return res.status(404).json({
                 success: false,
-                message: 'Usuario no encontrado o sin cambios' 
+                message: 'Usuario no encontrado o sin cambios.'
             });
         }
 
-        res.json({ 
-            success: true,
-            message: 'Usuario actualizado correctamente', 
-            data: dataToUpdate 
-        });
+        res.json({ success: true, message: 'Perfil actualizado.', data: result.data });
+
     } catch (error) {
         console.error('Error en updateUser:', error);
-        res.status(500).json({ 
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                success: false,
+                message: error.message  // "Ese nombre de usuario ya está en uso."
+            });
+        }
+
+        res.status(500).json({
             success: false,
-            message: error.message 
+            message: 'Error interno al actualizar el perfil.'
         });
     }
 };
-
-// ========================================
-// BORRAR USUARIO (Baja lógica)
-// ========================================
-// ========================================
-// BORRAR USUARIO (Baja lógica)
-// ========================================
 export const deleteUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        
-        console.log('Intentando eliminar usuario:', id); // Debug
-        
-        if (!id) {
-            return res.status(400).json({ 
-                success: false,
-                message: 'ID de usuario requerido' 
-            });
+        const result = await User.deleteLogical(req.params.id);
+        if (!result || result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Error al borrar' });
         }
-        
-        // Verificar que el usuario existe antes de intentar borrar
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'Usuario no encontrado' 
-            });
-        }
-        
-        const result = await User.deleteLogical(id);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'No se pudo eliminar el usuario' 
-            });
-        }
-
-        res.json({ 
-            success: true,
-            message: 'Usuario dado de baja exitosamente' 
-        });
-        
+        res.json({ success: true, message: 'Baja exitosa' });
     } catch (error) {
-        console.error('Error en deleteUser:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Error del servidor: ' + error.message 
-        });
+        res.status(500).json({ success: false, message: error.message });
     }
-    
 };
-

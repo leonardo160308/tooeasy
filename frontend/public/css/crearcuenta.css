@@ -1,115 +1,143 @@
-* {
-  box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+:root {
+    --input-gray: #D9D9D9;
+    --brand-beige: #C9AD8B;
+    --title-brown: #4A3728;
 }
 
+/* Fondo general */
 body {
-  background-color: #E5E5E5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-      font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+    background-color: #E5E5E5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
 }
 
+/* Tarjeta principal */
 .container {
-  background-color: #ffffff;
-  padding: 40px 50px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  width: 340px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 45px;
+    width: 380px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
 }
 
+/* Título */
 h1 {
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 22px;
-  color: #222;
+    color: var(--title-brown);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 5px;
 }
 
+/* Subtexto */
+.auth-container p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Labels */
 label {
-  display: block;
-  margin-top: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
+    display: block;
+    text-align: left;
+    font-size: 13px;
+    margin: 10px 0 5px 10px;
+    color: #555;
 }
 
-/* Modifica esto en tu style.css */
+/* Inputs */
 input[type="text"],
-input[type="password"],
-input[type="email"],   /* Nuevo: para el correo */
-input[type="number"],  /* Nuevo: para la edad */
-select {               /* Nuevo: para el género */
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white; /* Asegura fondo blanco en el select */
-}
-.terms {
-  display: flex;
-  align-items: center;
-  margin-top: px;
-  margin-bottom: 15px;
-  align-items: flex-start;
-  gap: 6px;
-
+input[type="password"] {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 30px;
+    background-color: var(--input-gray);
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 10px;
+    box-sizing: border-box;
 }
 
-.terms input {
-  margin-right: 1px;
-  margin-top: 13px;
-}
-
-.terms label {
-  font-size: 13px;
-  color: #555;
-}
-
-
-
+/* Botón */
 button {
-  width: 100%;
-  background-color: #BA8E58;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 40px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
+    width: 100%;
+    background-color: var(--brand-beige);
+    color: var(--title-brown);
+    border: none;
+    padding: 14px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s ease;
 }
 
 button:hover {
-  opacity: 0.85;
+    filter: brightness(0.95);
 }
 
+/* Mensaje error/login */
+#auth-message {
+    font-size: 13px;
+}
+
+/* Link de registro */
 .login-link {
-  display: block;
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-  color: #BA8E58;
-  text-decoration: none;
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--title-brown);
+    font-weight: 600;
 }
 
 .login-link:hover {
-  text-decoration: underline;
-}
-.aviso {
-  text-align: center;
-  margin-top: 10px;
-  font-weight: 600;
+    text-decoration: underline;
 }
 
-input:invalid {
-  border: 2px solid #e74c3c;
+/* Responsive */
+@media (max-width: 600px) {
+    .auth-container {
+        width: 85%;
+        padding: 30px;
+    }
+}
+.footer-navigation {
+    position: absolute; /* Para que se quede fijo abajo a la izquierda */
+    bottom: 20px;
+    left: 20px;
 }
 
-.terminos label{
-  flex-wrap: wrap;
-  text-align: left;
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #2C405B;
+    color: white; /* Color de texto sobrio */
+    border: 1.5px solid #2C405B; /* Un borde sutil */
+    border-radius: 8px; /* Esquinas redondeadas modernas */
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transición suave */
+    cursor: pointer;
+}
+
+/* El efecto "Chungón" al pasar el mouse */
+.btn-back:hover {
+    background-color: #8FA3C2; /* Fondo oscuro al pasar el mouse */
+    color:white;            /* Texto blanco */
+    transform: translateY(-2px); /* Se eleva un poquito */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra elegante */
+}
+
+/* Efecto cuando lo presionas */
+.btn-back:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

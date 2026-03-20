@@ -1,95 +1,104 @@
-import db from '../config/db.js';
+import { supabase } from '../config/supabase.js';
 
 class User {
-    // 1. CREAR (Create): Registra un nuevo usuario
+
+    // 1. CREAR usuario
     static async create(userData) {
-        // Desestructurar datos para asegurar el orden de los parámetros en la consulta
-        const { nombre, password_hash, edad, genero, foto } = userData;
-        
-        const query = `
-            INSERT INTO users (nombre, password_hash, edad, genero, foto) 
-            VALUES (?, ?, ?, ?, ?)
-        `;
+        const { nombre, email, password_hash, edad, genero, foto } = userData;
 
-        try {
-            // Ejecutamos la consulta. 'result' contiene metadatos como insertId.
-            const [result] = await db.execute(query, [nombre, password_hash, edad, genero, foto]);
-            
-            // Devolvemos el ID generado y el resto de los datos
-            return { id: result.insertId, ...userData };
-        } catch (error) {
-            // Re-lanzar el error para que sea manejado por el controlador (ej. duplicidad de email)
+        const { data, error } = await supabase
+            .from('users')
+            .insert({ nombre, email, password_hash, edad, genero, foto })
+            .select()
+            .single();
+
+        if (error) {
+            if (error.code === '23505') {
+                const dupError = new Error(error.message);
+                dupError.code = 'ER_DUP_ENTRY';
+                throw dupError;
+            }
             throw error;
         }
+
+        return data;
     }
 
-    // 2. LEER (Read): Buscar usuario por ID (útil para el perfil)
+    // 2. BUSCAR por ID
     static async findById(id) {
-        const query = 'SELECT * FROM users WHERE id = ?';
-        try {
-            // Ejecutamos la consulta. 'rows' es el primer elemento del resultado y contiene los datos.
-            const [rows] = await db.execute(query, [id]);
-            // Devolvemos la primera fila encontrada (el usuario)
-            return rows[0]; 
-        } catch (error) {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            if (error.code === 'PGRST116') return null;
             throw error;
         }
+
+        return data;
     }
-    
-    // 3. ACTUALIZAR (Update): Para monedas, nivel, avatar, etc.
-   // 3. ACTUALIZAR (Update): Para monedas, nivel, avatar, etc.
+
+    // 3. ACTUALIZAR
     static async update(id, updateData) {
-        // Lista de campos permitidos para actualizar (SEGURIDAD)
         const allowedFields = [
             'nombre', 'password_hash', 'edad', 'genero', 'foto',
-            'level', 'coins', 'wood', 
-            'house_level', 'beaver_level',
-            'current_appearance', 'current_beaver'
+            'level', 'coins', 'wood', 'dashboard_balance',
+            'house_level', 'beaver_level', 'current_appearance', 'current_beaver',
+            'email_verified', 'email_verified_at', 'is_active',
+            'failed_login_attempts', 'locked_until', 'last_login_at'
         ];
-        
-        // Filtrar solo campos permitidos
+
         const filteredData = {};
         Object.keys(updateData).forEach(key => {
             if (allowedFields.includes(key)) {
                 filteredData[key] = updateData[key];
             }
         });
-        
-        // Genera la parte 'SET campo = ?' dinámicamente
-        const fields = Object.keys(filteredData).map(key => `${key} = ?`).join(', ');
-        const values = Object.values(filteredData);
-        
-        if (fields.length === 0) {
-            console.warn('No hay campos válidos para actualizar');
-            return null;
+
+        if (Object.keys(filteredData).length === 0) {
+            console.warn('UserModel.update: no hay campos válidos para actualizar');
+            return { affectedRows: 0, data: null };
         }
 
-        // La consulta final incluye el ID al final del SET
-        const query = `UPDATE users SET ${fields} WHERE id = ?`;
-        
-        try {
-            console.log('Ejecutando UPDATE:', query, [...values, id]);
-            const [result] = await db.execute(query, [...values, id]);
-            return result;
-        } catch (error) {
-            console.error('Error en User.update:', error);
+        const { data, error } = await supabase
+            .from('users')
+            .update(filteredData)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
+            if (error.code === '23505') {
+                const field = error.message.includes('nombre') ? 'nombre de usuario' : 'correo';
+                const friendly = new Error(`Ese ${field} ya está en uso.`);
+                friendly.code = 'ER_DUP_ENTRY';
+                throw friendly;
+            }
+            if (error.code === 'PGRST116') {
+                return { affectedRows: 0, data: null };
+            }
             throw error;
         }
+
+        return { affectedRows: data ? 1 : 0, data };
     }
 
-    // 4. BORRAR (Delete Lógico): Cambiar is_active a false
-// 4. BORRAR (Delete Lógico): Cambiar is_active a false
+    // 4. ELIMINAR (DELETE directo)
+    // NOTA: Antes se usaba update({ is_active: false }) pero el trigger
+    // trg_hard_delete_on_deactivate cancelaba el UPDATE (RETURN NULL) y
+    // Supabase lanzaba PGRST116 al no recibir filas, causando un 500.
+    // Solución: DELETE directo que bypasea el trigger.
     static async deleteLogical(id) {
-        const query = 'UPDATE users SET is_active = 0 WHERE id = ?';
-        try {
-            console.log('Ejecutando baja lógica para usuario:', id); // Debug
-            const [result] = await db.execute(query, [id]);
-            console.log('Resultado:', result); // Debug
-            return result;
-        } catch (error) {
-            console.error('Error en deleteLogical:', error);
-            throw error;
-        }
+        const { error } = await supabase
+            .from('users')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        return { affectedRows: 1 };
     }
 }
 

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Correo - TooEasy</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #E5E5E5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 28px;
+            padding: 44px 40px;
+            width: 420px;
+            max-width: 95vw;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .step-icon { font-size: 52px; margin-bottom: 16px; display: block; }
+
+        h2 {
+            color: #2C405B;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .email-badge {
+            display: inline-block;
+            background: #eef4fb;
+            color: #2C405B;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(101,133,170,0.3);
+        }
+
+        /* Inputs OTP */
+        .otp-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 52px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            font-family: inherit;
+            outline: none;
+            background: #f8fafc;
+            color: #2C405B;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .otp-input:focus {
+            border-color: #6585AA;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(101,133,170,0.15);
+        }
+
+        .otp-input.error { border-color: #e53e3e; }
+        .otp-input.success { border-color: #27ae60; }
+
+        .timer {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 22px;
+        }
+
+        .timer span { font-weight: 800; color: #2C405B; }
+        .timer.expired span { color: #e53e3e; }
+
+        .btn-primary {
+            width: 100%;
+            background: #C9AD8B;
+            color: #4A3728;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.1s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary:hover { filter: brightness(0.95); transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-secondary {
+            width: 100%;
+            background: transparent;
+            color: #6585AA;
+            border: 2px solid #6585AA;
+            padding: 13px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn-secondary:hover { background: #6585AA; color: #fff; }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-link {
+            background: none;
+            border: none;
+            color: #718096;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s;
+            display: block;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .btn-link:hover { color: #2C405B; }
+
+        /* Éxito */
+        .success-view { display: none; }
+        .success-icon { font-size: 64px; margin: 8px 0 20px; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <!-- Vista: verificar código -->
+    <div id="verify-view">
+        <span class="step-icon">📧</span>
+        <h2>Verifica tu correo</h2>
+        <p class="subtitle">Te enviamos un código de 6 dígitos. Revisa tu bandeja de entrada y también la carpeta de spam.</p>
+
+        <div class="email-badge" id="email-badge">cargando...</div>
+
+        <div class="otp-container" id="otp-container">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        </div>
+
+        <div class="timer" id="timer-display">
+            El código expira en <span id="timer-count">10:00</span>
+        </div>
+
+        <button class="btn-primary" id="btn-verify" onclick="verifyCode()">
+            Verificar código
+        </button>
+
+        <button class="btn-secondary" id="btn-resend" onclick="resendCode()" disabled>
+            Reenviar código
+        </button>
+
+        <button class="btn-link" onclick="window.location.href='login.html'">
+            ← Volver al inicio de sesión
+        </button>
+    </div>
+
+    <!-- Vista: éxito -->
+    <div id="success-view" class="success-view">
+        <span class="success-icon">🎉</span>
+        <h2>¡Correo verificado!</h2>
+        <p class="subtitle" style="margin-bottom: 28px;">
+            Tu cuenta está lista. Bienvenido/a a Too Easy.
+        </p>
+        <button class="btn-primary" onclick="window.location.href='dashboard.html'">
+            Ir a mi cuenta →
+        </button>
+    </div>
+
+</div>
+
+<script type="module">
+    import { mostrarAlerta, alertaExito, alertaError, alertaInfo } from '../public/js/modules/alerts.js';
+    import { saveAuthData } from '../public/js/modules/auth.js';
+
+    const API = '/api';
+
+    // Recuperar userId guardado en sessionStorage durante el registro
+    const userId = sessionStorage.getItem('pendingVerificationUserId');
+
+    if (!userId) {
+        alertaError('No hay una verificación pendiente. Redirigiendo...', {
+            duration: 3000,
+            onClose: () => { window.location.href = '/login.html'; }
+        });
+        setTimeout(() => { window.location.href = '/login.html'; }, 3000);
+    }
+
+    // Mostrar email enmascarado (si lo tienes guardado)
+    const emailBadge = document.getElementById('email-badge');
+    const savedEmail = sessionStorage.getItem('pendingVerificationEmail') || 'tu correo';
+    emailBadge.textContent = savedEmail;
+
+    // ── Timer ────────────────────────────────────────────────────────────
+    let timerInterval = null;
+
+    function startTimer(minutes = 10) {
+        clearInterval(timerInterval);
+        let seconds = minutes * 60;
+        const display  = document.getElementById('timer-count');
+        const timerEl  = document.getElementById('timer-display');
+        const resendBtn = document.getElementById('btn-resend');
+
+        timerInterval = setInterval(() => {
+            seconds--;
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+            if (seconds <= 60) timerEl.classList.add('expired');
+
+            if (seconds <= 0) {
+                clearInterval(timerInterval);
+                display.textContent = '00:00';
+                resendBtn.disabled  = false;
+                timerEl.innerHTML   = 'El código ha <span>expirado</span>. Solicita uno nuevo.';
+            }
+        }, 1000);
+    }
+
+    startTimer(10);
+
+    // ── OTP inputs con autoavance ─────────────────────────────────────────
+    const inputs = document.querySelectorAll('.otp-input');
+
+    inputs.forEach((inp, i) => {
+        inp.addEventListener('input', e => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            if (e.target.value && i < inputs.length - 1) inputs[i + 1].focus();
+        });
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
+        });
+        inp.addEventListener('paste', e => {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text').replace(/\D/g, '').substring(0, 6);
+            inputs.forEach((inp2, j) => { inp2.value = text[j] || ''; });
+            if (text.length === 6) inputs[5].focus();
+        });
+    });
+
+    inputs[0].focus();
+
+    function getCode() {
+        return Array.from(inputs).map(i => i.value).join('');
+    }
+
+    // ── Verificar código ─────────────────────────────────────────────────
+    window.verifyCode = async () => {
+        const code = getCode();
+        if (code.length !== 6) {
+            alertaError('Ingresa los 6 dígitos del código.');
+            return;
+        }
+
+        const btn = document.getElementById('btn-verify');
+        btn.disabled    = true;
+        btn.textContent = 'Verificando...';
+
+        try {
+            const res  = await fetch(`${API}/auth/verify-email`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ userId, code })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                clearInterval(timerInterval);
+                sessionStorage.removeItem('pendingVerificationUserId');
+                sessionStorage.removeItem('pendingVerificationEmail');
+
+                // Guardar sesión y mostrar éxito
+                saveAuthData(data.user);
+
+                document.getElementById('verify-view').style.display  = 'none';
+                document.getElementById('success-view').style.display = 'block';
+
+                alertaExito('¡Correo verificado! Bienvenido/a.', { duration: 3000 });
+
+                setTimeout(() => { window.location.href = '/dashboard.html'; }, 3000);
+
+            } else if (data.expired) {
+                alertaError('El código expiró. Solicita uno nuevo.');
+                inputs.forEach(i => i.classList.add('error'));
+                setTimeout(() => inputs.forEach(i => i.classList.remove('error')), 1500);
+                document.getElementById('btn-resend').disabled = false;
+
+            } else {
+                alertaError(data.message || 'Código incorrecto.');
+                inputs.forEach(i => { i.classList.add('error'); i.value = ''; });
+                setTimeout(() => inputs.forEach(i => i.classList.remove('error')), 1500);
+                inputs[0].focus();
+            }
+
+        } catch {
+            alertaError('Error de conexión. Intenta de nuevo.');
+        } finally {
+            btn.disabled    = false;
+            btn.textContent = 'Verificar código';
+        }
+    };
+
+    // ── Reenviar código ───────────────────────────────────────────────────
+    window.resendCode = async () => {
+        const btn = document.getElementById('btn-resend');
+        btn.disabled    = true;
+        btn.textContent = 'Enviando...';
+
+        try {
+            const res  = await fetch(`${API}/auth/resend-verification`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ userId })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                alertaInfo('Nuevo código enviado. Revisa tu correo.', { duration: 4000 });
+                inputs.forEach(i => i.value = '');
+                inputs[0].focus();
+                document.getElementById('timer-display').classList.remove('expired');
+                startTimer(10);
+            } else {
+                alertaError(data.message || 'No se pudo reenviar el código.');
+                btn.disabled = false;
+            }
+
+        } catch {
+            alertaError('Error al reenviar. Intenta de nuevo.');
+            btn.disabled = false;
+        }
+
+        btn.textContent = 'Reenviar código';
+    };
+</script>
+
+</body>
+</html>

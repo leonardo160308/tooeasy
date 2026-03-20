@@ -1,409 +1,649 @@
+/* ========================================
+   DASHBOARD - TOO-EASY (v2)
+   Clean, modern financial dashboard
+   ======================================== */
+
 :root {
-    /* Paleta extraída de tu referencia */
-    --primary-color: #6585AA;       /* Azul Pizarra (Slate) - Botones principales */
-    --primary-hover: #536e8d;       /* Un poco más oscuro para hover */
-    --secondary-color: #BA8E58;     /* Dorado/Bronce - Acentos */
-    --dark-bg: #2C405B;             /* Azul Oscuro - Para secciones de resumen */
-    --header-bg: #a0a0a0;           /* Gris encabezado */
-    --footer-bg: #4d4d4d;           /* Gris oscuro footer */
-    
-    /* Fondos generales */
-    --bg-color: #ffffff;            /* Fondo blanco limpio */
-    --card-bg: #f9f9f9;             /* Fondo tarjetas muy sutil */
-    --text-dark: #000000;           /* Negro puro como en Arial */
-    --text-light: #555555;          /* Gris medio */
+    --primary:         #2C405B;
+    --primary-hover:   #1e2e42;
+    --secondary:       #6585AA;
+    --secondary-hover: #4a6d99;
+    --accent:          #BA8E58;
+    --accent-light:    #d4a96a;
+    --success:         #2e7d32;
+    --success-bg:      #e8f5e9;
+    --danger:          #c62828;
+    --danger-bg:       #ffebee;
+    --neutral:         #607d8b;
+    --neutral-bg:      #eceff1;
 
-    /* Lógica del negocio (Mantenemos funcionalidad pero ajustamos tonos) */
-    --color-green: #2e7d32;         /* Verde más sobrio */
-    --color-green-bg: #e8f5e9;      
-    --color-red: #c62828;           /* Rojo más sobrio */
-    --color-red-bg: #ffebee;        
-    --color-gray: #607d8b;          
-    --color-gray-bg: #cfd8dc;       
+    --bg-page:         #f0f4f8;
+    --bg-card:         #ffffff;
+    --bg-card-alt:     #f8fafc;
+    --border:          #e2e8f0;
+    --border-focus:    #6585AA;
 
-    --border-radius-card: 10px;     /* Radio de tarjetas */
-    --border-radius-btn: 40px;      /* Radio tipo "Pill" (Pastilla) */
-    --shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    --text-primary:    #1a2332;
+    --text-secondary:  #4a5568;
+    --text-muted:      #718096;
+
+    --radius-sm:       8px;
+    --radius-md:       12px;
+    --radius-lg:       18px;
+    --radius-xl:       24px;
+
+    --shadow-sm:   0 1px 3px rgba(44, 64, 91, 0.08), 0 1px 2px rgba(44, 64, 91, 0.05);
+    --shadow-md:   0 4px 16px rgba(44, 64, 91, 0.10), 0 2px 4px rgba(44, 64, 91, 0.06);
+    --shadow-lg:   0 10px 30px rgba(44, 64, 91, 0.12), 0 4px 8px rgba(44, 64, 91, 0.08);
+    --shadow-card: 0 2px 8px rgba(44, 64, 91, 0.08);
 }
 
-/* --- Reset Global y Tipografía --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-dark);
-    font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
     line-height: 1.6;
+    font-size: 15px;
 }
 
+/* ── LAYOUT ── */
 .app-container {
-    max-width: 100%;
-    width: 100%;
-    margin: 40px auto;
-    padding: 0 20px;
+    max-width: 1440px;
+    width: 92%;
+    margin: 32px auto;
+    padding: 0;
     display: flex;
-    gap: 20px;
-    box-sizing: border-box;
-    overflow-x: auto;  /* 👈 para evitar overflow */
+    gap: 24px;
 }
 
+.izquierda { flex: 65%; min-width: 0; }
+.derecha   { flex: 35%; min-width: 0; }
 
-
+/* ── CARD ── */
 .card {
-    background-color: var(--card-bg);
-    border: 1px solid #e0e0e0; /* Borde sutil */
-    border-radius: var(--border-radius-card);
-    padding: 25px;
-    margin-bottom: 30px;
-    /* Sombra más ligera */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease;
 }
 
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* ── HEADINGS ── */
 h2 {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-    color: var(--dark-bg); /* Títulos en el azul oscuro */
-    border-bottom: 2px solid var(--secondary-color); /* Línea dorada abajo */
-    padding-bottom: 5px;
-    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 22px;
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.2px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
 }
 
-/* --- 4. Módulo Calculadora (Inputs) --- */
-.fixed-data-grid, .goal-data-grid {
+/* ── GRIDS DE INPUT ── */
+.fixed-data-grid,
+.goal-data-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
     margin-bottom: 20px;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
-    background-color: #fff;
+    gap: 6px;
 }
 
 .input-group label {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: var(--text-dark);
-    margin-bottom: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
 }
 
 .input-group input {
-    padding: 12px 15px;
-    border: 2px solid #ccc;
-    border-radius: 8px; /* Bordes ligeramente cuadrados */
-    font-size: 1rem;
-    background-color: #fff;
-    transition: border-color 0.3s;
-}
-
-.input-group input:focus {
-    border-color: var(--primary-color); /* Azul Slate al enfocar */
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--bg-card-alt);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     outline: none;
 }
 
-/* --- Resumen de Resultados (Estilo "Texto1" - Fondo Oscuro) --- */
+.input-group input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(101, 133, 170, 0.15);
+    background: #fff;
+}
+
+/* ── RESUMEN OSCURO ── */
 .summary-results {
-    background-color: var(--dark-bg); /* Fondo Azul Oscuro */
+    background: linear-gradient(135deg, var(--primary) 0%, #3a5272 100%);
     color: white;
-    padding: 20px;
-    border-radius: var(--border-radius-card);
+    padding: 22px 28px;
+    border-radius: var(--radius-md);
     display: flex;
     justify-content: space-around;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
-    box-shadow: var(--shadow);
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(44, 64, 91, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-results::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
 }
 
 .result-item {
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
+    padding: 8px 16px;
 }
 
 .result-item span {
-    font-size: 0.85rem;
-    color: #d1d5db; /* Gris claro para texto secundario */
+    display: block;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.7);
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 4px;
 }
 
 .result-item strong {
     font-size: 1.5rem;
-    color: #ffffff; /* Dorado para los números importantes */
-    margin-top: 5px;
+    font-weight: 800;
+    color: #fff;
 }
 
+/* ── CHART TABS ── */
+.chart-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    background: var(--bg-card-alt);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.chart-tab-btn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+}
+
+.chart-tab-btn:hover {
+    background: rgba(101, 133, 170, 0.15);
+    color: var(--primary);
+}
+
+.chart-tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(44, 64, 91, 0.25);
+}
+
+/* ── CHART LEGEND ── */
+.chart-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.chart-legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+/* ── CHART CONTAINER ── */
 .chart-container {
     position: relative;
-    height: 200px;
+    height: 220px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
-/* --- 5. Módulo Calendario --- */
+/* ── CALENDARIO ── */
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px 16px;
+    background: var(--bg-card-alt);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.calendar-header h2 {
+    margin: 0;
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 800;
 }
 
 .calendar-header button {
     background: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 5px 15px;
-    border-radius: var(--border-radius-btn); /* Botones redondeados */
+    border: 1.5px solid var(--secondary);
+    color: var(--secondary);
+    padding: 5px 14px;
+    border-radius: 20px;
     cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
 }
 
 .calendar-header button:hover {
-    background-color: var(--primary-color);
+    background: var(--secondary);
     color: white;
+    transform: scale(1.05);
 }
 
-/* La Grilla del Calendario */
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 5px;
 }
 
-/* Celda individual del día */
+/* ── FIX OVERFLOW CALENDARIO ── */
 .day-cell {
-    aspect-ratio: 1 / 1;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    aspect-ratio: 1;
+    background: var(--bg-card-alt);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
     position: relative;
+    padding: 3px 2px;
+    overflow: hidden;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
 }
 
 .day-cell:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    border-color: var(--primary-color);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: var(--shadow-md);
+    border-color: var(--secondary);
     z-index: 2;
 }
 
 .day-number {
-    font-weight: bold;
-    font-size: 1rem;
-    color: var(--text-dark);
+    font-weight: 800;
+    font-size: clamp(0.6rem, 1.5vw, 0.9rem);
+    color: var(--text-primary);
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 .day-balance-preview {
-    font-size: 0.75rem;
-    margin-top: 4px;
-    font-weight: bold;
+    font-size: clamp(0.45rem, 1vw, 0.6rem);
+    margin-top: 2px;
+    font-weight: 700;
+    line-height: 1;
+    /* FIX: evitar overflow con texto largo */
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 2px;
 }
 
-/* Colores de Estado del Día (Ajustados) */
-.day-green {
-    background-color: var(--color-green-bg);
-    border: 1px solid var(--color-green);
-    color: var(--color-green);
-}
+.day-green  { background: var(--success-bg); border-color: #81c784; }
+.day-green .day-number  { color: var(--success); }
+.day-green .day-balance-preview { color: var(--success); }
 
-.day-red {
-    background-color: var(--color-red-bg);
-    border: 1px solid var(--color-red);
-    color: var(--color-red);
-}
+.day-red    { background: var(--danger-bg); border-color: #e57373; }
+.day-red .day-number    { color: var(--danger); }
+.day-red .day-balance-preview { color: var(--danger); }
 
-.day-gray {
-    background-color: var(--color-gray-bg);
-    border: 1px solid var(--color-gray);
-    color: #374151;
-}
+.day-gray   { background: var(--neutral-bg); border-color: #90a4ae; }
+.day-empty  { background: transparent; border: none; pointer-events: none; cursor: default; }
 
-.day-empty {
-    background-color: transparent;
-    border: none;
-    pointer-events: none;
-}
-
-/* --- 6. Modal (Ventana Emergente) --- */
+/* ── MODAL ── */
 .modal {
     position: fixed;
+    inset: 0;
     z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(44, 64, 91, 0.8); /* Fondo oscuro azulado */
+    background: rgba(26, 35, 50, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
+    backdrop-filter: blur(4px);
 }
 
-.modal.hidden {
-    display: none;
-}
+.modal.hidden { display: none; }
 
 .modal-content {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 15px; /* Más redondeado */
-    width: 90%;
-    max-width: 500px;
+    background: var(--bg-card);
+    padding: 32px;
+    border-radius: var(--radius-xl);
+    width: 92%;
+    max-width: 520px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 20px 60px rgba(26, 35, 50, 0.3);
+    animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+@keyframes modalIn {
+    from { transform: translateY(24px) scale(0.97); opacity: 0; }
+    to   { transform: translateY(0) scale(1);       opacity: 1; }
 }
 
 .close-btn {
     position: absolute;
-    top: 15px;
+    top: 16px;
     right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    color: var(--text-light);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-muted);
     cursor: pointer;
-    transition: color 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    line-height: 1;
 }
 
 .close-btn:hover {
-    color: var(--primary-color);
+    background: var(--danger-bg);
+    color: var(--danger);
+    transform: rotate(90deg);
 }
 
-/* Detalles dentro del Modal */
+/* Balance summary del modal */
 .day-balance-summary {
     display: flex;
     justify-content: space-between;
-    background-color: #f4f4f4;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border-left: 5px solid var(--secondary-color); /* Acento dorado */
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg-card-alt);
+    border-radius: var(--radius-sm);
+    margin-bottom: 22px;
+    border-left: 4px solid var(--accent);
+    flex-wrap: wrap;
 }
 
-.text-green { color: var(--color-green); font-weight: bold; }
-.text-red { color: var(--color-red); font-weight: bold; }
-
-/* Sección de recomendaciones */
-.recommendations-section {
-    background-color: #eff6ff; 
-    border: 1px solid #bfdbfe;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.recommendations-section h3 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-    font-size: 1rem;
+.day-balance-summary .balance-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    gap: 3px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.text-green { color: var(--success); font-weight: 700; }
+.text-red   { color: var(--danger);  font-weight: 700; }
+
+/* ── LISTA DE MOVIMIENTOS ── */
+.movements-list-section h3 {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
 }
 
 .movements-list-section ul {
     list-style: none;
-    margin-bottom: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border);
+    margin-bottom: 22px;
 }
 
-.movements-list-section li {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
+/* ── FORMULARIOS MODAL ── */
+.add-movement-form h3,
+.edit-movement-form h3 {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
 }
 
-/* Formulario dentro del Modal */
-.add-movement-form form {
+.add-movement-form form,
+.edit-movement-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    background-color: #fafafa;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #eee;
+    gap: 10px;
+    background: var(--bg-card-alt);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border);
 }
 
-.add-movement-form select, 
-.add-movement-form input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-family: 'Arial', sans-serif;
+.edit-movement-form {
+    border-color: var(--secondary);
+    background: rgba(101, 133, 170, 0.05);
+    margin-top: 16px;
 }
 
-/* Botón de Añadir (Estilo "Pill" Principal) */
-.btn-add {
-    background-color: var(--primary-color); /* Azul Slate */
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: var(--border-radius-btn); /* Pill shape */
+/* Encabezado del form de edición */
+.edit-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.edit-form-header h3 { margin-bottom: 0; }
+
+.btn-close-edit {
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background 0.3s, transform 0.1s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    align-self: center; /* Centrar botón */
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    font-family: inherit;
+    padding: 0;
+}
+
+.btn-close-edit:hover {
+    background: var(--danger-bg);
+    border-color: var(--danger);
+    color: var(--danger);
+    transform: rotate(90deg);
+}
+
+.add-movement-form select,
+.add-movement-form input,
+.edit-movement-form select,
+.edit-movement-form input {
+    padding: 10px 13px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: #fff;
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
     width: 100%;
 }
 
+.add-movement-form select:focus,
+.add-movement-form input:focus,
+.edit-movement-form select:focus,
+.edit-movement-form input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(101, 133, 170, 0.15);
+}
+
+/* ── BOTONES ── */
+.btn-add {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+    margin-top: 2px;
+}
+
 .btn-add:hover {
-    background-color: var(--primary-hover);
-    opacity: 0.9;
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 64, 91, 0.3);
 }
 
-/* Responsive */
+.btn-add:active { transform: translateY(0); }
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.btn-edit-delete {
+    flex: 1;
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-delete:hover {
+    background: #b71c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(198, 40, 40, 0.3);
+}
+
+.btn-edit-save {
+    flex: 2;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-save:hover {
+    background: var(--secondary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(101, 133, 170, 0.3);
+}
+
+.btn-edit-mov {
+    background: none !important;
+    border: 1.5px solid var(--secondary) !important;
+    border-radius: 6px !important;
+    color: var(--secondary) !important;
+    cursor: pointer;
+    padding: 4px 10px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-edit-mov:hover {
+    background: var(--secondary) !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+    .app-container { flex-direction: column; width: 95%; }
+    .izquierda, .derecha { flex: 1; }
+}
+
 @media (max-width: 600px) {
-    .fixed-data-grid, .goal-data-grid {
-        grid-template-columns: 1fr; 
-    }
-    
-    .calendar-grid {
-        gap: 5px;
-    }
-    
-    .day-cell {
-        border-radius: 6px;
-        font-size: 0.8rem;
-    }
-
-    .main-header h1 {
-        font-size: 1.5rem;
-    }
-}
-
-.izquierda {
-    flex: 7;   /* ≈ 70% */
-}
-
-.derecha {
-    flex: 25%;   
-
-
+    .app-container { margin: 16px auto; }
+    .card { padding: 20px; }
+    .fixed-data-grid, .goal-data-grid { grid-template-columns: 1fr; }
+    .calendar-grid { gap: 3px; }
+    .summary-results { padding: 16px; }
+    .modal-content { padding: 24px 20px; }
+    .day-number { font-size: 0.7rem; }
+    .day-balance-preview { font-size: 0.42rem; }
 }

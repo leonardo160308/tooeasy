@@ -5,137 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz - TOO-EASY</title>
     <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
-    <!-- ✅ CSS CORREGIDOS -->
+
     <link rel="stylesheet" href="../public/css/preguntas.css">
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- ========================================
-     CONTENEDOR PRINCIPAL DEL QUIZ
-     (2 COLUMNAS: IMAGEN + PREGUNTAS)
-     ======================================== -->
+<!-- ============================================================
+     LAYOUT: imagen izquierda | quiz derecha
+============================================================ -->
 <div class="contenedor-quiz">
-    
-    <!-- ========================================
-         LADO IZQUIERDO: IMAGEN ILUSTRATIVA
-         ======================================== -->
+
+    <!-- IZQUIERDA: Ilustración decorativa -->
     <div class="lado-izquierdo">
-        <!-- ✅ La imagen cambia según la pregunta -->
-        <img id="imagenPregunta" src="../public/img/Imagen1.1.png" alt="Ilustración">
+        <img id="imagenPregunta"
+             src="../public/img/Imagen1.1.png"
+             alt="Ilustración de la pregunta">
     </div>
 
-    <!-- ========================================
-         LADO DERECHO: PREGUNTAS Y CONTROLES
-         ======================================== -->
+    <!-- DERECHA: Zona del quiz -->
     <div class="lado-derecho">
-        
-        <!-- ========================================
-             HEADER DEL QUIZ: NIVEL Y PROGRESO
-             ======================================== -->
-        <div class="quiz-header" style="margin-bottom: 20px;">
-            <!-- Tema y Nivel -->
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h2 id="quiz-title" style="margin: 0; color: #2C405B;">
-                        📚 Nivel <span id="nivel-actual">1</span>
-                    </h2>
-                    <p id="quiz-subtitle" style="margin: 5px 0 0 0; color: #666; font-size: 0.9rem;">
-                        Tema: <span id="tema-nombre">Fundamentos</span>
-                    </p>
-                </div>
-                
-                <!-- Contador de Preguntas -->
-                <div style="text-align: right;">
-                    <span style="font-size: 1.2rem; font-weight: bold; color: #2C405B;">
-                        <span id="pregunta-actual">1</span> / <span id="total-preguntas">5</span>
-                    </span>
-                </div>
+
+        <!-- HEADER -->
+        <div class="quiz-header">
+            <div class="quiz-meta">
+                <h2>Nivel <span id="nivel-actual">1</span></h2>
+                <p>Pregunta <span id="pregunta-actual">1</span> de <span id="total-preguntas">5</span></p>
             </div>
-
-            <!-- Barra de Progreso -->
-            <div class="progreso-container">
-                <div class="progreso" id="barra-progreso"></div>
-            </div>
+            <div class="contador" id="contador-label">1 / 5</div>
         </div>
 
-        <!-- ========================================
-             PREGUNTA ACTUAL
-             ======================================== -->
-        <div class="pregunta-section">
-            <h3 id="textoPregunta" style="font-size: 1.3rem; line-height: 1.5; margin-bottom: 25px; color: #333;">
-                Cargando pregunta...
-            </h3>
+        <!-- BARRA DE PROGRESO -->
+        <div class="progreso-container">
+            <div class="progreso" id="barra-progreso"></div>
         </div>
 
-        <!-- ========================================
-             OPCIONES DE RESPUESTA
-             ======================================== -->
-        <div class="opciones" id="opcionesContainer">
-            <!-- Las opciones se generan dinámicamente con JS -->
+        <!-- TARJETA DE PREGUNTA -->
+        <div class="pregunta-section" id="pregunta-card">
+            <span class="q-deco" aria-hidden="true">?</span>
+            <h3 id="textoPregunta">Cargando pregunta...</h3>
         </div>
 
-        <!-- ========================================
-             BOTÓN COMPROBAR
-             ======================================== -->
-        <button id="botonComprobar" class="boton-comprobar" style="display: none;">
-            Comprobar Respuesta
+        <!-- OPCIONES (generadas por JS) -->
+        <div class="opciones" id="opcionesContainer"></div>
+
+        <!-- BOTÓN COMPROBAR -->
+        <button class="boton-comprobar" id="botonComprobar">
+            Comprobar respuesta
         </button>
 
-        <!-- ========================================
-             RESULTADO (CORRECTO / INCORRECTO)
-             ======================================== -->
-        <div id="resultado" class="resultado" style="display: none;">
-            <!-- Se muestra después de comprobar -->
+        <!-- PANEL FEEDBACK — wrapper con animación de altura -->
+        <div class="resultado-wrapper" id="resultadoWrapper">
+            <div class="resultado" id="resultado">
+                <div class="resultado-txt">
+                    <span class="ico" id="resultado-ico"></span>
+                    <span id="resultado-msg"></span>
+                </div>
+                <button id="btn-next">Siguiente →</button>
+            </div>
         </div>
 
-    </div>
+    </div><!-- fin .lado-derecho -->
+</div><!-- fin .contenedor-quiz -->
 
-</div>
-
-<!-- ========================================
-     MODAL DE FINALIZACIÓN
-     (Se muestra al terminar el quiz)
-     ======================================== -->
-<div id="modal-final" class="modal-final" style="display: none;">
-    <div class="modal-content-final">
-        <div id="modal-icono" style="font-size: 5rem; text-align: center; margin-bottom: 20px;">
-            <!-- 🎉 o 😕 según resultado -->
-        </div>
-        
-        <h2 id="modal-titulo" style="text-align: center; color: #2C405B; margin-bottom: 10px;">
-            <!-- Título dinámico -->
-        </h2>
-        
-        <p id="modal-puntaje" style="text-align: center; font-size: 1.3rem; margin-bottom: 20px;">
-            <!-- Ej: "5 / 5 Aciertos" -->
-        </p>
-        
-        <div id="modal-recompensa" style="background: #e8f5e9; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <!-- Ej: "+20 Monedas 🪙" -->
-        </div>
-        
-        <p id="modal-mensaje" style="text-align: center; color: #666; margin-bottom: 25px;">
-            <!-- Mensaje personalizado -->
-        </p>
-        
-        <!-- Botones de Acción -->
-        <div style="display: flex; gap: 15px; justify-content: center;">
-            <button onclick="window.location.href='lecciones.html'" class="btn-modal btn-secondary">
-                📚 Ver Niveles
-            </button>
-            <button id="btn-reintentar" class="btn-modal btn-primary" style="display: none;">
-                🔄 Reintentar
-            </button>
-        </div>
+<!-- MODAL FINAL -->
+<div id="modal-final" class="modal-final">
+    <div class="modal-content-final" id="modal-body">
+        <!-- Generado por JS -->
     </div>
 </div>
 
-<!-- ========================================
-     SCRIPT CONECTADO AL BACKEND
-     ======================================== -->
 <script type="module" src="../public/js/pages/quiz.js"></script>
-
 </body>
 </html>

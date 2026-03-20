@@ -1,18 +1,21 @@
 /* ========================================
-   HEADER UNIFICADO - TOO-EASY
+   HEADER UNIFICADO - TOO-EASY (v2)
    ======================================== */
 
 .header {
-    background: linear-gradient(135deg, #2C405B 0%, #4a5f7f 100%);
+    background: linear-gradient(135deg, #1e2e42 0%, #2C405B 60%, #3a5272 100%);
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 0 50px;
+    height: 80px;
+    box-shadow: 0 4px 20px rgba(44, 64, 91, 0.35);
     position: sticky;
     top: 0;
     z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(182, 130, 62, 0.3);
 }
 
 .logo {
@@ -21,123 +24,119 @@
     justify-content: center;
     align-items: flex-start;
     line-height: 1.1;
+    gap: 2px;
 }
 
 .logo h1 {
     margin: 0;
-    font-size: 32px;
-    letter-spacing: 2px;
+    font-size: 26px;
+    letter-spacing: 3px;
     font-weight: 800;
     color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: 'Nunito', 'Arial', sans-serif;
+    background: linear-gradient(90deg, #ffffff, #d4b896);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
 }
 
 .logo p {
     margin: 0;
-    font-size: 12px;
+    font-size: 10px;
     color: #B6823E;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: 2px;
     text-transform: uppercase;
+    opacity: 0.9;
 }
 
 .nav {
     display: flex;
-    gap: 30px;
+    gap: 4px;
     align-items: center;
 }
 
 .nav a {
-    color: white;
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 14px;
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
     position: relative;
 }
 
-.nav a::before {
+.nav a:hover {
+    background: rgba(182, 130, 62, 0.2);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.nav a::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: 4px;
     left: 50%;
     width: 0;
     height: 2px;
     background: #B6823E;
     transform: translateX(-50%);
-    transition: width 0.3s ease;
+    transition: width 0.25s ease;
+    border-radius: 2px;
 }
 
-.nav a:hover {
-    background: rgba(182, 130, 62, 0.2);
-    transform: translateY(-2px);
-}
-
-.nav a:hover::before {
-    width: 80%;
+.nav a:hover::after {
+    width: 60%;
 }
 
 .nav img {
-    width: 40px;
-    height: 40px;
+    width: 22px;
+    height: 22px;
     filter: brightness(0) invert(1);
-    transition: transform 0.3s ease;
+    transition: transform 0.25s ease, filter 0.25s ease;
+    opacity: 0.85;
 }
 
 .nav a:hover img {
-    transform: scale(1.2) rotate(5deg);
+    transform: scale(1.15);
+    opacity: 1;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .header {
-        padding: 15px 20px;
-        flex-wrap: wrap;
-    }
+/* Link de ADMIN especial */
+.nav a[style*="f39c12"] {
+    background: rgba(243, 156, 18, 0.15);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+}
 
-    .logo h1 {
-        font-size: 24px;
-    }
-
-    .logo p {
-        font-size: 10px;
-    }
-
-    .nav {
-        gap: 15px;
-        flex-wrap: wrap;
-    }
-
-    .nav a {
-        font-size: 13px;
-        padding: 6px 12px;
-    }
+.nav a[style*="f39c12"]:hover {
+    background: rgba(243, 156, 18, 0.3);
 }
 
 /* Animación de entrada */
 @keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(-100%); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
 }
 
 .header {
-    animation: slideDown 0.5s ease-out;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Efecto glow en hover del logo */
-.logo h1 {
-    transition: all 0.3s ease;
+/* Responsive */
+@media (max-width: 900px) {
+    .header { padding: 0 20px; height: 60px; }
+    .logo h1 { font-size: 20px; }
+    .logo p  { font-size: 9px; }
+    .nav { gap: 2px; }
+    .nav a { font-size: 12px; padding: 6px 10px; }
 }
 
-.logo:hover h1 {
-    text-shadow: 0 0 20px rgba(182, 130, 62, 0.8),
-                 2px 2px 4px rgba(0, 0, 0, 0.3);
+@media (max-width: 600px) {
+    .header { flex-wrap: wrap; height: auto; padding: 12px 16px; }
+    .nav { flex-wrap: wrap; gap: 4px; }
+    .nav a { font-size: 11px; padding: 5px 8px; }
 }

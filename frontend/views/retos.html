@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Font Awesome y Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -34,26 +39,30 @@
      SCRIPT PARA EL BOTÓN DE SALIR
      Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
      ======================================== -->
-
 <script type="module">
-    import { logout } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js'; // ✅ NUEVO
+    import { logout, isAdmin } from '/public/js/modules/auth.js';
+    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
+    
+    // ✅ MOSTRAR ENLACE ADMIN SI ES ADMIN
+    if (isAdmin()) {
+        const nav = document.querySelector('.nav');
+        const adminLink = document.createElement('a');
+        adminLink.href = '/admin.html';
+        adminLink.textContent = 'ADMIN';
+        adminLink.style.color = '#f39c12'; // Color diferente para destacar
+        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
+    }
     
     const logoutBtn = document.getElementById('logout-btn-perfil');
     
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
-            // ✅ Alerta de confirmación visual
             const confirmar = await alertaConfirmacion(
                 '¿Estás seguro de que deseas cerrar sesión?',
                 '👋 Salir de TOO-EASY'
             );
-            
-            if (confirmar) {
-                logout();
-            }
+            if (confirmar) logout();
         });
     }
 </script>
@@ -63,12 +72,18 @@
     <div class="left-panel">
         
         <div class="top-stats-card">
-            <h2>RETOS SEMANALES</h2>
+            <h2>RETOS</h2>
+            <div class="stats-bar">
+            <div class="stat-item">
+                <img src="../public/img/madera.png" alt="Madera">
+                <span id="wood-count">0</span>
+            </div>
+        </div>
            
         </div>
 
         <div class="challenges-list-container">
-            <div style="margin-bottom: 15px; color: #5a6b7c;">
+            <div style="margin-bottom: 15px; color: #6585AA;">
                 Tu progreso actual
             </div>
 
@@ -82,7 +97,7 @@
 </div>
 
 <script type="module" src="../public/js/pages/challenges.js"></script>
-
+<script type="module" src="../public/js/pages/profile.js"></script>
 
 </body>
 </html>
