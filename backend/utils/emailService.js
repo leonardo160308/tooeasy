@@ -1,65 +1,12 @@
 // backend/utils/emailService.js
-import nodemailer from 'nodemailer';
+// Usa Resend (API HTTP) en lugar de SMTP — compatible con Render Free
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// ── Validar config al arrancar ────────────────────────────────────────────────
-['EMAIL_USER', 'EMAIL_PASS'].forEach(key => {
-    if (!process.env[key]) {
-        console.error(`❌ Variable de entorno faltante: ${key}`);
-    }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-    host:               process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port:               parseInt(process.env.EMAIL_PORT || '587'),
-    secure:             process.env.EMAIL_SECURE === 'true', // false = STARTTLS
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,                        // App Password de Google
-    },
-    connectionTimeout:  10_000,
-    greetingTimeout:    5_000,
-    socketTimeout:      15_000,
-    // Reintento automático en errores de red transitorios
-    pool:               true,
-    maxConnections:     3,
-    maxMessages:        100,
-});
-
-// Verificar conexión al iniciar
-transporter.verify((err) => {
-    if (err) {
-        const hint = err.code === 'EAUTH'
-            ? ' → Usa App Password de Google, no tu contraseña normal'
-            : '';
-        console.error(`❌ SMTP no disponible: ${err.message}${hint}`);
-    } else {
-        console.log('✅ SMTP listo para enviar correos');
-    }
-});
-
-// ── Función base de envío ─────────────────────────────────────────────────────
-async function sendEmail({ to, subject, html }) {
-    try {
-        const info = await transporter.sendMail({
-            from:    process.env.EMAIL_FROM || `"Too Easy 💰" <${process.env.EMAIL_USER}>`,
-            to,
-            subject,
-            html,
-        });
-        console.log(`📧 Email enviado → ${to} | ID: ${info.messageId}`);
-        return { success: true };
-    } catch (error) {
-        const messages = {
-            EAUTH:      'Credenciales SMTP inválidas. Verifica tu App Password de Google.',
-            ECONNECTION:'No se pudo conectar al servidor SMTP.',
-            EMESSAGE:   'El mensaje tiene formato inválido.',
-        };
-        console.error(`❌ Error enviando a ${to}: ${messages[error.code] || error.message}`);
-        throw new Error(messages[error.code] || 'Error al enviar correo.');
-    }
-}
+const FROM_ADDRESS = process.env.EMAIL_FROM || 'Too Easy <onboarding@resend.dev>';
 
 // ── Template base ─────────────────────────────────────────────────────────────
 function baseTemplate(title, content, accentColor = '#2C405B') {
@@ -103,6 +50,24 @@ function baseTemplate(title, content, accentColor = '#2C405B') {
 </table>
 </body>
 </html>`;
+}
+
+// ── Función base de envío ─────────────────────────────────────────────────────
+async function sendEmail({ to, subject, html }) {
+    const { data, error } = await resend.emails.send({
+        from: FROM_ADDRESS,
+        to,
+        subject,
+        html,
+    });
+
+    if (error) {
+        console.error(`❌ Error enviando a ${to}:`, error);
+        throw new Error(error.message || 'Error al enviar correo.');
+    }
+
+    console.log(`📧 Email enviado → ${to} | ID: ${data.id}`);
+    return { success: true };
 }
 
 // ── Email: verificar cuenta nueva ────────────────────────────────────────────
@@ -169,7 +134,7 @@ export async function sendWelcomeEmail(toEmail, userName) {
   Tu cuenta ha sido verificada exitosamente. Ya puedes acceder a todas las funciones de Too Easy.
 </p>
 <div style="text-align:center;margin:28px 0;">
-  <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/login.html"
+  <a href="${process.env.FRONTEND_URL || 'https://tooeasy-8zct.onrender.com'}/login.html"
      style="background:#2C405B;color:#fff;text-decoration:none;padding:14px 32px;
             border-radius:30px;font-weight:700;font-size:15px;display:inline-block;">
     Ir a mi cuenta →
