@@ -1,0 +1,115 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #E5E5E5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+      font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 40px 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 340px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  color: #222;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Modifica esto en tu style.css */
+input[type="text"],
+input[type="password"],
+input[type="email"],   /* Nuevo: para el correo */
+input[type="number"],  /* Nuevo: para la edad */
+select {               /* Nuevo: para el género */
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white; /* Asegura fondo blanco en el select */
+}
+.terms {
+  display: flex;
+  align-items: center;
+  margin-top: px;
+  margin-bottom: 15px;
+  align-items: flex-start;
+  gap: 6px;
+
+}
+
+.terms input {
+  margin-right: 1px;
+  margin-top: 13px;
+}
+
+.terms label {
+  font-size: 13px;
+  color: #555;
+}
+
+
+
+button {
+  width: 100%;
+  background-color: #BA8E58;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+.login-link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #BA8E58;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+.aviso {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+input:invalid {
+  border: 2px solid #e74c3c;
+}
+
+.terminos label{
+  flex-wrap: wrap;
+  text-align: left;
+}

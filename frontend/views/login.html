@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión - TooEasy</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ✅ RUTA CORREGIDA -->
+    <link rel="stylesheet" href="../public/css/iniciarsesion.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ✅ ID REQUERIDO: loginForm -->
+        <form id="loginForm"> 
+            <h1>Bienvenido</h1>
+            <p style="text-align: center; margin-bottom: 20px;">Juega hoy, triunfa mañana.</p>
+            
+            <label for="Nombre">Usuario</label>
+            <!-- ✅ ID REQUERIDO: Nombre -->
+            <input type="text" id="Nombre" placeholder="Usuario" required> 
+            
+            <label for="contraseña">Contraseña</label>
+            <!-- ✅ ID REQUERIDO: contraseña -->
+            <input type="password" id="contraseña" placeholder="Contraseña" required> 
+            
+            <button type="submit">Entrar</button>
+            
+            <!-- Mensaje de error/éxito -->
+            <p id="auth-message" style="color: red; margin-top: 10px; text-align: center;"></p>
+        </form>
+
+        <a href="registro.html" class="login-link">¿No tienes cuenta? Regístrate aquí</a>
+    </div>
+
+    <!-- ✅ RUTA CORREGIDA -->
+    <script type="module" src="../public/js/pages/auth.js"></script>
+</body>
+</html>

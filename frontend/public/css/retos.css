@@ -1,0 +1,132 @@
+/* ====== RESET BÁSICO ====== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* IMPORTANTE: Forzamos al body a ocupar el 100% de la pantalla sin scroll general */
+body {
+    background-color: #1f2d3d;
+    color: #333;
+    font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+    height: 100vh; /* Altura total de la ventana */
+    display: flex;
+    flex-direction: column; /* Organiza Header arriba y Contenido abajo */
+    overflow: hidden; /* Evita que se mueva toda la página */
+}
+
+/* ====== HEADER (No lo tocamos, solo aseguramos que no crezca) ====== */
+.header {
+    flex-shrink: 0; /* Evita que el header se aplaste */
+    /* Aquí tus estilos del header existentes... */
+    background: #fff; /* Ejemplo */
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+}
+/* (Asegúrate que tu header.css no tenga alturas raras) */
+
+/* ====== CONTENEDOR PRINCIPAL (Ocupa el resto del espacio) ====== */
+.split-layout {
+    display: flex; /* Usamos Flex en vez de Grid para mejor control de altura */
+    flex: 1;       /* Ocupa todo el espacio sobrante debajo del header */
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px; /* Un poco de margen interno */
+    gap: 30px;     /* Separación entre izquierda y derecha */
+    overflow: hidden; /* Clave para que el scroll sea interno */
+}
+
+/* ====== PANEL IZQUIERDO (UI) ====== */
+.left-panel {
+    width: 450px; /* Ancho fijo */
+    display: flex;
+    flex-direction: column; /* Elementos uno debajo del otro */
+    gap: 20px;
+    height: 100%; /* Ocupa toda la altura disponible */
+    min-width: 400px; /* Para que no se haga muy pequeño */
+}
+
+/* Tarjeta superior (Título) */
+.top-stats-card {
+    background-color: #e9ecef;
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0; /* No dejes que esto se encoja */
+}
+
+/* Contenedor GRANDE de la lista */
+.challenges-list-container {
+    background-color: #dbe4ef;
+    border-radius: 25px;
+    padding: 20px;
+    
+    /* MAGIA PARA EL SCROLL: */
+    flex: 1; /* Crece para ocupar todo el espacio vertical sobrante */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Contiene el scroll hijo */
+}
+
+/* Área donde van las tarjetas (El que hace scroll) */
+#challenges-container {
+    flex: 1;          /* Ocupa el espacio dentro del contenedor azul */
+    overflow-y: auto; /* AQUÍ está el scroll */
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Scrollbar bonita */
+#challenges-container::-webkit-scrollbar { width: 8px; }
+#challenges-container::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+/* ====== PANEL DERECHO (IMAGEN) ====== */
+.right-panel-image {
+    flex: 1; /* Ocupa todo el ancho restante a la derecha */
+    height: 100%;
+    border-radius: 20px;
+    
+    /* IMAGEN DE FONDO */
+    /* Asegúrate que la ruta sea correcta desde donde está el CSS */
+    background-image: url("../img/mapacheEscalando.png"); /* Ajusta los ../ según tu carpeta */
+    background-size: contain; /* Ajusta la imagen sin cortarla */
+    background-repeat: no-repeat;
+    background-position: bottom right; /* Pegada abajo a la derecha */
+}
+
+/* ====== ESTILOS DE TARJETA (Los mismos de antes) ====== */
+.challenge-card {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 10px 0;
+}
+.challenge-card:last-child { border: none; }
+
+.card-top-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.card-top-row h3 { font-size: 1rem; color: #2c3e50; }
+
+.btn-claim {
+    background: white; border: 1px solid #bdc3c7; 
+    border-radius: 6px; padding: 4px 12px; cursor: pointer;
+}
+
+.progress-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.progress-track { flex: 1; height: 12px; background: #bdc3c7; border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: #2c3e50; width: 0%; }
+.reward-pill { background: #fff; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
+
+/* Responsive */
+@media (max-width: 900px) {
+    .split-layout { flex-direction: column; overflow-y: auto; }
+    .left-panel { width: 100%; min-width: 0; height: auto; }
+    .right-panel-image { display: none; } /* Ocultar imagen en móvil para dar espacio */
+    body { overflow: auto; height: auto; }
+}

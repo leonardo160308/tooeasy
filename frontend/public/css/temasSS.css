@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+  line-height: 1.6;
+  background-color: white;
+  color: black;
+}
+
+/* ======== ENCABEZADO ======== */
+
+/* ======== SECCIÓN PRINCIPAL ======== */
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 60px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.imagen-principal img {
+  width: 320px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.pagina-principal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.contenido-principal {
+  max-width: 400px;
+}
+
+.Titulo-tema {
+  color: black;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 22px;
+  border-bottom: 6px solid #B6823E;
+}
+
+/* ======== LISTA DE TEMAS ======== */
+.lista-temas {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lista-temas li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.lista-temas button {
+  background-color: #B6823E;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lista-temas button:hover {
+  opacity: 0.8;
+}
+.lista-temas a{
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}

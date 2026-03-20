@@ -1,0 +1,583 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.right-column {
+    background-color: #d2b48c;
+    border-radius: 10px;
+    padding: 20px;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+    gap: 20px;
+
+    overflow-y: auto;
+}
+
+
+/* Cada Visor Individual */
+.skin-viewer-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Cada Visor Individual */
+
+
+.skin-viewer-container h3 {
+    margin-bottom: 10px;
+    color: #4a3b2a;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.skin-display {
+    width: 100%;
+    height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f6f8;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.skin-display img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Controles abajo */
+.skin-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: rgba(255,255,255,0.8); /* Un poco más sólido */
+    padding: 8px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.skin-info-center span {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+body {
+    background-color: #f4f4f4;
+    color: #333;
+        font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+
+}
+
+
+
+
+.main-container {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    height: calc(100vh - 120px);
+}
+
+/* Izquierda */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.header-card {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+}
+
+.info-card {
+    background-color: #e0e5ec;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.avatar-container img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid #2c3e50;
+    object-fit: cover;
+}
+
+.btn-edit {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.user-details { flex: 1; }
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 2px;
+}
+.label { font-weight: bold; color: #555; }
+
+.stats-bar {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.coin-icon { color: #d4af37; margin-right: 5px; }
+.log-icon { color: #8b4513; margin-right: 5px; }
+
+/* BOTÓN SUBIR NIVEL */
+.btn-levelup {
+    background-color: #27ae60; /* Verde */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 0 #1e8449; /* Efecto 3D */
+}
+
+.btn-levelup:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.btn-levelup:disabled {
+    background-color: #95a5a6;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Caja Azul Vacía */
+/* Caja Azul Placeholder */
+.blue-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    flex: 1;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botón Eliminar Cuenta */
+.btn-delete-account {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 0 #c0392b;
+}
+
+.btn-delete-account:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #a93226;
+}
+
+.btn-delete-account:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+/* Derecha */
+
+
+
+
+
+.skin-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+}
+
+.skin-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8f9fb;
+    padding: 10px 14px;
+    border-radius: 30px;
+    box-shadow: inset 0 0 0 1px #e0e0e0;
+}
+
+
+.nav-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: #2c3e50;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.nav-btn:hover {
+    transform: scale(1.1);
+}
+
+
+.skin-info-center { text-align: center; }
+
+.btn-equip {
+    margin-top: 6px;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    border: none;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-equip:disabled { background: #7f8c8d; cursor: not-allowed; }
+/* Iconos de recursos */
+.coin-icon { color: #f1c40f; margin-right: 5px; }
+.wood-icon { color: #8e44ad; margin-right: 5px; } /* Morado o Café para madera, puse morado para distinguir, cámbialo a #795548 para café */
+
+/* Contenedor de Botones de Mejora */
+.upgrade-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Estilo Base de los Botones Nuevos */
+.btn-upgrade {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.2s;
+    text-align: left;
+    color: white;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+
+.btn-upgrade:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+.btn-upgrade:disabled {
+    background-color: #95a5a6 !important;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+}
+
+/* Botón Casa (Madera) - Color Café/Naranja */
+.btn-wood {
+    background-color: #d35400; 
+}
+
+/* Botón Castor (Monedas) - Color Verde/Dorado */
+.btn-coin {
+    background-color: #27ae60;
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    width: 30px;
+    text-align: center;
+}
+
+.btn-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-text span {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-text small {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+/* ========================================
+   MEJORAS VISUALES
+   ======================================== */
+
+/* Nivel Educativo */
+#user-level {
+    color: #3498db;
+    font-weight: bold;
+}
+
+/* Botón Editar Avatar */
+.btn-edit {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background: #34495e;
+}
+
+/* Caja Azul Placeholder */
+.blue-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    flex: 1;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Badge Equipado */
+.skin-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #27ae60;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Filtro de escala de grises para skins bloqueadas */
+.skin-display img.locked {
+    filter: grayscale(100%) brightness(0.8);
+}
+
+/* Animación de hover en botones de navegación */
+.nav-btn:hover {
+    background: #2c3e50;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Efecto de clic en botones de mejora */
+.btn-upgrade:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+/* ========================================
+   MODAL DE AVATARES
+   ======================================== */
+
+.avatar-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.avatar-modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.avatar-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.avatar-modal-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.avatar-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+}
+
+.avatar-close-btn:hover {
+    color: #e74c3c;
+}
+
+/* Grid de Avatares */
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.avatar-option {
+    aspect-ratio: 1;
+    border: 3px solid #ddd;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.avatar-option:hover {
+    transform: scale(1.05);
+    border-color: #2c3e50;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-option.selected {
+    border-color: #27ae60;
+    border-width: 4px;
+    box-shadow: 0 0 20px rgba(39, 174, 96, 0.4);
+}
+
+.avatar-option.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #27ae60;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Botón Guardar */
+.btn-select-avatar {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-select-avatar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-select-avatar:active {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .avatar-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .avatar-modal-content {
+        padding: 20px;
+    }
+}

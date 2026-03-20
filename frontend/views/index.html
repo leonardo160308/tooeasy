@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOO-EASY - Juega Hoy, Triunfa Mañana</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+    
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/inicio.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <h1>TOO-EASY</h1>
+        <p>JUEGA HOY, TRIUNFA MAÑANA</p>
+    </div>
+
+    <nav class="nav" id="main-nav-container">
+    </nav>
+</header>
+
+<main>
+    <section class="container pagina-principal">
+        <div class="contenido-principal">
+            <h2>¡Aprende a dar los primeros pasos de tu vida financiera!</h2>
+            
+            <div id="auth-buttons">
+                <a href="login.html"><button class="btn-iniciar-sesion">Iniciar Sesión</button></a>
+                <br><br>
+                <a href="registro.html"><button class="btn-crear-cuenta">Crear Cuenta</button></a>
+            </div>
+            
+            <div id="start-button" style="display:none;">
+                 <a href="lecciones.html"><button class="btn-iniciar-sesion">EMPIEZA YA!</button></a>
+            </div>
+        </div>
+        <div class="imagen-principal">
+            <img src="../public/img/Imagen2.png" alt="Ilustración de educación financiera">
+        </div>
+    </section>
+
+    <section class="container pagina-principal2">
+        <div class="texto1">
+            <h2>Divertido y útil</h2>
+            <p>Aprender sobre tu vida laboral y financiera nunca fue tan entretenido. ¡Con nuestras misiones cortas desbloqueas logros, subes de nivel y entiendes cómo funcionan los préstamos, el SAT y tus ingresos reales!</p>
+        </div>
+        <div class="imagen">
+            <img src="../public/img/Imagen1.1.png" alt="Juego de educación financiera">
+        </div>
+    </section>
+
+    <section class="container pagina-principal3">
+        <div class="texto">
+            <h2>Tu primer empleo, tu primer presupuesto, tu primer logro</h2>
+            <p>¿No sabes qué es el SAT o cómo usar una tarjeta de crédito? No te preocupes. Aquí lo aprendes jugando, ganando puntos y tomando decisiones que te preparan para la vida adulta.</p>
+        </div>
+        <div class="imagen">
+            <img src="../public/img/Imagen2.1.png" alt="Ilustración sobre empleo y presupuesto">
+        </div>
+    </section>
+
+    <section class="container pagina-principal4">
+        <div class="texto1">
+            <h2>Aprender es confiable con nosotros</h2>
+            <p>Creamos esta app después de tomar el curso oficial de educación financiera de la CONDUSEF. ¡Sí, tenemos el certificado! Así que puedes confiar en que cada lección, reto y simulación está basada en información real, útil y bien explicada.</p>
+        </div>
+        <div class="imagen">
+            <img src="../public/img/Imagen3.1.png" alt="Logo CONDUSEF o certificado de confianza">
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
+    <p>
+        Contacto: 
+        <a href="mailto:fouryoutooeasy@gmail.com">fouryoutooeasy@gmail.com</a> | 
+        <div class="terms-group">
+    <!-- Checkbox oculto (solo para JS y validación) -->
+    <input type="checkbox" id="terminos" required hidden>
+
+    <!-- Texto clickeable -->
+    <label for="terminos">
+        <span class="terms-link">Términos y Condiciones</span>
+    </label>
+</div>
+
+    </p>
+</footer>
+
+<script type="module">
+    import { checkSession, logout } from '../public/js/modules/auth.js'; 
+
+    const navContainer = document.getElementById('main-nav-container');
+    const authButtons = document.getElementById('auth-buttons');
+    const startButton = document.getElementById('start-button');
+
+    const publicNav = `
+        <a href="index.html">INICIO</a>
+        <a href="lecciones.html">APRENDE</a>
+        <a href="login.html">INICIAR SESIÓN</a>
+    `;
+
+    const privateNav = `
+        <a href="dashboard.html">DASHBOARD</a>
+        <a href="retos.html">RETOS</a>
+        <a href="lecciones.html">LECCIONES</a>
+        <a href="perfil.html">PERFIL</a>
+        <a href="#" id="logout-btn-index"><img src="../assets/icons/salida.png" alt="Salir"></a>
+    `;
+
+    const initializeIndexPage = () => {
+        const userId = checkSession();
+        
+        if (userId) {
+            navContainer.innerHTML = privateNav;
+            authButtons.style.display = 'none';
+            startButton.style.display = 'block';
+            
+            const logoutBtn = document.getElementById('logout-btn-index');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        } else {
+            navContainer.innerHTML = publicNav;
+            authButtons.style.display = 'block';
+            startButton.style.display = 'none';
+        }
+    };
+
+    initializeIndexPage();
+</script>
+<script src="../public/js/data/terminos.js"></script>
+</body>
+
+</html>

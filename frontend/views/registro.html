@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - TooEasy</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../public/css/iniciarsesion.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+</head>
+<body>
+    <div class="auth-container">
+        <form id="registerForm" class="formulario"> <!-- ID REQUERIDO: registerForm -->
+            <h2>Crear Cuenta</h2>
+            <p>¡Completa tu perfil para empezar tu aventura financiera!</p>
+            
+            <!-- Nombre de Usuario -->
+            <input type="text" id="registerNombre" placeholder="Nombre de Usuario" required> 
+            
+            <!-- Correo Electrónico -->
+            <input type="email" id="registerEmail" placeholder="Correo Electrónico" required>
+            
+            <!-- Contraseña -->
+            <input type="password" id="registerContraseña" placeholder="Contraseña" required>
+
+            <!-- Edad -->
+            <input type="number" id="registerEdad" placeholder="Edad" min="15" max="99" required>
+
+            <!-- Género -->
+            <select id="registerGenero" required>
+                <option value="" disabled selected>Selecciona tu Género</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+                <option value="no-decir">Prefiero no decir</option>
+            </select>
+            
+            <!-- NUEVO: TÉRMINOS Y CONDICIONES -->
+            <div class="terms-group" style="margin: 10px 0; display: flex; align-items: center;">
+                <!-- El checkbox tiene el atributo 'required' -->
+                <input type="checkbox" id="terminos" required style="width: auto; margin-right: 8px;">
+                <!-- El label es el objetivo del click para abrir el modal -->
+                <label for="terminos" style="font-size: 0.9em;">Acepto los <span style="text-decoration: underline; cursor: pointer;">Términos y Condiciones</span></label>
+            </div>
+            
+            <button type="submit" class="btn-primary">Registrar</button>
+            <p id="auth-message" style="color: red; margin-top: 10px;"></p>
+        </form>
+
+        <p>¿Ya tienes cuenta? <a href="login.html">Iniciar Sesión</a></p>
+    </div>
+
+    <!-- Scripts necesarios: auth.js para el registro y terminos.js para el modal -->
+    <script type="module" src="/public/js/pages/auth.js"></script>
+    <script src="../public/js/data/terminos.js"></script>
+</body>
+</html>

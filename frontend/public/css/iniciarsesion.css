@@ -1,0 +1,195 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #E5E5E5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+      font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 40px 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 340px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+  color: #222;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+button {
+  width: 100%;
+  background-color: #BA8E58;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+.login-link {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #BA8E58;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #E5E5E5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+/* CAMBIO 1: Renombrado de .container a .auth-container para coincidir con tu HTML */
+.auth-container {
+  background-color: #ffffff;
+  padding: 40px 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 380px; /* Un poco más ancho para que se vea mejor */
+  border-radius: 8px; /* Bordes ligeramente redondeados */
+}
+
+/* Estilos para el título H2 (tu HTML usa h2, no h1) */
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #222;
+  margin-top: 0;
+}
+
+/* Estilo para el párrafo de descripción */
+.auth-container p {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* CAMBIO 2: Agregados email, number y select para que todos se vean iguales */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px; /* Espacio entre inputs */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+/* Ajuste específico para el SELECT para que se vea limpio */
+select {
+  appearance: none; /* Elimina estilo por defecto del navegador */
+  -webkit-appearance: none;
+  cursor: pointer;
+  color: #333;
+}
+
+/* CAMBIO 3: Estilos para el botón */
+button.btn-primary {
+  width: 100%;
+  background-color: #BA8E58;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(186, 142, 88, 0.2);
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* CAMBIO 4: Enlaces generales y enlace de "Iniciar Sesión" */
+a {
+  color: #BA8E58;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Ajuste para el checkbox de términos (para que no tome el width 100%) */
+input[type="checkbox"] {
+    width: auto !important; /* Forza a ser pequeño */
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/* Estilo visual para el link falso de 'Términos' dentro del label */
+.terms-group span {
+    color: #BA8E58;
+    font-weight: 600;
+}

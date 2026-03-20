@@ -1,0 +1,409 @@
+:root {
+    /* Paleta extraída de tu referencia */
+    --primary-color: #6585AA;       /* Azul Pizarra (Slate) - Botones principales */
+    --primary-hover: #536e8d;       /* Un poco más oscuro para hover */
+    --secondary-color: #BA8E58;     /* Dorado/Bronce - Acentos */
+    --dark-bg: #2C405B;             /* Azul Oscuro - Para secciones de resumen */
+    --header-bg: #a0a0a0;           /* Gris encabezado */
+    --footer-bg: #4d4d4d;           /* Gris oscuro footer */
+    
+    /* Fondos generales */
+    --bg-color: #ffffff;            /* Fondo blanco limpio */
+    --card-bg: #f9f9f9;             /* Fondo tarjetas muy sutil */
+    --text-dark: #000000;           /* Negro puro como en Arial */
+    --text-light: #555555;          /* Gris medio */
+
+    /* Lógica del negocio (Mantenemos funcionalidad pero ajustamos tonos) */
+    --color-green: #2e7d32;         /* Verde más sobrio */
+    --color-green-bg: #e8f5e9;      
+    --color-red: #c62828;           /* Rojo más sobrio */
+    --color-red-bg: #ffebee;        
+    --color-gray: #607d8b;          
+    --color-gray-bg: #cfd8dc;       
+
+    --border-radius-card: 10px;     /* Radio de tarjetas */
+    --border-radius-btn: 40px;      /* Radio tipo "Pill" (Pastilla) */
+    --shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* --- Reset Global y Tipografía --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+.app-container {
+    max-width: 100%;
+    width: 100%;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: flex;
+    gap: 20px;
+    box-sizing: border-box;
+    overflow-x: auto;  /* 👈 para evitar overflow */
+}
+
+
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid #e0e0e0; /* Borde sutil */
+    border-radius: var(--border-radius-card);
+    padding: 25px;
+    margin-bottom: 30px;
+    /* Sombra más ligera */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--dark-bg); /* Títulos en el azul oscuro */
+    border-bottom: 2px solid var(--secondary-color); /* Línea dorada abajo */
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+/* --- 4. Módulo Calculadora (Inputs) --- */
+.fixed-data-grid, .goal-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    background-color: #fff;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    padding: 12px 15px;
+    border: 2px solid #ccc;
+    border-radius: 8px; /* Bordes ligeramente cuadrados */
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color); /* Azul Slate al enfocar */
+    outline: none;
+}
+
+/* --- Resumen de Resultados (Estilo "Texto1" - Fondo Oscuro) --- */
+.summary-results {
+    background-color: var(--dark-bg); /* Fondo Azul Oscuro */
+    color: white;
+    padding: 20px;
+    border-radius: var(--border-radius-card);
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+}
+
+.result-item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.result-item span {
+    font-size: 0.85rem;
+    color: #d1d5db; /* Gris claro para texto secundario */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.result-item strong {
+    font-size: 1.5rem;
+    color: #ffffff; /* Dorado para los números importantes */
+    margin-top: 5px;
+}
+
+.chart-container {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* --- 5. Módulo Calendario --- */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.calendar-header button {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 15px;
+    border-radius: var(--border-radius-btn); /* Botones redondeados */
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.calendar-header button:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* La Grilla del Calendario */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+/* Celda individual del día */
+.day-cell {
+    aspect-ratio: 1 / 1;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.day-cell:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+    z-index: 2;
+}
+
+.day-number {
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+.day-balance-preview {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    font-weight: bold;
+}
+
+/* Colores de Estado del Día (Ajustados) */
+.day-green {
+    background-color: var(--color-green-bg);
+    border: 1px solid var(--color-green);
+    color: var(--color-green);
+}
+
+.day-red {
+    background-color: var(--color-red-bg);
+    border: 1px solid var(--color-red);
+    color: var(--color-red);
+}
+
+.day-gray {
+    background-color: var(--color-gray-bg);
+    border: 1px solid var(--color-gray);
+    color: #374151;
+}
+
+.day-empty {
+    background-color: transparent;
+    border: none;
+    pointer-events: none;
+}
+
+/* --- 6. Modal (Ventana Emergente) --- */
+.modal {
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(44, 64, 91, 0.8); /* Fondo oscuro azulado */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px; /* Más redondeado */
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Detalles dentro del Modal */
+.day-balance-summary {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f4f4f4;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--secondary-color); /* Acento dorado */
+}
+
+.text-green { color: var(--color-green); font-weight: bold; }
+.text-red { color: var(--color-red); font-weight: bold; }
+
+/* Sección de recomendaciones */
+.recommendations-section {
+    background-color: #eff6ff; 
+    border: 1px solid #bfdbfe;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.recommendations-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.movements-list-section ul {
+    list-style: none;
+    margin-bottom: 20px;
+    border-top: 1px solid #eee;
+}
+
+.movements-list-section li {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+/* Formulario dentro del Modal */
+.add-movement-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #fafafa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.add-movement-form select, 
+.add-movement-form input {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Botón de Añadir (Estilo "Pill" Principal) */
+.btn-add {
+    background-color: var(--primary-color); /* Azul Slate */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-btn); /* Pill shape */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.3s, transform 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    align-self: center; /* Centrar botón */
+    width: 100%;
+}
+
+.btn-add:hover {
+    background-color: var(--primary-hover);
+    opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .fixed-data-grid, .goal-data-grid {
+        grid-template-columns: 1fr; 
+    }
+    
+    .calendar-grid {
+        gap: 5px;
+    }
+    
+    .day-cell {
+        border-radius: 6px;
+        font-size: 0.8rem;
+    }
+
+    .main-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.izquierda {
+    flex: 7;   /* ≈ 70% */
+}
+
+.derecha {
+    flex: 25%;   
+
+
+}

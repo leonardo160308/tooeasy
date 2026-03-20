@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero - TOO-EASY</title>
+        <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+
+    <!-- ✅ CSS CORREGIDOS -->
+    <link rel="stylesheet" href="../public/css/dashboard.css"> 
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+    
+    <!-- Chart.js para las gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- ========================================
+     ENCABEZADO CON NAVEGACIÓN
+     ======================================== -->
+<header class="header">
+    <div class="logo">
+        <h1>TOO-EASY</h1>
+        <p>JUEGA HOY, TRIUNFA MAÑANA</p>
+    </div>
+
+    <nav class="nav">
+        <a href="/dashboard.html">DASHBOARD</a>
+        <a href="/retos.html">RETOS</a>
+        <a href="/lecciones.html">LECCIONES</a>
+        <a href="/perfil.html">PERFIL</a>
+        <!-- ✅ BOTÓN DE SALIR CON ID ESPECÍFICO -->
+        <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
+            <img src="../public/img/Salida.png" alt="Salir">
+        </a>
+    </nav>
+</header>
+
+<!-- ========================================
+     SCRIPT PARA EL BOTÓN DE SALIR
+     Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
+     ======================================== -->
+
+<script type="module">
+    import { logout } from '/public/js/modules/auth.js';
+    import { alertaConfirmacion } from '/public/js/modules/alerts.js'; // ✅ NUEVO
+    
+    const logoutBtn = document.getElementById('logout-btn-perfil');
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // ✅ Alerta de confirmación visual
+            const confirmar = await alertaConfirmacion(
+                '¿Estás seguro de que deseas cerrar sesión?',
+                '👋 Salir de TOO-EASY'
+            );
+            
+            if (confirmar) {
+                logout();
+            }
+        });
+    }
+</script>
+
+<!-- ========================================
+     CONTENEDOR PRINCIPAL
+     ======================================== -->
+<div class="app-container">
+    
+    <!-- ✅ Saludo Personalizado (Se llena con JS) -->
+    <div class="main-header" style="padding: 1rem;">
+        <h1 id="user-greeting">Cargando...</h1>
+    </div>
+
+    <!-- ========================================
+         COLUMNA IZQUIERDA: RESUMEN Y GRÁFICAS
+         ======================================== -->
+    <div class="izquierda">
+        <section class="card module-calculator">
+            <h2>Resumen Mensual y Metas</h2>
+            
+            <!-- Datos Fijos: Ingreso y Egreso -->
+            <div class="fixed-data-grid">
+                <div class="input-group">
+                    <label for="fixed-income">Ingreso Fijo Mensual ($)</label>
+                    <input type="number" id="fixed-income" placeholder="0.00" step="10.00">
+                </div>
+                
+                <div class="input-group">
+                    <label for="fixed-expense">Egreso Fijo Mensual ($)</label>
+                    <input type="number" id="fixed-expense" placeholder="0.00" step="10.00">
+                </div>
+            </div>
+
+            <!-- Datos de Meta -->
+            <div class="goal-data-grid">
+                <div class="input-group">
+                    <label for="goal-name">Nombre de Meta</label>
+                    <input type="text" id="goal-name" placeholder="Ej: Vacaciones" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="goal-amount">Monto de Meta ($)</label>
+                    <input type="number" id="goal-amount" placeholder="0.00" step="10.00">
+                </div>
+            </div>
+
+            <!-- Resumen de Resultados -->
+            <div class="summary-results">
+                <div class="result-item">
+                    <span>Ahorro Actual:</span>
+                    <strong id="calculated-savings">$0.00</strong>
+                </div>
+                <div class="result-item">
+                    <span>Falta para Meta:</span>
+                    <strong id="calculated-remaining">$0.00</strong>
+                </div>
+                <div class="result-item">
+                    <span>Estado:</span>
+                    <strong id="goal-status">Sin datos</strong>
+                </div>
+            </div>
+
+            <!-- Gráfica de Barras -->
+            <div class="chart-container">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </section>
+    </div>
+        
+    <!-- ========================================
+         COLUMNA DERECHA: CALENDARIO
+         ======================================== -->
+    <div class="derecha">
+        <section class="card module-calendar">
+            <h2>Calendario de Movimientos</h2>
+            
+            <!-- Controles del Calendario -->
+            <div class="calendar-header">
+                <button id="prev-month">&lt;</button>
+                <h2 id="current-month-year">Cargando...</h2>
+                <button id="next-month">&gt;</button>
+            </div>
+            
+            <!-- Grid del Calendario (Se llena con JS) -->
+            <div id="calendar-grid" class="calendar-grid">
+                <!-- Los días se inyectan dinámicamente -->
+            </div>
+        </section>
+    </div>
+
+    <!-- ========================================
+         MODAL DE DETALLE DEL DÍA
+         ======================================== -->
+    <div id="day-modal" class="modal hidden">
+        <div class="modal-content">
+            <!-- Botón Cerrar -->
+            <span id="close-modal" class="close-btn">&times;</span>
+            
+            <!-- Título del Día -->
+            <h2 id="modal-date-title">Detalle del Día</h2>
+            
+            <!-- Resumen del Balance del Día -->
+            <div class="day-balance-summary">
+                <div class="balance-item">
+                    <span>Ingresos:</span> 
+                    <span id="day-income" class="text-green">$0</span>
+                </div>
+                <div class="balance-item">
+                    <span>Egresos:</span> 
+                    <span id="day-expense" class="text-red">$0</span>
+                </div>
+                <div class="balance-item total">
+                    <span>Balance:</span> 
+                    <strong id="day-total">$0</strong>
+                </div>
+            </div>
+
+            <!-- Recomendaciones Financieras -->
+            <div class="recommendations-section">
+                <h3>💡Recomendaciones del día</h3>
+                <ul id="recommendations-list">
+                    <!-- Se llenan con JS -->
+                </ul>
+            </div>
+
+            <!-- Lista de Movimientos del Día -->
+            <div class="movements-list-section">
+                <h3>Movimientos Registrados</h3>
+                <ul id="movements-list">
+                    <!-- Se llenan con JS -->
+                </ul>
+            </div>
+
+            <!-- Formulario para Agregar Movimiento -->
+            <div class="add-movement-form">
+                <h3>➕ Nuevo Movimiento</h3>
+                <form id="transaction-form">
+                    <!-- Tipo de Movimiento -->
+                    <select id="trans-type" required>
+                        <option value="expense">Egreso (-)</option>
+                        <option value="income">Ingreso (+)</option>
+                    </select>
+                    
+                    <!-- Categoría -->
+                    <input 
+                        type="text" 
+                        id="trans-category" 
+                        placeholder="Categoría (ej: Comida, Transporte, Deuda)" 
+                        required
+                    >
+
+                    <!-- Monto -->
+                    <input 
+                        type="number" 
+                        id="trans-amount" 
+                        placeholder="Monto" 
+                        step="0.01" 
+                        min="0.01"
+                        required
+                    >
+                    
+                    <!-- Botón Agregar -->
+                    <button type="submit" class="btn-add">Agregar Movimiento</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     SCRIPT CONECTADO AL BACKEND
+     ======================================== -->
+<script type="module" src="../public/js/pages/dashboard.js"></script>
+
+</body>
+</html>

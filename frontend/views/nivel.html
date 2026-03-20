@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lección - TOO-EASY</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
+    <!-- ✅ CSS CORREGIDOS -->
+    <link rel="stylesheet" href="../public/css/flashcards.css">
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+</head>
+<body>
+
+<!-- ========================================
+     ENCABEZADO CON NAVEGACIÓN
+     ======================================== -->
+<header class="header">
+    <div class="logo">
+        <h1>TOO-EASY</h1>
+        <p>JUEGA HOY, TRIUNFA MAÑANA</p>
+    </div>
+
+    <nav class="nav">
+        <a href="/dashboard.html">DASHBOARD</a>
+        <a href="/retos.html">RETOS</a>
+        <a href="/lecciones.html">LECCIONES</a>
+        <a href="/perfil.html">PERFIL</a>
+        <!-- ✅ BOTÓN DE SALIR CON ID ESPECÍFICO -->
+        <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
+            <img src="../public/img/Salida.png" alt="Salir">
+        </a>
+    </nav>
+</header>
+
+<!-- ========================================
+     SCRIPT PARA EL BOTÓN DE SALIR
+     Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
+     ======================================== -->
+
+<script type="module">
+    import { logout } from '/public/js/modules/auth.js';
+    import { alertaConfirmacion } from '/public/js/modules/alerts.js'; // ✅ NUEVO
+    
+    const logoutBtn = document.getElementById('logout-btn-perfil');
+    
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // ✅ Alerta de confirmación visual
+            const confirmar = await alertaConfirmacion(
+                '¿Estás seguro de que deseas cerrar sesión?',
+                '👋 Salir de TOO-EASY'
+            );
+            
+            if (confirmar) {
+                logout();
+            }
+        });
+    }
+</script>
+
+<!-- ========================================
+     CONTENEDOR PRINCIPAL DE FLASHCARDS
+     ======================================== -->
+     <main class="main-content">
+<div class="container">
+
+    <!-- ========================================
+         HEADER: INFORMACIÓN DEL NIVEL
+         ======================================== -->
+    <div class="lesson-header" style="text-align: center; margin-bottom: 30px;">
+        <h1 id="lesson-title" style="color: #2C405B; margin-bottom: 10px;">
+            📚 Cargando lección...
+        </h1>
+        <p id="lesson-subtitle" style="color: #666; font-size: 1.1rem;">
+            <!-- Ej: "Tema: Fundamentos - Nivel 1" -->
+        </p>
+    </div>
+
+    <!-- ========================================
+         TARJETA FLASHCARD (SE VOLTEA)
+         ======================================== -->
+    <div class="card" id="flashcard">
+        <div class="card-inner">
+            
+            <!-- FRENTE DE LA TARJETA -->
+            <div class="card-front">
+                <h2 class="card-title" id="card-title-front">
+                    Título de la Lección
+                </h2>
+                <img id="card-image" src="../public/img/Imagen1.1.png" alt="Ilustración">
+            </div>
+
+            <!-- REVERSO DE LA TARJETA -->
+            <div class="card-back">
+                <h2 class="title-back" id="card-title-back">
+                    Título de la Lección
+                </h2>
+                <div class="container-info">
+                    <p class="card-text" id="card-content">
+                        Contenido educativo aquí...
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================
+         CONTROLES DE NAVEGACIÓN
+         ======================================== -->
+    
+    <!-- Flechas para cambiar de tarjeta -->
+    <button class="arrow-btn" id="prevCard" style="display: none;">
+        ◄
+    </button>
+    <button class="arrow-btn" id="nextCard" style="display: none;">
+        ►
+    </button>
+
+    <!-- Indicador de progreso -->
+    <div style="text-align: center; margin-top: 20px;">
+        <span id="card-counter" style="font-size: 1.1rem; color: #666;">
+            <!-- Ej: "Tarjeta 1 de 5" -->
+        </span>
+    </div>
+
+    <!-- ========================================
+         BOTONES DE ACCIÓN
+         ======================================== -->
+    <div class="buttons">
+        <a href="lecciones.html" style="text-decoration: none;">
+            <button class="btn-secondary">
+                ← Volver a Niveles
+            </button>
+        </a>
+        
+        <button id="btn-ir-quiz" class="btn-primary" style="display: none;">
+            Hacer Quiz →
+        </button>
+    </div>
+
+</div>
+</main>
+<!-- ========================================
+     SCRIPT PARA LAS FLASHCARDS
+     ======================================== -->
+<script type="module">
+    import { protectRoute, getAuthData } from '../public/js/modules/auth.js';
+
+    // Proteger la ruta
+    if (!protectRoute()) {
+        throw new Error('No autenticado');
+    }
+
+    const sessionUser = getAuthData();
+
+    // ========================================
+    // DATOS DE LAS FLASHCARDS (Por Nivel)
+    // ========================================
+    const flashcardsData = {
+        1: [
+            {
+                title: "¿Qué es el dinero?",
+                image: "../public/img/Imagen1.1.png",
+                content: "El dinero es un medio de intercambio que usamos para comprar bienes y servicios. Puede ser físico (billetes y monedas) o digital (tarjetas y transferencias). Su valor está respaldado por la economía del país."
+            },
+            {
+                title: "Ingresos",
+                image: "../public/img/Imagen1.1.png",
+                content: "Un ingreso es todo el dinero que entra a tu bolsillo o cuenta bancaria. Puede ser un salario, propinas, ventas, regalos o cualquier entrada económica. Los ingresos pueden ser fijos (mensuales) o variables (ocasionales)."
+            },
+            {
+                title: "Gastos",
+                image: "../public/img/Imagen1.1.png",
+                content: "Los gastos son el dinero que sale de tu bolsillo para pagar cosas que necesitas o deseas. Se dividen en fijos (renta, luz) y variables (comida, entretenimiento). Controlar tus gastos es clave para tener salud financiera."
+            }
+        ],
+        2: [
+            {
+                title: "El Arte de Ahorrar",
+                image: "../public/img/Imagen1.1.png",
+                content: "Ahorrar es guardar una parte de tu dinero para el futuro. No significa dejar de disfrutar, sino planificar tus gastos para tener seguridad económica y cumplir metas importantes como un viaje, estudios o emergencias."
+            },
+            {
+                title: "¿Por qué ahorrar?",
+                image: "../public/img/Imagen1.1.png",
+                content: "El ahorro te da libertad financiera. Te permite enfrentar imprevistos sin endeudarte, cumplir sueños sin sacrificar tu calidad de vida y tener tranquilidad mental al saber que tienes un respaldo económico."
+            }
+        ],
+        3: [
+            {
+                title: "Fondo de Emergencia",
+                image: "../public/img/Imagen1.1.png",
+                content: "Un fondo de emergencia es dinero guardado específicamente para imprevistos: reparaciones, pérdida de empleo, gastos médicos. Los expertos recomiendan tener ahorrado el equivalente a 3-6 meses de tus gastos básicos."
+            },
+            {
+                title: "Seguridad Financiera",
+                image: "../public/img/Imagen1.1.png",
+                content: "La seguridad financiera significa tener control sobre tu dinero y no vivir al día. Se logra combinando: ingresos estables, control de gastos, ahorro constante y un fondo de emergencia que te proteja de situaciones inesperadas."
+            }
+        ]
+        // Añade más niveles aquí según necesites
+    };
+
+    // ========================================
+    // LÓGICA DE LA APLICACIÓN
+    // ========================================
+    
+    // Obtener nivel desde URL (ej: nivel.html?level=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const nivelActual = parseInt(urlParams.get('level')) || 1;
+
+    // Obtener flashcards del nivel
+    const flashcards = flashcardsData[nivelActual] || [];
+    
+    if (flashcards.length === 0) {
+        alert('Este nivel aún no tiene contenido. Volviendo a lecciones...');
+        window.location.href = 'lecciones.html';
+    }
+
+    let currentIndex = 0;
+
+    // Referencias DOM
+    const card = document.getElementById('flashcard');
+    const cardInner = card.querySelector('.card-inner');
+    const titleFront = document.getElementById('card-title-front');
+    const titleBack = document.getElementById('card-title-back');
+    const image = document.getElementById('card-image');
+    const content = document.getElementById('card-content');
+    const counter = document.getElementById('card-counter');
+    const btnPrev = document.getElementById('prevCard');
+    const btnNext = document.getElementById('nextCard');
+    const btnQuiz = document.getElementById('btn-ir-quiz');
+    const lessonTitle = document.getElementById('lesson-title');
+    const lessonSubtitle = document.getElementById('lesson-subtitle');
+
+    // Función para obtener nombre del tema
+    function getTemaYNivel(level) {
+        if (level <= 3) return { tema: "Fundamentos", nivelEnTema: level };
+        if (level <= 6) return { tema: "Cuentas Bancarias", nivelEnTema: level - 3 };
+        if (level <= 10) return { tema: "Tarjetas", nivelEnTema: level - 6 };
+        if (level <= 13) return { tema: "Administración del Dinero", nivelEnTema: level - 10 };
+        if (level <= 17) return { tema: "Deudas y Créditos", nivelEnTema: level - 13 };
+        return { tema: "Desconocido", nivelEnTema: 1 };
+    }
+
+    const { tema, nivelEnTema } = getTemaYNivel(nivelActual);
+    lessonTitle.textContent = flashcards[0].title;
+    lessonSubtitle.textContent = `${tema} - Nivel ${nivelEnTema}`;
+
+    // Función para renderizar la tarjeta actual
+    function renderCard() {
+        const current = flashcards[currentIndex];
+        
+        titleFront.textContent = current.title;
+        titleBack.textContent = current.title;
+        image.src = current.image;
+        content.textContent = current.content;
+        counter.textContent = `Tarjeta ${currentIndex + 1} de ${flashcards.length}`;
+
+        // Mostrar/ocultar flechas
+        btnPrev.style.display = currentIndex > 0 ? 'flex' : 'none';
+        btnNext.style.display = currentIndex < flashcards.length - 1 ? 'flex' : 'none';
+        
+        // Mostrar botón de quiz en la última tarjeta
+        btnQuiz.style.display = currentIndex === flashcards.length - 1 ? 'inline-block' : 'none';
+
+        // Resetear volteo
+        cardInner.classList.remove('flipped');
+    }
+
+    // Voltear tarjeta al hacer click
+    card.addEventListener('click', () => {
+        cardInner.classList.toggle('flipped');
+    });
+
+    // Navegación
+    btnPrev.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCard();
+        }
+    });
+
+    btnNext.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentIndex < flashcards.length - 1) {
+            currentIndex++;
+            renderCard();
+        }
+    });
+
+    // Ir al quiz
+    btnQuiz.addEventListener('click', () => {
+        window.location.href = `quiz.html?level=${nivelActual}`;
+    });
+
+    // Inicializar
+    renderCard();
+
+</script>
+
+</body>
+</html>

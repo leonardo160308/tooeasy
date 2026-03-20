@@ -1,0 +1,143 @@
+/* ========================================
+   HEADER UNIFICADO - TOO-EASY
+   ======================================== */
+
+.header {
+    background: linear-gradient(135deg, #2C405B 0%, #4a5f7f 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    line-height: 1.1;
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo p {
+    margin: 0;
+    font-size: 12px;
+    color: #B6823E;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.nav {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #B6823E;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+.nav a:hover {
+    background: rgba(182, 130, 62, 0.2);
+    transform: translateY(-2px);
+}
+
+.nav a:hover::before {
+    width: 80%;
+}
+
+.nav img {
+    width: 40px;
+    height: 40px;
+    filter: brightness(0) invert(1);
+    transition: transform 0.3s ease;
+}
+
+.nav a:hover img {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+    }
+
+    .logo h1 {
+        font-size: 24px;
+    }
+
+    .logo p {
+        font-size: 10px;
+    }
+
+    .nav {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .nav a {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+}
+
+/* Animación de entrada */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.header {
+    animation: slideDown 0.5s ease-out;
+}
+
+/* Efecto glow en hover del logo */
+.logo h1 {
+    transition: all 0.3s ease;
+}
+
+.logo:hover h1 {
+    text-shadow: 0 0 20px rgba(182, 130, 62, 0.8),
+                 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
