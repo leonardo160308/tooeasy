@@ -1,11 +1,12 @@
 // backend/utils/emailService.js
-// Usa Resend (API HTTP) en lugar de SMTP — compatible con Render Free
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// En Resend plan gratuito: usa 'onboarding@resend.dev' como from
+// Si verificas tu dominio en resend.com puedes usar el tuyo propio
 const FROM_ADDRESS = process.env.EMAIL_FROM || 'Too Easy <onboarding@resend.dev>';
 
 // ── Template base ─────────────────────────────────────────────────────────────
@@ -54,20 +55,25 @@ function baseTemplate(title, content, accentColor = '#2C405B') {
 
 // ── Función base de envío ─────────────────────────────────────────────────────
 async function sendEmail({ to, subject, html }) {
-    const { data, error } = await resend.emails.send({
-        from: FROM_ADDRESS,
-        to,
-        subject,
-        html,
-    });
+    try {
+        const { data, error } = await resend.emails.send({
+            from: FROM_ADDRESS,
+            to,
+            subject,
+            html,
+        });
 
-    if (error) {
-        console.error(`❌ Error enviando a ${to}:`, error);
-        throw new Error(error.message || 'Error al enviar correo.');
+        if (error) {
+            console.error(`❌ Error enviando a ${to}:`, error);
+            throw new Error(error.message || 'Error al enviar correo.');
+        }
+
+        console.log(`📧 Email enviado → ${to} | ID: ${data.id}`);
+        return { success: true };
+    } catch (err) {
+        console.error(`❌ Excepción enviando email a ${to}:`, err.message);
+        throw err;
     }
-
-    console.log(`📧 Email enviado → ${to} | ID: ${data.id}`);
-    return { success: true };
 }
 
 // ── Email: verificar cuenta nueva ────────────────────────────────────────────
