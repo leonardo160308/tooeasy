@@ -1,13 +1,20 @@
 // backend/utils/emailService.js
-import { Resend } from 'resend';
+// Usa Nodemailer con Gmail App Password
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
-// En Resend plan gratuito: usa 'onboarding@resend.dev' como from
-// Si verificas tu dominio en resend.com puedes usar el tuyo propio
-const FROM_ADDRESS = process.env.EMAIL_FROM || 'Too Easy <onboarding@resend.dev>';
+const FROM_ADDRESS = process.env.EMAIL_FROM || `Too Easy <${process.env.EMAIL_USER}>`;
 
 // ── Template base ─────────────────────────────────────────────────────────────
 function baseTemplate(title, content, accentColor = '#2C405B') {
@@ -56,19 +63,13 @@ function baseTemplate(title, content, accentColor = '#2C405B') {
 // ── Función base de envío ─────────────────────────────────────────────────────
 async function sendEmail({ to, subject, html }) {
     try {
-        const { data, error } = await resend.emails.send({
+        const info = await transporter.sendMail({
             from: FROM_ADDRESS,
             to,
             subject,
             html,
         });
-
-        if (error) {
-            console.error(`❌ Error enviando a ${to}:`, error);
-            throw new Error(error.message || 'Error al enviar correo.');
-        }
-
-        console.log(`📧 Email enviado → ${to} | ID: ${data.id}`);
+        console.log(`📧 Email enviado → ${to} | ID: ${info.messageId}`);
         return { success: true };
     } catch (err) {
         console.error(`❌ Excepción enviando email a ${to}:`, err.message);
