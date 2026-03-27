@@ -19,6 +19,5 @@ router.post('/auth/verify-code', verifyRecoveryCode);
 router.post('/auth/recovery-login', recoveryLogin);
 
 // Paso 3b: Cambiar contraseña con token verificado
-router.post('/auth/reset-password', resetPassword);
-
+router.post('/auth/recovery-reset-password', resetPassword);
 export default router;

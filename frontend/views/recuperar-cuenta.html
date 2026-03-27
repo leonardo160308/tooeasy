@@ -588,7 +588,7 @@
         window.togglePass = (id, btn) => {
             const inp = document.getElementById(id);
             inp.type = inp.type === 'password' ? 'text' : 'password';
-            btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+            btn.textContent = inp.type === 'password' ? '👁' : '';
         };
 
         window.changePassword = async () => {
@@ -606,8 +606,7 @@
             btn.textContent = 'Guardando...';
 
             try {
-                const res = await fetch(`${API}/auth/reset-password`, {
-                    method: 'POST',
+                const res = await fetch(`${API}/auth/recovery-reset-password`, {                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         userId:            state.userId,
