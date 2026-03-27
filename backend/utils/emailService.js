@@ -60,7 +60,7 @@ function baseTemplate(title, content, accentColor = '#2C405B') {
       <tr>
         <td style="background:${accentColor};padding:28px 40px;text-align:center;">
           <h1 style="margin:0;color:#fff;font-size:26px;font-weight:800;letter-spacing:3px;">
-            TOO EASY 💸
+            TOO EASY 
           </h1>
           <p style="margin:8px 0 0;color:#B6823E;font-size:11px;letter-spacing:2px;
                     text-transform:uppercase;">${title}</p>

@@ -488,7 +488,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             alertaAdvertencia('La edad debe ser entre 15 y 99 años.');
             return;
         }
-
+        // Guardar avatar si cambió en el modal
+if (_avatarSeleccionadoModal) {
+    await equipSkin(userId, _avatarSeleccionadoModal, 'avatar');
+    currentUserData.foto = _avatarSeleccionadoModal;
+    localStorage.setItem('userAvatar', _avatarSeleccionadoModal);
+    _avatarSeleccionadoModal = null;
+}
         try {
             alertaInfo('Guardando cambios...', { duration: 1500 });
 

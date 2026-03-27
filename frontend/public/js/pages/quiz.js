@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── Mostrar feedback sin reflow ───────────────────────────────────────
     function mostrarFeedback(esCorrecto, keyCorrecta, textoCorrecta) {
         resultado.className = `resultado ${esCorrecto ? 'correcto' : 'incorrecto'}`;
-        resultIco.textContent  = esCorrecto ? '🎉' : '💡';
+        resultIco.textContent  = esCorrecto ? '' : '';
         resultMsg.textContent  = esCorrecto
             ? '¡Correcto! Muy bien.'
             : `La respuesta correcta era: ${keyCorrecta}) ${textoCorrecta}`;
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mensaje            += ' +20 monedas 🪙';
 
                 if (SKIN_REWARDS[updatePayload.level]) {
-                    mensaje += ' · ¡Nueva skin desbloqueada! 🎨';
+                    mensaje += ' · Eres muy inteligente ';
                 }
             } else {
                 mensaje = 'Repaso completado · Sin recompensa extra.';

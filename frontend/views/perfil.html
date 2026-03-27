@@ -306,17 +306,21 @@
     function closeAvatarPickerModal() {
         document.getElementById('avatarPickerModal').classList.remove('open');
     }
-    function selectAvatarModal(avatarKey) {
-        const paths = {
-            avatar1: '/public/img/avatars/perfil1.png',
-            avatar2: '/public/img/avatars/perfil2.png',
-            avatar3: '/public/img/avatars/perfil3.png',
-            avatar4: '/public/img/avatars/perfil4.png',
-        };
-        document.getElementById('avatarPreview').src = paths[avatarKey];
-        document.getElementById('user-avatar').src   = paths[avatarKey];
-        closeAvatarPickerModal();
-    }
+    let _avatarSeleccionadoModal = null; 
+
+    // En el <script> de perfil.html
+function selectAvatarModal(avatarKey) {
+    const paths = {
+        avatar1: '/public/img/avatars/perfil1.png',
+        avatar2: '/public/img/avatars/perfil2.png',
+        avatar3: '/public/img/avatars/perfil3.png',
+        avatar4: '/public/img/avatars/perfil4.png',
+    };
+    document.getElementById('avatarPreview').src = paths[avatarKey];
+    document.getElementById('user-avatar').src   = paths[avatarKey];
+    window._avatarSeleccionadoModal = avatarKey; // 👈 window. para que profile.js lo vea
+    closeAvatarPickerModal();
+}
     document.addEventListener('click', function(e) {
         const container = document.getElementById('avatarContainerModal');
         if (container && !container.contains(e.target)) closeAvatarPickerModal();
