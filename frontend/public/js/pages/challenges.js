@@ -1,5 +1,5 @@
 import { protectRoute, getAuthData } from '../modules/auth.js';
-import { getChallengesStatus, getChallengesProgress, completeChallenge } from '../modules/api.js';
+import { getUserData, getChallengesStatus, getChallengesProgress, completeChallenge } from '../modules/api.js';
 import { challengesData } from '../data/challenges.js';
 import { alertaExito, alertaError, alertaInfo } from '../modules/alerts.js';
 
@@ -12,7 +12,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const challengesContainer = document.getElementById('challenges-container');
 
     let completedChallengesIds = [];
-    let challengeProgress = {};   // { [id]: { current, required, percentage } }
+    let challengeProgress = {};
+
+    // ─── ACTUALIZAR MADERA EN PANTALLA ────────────────────────────────────
+    async function updateWoodDisplay() {
+        try {
+            const userData = await getUserData(userId);
+            const woodEl = document.getElementById('wood-count');
+            if (woodEl) woodEl.textContent = userData.wood ?? 0;
+        } catch (e) {
+            console.error('Error actualizando madera:', e);
+        }
+    }
 
     // ─── CARGAR ESTADO DE RETOS ───────────────────────────────────────────
     async function fetchChallengesData() {
@@ -37,16 +48,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const isCompleted = completedChallengesIds.includes(challenge.id);
             const prog = challengeProgress[challenge.id] || { current: 0, required: 1, percentage: 0 };
 
-            // Si ya está reclamado → 100%; si no, usar progreso real
             const percentage = isCompleted ? 100 : prog.percentage;
             const canClaim   = percentage >= 100 && !isCompleted;
 
-            // ── Botón ─────────────────────────────────────────────────────
             let btnText     = isCompleted ? '✓ Reclamado' : (canClaim ? 'Reclamar' : 'En progreso');
             let btnClass    = isCompleted ? 'btn-claim claimed' : (canClaim ? 'btn-claim ready' : 'btn-claim');
             let btnDisabled = isCompleted || !canClaim;
 
-            // ── Etiqueta de progreso ──────────────────────────────────────
             let progressLabel;
             if (isCompleted) {
                 progressLabel = '100%';
@@ -90,7 +98,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             challengesContainer.appendChild(card);
         });
 
-        // Asignar eventos solo a botones activos
         document.querySelectorAll('.btn-claim.ready[data-challenge-id]').forEach(button => {
             button.addEventListener('click', handleCompleteChallenge);
         });
@@ -120,8 +127,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     duration: 4000
                 });
 
-                // Recargar y re-renderizar con datos frescos
-                await fetchChallengesData();
+                // Actualizar madera y retos con datos frescos
+                await Promise.all([
+                    updateWoodDisplay(),
+                    fetchChallengesData()
+                ]);
                 renderChallenges();
 
             } else {
@@ -141,6 +151,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ─── INICIALIZAR ──────────────────────────────────────────────────────
-    await fetchChallengesData();
+    await Promise.all([
+        fetchChallengesData(),
+        updateWoodDisplay()
+    ]);
     renderChallenges();
 });

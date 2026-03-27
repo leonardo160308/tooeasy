@@ -353,14 +353,18 @@ h2 {
 .day-empty  { background: transparent; border: none; pointer-events: none; cursor: default; }
 
 /* ── MODAL ── */
+/* ── MODAL ── */
+/* CAMBIO: z-index subido de 100 a 10001 para aparecer SOBRE el header sticky (z-index:1000) */
 .modal {
     position: fixed;
     inset: 0;
-    z-index: 100;
+    z-index: 10001;
     background: rgba(26, 35, 50, 0.6);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;          /* alinear arriba para que no quede cortado */
+    padding-top: 90px;                /* dejar espacio visual bajo el header */
+    overflow-y: auto;                 /* scroll si el modal es muy alto */
     backdrop-filter: blur(4px);
 }
 
@@ -372,11 +376,12 @@ h2 {
     border-radius: var(--radius-xl);
     width: 92%;
     max-width: 520px;
-    max-height: 90vh;
+    max-height: calc(100vh - 110px);  /* nunca superar el viewport menos el padding */
     overflow-y: auto;
     position: relative;
     box-shadow: 0 20px 60px rgba(26, 35, 50, 0.3);
     animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 24px;             /* espacio en la parte inferior al hacer scroll */
 }
 
 @keyframes modalIn {
