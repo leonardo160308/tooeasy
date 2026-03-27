@@ -1,20 +1,47 @@
 // backend/utils/emailService.js
-// Usa Nodemailer con Gmail App Password
-import nodemailer from 'nodemailer';
+// Usa Brevo (Sendinblue) HTTP API
+// ✅ Funciona en Render Free (no usa SMTP, usa HTTPS)
+// ✅ Manda a cualquier correo sin verificar dominio
+// ✅ Gratis hasta 300 emails/día
 import dotenv from 'dotenv';
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-});
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const FROM_EMAIL    = process.env.EMAIL_USER || 'tooeasycontactanos@gmail.com';
+const FROM_NAME     = 'Too Easy';
 
-const FROM_ADDRESS = process.env.EMAIL_FROM || `Too Easy <${process.env.EMAIL_USER}>`;
+// ── Función base de envío via Brevo REST API ──────────────────────────────────
+async function sendEmail({ to, subject, html }) {
+    try {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'accept':       'application/json',
+                'api-key':      BREVO_API_KEY,
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                sender:  { name: FROM_NAME, email: FROM_EMAIL },
+                to:      [{ email: to }],
+                subject,
+                htmlContent: html,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(`❌ Error enviando a ${to}:`, data);
+            throw new Error(data.message || 'Error al enviar correo.');
+        }
+
+        console.log(`📧 Email enviado → ${to} | ID: ${data.messageId}`);
+        return { success: true };
+    } catch (err) {
+        console.error(`❌ Excepción enviando email a ${to}:`, err.message);
+        throw err;
+    }
+}
 
 // ── Template base ─────────────────────────────────────────────────────────────
 function baseTemplate(title, content, accentColor = '#2C405B') {
@@ -58,23 +85,6 @@ function baseTemplate(title, content, accentColor = '#2C405B') {
 </table>
 </body>
 </html>`;
-}
-
-// ── Función base de envío ─────────────────────────────────────────────────────
-async function sendEmail({ to, subject, html }) {
-    try {
-        const info = await transporter.sendMail({
-            from: FROM_ADDRESS,
-            to,
-            subject,
-            html,
-        });
-        console.log(`📧 Email enviado → ${to} | ID: ${info.messageId}`);
-        return { success: true };
-    } catch (err) {
-        console.error(`❌ Excepción enviando email a ${to}:`, err.message);
-        throw err;
-    }
 }
 
 // ── Email: verificar cuenta nueva ────────────────────────────────────────────
