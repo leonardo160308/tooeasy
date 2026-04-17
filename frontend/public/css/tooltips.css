@@ -1,0 +1,288 @@
+/* ========================================
+   SISTEMA DE TOOLTIPS — TOO-EASY (v1)
+   Integra con las CSS variables globales
+   del proyecto (--primary, --secondary, etc.)
+   ======================================== */
+
+:root {
+    --tt-bg:      #1a2332;
+    --tt-color:   #ffffff;
+    --tt-border:  rgba(182, 130, 62, 0.35);
+    --tt-radius:  10px;
+    --tt-width:   250px;
+    --tt-shadow:  0 8px 28px rgba(26, 35, 50, 0.32);
+}
+
+/* ─────────────────────────────────────────
+   ICONO DISPARADOR (ℹ dentro de un círculo)
+   Uso:  <span class="tooltip-icon" data-tooltip="Texto explicativo">ℹ</span>
+   ───────────────────────────────────────── */
+.tooltip-icon {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    width:           16px;
+    height:          16px;
+    min-width:       16px;
+    background:      #6585AA;
+    color:           #ffffff;
+    border-radius:   50%;
+    font-size:       10px;
+    font-weight:     800;
+    font-style:      normal;
+    cursor:          help;
+    margin-left:     5px;
+    position:        relative;
+    vertical-align:  middle;
+    user-select:     none;
+    transition:      background 0.2s ease, transform 0.18s ease;
+    line-height:     1;
+    flex-shrink:     0;
+    z-index:         1;
+}
+
+.tooltip-icon:hover {
+    background: #2C405B;
+    transform:  scale(1.18);
+}
+
+/* ─────────────────────────────────────────
+   BURBUJA DEL TOOLTIP (pseudo-elemento ::before)
+   ───────────────────────────────────────── */
+.tooltip-icon::before {
+    content:       attr(data-tooltip);
+    position:      absolute;
+    bottom:        calc(100% + 12px);
+    left:          50%;
+    transform:     translateX(-50%) translateY(6px);
+    background:    var(--tt-bg);
+    color:         var(--tt-color);
+    border:        1px solid var(--tt-border);
+    padding:       10px 14px;
+    border-radius: var(--tt-radius);
+    font-size:     12px;
+    font-weight:   500;
+    font-style:    normal;
+    line-height:   1.6;
+    white-space:   normal;
+    width:         var(--tt-width);
+    text-align:    left;
+    z-index:       99999;
+    opacity:       0;
+    visibility:    hidden;
+    transition:    opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+    box-shadow:    var(--tt-shadow);
+    pointer-events: none;
+    letter-spacing: 0.1px;
+}
+
+/* ─────────────────────────────────────────
+   FLECHITA DEL TOOLTIP (pseudo-elemento ::after)
+   ───────────────────────────────────────── */
+.tooltip-icon::after {
+    content:       '';
+    position:      absolute;
+    bottom:        calc(100% + 4px);
+    left:          50%;
+    transform:     translateX(-50%);
+    border:        5px solid transparent;
+    border-top-color: var(--tt-bg);
+    z-index:       99999;
+    opacity:       0;
+    visibility:    hidden;
+    transition:    opacity 0.22s ease, visibility 0.22s ease;
+    pointer-events: none;
+}
+
+/* ── Mostrar al hacer hover ── */
+.tooltip-icon:hover::before {
+    opacity:    1;
+    visibility: visible;
+    transform:  translateX(-50%) translateY(0);
+}
+.tooltip-icon:hover::after {
+    opacity:    1;
+    visibility: visible;
+}
+
+/* ─────────────────────────────────────────
+   VARIANTES DE POSICIÓN
+   ───────────────────────────────────────── */
+
+/* ↓ Abajo */
+.tooltip-icon.tt-bottom::before {
+    bottom:    auto;
+    top:       calc(100% + 12px);
+    transform: translateX(-50%) translateY(-6px);
+}
+.tooltip-icon.tt-bottom::after {
+    bottom:              auto;
+    top:                 calc(100% + 4px);
+    border-top-color:    transparent;
+    border-bottom-color: var(--tt-bg);
+}
+.tooltip-icon.tt-bottom:hover::before {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* → Derecha */
+.tooltip-icon.tt-right::before {
+    bottom:    auto;
+    top:       50%;
+    left:      calc(100% + 12px);
+    transform: translateY(-50%) translateX(-6px);
+    width:     220px;
+}
+.tooltip-icon.tt-right::after {
+    bottom:             auto;
+    top:                50%;
+    left:               calc(100% + 4px);
+    transform:          translateY(-50%);
+    border-top-color:   transparent;
+    border-right-color: var(--tt-bg);
+}
+.tooltip-icon.tt-right:hover::before {
+    transform: translateY(-50%) translateX(0);
+}
+
+/* ← Izquierda */
+.tooltip-icon.tt-left::before {
+    bottom:    auto;
+    top:       50%;
+    left:      auto;
+    right:     calc(100% + 12px);
+    transform: translateY(-50%) translateX(6px);
+    width:     220px;
+}
+.tooltip-icon.tt-left::after {
+    bottom:            auto;
+    top:               50%;
+    left:              auto;
+    right:             calc(100% + 4px);
+    transform:         translateY(-50%);
+    border-top-color:  transparent;
+    border-left-color: var(--tt-bg);
+}
+.tooltip-icon.tt-left:hover::before {
+    transform: translateY(-50%) translateX(0);
+}
+
+/* ─────────────────────────────────────────
+   MODIFICADORES DE ANCHO
+   ───────────────────────────────────────── */
+.tooltip-icon.tt-wide::before   { width: 300px; }
+.tooltip-icon.tt-narrow::before { width: 180px; }
+
+/* ─────────────────────────────────────────
+   VARIANTE CLARA (para fondos oscuros)
+   El ícono se ve blanco/semitransparente
+   ───────────────────────────────────────── */
+.tooltip-icon.tt-light {
+    background: rgba(255, 255, 255, 0.18);
+    color:      #ffffff;
+    border:     1px solid rgba(255, 255, 255, 0.35);
+}
+.tooltip-icon.tt-light:hover {
+    background: rgba(255, 255, 255, 0.32);
+    transform:  scale(1.18);
+}
+
+/* ─────────────────────────────────────────
+   HELPER: encabezado con tooltip alineado
+   Uso: <h2 class="tooltip-heading">Título
+          <span class="tooltip-icon ...">ℹ</span>
+        </h2>
+   ───────────────────────────────────────── */
+.tooltip-heading {
+    display:     inline-flex;
+    align-items: center;
+    gap:         8px;
+}
+
+/* ─────────────────────────────────────────
+   BANNER INFORMATIVO (bloques de "¿cómo funciona?")
+   Uso:
+   <div class="info-banner">
+     <span class="info-banner-icon">🎯</span>
+     <div class="info-banner-text">
+       <strong>Título</strong>
+       Descripción breve.
+     </div>
+   </div>
+   ───────────────────────────────────────── */
+.info-banner {
+    background:    linear-gradient(135deg, #eef4fb 0%, #e4edf7 100%);
+    border:        1px solid rgba(101, 133, 170, 0.22);
+    border-left:   4px solid #6585AA;
+    border-radius: 14px;
+    padding:       14px 18px;
+    margin-bottom: 18px;
+    font-size:     0.86rem;
+    color:         #4a5568;
+    font-weight:   600;
+    line-height:   1.65;
+    display:       flex;
+    align-items:   flex-start;
+    gap:           14px;
+    box-shadow:    0 2px 8px rgba(44, 64, 91, 0.07);
+}
+
+.info-banner .info-banner-icon {
+    font-size:  1.5rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+    line-height: 1;
+}
+
+.info-banner .info-banner-text strong {
+    display:       block;
+    color:         #2C405B;
+    font-size:     0.92rem;
+    font-weight:   800;
+    margin-bottom: 4px;
+}
+
+.info-banner .info-banner-text p {
+    margin: 0;
+}
+
+/* ─────────────────────────────────────────
+   BANNER VARIANTE ACENTO (color dorado/naranja)
+   ───────────────────────────────────────── */
+.info-banner.info-banner-accent {
+    background:  linear-gradient(135deg, #fdf6ed 0%, #f9ead8 100%);
+    border-left-color: #BA8E58;
+    border-color:      rgba(186, 142, 88, 0.22);
+}
+
+.info-banner.info-banner-accent .info-banner-text strong {
+    color: #7c4a03;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — Ajuste para móviles
+   ───────────────────────────────────────── */
+@media (max-width: 600px) {
+    .tooltip-icon::before {
+        width:     200px;
+        left:      0;
+        transform: translateX(0) translateY(6px);
+    }
+    .tooltip-icon:hover::before {
+        transform: translateX(0) translateY(0);
+    }
+    .tooltip-icon::after {
+        left: 8px;
+    }
+    /* Variante derecha en móvil → cae abajo */
+    .tooltip-icon.tt-right::before {
+        bottom:    auto;
+        top:       calc(100% + 10px);
+        left:      0;
+        transform: translateX(0) translateY(-6px);
+        width:     200px;
+    }
+    .tooltip-icon.tt-right:hover::before {
+        transform: translateX(0) translateY(0);
+    }
+}
