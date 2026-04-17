@@ -47,23 +47,23 @@
     <!-- ── SIDEBAR ───────────────────────────────────────────── -->
     <aside class="inv-sidebar">
         <div class="sidebar-logo">
-            <span>📈</span> Inversiones
+            <span></span> Inversiones
         </div>
 
         <button class="nav-item active" data-section="inicio">
-            <span class="nav-icon">🏠</span> Inicio
+            <span class="nav-icon"></span> Inicio
         </button>
         <button class="nav-item" data-section="nueva">
-            <span class="nav-icon">➕</span> Nueva simulación
+            <span class="nav-icon"></span> Nueva simulación
         </button>
         <button class="nav-item" data-section="historial">
-            <span class="nav-icon">📋</span> Historial
+            <span class="nav-icon"></span> Historial
         </button>
         <button class="nav-item" data-section="comparar">
-            <span class="nav-icon">⚖️</span> Comparar
+            <span class="nav-icon"></span> Comparar
         </button>
         <button class="nav-item" data-section="configuracion">
-            <span class="nav-icon">⚙️</span> Configuración
+            <span class="nav-icon"></span> Configuración
         </button>
     </aside>
 
@@ -74,7 +74,7 @@
              SECCIÓN: INICIO
         ══════════════════════════════════════════════════════ -->
         <section id="section-inicio" class="inv-section">
-            <div class="section-title">📊 Módulo de Inversiones</div>
+            <div class="section-title">Módulo de Inversiones</div>
             <div class="section-subtitle">Simula, analiza y compara estrategias de inversión.</div>
 
             <div id="inicio-stats" style="margin-bottom:24px"></div>
@@ -92,15 +92,15 @@
                 <h3>¿Cómo funciona?</h3>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;font-size:0.88rem;color:var(--text-mid)">
                     <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.5rem">1️⃣</span>
+                        <span style="font-size:1.5rem">1️</span>
                         <div><strong style="display:block;color:var(--primary);margin-bottom:3px">Configura</strong>Define capital, plazo, aportación mensual y número de instrumentos (máx. 3).</div>
                     </div>
                     <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.5rem">2️⃣</span>
+                        <span style="font-size:1.5rem">2️</span>
                         <div><strong style="display:block;color:var(--primary);margin-bottom:3px">Selecciona</strong>Elige entre 15 instrumentos reales: CETES, S&P 500, Bitcoin y más. El riesgo se calcula automáticamente.</div>
                     </div>
                     <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.5rem">3️⃣</span>
+                        <span style="font-size:1.5rem">3️</span>
                         <div><strong style="display:block;color:var(--primary);margin-bottom:3px">Analiza</strong>Ve la gráfica de crecimiento, tabla anual, análisis automático y recomendaciones personalizadas.</div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
              SECCIÓN: NUEVA SIMULACIÓN (wizard 3 pasos)
         ══════════════════════════════════════════════════════ -->
         <section id="section-nueva" class="inv-section">
-            <div class="section-title">➕ Nueva Simulación</div>
+            <div class="section-title">Nueva Simulación</div>
 
             <!-- Wizard tabs -->
             <div class="wizard-steps">
@@ -163,7 +163,7 @@
 
                     <div class="inv-card" style="background:#eef4fb;border-color:rgba(101,133,170,0.3);margin:18px 0 0;padding:12px 16px">
                         <p style="font-size:0.83rem;color:var(--text-mid);font-weight:600;margin:0">
-                            💡 El capital se distribuye <strong>equitativamente</strong> entre los instrumentos elegidos.
+                            El capital se distribuye <strong>equitativamente</strong> entre los instrumentos elegidos.
                             Las aportaciones también se reparten de forma proporcional.
                         </p>
                     </div>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="btn-row">
                     <button class="btn-ghost" id="btn-paso2-ant">← Volver</button>
-                    <button class="btn-primary" id="btn-simular">📈 Simular</button>
+                    <button class="btn-primary" id="btn-simular">Simular</button>
                 </div>
             </div>
 
@@ -246,15 +246,15 @@
                     <h3>Análisis automático</h3>
                     <div class="analysis-row">
                         <div class="analysis-item">
-                            <div class="ai-label">🏆 Mejor rendimiento</div>
+                            <div class="ai-label">Mejor rendimiento</div>
                             <div class="ai-value" id="ana-mejor">—</div>
                         </div>
                         <div class="analysis-item">
-                            <div class="ai-label">🛡️ Más estable</div>
+                            <div class="ai-label">Más estable</div>
                             <div class="ai-value" id="ana-estable">—</div>
                         </div>
                         <div class="analysis-item">
-                            <div class="ai-label">⚡ Mayor riesgo</div>
+                            <div class="ai-label">Mayor riesgo</div>
                             <div class="ai-value" id="ana-riesgo">—</div>
                         </div>
                     </div>
@@ -272,7 +272,7 @@
                     </div>
                     <div class="btn-row">
                         <button class="btn-ghost" id="btn-paso3-ant">← Cambiar instrumentos</button>
-                        <button class="btn-secondary" id="btn-guardar">💾 Guardar en historial</button>
+                        <button class="btn-secondary" id="btn-guardar">Guardar en historial</button>
                     </div>
                 </div>
             </div>
@@ -282,7 +282,7 @@
              SECCIÓN: HISTORIAL
         ══════════════════════════════════════════════════════ -->
         <section id="section-historial" class="inv-section">
-            <div class="section-title">📋 Historial de simulaciones</div>
+            <div class="section-title">Historial de simulaciones</div>
             <div class="section-subtitle">Revisa, elimina o selecciona simulaciones para comparar.</div>
 
             <div class="compare-select-info" id="compare-info">
@@ -297,7 +297,7 @@
 
             <div id="historial-list" class="historial-list">
                 <div class="empty-state">
-                    <div class="empty-icon">📋</div>
+                    <div class="empty-icon"></div>
                     <p>Cargando historial...</p>
                 </div>
             </div>
@@ -307,11 +307,11 @@
              SECCIÓN: COMPARAR
         ══════════════════════════════════════════════════════ -->
         <section id="section-comparar" class="inv-section">
-            <div class="section-title">⚖️ Comparar simulaciones</div>
+            <div class="section-title">Comparar simulaciones</div>
             <div class="section-subtitle">Comparación lado a lado de las simulaciones seleccionadas.</div>
             <div id="compare-container">
                 <div class="empty-state">
-                    <div class="empty-icon">⚖️</div>
+                    <div class="empty-icon"></div>
                     <p>Selecciona simulaciones desde el Historial para comparar aquí.</p>
                 </div>
             </div>
@@ -320,24 +320,7 @@
         <!-- ══════════════════════════════════════════════════════
              SECCIÓN: CONFIGURACIÓN
         ══════════════════════════════════════════════════════ -->
-        <section id="section-configuracion" class="inv-section">
-            <div class="section-title">⚙️ Configuración global</div>
-            <div class="section-subtitle">Estos valores se aplican a todas tus simulaciones.</div>
-
-            <div class="inv-card" style="max-width:480px">
-                <h3>Inflación anual</h3>
-                <div class="field-group" style="margin-bottom:18px">
-                    <label for="cfg-inflacion-global">Inflación anual estimada (%)</label>
-                    <input type="number" id="cfg-inflacion-global" value="4.50" min="0" max="25" step="0.1">
-                </div>
-                <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:16px;font-weight:600">
-                    La inflación afecta el <strong>capital real</strong> y el <strong>rendimiento real</strong>
-                    de tus simulaciones. Para UDIBONOS, también se suma al rendimiento base (ya que es un
-                    instrumento indexado a inflación). Referencia: inflación México promedio 4–5%.
-                </p>
-                <button class="btn-primary" id="btn-guardar-cfg">💾 Guardar configuración</button>
-            </div>
-        </section>
+        
 
     </main>
 </div>

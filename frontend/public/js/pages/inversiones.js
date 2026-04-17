@@ -15,16 +15,87 @@ const state = {
         plazoAnios: 10,
         aportacionMensual: 0,
         numInversiones: 1,
-        inflacion: 4.50
+        inflacion: 4.50          // ← ahora vive aquí (por simulación)
     },
-    instrumentosSeleccionados: [],  // objetos de INSTRUMENTOS
-    resultados: null,               // resultado de calcularSimulacion()
-    historial: [],                  // sims guardadas
-    compareSeleccion: new Set(),    // ids seleccionados para comparar
+    instrumentosSeleccionados: [],
+    resultados: null,
+    historial: [],
+    compareSeleccion: new Set(),
     chartInstance: null,
     compareChartInstance: null,
-    wizardStep: 1
+    wizardStep: 1,
+    simulacionGuardada: false    // ← nuevo flag para controlar el botón "Guardar"
 };
+
+// ── Función para resetear el estado de una nueva simulación ───────────────────
+function resetSimulationState() {
+    state.config = {
+        nombre: '',
+        capitalInicial: 100000,
+        plazoAnios: 10,
+        aportacionMensual: 0,
+        numInversiones: 1,
+        inflacion: 4.50
+    };
+    state.instrumentosSeleccionados = [];
+    state.resultados = null;
+    state.simulacionGuardada = false;
+
+    // Limpiar campos de la UI del paso 1
+    const campos = {
+        'cfg-nombre':      '',
+        'cfg-capital':     '100000',
+        'cfg-plazo':       '10',
+        'cfg-aportacion':  '0',
+        'cfg-num':         '1',
+        'cfg-inflacion':   '4.50'
+    };
+    Object.entries(campos).forEach(([id, val]) => {
+        const el = $(id);
+        if (el) el.value = val;
+    });
+
+    // Limpiar instrumentos
+    const instrContainer = $('instruments-container');
+    if (instrContainer) instrContainer.innerHTML = '';
+
+    // Limpiar resultados UI
+    ['res-capital','res-aportado','res-ganancia','res-rendimiento','res-real'].forEach(id => {
+        const el = $(id);
+        if (el) el.textContent = '—';
+    });
+    const riesgoEl = $('res-riesgo');
+    if (riesgoEl) { riesgoEl.textContent = '—'; riesgoEl.className = 'risk-badge'; }
+
+    const recList = $('rec-list');
+    if (recList) recList.innerHTML = '';
+
+    const tbody = $('tabla-tbody');
+    if (tbody) tbody.innerHTML = '';
+
+    const thead = $('tabla-thead');
+    if (thead) thead.innerHTML = '';
+
+    ['ana-mejor','ana-estable','ana-riesgo'].forEach(id => {
+        const el = $(id);
+        if (el) el.textContent = '—';
+    });
+
+    const resNombre = $('res-nombre');
+    if (resNombre) resNombre.value = '';
+
+    const btnGuardar = $('btn-guardar');
+    if (btnGuardar) {
+        btnGuardar.textContent = '💾 Guardar en historial';
+        btnGuardar.disabled = false;
+    }
+
+    // Destruir gráfica si existe
+    if (state.chartInstance) {
+        state.chartInstance.destroy();
+        state.chartInstance = null;
+    }
+}
 
 // ── Utilidades DOM ────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -41,6 +112,115 @@ function randn(mean = 0, std = 1) {
     return mean + std * z;
 }
 
+// ── VALIDACIONES ──────────────────────────────────────────────────────────────
+
+/**
+ * Valida todos los campos del Paso 1.
+ * Retorna { valid: boolean, errors: string[] }
+ */
+function validarPaso1() {
+    const errors = [];
+
+    // --- Nombre ---
+    const nombre = ($('cfg-nombre').value || '').trim();
+    if (nombre.length < 3) {
+        errors.push('El nombre debe tener al menos 3 caracteres.');
+    } else if (nombre.length > 50) {
+        errors.push('El nombre no puede superar los 50 caracteres.');
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9 \-]+$/.test(nombre)) {
+        errors.push('El nombre solo puede contener letras, números, espacios y guiones.');
+    }
+
+    // --- Plazo ---
+    const plazoRaw = $('cfg-plazo').value;
+    const plazo = parseInt(plazoRaw, 10);
+    if (!Number.isInteger(plazo) || isNaN(plazo) || plazo < 1 || plazo > 50) {
+        errors.push('El plazo debe ser un número entero entre 1 y 50 años.');
+    }
+
+    // --- Capital Inicial ---
+    const capitalRaw = $('cfg-capital').value;
+    const capital = parseInt(capitalRaw, 10);
+    const aportRaw = $('cfg-aportacion').value;
+    const aport = parseInt(aportRaw, 10);
+
+    if (isNaN(capital) || capital < 0 || capital > 999999999) {
+        errors.push('El capital inicial debe estar entre $0 y $999,999,999 (sin decimales).');
+    } else if (capital === 0 && (isNaN(aport) || aport <= 0)) {
+        errors.push('Si el capital inicial es $0, la aportación mensual debe ser mayor a $0.');
+    }
+
+    // --- Aportación Mensual ---
+    if (isNaN(aport) || aport < 0 || aport > 99999999) {
+        errors.push('La aportación mensual debe estar entre $0 y $99,999,999 (sin decimales).');
+    }
+
+    // --- Inflación ---
+    const inflRaw = $('cfg-inflacion').value;
+    const inflacion = parseFloat(inflRaw);
+    if (isNaN(inflacion) || inflacion < -5.00 || inflacion > 100.00) {
+        errors.push('La inflación debe estar entre -5.00% y 100.00%.');
+    }
+
+    return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Aplica restricciones de input en tiempo real a un campo de entero.
+ * Elimina decimales, limita el valor al rango dado.
+ */
+function aplicarRestriccionEntero(inputEl, min, max) {
+    inputEl.addEventListener('input', () => {
+        // Eliminar cualquier caracter que no sea dígito (ni signo para negativos si min < 0)
+        let val = inputEl.value.replace(/[^\d]/g, '');
+        if (val === '') { inputEl.value = ''; return; }
+        let num = parseInt(val, 10);
+        if (isNaN(num)) { inputEl.value = ''; return; }
+        if (num > max) num = max;
+        inputEl.value = num;
+    });
+    inputEl.addEventListener('keydown', e => {
+        // Bloquear punto, coma y 'e'
+        if (['.', ',', 'e', 'E'].includes(e.key)) e.preventDefault();
+    });
+}
+
+/**
+ * Aplica restricciones de input en tiempo real a un campo decimal.
+ * Permite negativos si minVal < 0. Máximo 2 decimales.
+ */
+function aplicarRestriccionDecimal(inputEl, minVal, maxVal) {
+    inputEl.addEventListener('input', () => {
+        let val = inputEl.value;
+        // Permitir signo negativo solo al inicio si minVal < 0
+        if (minVal < 0) {
+            val = val.replace(/[^\d.\-]/g, '');
+            // Solo un signo negativo al inicio
+            val = val.replace(/(?!^)-/g, '');
+        } else {
+            val = val.replace(/[^\d.]/g, '');
+        }
+        // Solo un punto decimal
+        const parts = val.split('.');
+        if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
+        // Máximo 2 decimales
+        if (parts.length === 2 && parts[1].length > 2) {
+            val = parts[0] + '.' + parts[1].substring(0, 2);
+        }
+        inputEl.value = val;
+    });
+    inputEl.addEventListener('keydown', e => {
+        if ([',', 'e', 'E'].includes(e.key)) e.preventDefault();
+    });
+    inputEl.addEventListener('blur', () => {
+        let num = parseFloat(inputEl.value);
+        if (isNaN(num)) { inputEl.value = ''; return; }
+        if (num < minVal) num = minVal;
+        if (num > maxVal) num = maxVal;
+        inputEl.value = num.toFixed(2);
+    });
+}
+
 // ── CÁLCULO DE SIMULACIÓN ─────────────────────────────────────────────────────
 
 function simularInstrumento(instrumento, cfg, numInstrumentos) {
@@ -51,17 +231,12 @@ function simularInstrumento(instrumento, cfg, numInstrumentos) {
     const inflMensual  = Math.pow(1 + inflAnual, 1 / 12) - 1;
 
     let capital = capitalParte;
-    // datosAnuales[0] = punto de inicio
     const datosAnuales = [{ año: 0, capital: capitalParte, capitalReal: capitalParte }];
     const retornosAnuales = [];
 
     for (let mes = 1; mes <= meses; mes++) {
-        // Tasa anual con variabilidad (usando volatilidad anualizada)
         let tasaAnual = instrumento.tasa_base + randn(0, instrumento.volatilidad);
-
-        // UDIBONOS: el rendimiento base es REAL; añadir inflación da el nominal
         if (instrumento.indexadoInflacion) tasaAnual += inflAnual;
-
         const tasaMensual = Math.pow(1 + tasaAnual, 1 / 12) - 1;
         capital = Math.max(0, capital * (1 + tasaMensual) + aportParte);
 
@@ -78,13 +253,12 @@ function simularInstrumento(instrumento, cfg, numInstrumentos) {
         }
     }
 
-    const capitalFinal   = datosAnuales[datosAnuales.length - 1].capital;
+    const capitalFinal    = datosAnuales[datosAnuales.length - 1].capital;
     const capitalFinalReal = datosAnuales[datosAnuales.length - 1].capitalReal;
-    const totalAportado  = capitalParte + aportParte * meses;
-    const ganancia       = capitalFinal - totalAportado;
-    const rendimiento    = totalAportado > 0 ? (ganancia / totalAportado) * 100 : 0;
+    const totalAportado   = capitalParte + aportParte * meses;
+    const ganancia        = capitalFinal - totalAportado;
+    const rendimiento     = totalAportado > 0 ? (ganancia / totalAportado) * 100 : 0;
 
-    // Coeficiente de variación para detectar "más estable"
     const mediaR  = retornosAnuales.reduce((a, b) => a + b, 0) / (retornosAnuales.length || 1);
     const varR    = retornosAnuales.reduce((s, r) => s + (r - mediaR) ** 2, 0) / (retornosAnuales.length || 1);
     const coefVar = Math.abs(mediaR) > 0.001 ? Math.sqrt(varR) / Math.abs(mediaR) : 999;
@@ -172,7 +346,6 @@ function calcularSimulacion() {
 
     const resultadosPorInstrumento = instrs.map(i => simularInstrumento(i, cfg, n));
 
-    // Tabla anual combinada
     const tablaAnual = [];
     for (let año = 1; año <= cfg.plazoAnios; año++) {
         const fila = { año };
@@ -190,7 +363,6 @@ function calcularSimulacion() {
         tablaAnual.push(fila);
     }
 
-    // Totales del portafolio
     const capitalFinalTotal   = resultadosPorInstrumento.reduce((s, r) => s + r.capitalFinal, 0);
     const capitalFinalReal    = resultadosPorInstrumento.reduce((s, r) => s + r.capitalFinalReal, 0);
     const totalAportadoTotal  = cfg.capitalInicial + cfg.aportacionMensual * cfg.plazoAnios * 12;
@@ -198,7 +370,6 @@ function calcularSimulacion() {
     const rendimientoTotal    = totalAportadoTotal > 0 ? (gananciaTotal / totalAportadoTotal) * 100 : 0;
     const riesgoGlobal        = calcularRiesgoGlobal(instrs);
 
-    // Análisis
     const mejor    = resultadosPorInstrumento.reduce((a, b) => a.capitalFinal > b.capitalFinal ? a : b);
     const estable  = resultadosPorInstrumento.reduce((a, b) => a.coefVar < b.coefVar ? a : b);
     const masRiesgo = resultadosPorInstrumento.reduce((a, b) =>
@@ -209,7 +380,6 @@ function calcularSimulacion() {
         gananciaTotal, rendimientoTotal
     });
 
-    // Datos para gráfica (series por instrumento + total)
     const labels = ['Inicio', ...Array.from({ length: cfg.plazoAnios }, (_, i) => `Año ${i + 1}`)];
     const series = resultadosPorInstrumento.map(r => ({
         nombre: r.instrumento.nombre,
@@ -274,17 +444,21 @@ function irAPaso(paso) {
 // ── PASO 1: CONFIGURACIÓN ─────────────────────────────────────────────────────
 
 function leerConfig() {
-    state.config.nombre            = $('cfg-nombre').value.trim() || 'Simulación';
-    state.config.capitalInicial    = parseFloat($('cfg-capital').value) || 0;
-    state.config.plazoAnios        = parseInt($('cfg-plazo').value) || 1;
-    state.config.aportacionMensual = parseFloat($('cfg-aportacion').value) || 0;
-    state.config.numInversiones    = parseInt($('cfg-num').value) || 1;
+    state.config.nombre            = ($('cfg-nombre').value || '').trim();
+    state.config.capitalInicial    = parseInt($('cfg-capital').value, 10) || 0;
+    state.config.plazoAnios        = parseInt($('cfg-plazo').value, 10) || 1;
+    state.config.aportacionMensual = parseInt($('cfg-aportacion').value, 10) || 0;
+    state.config.numInversiones    = parseInt($('cfg-num').value, 10) || 1;
+    state.config.inflacion         = parseFloat($('cfg-inflacion').value) || 4.50;
 }
 
 function siguientePaso1() {
+    const { valid, errors } = validarPaso1();
+    if (!valid) {
+        alertaAdvertencia(errors.join('\n'), { title: 'Revisa los datos', duration: 6000 });
+        return;
+    }
     leerConfig();
-    if (state.config.capitalInicial <= 0) return alertaAdvertencia('Ingresa un capital inicial mayor a 0.');
-    if (state.config.plazoAnios < 1 || state.config.plazoAnios > 30) return alertaAdvertencia('El plazo debe estar entre 1 y 30 años.');
     renderInstrumentSelects();
     irAPaso(2);
 }
@@ -394,21 +568,26 @@ function simular() {
         return alertaAdvertencia(`Selecciona ${state.config.numInversiones} instrumento(s) para continuar.`);
     }
 
-    // Verificar duplicados
     const ids = instrs.map(i => i.id);
     if (new Set(ids).size !== ids.length) {
         return alertaAdvertencia('No puedes seleccionar el mismo instrumento más de una vez.');
     }
 
     state.instrumentosSeleccionados = instrs;
+    state.simulacionGuardada = false;  // reset flag al calcular nueva simulación
     alertaInfo('Ejecutando simulación...', { duration: 1500 });
 
-    // Pequeño timeout para que la alerta aparezca antes del cálculo
     setTimeout(() => {
         try {
             state.resultados = calcularSimulacion();
             irAPaso(3);
             renderResultados(state.resultados);
+            // Restaurar botón guardar para esta nueva simulación
+            const btnGuardar = $('btn-guardar');
+            if (btnGuardar) {
+                btnGuardar.textContent = '💾 Guardar en historial';
+                btnGuardar.disabled = false;
+            }
         } catch (e) {
             console.error(e);
             alertaError('Error al calcular la simulación.');
@@ -421,7 +600,6 @@ function simular() {
 function renderResultados(r) {
     const cfg = state.config;
 
-    // Summary cards
     $('res-capital').textContent     = fmtMXN(r.capitalFinalTotal);
     $('res-aportado').textContent    = fmtMXN(r.totalAportadoTotal);
     $('res-ganancia').textContent    = fmtMXN(r.gananciaTotal);
@@ -435,18 +613,13 @@ function renderResultados(r) {
     riskEl.textContent = `${rm.emoji} ${rm.label}`;
     riskEl.className = `risk-badge ${r.riesgoGlobal}`;
 
-    // Gráfica
     renderGrafica(r.datosGrafica);
-
-    // Tabla
     renderTablaAnual(r.tablaAnual, r.resultadosPorInstrumento);
 
-    // Análisis
     $('ana-mejor').textContent   = r.mejorInstrumento;
     $('ana-estable').textContent = r.masEstable;
     $('ana-riesgo').textContent  = r.mayorRiesgo;
 
-    // Recomendaciones
     const recList = $('rec-list');
     recList.innerHTML = r.recomendaciones.map(rec => `
         <div class="rec-item ${rec.tipo}">
@@ -458,7 +631,6 @@ function renderResultados(r) {
         </div>
     `).join('');
 
-    // Nombre de la simulación
     $('res-nombre').value = `${state.instrumentosSeleccionados.map(i => i.nombre).join(' + ')} · ${cfg.plazoAnios} años`;
 }
 
@@ -478,7 +650,6 @@ function renderGrafica(gData) {
         fill: false
     }));
 
-    // Línea de capital invertido (referencia)
     datasets.push({
         label: 'Capital invertido',
         data: gData.capitalInvertidoSerie,
@@ -520,14 +691,12 @@ function renderTablaAnual(tabla, resultados) {
     const thead = $('tabla-thead');
     const tbody = $('tabla-tbody');
 
-    // Encabezado dinámico
     let thHtml = '<th>Año</th>';
     resultados.forEach(r => { thHtml += `<th>${r.instrumento.nombre}</th>`; });
     if (resultados.length > 1) thHtml += '<th>Total</th>';
     thHtml += '<th>Total real (−inflación)</th>';
     thead.innerHTML = thHtml;
 
-    // Filas
     tbody.innerHTML = tabla.map(f => {
         let tdHtml = `<td>${f.año}</td>`;
         resultados.forEach((_, idx) => {
@@ -542,11 +711,18 @@ function renderTablaAnual(tabla, resultados) {
 // ── GUARDAR SIMULACIÓN ────────────────────────────────────────────────────────
 
 async function guardarSimulacion() {
-    const r = state.resultados;
-    const cfg = state.config;
-    if (!r) return alertaError('No hay resultados que guardar.');
+    const r = state.config;
+    if (!state.resultados) return alertaError('No hay resultados que guardar.');
+    if (state.simulacionGuardada) {
+        alertaAdvertencia('Esta simulación ya fue guardada. Crea una nueva simulación para guardar otra.');
+        return;
+    }
 
-    const nombre = $('res-nombre').value.trim() || 'Simulación';
+    const nombre = $('res-nombre').value.trim();
+    if (!nombre) return alertaAdvertencia('Ingresa un nombre para guardar la simulación.');
+
+    const cfg = state.config;
+    const res = state.resultados;
 
     const simulacionData = {
         nombre,
@@ -555,34 +731,34 @@ async function guardarSimulacion() {
         aportacion_mensual: cfg.aportacionMensual,
         inflacion:          cfg.inflacion,
         num_instrumentos:   state.instrumentosSeleccionados.length,
-        riesgo_global:      r.riesgoGlobal,
-        capital_final:      r.capitalFinalTotal,
-        total_aportado:     r.totalAportadoTotal,
-        ganancia_total:     r.gananciaTotal,
-        rendimiento_pct:    r.rendimientoTotal,
-        capital_final_real: r.capitalFinalReal,
+        riesgo_global:      res.riesgoGlobal,
+        capital_final:      res.capitalFinalTotal,
+        total_aportado:     res.totalAportadoTotal,
+        ganancia_total:     res.gananciaTotal,
+        rendimiento_pct:    res.rendimientoTotal,
+        capital_final_real: res.capitalFinalReal,
         analisis:           JSON.stringify({
-            mejorInstrumento: r.mejorInstrumento,
-            masEstable:       r.masEstable,
-            mayorRiesgo:      r.mayorRiesgo,
-            recomendaciones:  r.recomendaciones
+            mejorInstrumento: res.mejorInstrumento,
+            masEstable:       res.masEstable,
+            mayorRiesgo:      res.mayorRiesgo,
+            recomendaciones:  res.recomendaciones
         }),
-        datos_grafica: JSON.stringify(r.datosGrafica),
-        tabla_anual:   JSON.stringify(r.tablaAnual)
+        datos_grafica: JSON.stringify(res.datosGrafica),
+        tabla_anual:   JSON.stringify(res.tablaAnual)
     };
 
     const instrumentosData = state.instrumentosSeleccionados.map((instr, idx) => {
-        const res = r.resultadosPorInstrumento[idx];
+        const resultado = res.resultadosPorInstrumento[idx];
         return {
-            posicion:          idx + 1,
-            instrumento_id:    instr.id,
+            posicion:           idx + 1,
+            instrumento_id:     instr.id,
             instrumento_nombre: instr.nombre,
-            riesgo:            instr.riesgo,
-            tasa_base:         instr.tasa_base,
-            capital_asignado:  cfg.capitalInicial / state.instrumentosSeleccionados.length,
-            capital_final:     res.capitalFinal,
-            ganancia:          res.ganancia,
-            rendimiento_pct:   res.rendimiento
+            riesgo:             instr.riesgo,
+            tasa_base:          instr.tasa_base,
+            capital_asignado:   cfg.capitalInicial / state.instrumentosSeleccionados.length,
+            capital_final:      resultado.capitalFinal,
+            ganancia:           resultado.ganancia,
+            rendimiento_pct:    resultado.rendimiento
         };
     });
 
@@ -594,9 +770,13 @@ async function guardarSimulacion() {
         });
         const data = await resp.json();
         if (data.success) {
+            state.simulacionGuardada = true;
             alertaExito('Simulación guardada en tu historial.', { duration: 3000 });
-            $('btn-guardar').textContent = '✓ Guardada';
-            $('btn-guardar').disabled = true;
+            const btnGuardar = $('btn-guardar');
+            if (btnGuardar) {
+                btnGuardar.textContent = '✓ Guardada';
+                btnGuardar.disabled = true;
+            }
         } else {
             alertaError(data.message || 'Error al guardar.');
         }
@@ -644,6 +824,8 @@ function renderHistorial() {
 
         const gananciaClass = sim.ganancia_total >= 0 ? '' : 'neg';
         const fecha = new Date(sim.created_at).toLocaleDateString('es-MX', { year:'numeric', month:'short', day:'numeric' });
+        // Mostrar inflación si existe en los datos guardados
+        const inflacionLabel = sim.inflacion != null ? `· Infl. ${sim.inflacion}%` : '';
 
         return `
         <div class="historial-card" id="hist-${sim.id}">
@@ -653,7 +835,7 @@ function renderHistorial() {
                 <div class="hist-nombre">${sim.nombre}</div>
                 <div class="hist-meta" style="gap:8px;margin-bottom:6px">
                     <span>${fecha}</span>
-                    <span>$${fmt(sim.capital_inicial)} · ${sim.plazo_anios} años · ${sim.num_instrumentos} instrumento(s)</span>
+                    <span>$${fmt(sim.capital_inicial)} · ${sim.plazo_anios} años · ${sim.num_instrumentos} instrumento(s) ${inflacionLabel}</span>
                 </div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">${instrs}</div>
             </div>
@@ -678,7 +860,6 @@ function renderHistorial() {
         </div>`;
     }).join('');
 
-    // Checkboxes para comparar
     document.querySelectorAll('.compare-check').forEach(cb => {
         cb.addEventListener('change', () => {
             const id = parseInt(cb.dataset.id);
@@ -697,7 +878,6 @@ function actualizarBtnComparar() {
     btn.disabled = n < 2;
 }
 
-// Función global para ver una simulación
 window.verSimulacion = async (id) => {
     try {
         const resp = await fetch(`${API}/inversiones/${id}?userId=${state.userId}`);
@@ -705,10 +885,8 @@ window.verSimulacion = async (id) => {
         if (!data.success) return alertaError('No se pudo cargar la simulación.');
 
         const sim = data.data;
-        // Reconstituir gráfica desde datos guardados
         const grafData = sim.datos_grafica ? JSON.parse(sim.datos_grafica) : null;
         if (grafData) {
-            // Navegar al paso 3 y mostrar
             navegarA('nueva');
             irAPaso(3);
             $('res-capital').textContent     = fmtMXN(sim.capital_final || 0);
@@ -720,8 +898,14 @@ window.verSimulacion = async (id) => {
             $('res-riesgo').textContent = `${rm.emoji} ${rm.label}`;
             $('res-riesgo').className   = `risk-badge ${sim.riesgo_global}`;
             $('res-nombre').value = sim.nombre;
-            $('btn-guardar').textContent = '✓ Ya guardada';
-            $('btn-guardar').disabled = true;
+
+            // Marcar como ya guardada para que no se pueda guardar dos veces desde la vista
+            state.simulacionGuardada = true;
+            const btnGuardar = $('btn-guardar');
+            if (btnGuardar) {
+                btnGuardar.textContent = '✓ Ya guardada';
+                btnGuardar.disabled = true;
+            }
 
             renderGrafica(grafData);
 
@@ -796,11 +980,11 @@ async function iniciarComparacion() {
 function renderComparacion(sims) {
     const container = $('compare-container');
 
-    // Tabla comparativa
     const filas = [
         { label: 'Capital inicial',    key: s => fmtMXN(s.capital_inicial) },
         { label: 'Plazo',              key: s => `${s.plazo_anios} años` },
         { label: 'Aportación mensual', key: s => fmtMXN(s.aportacion_mensual || 0) },
+        { label: 'Inflación usada',    key: s => s.inflacion != null ? `${s.inflacion}%` : '—' },
         { label: 'Capital final',      key: s => `<strong>${fmtMXN(s.capital_final || 0)}</strong>` },
         { label: 'Ganancia total',     key: s => `<span style="color:${(s.ganancia_total||0)>=0?'var(--success)':'var(--danger)'}">${fmtMXN(s.ganancia_total || 0)}</span>` },
         { label: 'Rendimiento',        key: s => `<span style="color:${(s.rendimiento_pct||0)>=0?'var(--success)':'var(--danger)'}">${fmtPct(s.rendimiento_pct || 0)}</span>` },
@@ -830,7 +1014,6 @@ function renderComparacion(sims) {
             </div>
         </div>`;
 
-    // Gráfica de barras: capital final
     if (state.compareChartInstance) { state.compareChartInstance.destroy(); }
     const ctx = document.getElementById('compare-chart').getContext('2d');
     state.compareChartInstance = new Chart(ctx, {
@@ -869,6 +1052,7 @@ function renderComparacion(sims) {
 
 function renderInicio() {
     const el = $('inicio-stats');
+    if (!el) return;
     if (!state.historial.length) {
         el.innerHTML = `
             <div class="empty-state" style="padding:30px">
@@ -898,38 +1082,6 @@ function renderInicio() {
         </div>`;
 }
 
-// ── CONFIGURACIÓN (inflación) ─────────────────────────────────────────────────
-
-async function cargarConfiguracion() {
-    try {
-        const resp = await fetch(`${API}/inversiones/settings/${state.userId}`);
-        const data = await resp.json();
-        if (data.success) {
-            state.config.inflacion = data.data.inflacion || 4.50;
-            $('cfg-inflacion-global').value = state.config.inflacion;
-        }
-    } catch (e) { console.error(e); }
-}
-
-async function guardarConfiguracion() {
-    const val = parseFloat($('cfg-inflacion-global').value);
-    if (isNaN(val) || val < 0 || val > 25) return alertaAdvertencia('Inflación inválida (0–25%).');
-    try {
-        const resp = await fetch(`${API}/inversiones/settings/${state.userId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ inflacion: val })
-        });
-        const data = await resp.json();
-        if (data.success) {
-            state.config.inflacion = val;
-            // Actualizar el campo del paso 1 también
-            if ($('cfg-inflacion')) $('cfg-inflacion').value = val;
-            alertaExito('Configuración guardada.');
-        } else { alertaError(data.message); }
-    } catch (e) { alertaError('Error al guardar configuración.'); }
-}
-
 // ── INICIALIZACIÓN ────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -948,15 +1100,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('btn-simular')?.addEventListener('click', simular);
     $('btn-paso3-ant')?.addEventListener('click', () => irAPaso(2));
     $('btn-guardar')?.addEventListener('click', guardarSimulacion);
-    $('btn-nueva-sim')?.addEventListener('click', () => { navegarA('nueva'); irAPaso(1); });
-    $('btn-guardar-cfg')?.addEventListener('click', guardarConfiguracion);
+
+    // ── Nueva simulación: resetear todo el estado ──────────────────────────
+    $('btn-nueva-sim')?.addEventListener('click', () => {
+        resetSimulationState();
+        navegarA('nueva');
+        irAPaso(1);
+    });
+
     $('btn-comparar-sel')?.addEventListener('click', iniciarComparacion);
 
-    // Número de inversiones cambia → actualizar en step 1 preview
+    // Número de inversiones cambia → actualizar estado en paso 1
     $('cfg-num')?.addEventListener('change', () => {
-        const n = parseInt($('cfg-num').value) || 1;
+        const n = parseInt($('cfg-num').value, 10) || 1;
         state.config.numInversiones = n;
     });
+
+    // Aplicar restricciones de input a los campos del paso 1
+    const camposEntero = [
+        { id: 'cfg-capital',    min: 0, max: 999999999 },
+        { id: 'cfg-aportacion', min: 0, max: 99999999  },
+        { id: 'cfg-plazo',      min: 1, max: 50        }
+    ];
+    camposEntero.forEach(({ id, min, max }) => {
+        const el = $(id);
+        if (el) aplicarRestriccionEntero(el, min, max);
+    });
+
+    const inflacionEl = $('cfg-inflacion');
+    if (inflacionEl) aplicarRestriccionDecimal(inflacionEl, -5.00, 100.00);
 
     // Logout
     document.getElementById('logout-btn-inv')?.addEventListener('click', async (e) => {
@@ -964,9 +1136,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const ok = await alertaConfirmacion('¿Cerrar sesión?', '👋 Salir');
         if (ok) logout();
     });
-
-    await cargarConfiguracion();
-    if ($('cfg-inflacion')) $('cfg-inflacion').value = state.config.inflacion;
 
     // Cargar historial en segundo plano para el inicio
     try {
