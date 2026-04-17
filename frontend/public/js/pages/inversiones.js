@@ -86,7 +86,7 @@ function resetSimulationState() {
 
     const btnGuardar = $('btn-guardar');
     if (btnGuardar) {
-        btnGuardar.textContent = '💾 Guardar en historial';
+        btnGuardar.textContent = 'Guardar en historial';
         btnGuardar.disabled = false;
     }
 
@@ -289,28 +289,28 @@ function generarRecomendaciones(r) {
     const inflTotal = (Math.pow(1 + cfg.inflacion / 100, cfg.plazoAnios) - 1) * 100;
 
     if (riesgoGlobal === 'alto' && cfg.plazoAnios < 5) {
-        recs.push({ tipo: 'danger', icono: '⚠️', titulo: 'Riesgo alto con plazo corto',
+        recs.push({ tipo: 'danger', icono: '', titulo: 'Riesgo alto con plazo corto',
             mensaje: 'Los instrumentos de alto riesgo necesitan 5–10 años mínimo para recuperarse de caídas. Aumenta el plazo o reduce el riesgo.' });
     }
 
     const rendimientoReal = rendimientoTotal - inflTotal;
     if (rendimientoReal < 5 && gananciaTotal >= 0) {
-        recs.push({ tipo: 'warning', icono: '📊', titulo: 'La inflación reduce tu ganancia real',
+        recs.push({ tipo: 'warning', icono: '', titulo: 'La inflación reduce tu ganancia real',
             mensaje: `Con inflación del ${cfg.inflacion}%, tu rendimiento real estimado es solo ${rendimientoReal.toFixed(1)}%. Considera instrumentos con mayor rendimiento.` });
     }
 
     if (cfg.aportacionMensual === 0) {
-        recs.push({ tipo: 'info', icono: '💡', titulo: 'Agrega aportaciones mensuales',
+        recs.push({ tipo: 'info', icono: '', titulo: 'Agrega aportaciones mensuales',
             mensaje: 'Aportaciones pequeñas pueden duplicar tu capital final gracias al interés compuesto. ¡Prueba agregar $500/mes!' });
     }
 
     if (cfg.plazoAnios < 5) {
-        recs.push({ tipo: 'info', icono: '⏳', titulo: 'El tiempo es tu mejor aliado',
+        recs.push({ tipo: 'info', icono: '', titulo: 'El tiempo es tu mejor aliado',
             mensaje: 'Simula a 10 o 20 años. El interés compuesto crece exponencialmente con el tiempo.' });
     }
 
     if (resultadosPorInstrumento.length === 1 && resultadosPorInstrumento[0].instrumento.riesgo === 'alto') {
-        recs.push({ tipo: 'warning', icono: '🎯', titulo: 'Portafolio sin diversificación',
+        recs.push({ tipo: 'warning', icono: '', titulo: 'Portafolio sin diversificación',
             mensaje: 'Un solo instrumento de alto riesgo es muy vulnerable. Combina con CETES o S&P 500 para proteger tu capital.' });
     }
 
@@ -320,7 +320,7 @@ function generarRecomendaciones(r) {
         if (peor.capitalFinal > 0) {
             const dif = ((mejor.capitalFinal / peor.capitalFinal) - 1) * 100;
             if (dif > 60) {
-                recs.push({ tipo: 'success', icono: '🏆', titulo: `${mejor.instrumento.nombre} destaca`,
+                recs.push({ tipo: 'success', icono: '', titulo: `${mejor.instrumento.nombre} destaca`,
                     mensaje: `Supera al instrumento más débil en un ${dif.toFixed(0)}%. Si tu perfil lo permite, considera concentrar más capital ahí.` });
             }
         }
@@ -332,7 +332,7 @@ function generarRecomendaciones(r) {
     }
 
     if (gananciaTotal < 0) {
-        recs.push({ tipo: 'danger', icono: '🚨', titulo: 'Pérdida proyectada',
+        recs.push({ tipo: 'danger', icono: '', titulo: 'Pérdida proyectada',
             mensaje: 'Esta combinación de instrumentos y plazo proyecta pérdidas. Considera reducir el riesgo o aumentar el plazo.' });
     }
 
@@ -585,7 +585,7 @@ function simular() {
             // Restaurar botón guardar para esta nueva simulación
             const btnGuardar = $('btn-guardar');
             if (btnGuardar) {
-                btnGuardar.textContent = '💾 Guardar en historial';
+                btnGuardar.textContent = 'Guardar en historial';
                 btnGuardar.disabled = false;
             }
         } catch (e) {
@@ -810,7 +810,7 @@ function renderHistorial() {
     if (!state.historial.length) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="empty-icon">📋</div>
+                <div class="empty-icon"></div>
                 <p>Aún no tienes simulaciones guardadas.<br>¡Crea tu primera simulación!</p>
             </div>`;
         return;
@@ -1056,7 +1056,7 @@ function renderInicio() {
     if (!state.historial.length) {
         el.innerHTML = `
             <div class="empty-state" style="padding:30px">
-                <div class="empty-icon">📊</div>
+                <div class="empty-icon"></div>
                 <p>Aún no tienes simulaciones. ¡Crea la primera!</p>
             </div>`;
         return;
