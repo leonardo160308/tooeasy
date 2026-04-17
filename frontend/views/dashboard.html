@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../public/css/dashboard.css"> 
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
+    <!-- ✅ NUEVO: Sistema de tooltips -->
+    <link rel="stylesheet" href="../public/css/tooltips.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -67,50 +69,109 @@
     <!-- COLUMNA IZQUIERDA -->
     <div class="izquierda">
         <section class="card module-calculator">
-            <h2>Resumen Mensual y Metas</h2>
-            
+
+            <!-- ── TÍTULO CON TOOLTIP ── -->
+            <h2 class="tooltip-heading">
+                📊 Resumen Mensual y Metas
+                <span class="tooltip-icon tt-right tt-wide"
+                      data-tooltip="Aquí configuras tus ingresos y gastos fijos y defines tu meta de ahorro del mes. El sistema calcula automáticamente cuánto ahorras y cuánto te falta para llegar a tu objetivo.">ℹ</span>
+            </h2>
+
+            <!-- ── GRID: DATOS FIJOS ── -->
             <div class="fixed-data-grid">
+
                 <div class="input-group">
-                    <label for="fixed-income">Ingreso Fijo Mensual ($)</label>
+                    <label for="fixed-income">
+                        Ingreso Fijo Mensual ($)
+                        <span class="tooltip-icon"
+                              data-tooltip="Escribe aquí tus ingresos recurrentes mensuales: salario base, renta cobrada u otros pagos que recibes de forma fija cada mes. El sistema lo suma a tus ingresos variables del calendario.">ℹ</span>
+                    </label>
                     <input type="number" id="fixed-income" placeholder="0.00" step="10.00">
                 </div>
+
                 <div class="input-group">
-                    <label for="fixed-expense">Egreso Fijo Mensual ($)</label>
+                    <label for="fixed-expense">
+                        Egreso Fijo Mensual ($)
+                        <span class="tooltip-icon"
+                              data-tooltip="Registra tus gastos recurrentes: renta, servicios, suscripciones u otros pagos que realizas puntualmente cada mes. Se descuentan de tus ingresos para calcular tu balance.">ℹ</span>
+                    </label>
                     <input type="number" id="fixed-expense" placeholder="0.00" step="10.00">
                 </div>
+
             </div>
 
+            <!-- ── GRID: META ── -->
             <div class="goal-data-grid">
+
                 <div class="input-group">
-                    <label for="goal-name">Nombre de Meta</label>
+                    <label for="goal-name">
+                        Nombre de Meta
+                        <span class="tooltip-icon"
+                              data-tooltip="Dale un nombre descriptivo a tu objetivo de ahorro, por ejemplo: 'Vacaciones', 'Fondo de emergencia' o 'Nuevo equipo'. Esto te ayuda a mantener el enfoque en tu propósito.">ℹ</span>
+                    </label>
                     <input type="text" id="goal-name" placeholder="Ej: Vacaciones" maxlength="50">
                 </div>
+
                 <div class="input-group">
-                    <label for="goal-amount">Monto de Meta ($)</label>
+                    <label for="goal-amount">
+                        Monto de Meta ($)
+                        <span class="tooltip-icon"
+                              data-tooltip="Indica cuánto dinero necesitas para alcanzar tu meta. El sistema calculará cuánto te falta en función de tus ingresos y gastos actuales del mes.">ℹ</span>
+                    </label>
                     <input type="number" id="goal-amount" placeholder="0.00" step="10.00">
                 </div>
+
             </div>
 
+            <!-- ── RESUMEN OSCURO ── -->
             <div class="summary-results">
+
                 <div class="result-item">
-                    <span>Ahorro Actual</span>
+                    <span>
+                        Ahorro Actual
+                        <span class="tooltip-icon tt-bottom tt-light"
+                              data-tooltip="Diferencia entre tus ingresos totales (fijos + variables del mes) y tus egresos totales. Positivo = superávit; negativo = déficit.">ℹ</span>
+                    </span>
                     <strong id="calculated-savings">$0.00</strong>
                 </div>
+
                 <div class="result-item">
-                    <span>Falta para Meta</span>
+                    <span>
+                        Falta para Meta
+                        <span class="tooltip-icon tt-bottom tt-light"
+                              data-tooltip="Cuánto dinero te falta aún para alcanzar tu meta del mes. Si ya lograste el objetivo, verás $0.00.">ℹ</span>
+                    </span>
                     <strong id="calculated-remaining">$0.00</strong>
                 </div>
+
                 <div class="result-item">
-                    <span>Estado</span>
+                    <span>
+                        Estado
+                        <span class="tooltip-icon tt-bottom tt-light"
+                              data-tooltip="Refleja tu situación financiera: 'En progreso' (avanzando hacia la meta), '¡Meta Alcanzada!' (superávit suficiente) o 'Déficit' (gastos mayores que ingresos).">ℹ</span>
+                    </span>
                     <strong id="goal-status">Sin datos</strong>
                 </div>
+
             </div>
 
-            <!-- PESTAÑAS DE GRÁFICO -->
+            <!-- ── PESTAÑAS DE GRÁFICO ── -->
             <div class="chart-tabs">
-                <button class="chart-tab-btn active" data-chart-type="1">Balance neto</button>
-                <button class="chart-tab-btn" data-chart-type="2">Ingresos por categoría</button>
-                <button class="chart-tab-btn" data-chart-type="3">Egresos por categoría</button>
+                <button class="chart-tab-btn active" data-chart-type="1">
+                    Balance neto
+                    <span class="tooltip-icon tt-bottom"
+                          data-tooltip="Muestra la evolución diaria de ingresos, egresos y balance neto (diferencia entre ambos) a lo largo del mes seleccionado.">ℹ</span>
+                </button>
+                <button class="chart-tab-btn" data-chart-type="2">
+                    Ingresos por categoría
+                    <span class="tooltip-icon tt-bottom"
+                          data-tooltip="Visualiza en una gráfica de barras cuánto ingresó por cada categoría durante el mes (salario, freelance, ventas, etc.).">ℹ</span>
+                </button>
+                <button class="chart-tab-btn" data-chart-type="3">
+                    Egresos por categoría
+                    <span class="tooltip-icon tt-bottom"
+                          data-tooltip="Muestra en qué categorías gastaste más dinero durante el mes (renta, comida, transporte, etc.), útil para identificar dónde recortar.">ℹ</span>
+                </button>
             </div>
 
             <!-- LEYENDA -->
@@ -135,25 +196,32 @@
             <div class="chart-container">
                 <canvas id="monthlyChart"></canvas>
             </div>
+
         </section>
     </div>
         
     <!-- COLUMNA DERECHA: CALENDARIO -->
     <div class="derecha">
         <section class="card module-calendar">
-            <h2>Calendario de Movimientos</h2>
+
+            <!-- ── TÍTULO CON TOOLTIP ── -->
+            <h2 class="tooltip-heading">
+                📅 Calendario de Movimientos
+                <span class="tooltip-icon tt-bottom tt-wide"
+                      data-tooltip="Visualiza y registra tus ingresos y gastos día a día. Verde = ingresos > gastos · Rojo = gastos > ingresos · Gris = balance neutro. Haz clic en cualquier día para ver el detalle o agregar nuevos movimientos.">ℹ</span>
+            </h2>
             
             <div class="calendar-header">
-                <button id="prev-month">&lt;</button>
+                <button id="prev-month" title="Mes anterior">&#8249;</button>
                 <h2 id="current-month-year">Cargando...</h2>
-                <button id="next-month">&gt;</button>
+                <button id="next-month" title="Mes siguiente">&#8250;</button>
             </div>
             
             <div id="calendar-grid" class="calendar-grid"></div>
         </section>
     </div>
 
-    <!-- MODAL DE DETALLE DEL DÍA -->
+    <!-- ── MODAL DE DETALLE DEL DÍA ── -->
     <div id="day-modal" class="modal hidden">
         <div class="modal-content">
             <span id="close-modal" class="close-btn">&times;</span>
@@ -179,53 +247,72 @@
                 <ul id="movements-list"></ul>
             </div>
 
-            <!-- ✅ FORM EDICIÓN CON BOTÓN CERRAR -->
+            <!-- FORM EDICIÓN -->
             <div class="edit-movement-form" id="edit-movement-container" style="display:none;">
                 <div class="edit-form-header">
                     <h3>✏️ Editar Movimiento</h3>
                     <button type="button" class="btn-close-edit" id="btn-close-edit" title="Cancelar edición">✕</button>
                 </div>
                 <form id="edit-transaction-form">
-                    <select id="edit-trans-type" required>
-                        <option value="expense">Egreso (−)</option>
-                        <option value="income">Ingreso (+)</option>
+                    <select id="edit-trans-type" required title="Tipo de movimiento">
+                        <option value="expense">Egreso (−) — dinero que sale</option>
+                        <option value="income">Ingreso (+) — dinero que entra</option>
                     </select>
-                    <select id="edit-trans-category" required>
+                    <select id="edit-trans-category" required title="Categoría del movimiento">
                         <option value="">-- Selecciona una categoría --</option>
                     </select>
-                    <input type="text" id="edit-trans-amount" placeholder="Monto"
-                           inputmode="decimal" maxlength="11" required>
+                    <input type="text" id="edit-trans-amount"
+                           placeholder="Monto en pesos (ej: 1500.00)"
+                           inputmode="decimal" maxlength="11" required
+                           title="Monto del movimiento. Solo valores positivos mayores a $0.">
                     <div class="edit-actions">
-                        <button type="button" class="btn-edit-delete" id="edit-btn-delete">🗑️ Eliminar</button>
-                        <button type="submit" class="btn-edit-save">✔ Guardar</button>
+                        <button type="button" class="btn-edit-delete" id="edit-btn-delete"
+                                title="Eliminar este movimiento permanentemente">🗑️ Eliminar</button>
+                        <button type="submit" class="btn-edit-save"
+                                title="Guardar los cambios en este movimiento">✔ Guardar</button>
                     </div>
                 </form>
             </div>
 
+            <!-- FORM NUEVO MOVIMIENTO -->
             <div class="add-movement-form">
-                <h3>➕ Nuevo Movimiento</h3>
+                <h3>
+                    ➕ Nuevo Movimiento
+                    <span class="tooltip-icon tt-right"
+                          data-tooltip="Registra un ingreso o gasto en este día. Selecciona el tipo, elige una categoría y escribe el monto. El sistema actualizará automáticamente tu balance.">ℹ</span>
+                </h3>
                 <form id="transaction-form">
-                    <select id="trans-type" required>
-                        <option value="expense">Egreso (−)</option>
-                        <option value="income">Ingreso (+)</option>
+
+                    <select id="trans-type" required
+                            title="¿Es dinero que entra (ingreso) o que sale (egreso)?">
+                        <option value="expense">Egreso (−) — dinero que sale</option>
+                        <option value="income">Ingreso (+) — dinero que entra</option>
                     </select>
-                    <select id="trans-category" required>
+
+                    <select id="trans-category" required
+                            title="Clasifica el movimiento para ver reportes por categoría">
                         <option value="">-- Selecciona una categoría --</option>
                     </select>
-                    <input type="text" id="trans-amount" placeholder="Monto"
-                           inputmode="decimal" maxlength="11" required>
+
+                    <input type="text" id="trans-amount"
+                           placeholder="Monto en pesos (ej: 500.00)"
+                           inputmode="decimal" maxlength="11" required
+                           title="Escribe el monto del movimiento. Máximo $99,999,999.99.">
+
                     <button type="submit" class="btn-add">Agregar Movimiento</button>
                 </form>
             </div>
 
         </div>
     </div>
+
 </div>
 
-<!-- Script leyenda -->
+<!-- Script leyenda + tooltips en tabs -->
 <script>
 document.querySelectorAll('.chart-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+        /* Evitar que el clic en el ícono tooltip dispare comportamiento extra */
         const type = parseInt(btn.dataset.chartType);
         const legend = document.getElementById('chart-legend');
         legend.querySelectorAll('span[class^="legend-"]').forEach(el => el.style.display = 'none');
@@ -238,7 +325,6 @@ document.querySelectorAll('.chart-tab-btn').forEach(btn => {
         }
     });
 });
-// Mostrar leyenda inicial
 document.querySelectorAll('.legend-balance').forEach(el => el.style.display = 'flex');
 </script>
 

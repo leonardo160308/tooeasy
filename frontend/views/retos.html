@@ -8,12 +8,98 @@
     <link rel="stylesheet" href="../public/css/retos.css">
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Font Awesome y Google Fonts -->
+    <!-- ✅ NUEVO: Sistema de tooltips -->
+    <link rel="stylesheet" href="../public/css/tooltips.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ── Estilos adicionales para la sección de retos ── */
+
+        /* Banner de instrucciones (encima del panel izquierdo) */
+        .retos-how-it-works {
+            background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(240,244,248,0.95) 100%);
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(44,64,91,0.1);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .retos-how-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2C405B;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .retos-steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .reto-step {
+            background: rgba(101,133,170,0.08);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .reto-step .step-num {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .reto-step .step-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2C405B;
+        }
+
+        .reto-step .step-desc {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        /* Chip de nivel en cada reto */
+        .challenge-level-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(101,133,170,0.12);
+            color: #6585AA;
+            flex-shrink: 0;
+        }
+
+        /* Stats bar mejorada con tooltip */
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .retos-steps { grid-template-columns: 1fr; gap: 6px; }
+        }
+    </style>
 </head>
 <body>
 
@@ -29,33 +115,26 @@
         <a href="/retos.html">RETOS</a>
         <a href="/lecciones.html">LECCIONES</a>
         <a href="/perfil.html">PERFIL</a>
-        <!-- ✅ BOTÓN DE SALIR CON ID ESPECÍFICO -->
         <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
             <img src="../public/img/Salida.png" alt="Salir">
         </a>
     </nav>
 </header>
 
-<!-- ========================================
-     SCRIPT PARA EL BOTÓN DE SALIR
-     Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
-     ======================================== -->
 <script type="module">
     import { logout, isAdmin } from '/public/js/modules/auth.js';
     import { alertaConfirmacion } from '/public/js/modules/alerts.js';
     
-    // ✅ MOSTRAR ENLACE ADMIN SI ES ADMIN
     if (isAdmin()) {
         const nav = document.querySelector('.nav');
         const adminLink = document.createElement('a');
         adminLink.href = '/admin.html';
         adminLink.textContent = 'ADMIN';
-        adminLink.style.color = '#f39c12'; // Color diferente para destacar
+        adminLink.style.color = '#f39c12';
         nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
     }
     
     const logoutBtn = document.getElementById('logout-btn-perfil');
-    
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -71,28 +150,93 @@
 <div class="split-layout">
     
     <div class="left-panel">
-        
-        <div class="top-stats-card">
-            <h2>RETOS</h2>
-            <div class="stats-bar">
-            <div class="stat-item">
-                <img src="../public/img/madera.png" alt="Madera">
-                <span id="wood-count">0</span>
+
+        <!-- ══════════════════════════════════════════
+             BANNER "¿CÓMO FUNCIONAN LOS RETOS?"
+             Siempre visible, explica el sistema.
+        ═══════════════════════════════════════════ -->
+        <div class="retos-how-it-works">
+            <div class="retos-how-title">
+                🎯 ¿Cómo funcionan los retos?
+            </div>
+            <div class="retos-steps">
+
+                <div class="reto-step">
+                    <span class="step-num">📊</span>
+                    <span class="step-label">1. Registra</span>
+                    <span class="step-desc">Agrega movimientos en tu Dashboard: ingresos, gastos y categorías.</span>
+                </div>
+
+                <div class="reto-step">
+                    <span class="step-num">✅</span>
+                    <span class="step-label">2. Completa</span>
+                    <span class="step-desc">Los retos se activan automáticamente al cumplir sus condiciones.</span>
+                </div>
+
+                <div class="reto-step">
+                    <span class="step-num">🪵</span>
+                    <span class="step-label">3. Reclama</span>
+                    <span class="step-desc">Reclama tu Madera y úsala en Perfil para mejorar tu casa.</span>
+                </div>
+
             </div>
         </div>
-           
+
+        <!-- ══════════════════════════════════════════
+             TARJETA DE ESTADÍSTICAS (TÍTULO + MADERA)
+        ═══════════════════════════════════════════ -->
+        <div class="top-stats-card">
+
+            <h2 class="tooltip-heading" style="color:#2C405B; font-size:1.3rem; font-weight:900; letter-spacing:1px;">
+                RETOS
+                <span class="tooltip-icon tt-right tt-wide"
+                      data-tooltip="Los retos son desafíos financieros que se completan al registrar ciertos movimientos en el Dashboard. Cada reto completado te da Madera 🪵, el recurso para mejorar tu casa en la sección de Perfil. Los retos son de un solo uso: una vez reclamados, quedan marcados como completados.">ℹ</span>
+            </h2>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <img src="../public/img/madera.png" alt="Madera"
+                         title="Madera — recurso de recompensa">
+                    <div style="display:flex; flex-direction:column; gap:0;">
+                        <span class="stat-label">Madera
+                            <span class="tooltip-icon tt-right tt-wide"
+                                  style="width:14px; height:14px; font-size:9px;"
+                                  data-tooltip="La Madera es el recurso de recompensa de los retos. Acumúlala completando retos y úsala en la sección de Perfil para mejorar el nivel de tu casa y desbloquear nuevas apariencias.">ℹ</span>
+                        </span>
+                        <span id="wood-count" style="font-size:1.2rem; font-weight:800; color:#2C405B;">0</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
+        <!-- ══════════════════════════════════════════
+             CONTENEDOR DE RETOS
+        ═══════════════════════════════════════════ -->
         <div class="challenges-list-container">
-            <div style="margin-bottom: 15px; color: #6585AA;">
-                Tu progreso actual
+
+            <div style="display:flex; justify-content:space-between; align-items:center;
+                        margin-bottom: 14px; padding-bottom: 10px;
+                        border-bottom: 1px solid rgba(101,133,170,0.2);">
+                <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+                             letter-spacing: 1px; color: #6585AA;">
+                    Tu progreso actual
+                </span>
+                <span style="font-size: 0.72rem; color: #718096; font-weight: 600;">
+                    <span class="tooltip-icon tt-left tt-wide"
+                          data-tooltip="La barra de progreso de cada reto muestra qué tan cerca estás de completarlo. Cuando llegue al 100% aparecerá el botón 'Reclamar' en verde. Haz clic para obtener tu recompensa de Madera 🪵.">ℹ</span>
+                    Haz clic en 'Reclamar' para cobrar tu recompensa
+                </span>
             </div>
 
             <div id="challenges-container">
-                </div>
+                <!-- Generado dinámicamente por challenges.js -->
+            </div>
+
         </div>
     </div>
 
+    <!-- Panel derecho: imagen decorativa -->
     <div class="right-panel-image"></div>
 
 </div>

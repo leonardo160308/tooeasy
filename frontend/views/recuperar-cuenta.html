@@ -271,7 +271,7 @@
 
         <!-- PASO 1: Ingresar email -->
         <div class="step active" id="step-1">
-            <span class="step-icon">🔐</span>
+            <span class="step-icon"></span>
             <h2>Recuperar cuenta</h2>
             <p class="subtitle">Ingresa tu correo electrónico y te enviaremos un código de 6 dígitos.</p>
             <input type="email" id="input-email" placeholder="tu@correo.com" autocomplete="email">
@@ -281,7 +281,7 @@
 
         <!-- PASO 2: Ingresar código OTP -->
         <div class="step" id="step-2">
-            <span class="step-icon">📬</span>
+            <span class="step-icon"></span>
             <h2>Revisa tu correo</h2>
             <p class="subtitle">Ingresa el código de 6 dígitos que enviamos a <strong id="display-email"></strong></p>
 
@@ -312,7 +312,7 @@
             <p class="subtitle">¿Qué deseas hacer?</p>
 
             <button class="action-card" onclick="doLogin()">
-                <span class="icon">🚀</span>
+                <span class="icon"></span>
                 <div class="text">
                     <strong>Iniciar sesión directamente</strong>
                     <span>Entra a tu cuenta sin cambiar contraseña</span>
@@ -322,7 +322,7 @@
             <div class="action-divider">o</div>
 
             <button class="action-card" onclick="goToStep(4)">
-                <span class="icon">🔑</span>
+                <span class="icon"></span>
                 <div class="text">
                     <strong>Cambiar mi contraseña</strong>
                     <span>Establece una nueva contraseña segura</span>
@@ -332,7 +332,7 @@
 
         <!-- PASO 4: Nueva contraseña -->
         <div class="step" id="step-4">
-            <span class="step-icon">🔑</span>
+            <span class="step-icon"></span>
             <h2>Nueva contraseña</h2>
             <p class="subtitle">Elige una contraseña segura de entre 6 y 16 caracteres.</p>
 
@@ -353,7 +353,7 @@
 
         <!-- PASO 5: Éxito -->
         <div class="step" id="step-5">
-            <span class="success-icon">🎉</span>
+            <span class="success-icon"></span>
             <h2>¡Contraseña actualizada!</h2>
             <p class="subtitle">Tu contraseña fue cambiada exitosamente. Ahora puedes iniciar sesión.</p>
             <button class="btn-primary" onclick="window.location.href='login.html'">Ir al inicio de sesión</button>
