@@ -5,59 +5,315 @@
     <title>Registro - TooEasy</title>
     <link rel="icon" type="image/x-icon" href="../public/img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../public/css/iniciarsesion.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --input-gray: #EAEAEA;
+            --brand-beige: #C9AD8B;
+            --title-brown: #4A3728;
+            --primary: #2C405B;
+            --secondary: #6585AA;
+            --border-radius-pill: 30px;
+            --border-radius-card: 28px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: linear-gradient(135deg, #dce8f5 0%, #e8ddd2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+        }
+
+        /* ── CARD ── */
+        .auth-container {
+            background: #fff;
+            border-radius: var(--border-radius-card);
+            padding: 28px 32px 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 12px 40px rgba(44, 64, 91, 0.12), 0 2px 8px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        /* ── AVATAR ── */
+        .avatar-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .avatar-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 3px solid var(--brand-beige);
+            object-fit: cover;
+        }
+
+        /* ── TÍTULOS ── */
+        h2 {
+            text-align: center;
+            color: var(--title-brown);
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        /* ── INPUTS ── */
+        .field {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 11px 18px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--border-radius-pill);
+            background: var(--input-gray);
+            font-size: 14px;
+            font-family: inherit;
+            color: #444;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--secondary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(101, 133, 170, 0.15);
+        }
+
+        /* ── FILA EDAD + GÉNERO ── */
+        .row-fields {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .row-fields input,
+        .row-fields select {
+            margin-bottom: 0;
+        }
+
+        /* ── TÉRMINOS ── */
+        .terms-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0 14px;
+            padding: 0 4px;
+        }
+
+        .terms-group input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            min-width: 17px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .terms-group label {
+            font-size: 12.5px;
+            color: #555;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .terms-group label span {
+            text-decoration: underline;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* ── BOTÓN ── */
+        .btn-primary {
+            width: 100%;
+            background: var(--brand-beige);
+            color: var(--title-brown);
+            border: none;
+            padding: 13px;
+            border-radius: var(--border-radius-pill);
+            font-weight: 800;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.15s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(0.93);
+            transform: translateY(-1px);
+        }
+
+        /* ── ENLACE LOGIN ── */
+        .login-ask {
+            display: block;
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .login {
+            color: var(--title-brown);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login:hover { text-decoration: underline; }
+
+        /* ── BOTÓN REGRESAR ── */
+        .footer-navigation {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(44, 64, 91, 0.25);
+        }
+
+        .btn-back:hover {
+            background: #4a6d99;
+            transform: translateY(-1px);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 480px) {
+            body { padding: 12px 10px 60px; }
+
+            .auth-container {
+                padding: 24px 20px 20px;
+                border-radius: 20px;
+            }
+
+            h2 { font-size: 19px; }
+
+            .row-fields { grid-template-columns: 1fr; gap: 8px; }
+
+            .footer-navigation { bottom: 10px; left: 10px; }
+        }
+
+        @media (max-height: 700px) {
+            .auth-container {
+                padding: 20px 28px 18px;
+            }
+
+            .avatar-img { width: 52px; height: 52px; }
+            h2 { font-size: 20px; }
+            .subtitle { margin-bottom: 12px; }
+            .field, .row-fields { margin-bottom: 8px; }
+
+            input, select { padding: 9px 16px; }
+            .btn-primary { padding: 11px; }
+        }
+    </style>
 </head>
 <body>
     <div class="auth-container">
-        <form id="registerForm" class="formulario">
+        <form id="registerForm">
+
             <div class="avatar-header">
-        <img src="../public/img/avatars/perfil1.png" alt="Avatar" class="avatar-img">
-    </div>
-            <!-- ID REQUERIDO: registerForm -->
+                <img src="../public/img/avatars/perfil1.png" alt="Avatar" class="avatar-img"
+                     onerror="this.src='https://via.placeholder.com/64/C9AD8B/fff?text=TE'">
+            </div>
+
             <h2>Crear Cuenta</h2>
-            <p>¡Completa tu perfil para empezar tu aventura financiera!</p>
-            
-            <!-- Nombre de Usuario -->
-            <input type="text" id="registerNombre" minlength="3" maxlength="16" placeholder="Nombre de Usuario" required> 
-            
-            <!-- Correo Electrónico -->
-            <input type="email" id="registerEmail" minlength="6" maxlength="254" placeholder="Correo Electrónico" required>
-            
-            <!-- Contraseña -->
-            <input type="password" id="registerContraseña" minlength="6" maxlength="16" placeholder="Contraseña" required>
-            <div class="alinear">
-            <!-- Edad -->
-            <input type="number" id="registerEdad" placeholder="Edad" min="15" max="99" required>
+            <p class="subtitle">¡Completa tu perfil para empezar!</p>
 
-            <!-- Género -->
-            <select id="registerGenero" required>
-                <option value="" disabled selected>Selecciona tu Género</option>
-                <option value="femenino">Femenino</option>
-                <option value="masculino">Masculino</option>
-                <option value="otro">Otro</option>
-                <option value="no-decir">Prefiero no decir</option>
-            </select>
+            <div class="field">
+                <input type="text" id="registerNombre"
+                       minlength="3" maxlength="16"
+                       placeholder="Nombre de usuario" required>
             </div>
-            <!-- NUEVO: TÉRMINOS Y CONDICIONES -->
-            <div class="terms-group" style="margin: 10px 0; display: flex; align-items: center;">
-                <!-- El checkbox tiene el atributo 'required' -->
-                <input type="checkbox" id="terminos" required style="width: auto; margin-right: 8px;">
-                <!-- El label es el objetivo del click para abrir el modal -->
-                <label for="terminos" style="font-size: 0.9em;">Acepto los <span style="text-decoration: underline; cursor: pointer;">Términos y Condiciones</span></label>
+
+            <div class="field">
+                <input type="email" id="registerEmail"
+                       minlength="6" maxlength="254"
+                       placeholder="Correo electrónico" required>
             </div>
-            
-            <button type="submit" class="btn-primary">Registrar</button>
-            <p id="auth-message" style="color: red; margin-top: 10px;"></p>
+
+            <div class="field">
+                <input type="password" id="registerContraseña"
+                       minlength="6" maxlength="16"
+                       placeholder="Contraseña (6–16 caracteres)" required>
+            </div>
+
+            <div class="row-fields">
+                <input type="number" id="registerEdad"
+                       placeholder="Edad" min="15" max="99" required>
+
+                <select id="registerGenero" required>
+                    <option value="" disabled selected>Género</option>
+                    <option value="femenino">Femenino</option>
+                    <option value="masculino">Masculino</option>
+                    <option value="otro">Otro</option>
+                    <option value="no-decir">Prefiero no decir</option>
+                </select>
+            </div>
+
+            <div class="terms-group">
+                <input type="checkbox" id="terminos" required>
+                <label for="terminos">
+                    Acepto los <span>Términos y Condiciones</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-primary">Crear cuenta</button>
+
+            <p class="login-ask">
+                ¿Ya tienes cuenta?
+                <a href="login.html" class="login">Iniciar sesión</a>
+            </p>
+
         </form>
-
-        <p class="login-ask">¿Ya tienes cuenta? <a href="login.html" class="login">Iniciar Sesión</a></p>
     </div>
+
     <div class="footer-navigation">
-            <a href="./index.html" class="btn-back">← Regresar</a>
-        </div>
-        </div>
-    <!-- Scripts necesarios: auth.js para el registro y terminos.js para el modal -->
+        <a href="./index.html" class="btn-back">← Regresar</a>
+    </div>
+
     <script type="module" src="/public/js/pages/auth.js"></script>
     <script src="../public/js/data/terminos.js"></script>
 </body>

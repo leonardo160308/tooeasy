@@ -160,14 +160,15 @@ body {
 }
 
 .footer a {
-    color: #BA8E58;
+   font-size: 0.85rem;
+    cursor: pointer;
+    color: rgba(255,255,255,0.7);
+    transition: color 0.2s;
     text-decoration: none;
-    transition: color 0.2s ease;
 }
 
 .footer a:hover {
-    color: #ffffff;
-    text-decoration: underline;
+    color: #BA8E58;
 }
 
 .terms-group {

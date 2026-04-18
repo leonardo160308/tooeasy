@@ -35,6 +35,7 @@
 
 <script type="module">
     import { isAdmin } from '/public/js/modules/auth.js';
+    import '/public/js/modules/nav-active.js';
     if (isAdmin()) {
         const nav = document.querySelector('.nav');
         const a = document.createElement('a');
@@ -381,5 +382,6 @@
 </div>
 
 <script type="module" src="../public/js/pages/inversiones.js"></script>
+<script type="module" src="/public/js/modules/nav-active.js"></script>
 </body>
 </html>

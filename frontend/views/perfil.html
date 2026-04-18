@@ -36,6 +36,7 @@
 <script type="module">
     import { logout, isAdmin } from '/public/js/modules/auth.js';
     import { alertaConfirmacion } from '/public/js/modules/alerts.js';
+    import '/public/js/modules/nav-active.js';
     
     if (isAdmin()) {
         const nav = document.querySelector('.nav');
@@ -345,5 +346,6 @@ function selectAvatarModal(avatarKey) {
 
 <!-- El módulo profile.js expone openProfileModal, closeProfileModal, saveProfile, deleteAccountFromModal al scope global -->
 <script type="module" src="../public/js/pages/profile.js"></script>
+<script type="module" src="/public/js/modules/nav-active.js"></script>
 </body>
 </html>

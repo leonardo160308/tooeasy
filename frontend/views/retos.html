@@ -124,7 +124,7 @@
 <script type="module">
     import { logout, isAdmin } from '/public/js/modules/auth.js';
     import { alertaConfirmacion } from '/public/js/modules/alerts.js';
-    
+    import '/public/js/modules/nav-active.js';
     if (isAdmin()) {
         const nav = document.querySelector('.nav');
         const adminLink = document.createElement('a');
@@ -213,6 +213,6 @@
 
 <script type="module" src="../public/js/pages/challenges.js"></script>
 <script type="module" src="../public/js/pages/profile.js"></script>
-
+<script type="module" src="/public/js/modules/nav-active.js"></script>
 </body>
 </html>

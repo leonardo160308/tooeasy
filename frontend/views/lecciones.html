@@ -38,7 +38,7 @@
 <script type="module">
     import { logout, isAdmin } from '/public/js/modules/auth.js';
     import { alertaConfirmacion } from '/public/js/modules/alerts.js';
-    
+    import '/public/js/modules/nav-active.js';
     // MOSTRAR ENLACE ADMIN SI ES ADMIN
     if (isAdmin()) {
         const nav = document.querySelector('.nav');
@@ -167,6 +167,7 @@
 </main>
 
 <script type="module" src="../public/js/pages/lessons.js"></script>
+<script type="module" src="/public/js/modules/nav-active.js"></script>
 
 </body>
 </html>
