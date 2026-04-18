@@ -1,142 +1,205 @@
 /* ========================================
-   HEADER UNIFICADO - TOO-EASY (v2)
+   HEADER UNIFICADO - TOO-EASY (v3 Ultra)
+   "El Header que se ve cabrón"
    ======================================== */
 
+:root {
+    --primary-dark: #1e2e42;
+    --accent-gold: #B6823E;
+    --accent-light: #d4b896;
+    --glass-bg: rgba(30, 46, 66, 0.85);
+    --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 .header {
-    background: linear-gradient(135deg, #1e2e42 0%, #2C405B 60%, #3a5272 100%);
+    /* Gradiente con más profundidad y efecto de ruido sutil */
+    background: linear-gradient(135deg, #1e2e42 0%, #25354d 50%, #1a2738 100%);
     color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
-    height: 80px;
-    box-shadow: 0 4px 20px rgba(44, 64, 91, 0.35);
+    padding: 0 60px;
+    min-height: 85px;
     position: sticky;
     top: 0;
     z-index: 1000;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(182, 130, 62, 0.3);
+    
+    /* Glassmorphism nivel pro */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    /* Borde inferior animado */
+    border-bottom: 1px solid rgba(182, 130, 62, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden; /* Para contener destellos */
+}
+
+/* El toque "cabrón": un destello que recorre el header al cargar */
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(182, 130, 62, 0.1), 
+        transparent
+    );
+    animation: sweep 5s infinite;
+}
+
+@keyframes sweep {
+    0% { left: -100%; }
+    20% { left: 150%; }
+    100% { left: 150%; }
 }
 
 .logo {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    line-height: 1.1;
-    gap: 2px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.logo:hover {
+    transform: scale(1.02);
 }
 
 .logo h1 {
     margin: 0;
-    font-size: 26px;
-    letter-spacing: 3px;
-    font-weight: 800;
-    color: #fff;
-    font-family: 'Nunito', 'Arial', sans-serif;
-    background: linear-gradient(90deg, #ffffff, #d4b896);
+    font-size: 28px;
+    letter-spacing: 4px;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    
+    /* Gradiente animado en el texto */
+    background: linear-gradient(
+        to right, 
+        #fff 20%, 
+        var(--accent-light) 40%, 
+        var(--accent-light) 60%, 
+        #fff 80%
+    );
+    background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: none;
-    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+    animation: shineText 3s linear infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+@keyframes shineText {
+    to { background-position: 200% center; }
 }
 
 .logo p {
     margin: 0;
-    font-size: 10px;
-    color: #B6823E;
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-size: 11px;
+    color: var(--accent-gold);
+    font-weight: 800;
+    letter-spacing: 3.5px;
     text-transform: uppercase;
-    opacity: 0.9;
+    position: relative;
+    padding-left: 2px;
 }
 
 .nav {
     display: flex;
-    gap: 4px;
+    gap: 8px;
     align-items: center;
 }
 
 .nav a {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    font-weight: 600;
-    font-size: 13px;
-    padding: 8px 14px;
-    border-radius: 8px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    transition: var(--transition);
     position: relative;
+    overflow: hidden;
 }
 
+/* Efecto Hover Moderno: Pill de fondo */
 .nav a:hover {
-    background: rgba(182, 130, 62, 0.2);
     color: #fff;
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.05);
 }
 
+/* La línea de abajo ahora es un punto que se expande */
 .nav a::after {
     content: '';
     position: absolute;
-    bottom: 4px;
+    bottom: 8px;
     left: 50%;
-    width: 0;
-    height: 2px;
-    background: #B6823E;
-    transform: translateX(-50%);
-    transition: width 0.25s ease;
-    border-radius: 2px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-gold);
+    border-radius: 50%;
+    transform: translateX(-50%) scale(0);
+    transition: var(--transition);
+    opacity: 0;
 }
 
 .nav a:hover::after {
-    width: 60%;
-}
-
-.nav img {
-    width: 22px;
-    height: 22px;
-    filter: brightness(0) invert(1);
-    transition: transform 0.25s ease, filter 0.25s ease;
-    opacity: 0.85;
-}
-
-.nav a:hover img {
-    transform: scale(1.15);
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    transform: translateX(-50%) scale(1);
     opacity: 1;
 }
 
-/* Link de ADMIN especial */
+/* Iconos con pulso al hover */
+.nav img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1) opacity(0.7);
+    transition: var(--transition);
+}
+
+.nav a:hover img {
+    filter: brightness(0) invert(1) opacity(1);
+    transform: translateY(-2px) scale(1.1);
+}
+
+/* Botón ADMIN: Ahora brilla de verdad */
 .nav a[style*="f39c12"] {
-    background: rgba(243, 156, 18, 0.15);
-    border: 1px solid rgba(243, 156, 18, 0.3);
+    background: rgba(243, 156, 18, 0.1) !important;
+    border: 1px solid rgba(243, 156, 18, 0.4);
+    color: #f39c12 !important;
+    box-shadow: 0 0 15px rgba(243, 156, 18, 0.1);
 }
 
 .nav a[style*="f39c12"]:hover {
-    background: rgba(243, 156, 18, 0.3);
+    background: #f39c12 !important;
+    color: #fff !important;
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.4);
 }
 
-/* Animación de entrada */
-@keyframes slideDown {
-    from { transform: translateY(-100%); opacity: 0; }
-    to   { transform: translateY(0);     opacity: 1; }
+/* Animación de entrada suave con desenfoque */
+@keyframes entrance {
+    from { 
+        transform: translateY(-20px); 
+        opacity: 0; 
+        filter: blur(10px);
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+        filter: blur(0);
+    }
 }
 
 .header {
-    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: entrance 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Responsive */
+/* Responsive optimizado */
 @media (max-width: 900px) {
-    .header { padding: 0 20px; height: 60px; }
-    .logo h1 { font-size: 20px; }
-    .logo p  { font-size: 9px; }
+    .header { padding: 0 25px; min-height: 70px; }
+    .logo h1 { font-size: 22px; letter-spacing: 2px; }
     .nav { gap: 2px; }
-    .nav a { font-size: 12px; padding: 6px 10px; }
-}
-
-@media (max-width: 600px) {
-    .header { flex-wrap: wrap; height: auto; padding: 12px 16px; }
-    .nav { flex-wrap: wrap; gap: 4px; }
-    .nav a { font-size: 11px; padding: 5px 8px; }
 }
