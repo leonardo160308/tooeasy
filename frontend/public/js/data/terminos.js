@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </h2>
                 <p style="margin:0; font-size:0.78rem; color:#718096; font-weight:600;">
                     Plataforma educativa Too Easy &nbsp;·&nbsp; Versión 1.0
-                    &nbsp;·&nbsp; Vigente desde junio de 2025
+                    &nbsp;·&nbsp; Vigente desde septiembre de 2025
                 </p>
             </div>
 
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </h3>
             <p style="font-size:0.85rem; line-height:1.7; color:#4a5568; margin:0 0 14px;">
                 Too Easy es una aplicación web educativa de finanzas personales, desarrollada con
-                fines académicos por el equipo del Grupo 5IV8. La plataforma ofrece herramientas
+                fines académicos por el equipo de desarrollo Macro-Ware. La plataforma ofrece herramientas
                 interactivas que incluyen: lecciones mediante flashcards, cuestionarios de
                 evaluación (quizzes), un dashboard financiero personal, un simulador de inversiones
                 y un sistema de retos gamificado. Su propósito exclusivo es facilitar el aprendizaje
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 Todo el contenido disponible en Too Easy —incluyendo pero no limitado a: diseño
                 gráfico, código fuente, imágenes, íconos, textos, materiales educativos, flashcards,
                 preguntas de quizzes y elementos de gamificación— es propiedad intelectual del
-                equipo desarrollador del Grupo 5IV8 o está licenciado para su uso por dicho equipo.
+                equipo desarrollador Macro-Ware o está licenciado para su uso por dicho equipo.
                 Queda prohibida su reproducción total o parcial, distribución, modificación o
                 uso comercial sin autorización escrita previa. El acceso al servicio no otorga al
                 usuario ningún derecho de propiedad sobre los elementos de la plataforma.
@@ -239,13 +239,13 @@ document.addEventListener("DOMContentLoaded", () => {
                    style="color:#2C405B; font-weight:700; text-decoration:underline;">
                     tooeasycontactanos@gmail.com
                 </a>.
-                Nos comprometemos a dar respuesta en un plazo máximo de 5 días hábiles.
+                Nos comprometemos a dar respuesta.
             </p>
 
             <!-- PIE DEL MODAL -->
             <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0;
                         text-align:center; font-size:0.78rem; color:#a0aec0; font-weight:600;">
-                © 2025 Too Easy — Proyecto Académico Grupo 5IV8<br>
+                © 2025 Too Easy — Proyecto Académico Equipo Macro-Ware<br>
                 <em>"Juega hoy, triunfa mañana"</em>
             </div>
 
