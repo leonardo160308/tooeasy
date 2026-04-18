@@ -34,24 +34,25 @@ body {
 /* ── LAYOUT ── */
 .inv-layout {
     display: flex;
-    min-height: calc(100vh - 70px);
-    overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    min-height: calc(100vh - 70px); /* Ajustado a la altura del header */
+    border-radius: 16px; 
+    /* Quitamos overflow: hidden para que el sticky funcione */
+    border-bottom: 1px solid var(--border);
+    position: relative;
 }
-
 /* ── SIDEBAR ── */
 .inv-sidebar {
     width: 220px;
     min-width: 220px;
     background: linear-gradient(160deg, #1e2e42 0%, #2C405B 100%);
-    display: flex;
-    flex-direction: column;
-    padding: 24px 16px;
-    gap: 6px;
     position: sticky;
-    top: 70px;
+    top: 70px; /* Si sigue habiendo hueco, prueba 69px o 71px */
     height: calc(100vh - 70px);
     overflow-y: auto;
+    
+    /* Si el layout es redondeado, el sidebar debe redondear su esquina superior izquierda */
+    border-top-left-radius: 16px; 
+    border-bottom-left-radius: 16px;
 }
 
 .sidebar-logo {
