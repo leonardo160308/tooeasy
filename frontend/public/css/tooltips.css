@@ -1,7 +1,5 @@
 /* ========================================
-   SISTEMA DE TOOLTIPS — TOO-EASY (v1)
-   Integra con las CSS variables globales
-   del proyecto (--primary, --secondary, etc.)
+   SISTEMA DE TOOLTIPS — TOO-EASY (v2)
    ======================================== */
 
 :root {
@@ -14,20 +12,20 @@
 }
 
 /* ─────────────────────────────────────────
-   ICONO DISPARADOR (ℹ dentro de un círculo)
-   Uso:  <span class="tooltip-icon" data-tooltip="Texto explicativo">ℹ</span>
+   ICONO DISPARADOR
    ───────────────────────────────────────── */
 .tooltip-icon {
     display:         inline-flex;
     align-items:     center;
     justify-content: center;
-    width:           16px;
-    height:          16px;
-    min-width:       16px;
-    background:      #6585AA;
-    color:           #ffffff;
+    width:           15px;
+    height:          15px;
+    min-width:       15px;
+    /* Más sutil: fondo semi-transparente */
+    background:      rgba(101, 133, 170, 0.25);
+    color:           rgba(255, 255, 255, 0.7);
     border-radius:   50%;
-    font-size:       10px;
+    font-size:       9px;
     font-weight:     800;
     font-style:      normal;
     cursor:          help;
@@ -38,16 +36,20 @@
     transition:      background 0.2s ease, transform 0.18s ease;
     line-height:     1;
     flex-shrink:     0;
+    /* Z-index base para que el pseudo-elemento quede encima de todo */
     z-index:         1;
+    /* Evitar que rompa el layout inline */
+    white-space:     nowrap;
 }
 
 .tooltip-icon:hover {
-    background: #2C405B;
-    transform:  scale(1.18);
+    background: rgba(44, 64, 91, 0.6);
+    color: #fff;
+    transform:  scale(1.15);
 }
 
 /* ─────────────────────────────────────────
-   BURBUJA DEL TOOLTIP (pseudo-elemento ::before)
+   BURBUJA DEL TOOLTIP
    ───────────────────────────────────────── */
 .tooltip-icon::before {
     content:       attr(data-tooltip);
@@ -67,17 +69,20 @@
     white-space:   normal;
     width:         var(--tt-width);
     text-align:    left;
-    z-index:       99999;
+    /* Z-index MUY alto para que salga por encima de todo */
+    z-index:       999999;
     opacity:       0;
     visibility:    hidden;
     transition:    opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
     box-shadow:    var(--tt-shadow);
     pointer-events: none;
     letter-spacing: 0.1px;
+    /* Asegurar que no quede cortado por overflow hidden de padres */
+    isolation:     isolate;
 }
 
 /* ─────────────────────────────────────────
-   FLECHITA DEL TOOLTIP (pseudo-elemento ::after)
+   FLECHITA
    ───────────────────────────────────────── */
 .tooltip-icon::after {
     content:       '';
@@ -87,7 +92,7 @@
     transform:     translateX(-50%);
     border:        5px solid transparent;
     border-top-color: var(--tt-bg);
-    z-index:       99999;
+    z-index:       999999;
     opacity:       0;
     visibility:    hidden;
     transition:    opacity 0.22s ease, visibility 0.22s ease;
@@ -175,23 +180,56 @@
 
 /* ─────────────────────────────────────────
    VARIANTE CLARA (para fondos oscuros)
-   El ícono se ve blanco/semitransparente
+   Usada en summary-results (fondo azul oscuro)
    ───────────────────────────────────────── */
 .tooltip-icon.tt-light {
-    background: rgba(255, 255, 255, 0.18);
-    color:      #ffffff;
-    border:     1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.15);
+    color:      rgba(255, 255, 255, 0.65);
+    border:     1px solid rgba(255, 255, 255, 0.2);
 }
 .tooltip-icon.tt-light:hover {
-    background: rgba(255, 255, 255, 0.32);
-    transform:  scale(1.18);
+    background: rgba(255, 255, 255, 0.28);
+    color:      #fff;
+    transform:  scale(1.15);
+}
+
+/* ─────────────────────────────────────────
+   FIX PARA summary-results:
+   Los result-item usan display:flex column,
+   entonces el tooltip-icon debe estar INLINE
+   junto al texto del span, no en bloque.
+   ───────────────────────────────────────── */
+.summary-results .result-item > span {
+    display:     flex;
+    align-items: center;
+    justify-content: center;
+    gap:         4px;
+    flex-wrap:   nowrap;
+    font-size:   0.72rem;
+    color:       rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+/* El tooltip dentro de summary-results necesita
+   z-index aún más alto porque está en un stacking
+   context con overflow y transform */
+.summary-results .tooltip-icon::before,
+.summary-results .tooltip-icon::after {
+    z-index: 9999999;
+}
+
+/* Forzar que el pseudo-elemento salga del overflow
+   del contenedor usando position fixed-like trick */
+.summary-results .result-item {
+    position: relative;
+    overflow: visible;
 }
 
 /* ─────────────────────────────────────────
    HELPER: encabezado con tooltip alineado
-   Uso: <h2 class="tooltip-heading">Título
-          <span class="tooltip-icon ...">ℹ</span>
-        </h2>
    ───────────────────────────────────────── */
 .tooltip-heading {
     display:     inline-flex;
@@ -200,15 +238,7 @@
 }
 
 /* ─────────────────────────────────────────
-   BANNER INFORMATIVO (bloques de "¿cómo funciona?")
-   Uso:
-   <div class="info-banner">
-     <span class="info-banner-icon">🎯</span>
-     <div class="info-banner-text">
-       <strong>Título</strong>
-       Descripción breve.
-     </div>
-   </div>
+   BANNER INFORMATIVO
    ───────────────────────────────────────── */
 .info-banner {
     background:    linear-gradient(135deg, #eef4fb 0%, #e4edf7 100%);
@@ -242,13 +272,8 @@
     margin-bottom: 4px;
 }
 
-.info-banner .info-banner-text p {
-    margin: 0;
-}
+.info-banner .info-banner-text p { margin: 0; }
 
-/* ─────────────────────────────────────────
-   BANNER VARIANTE ACENTO (color dorado/naranja)
-   ───────────────────────────────────────── */
 .info-banner.info-banner-accent {
     background:  linear-gradient(135deg, #fdf6ed 0%, #f9ead8 100%);
     border-left-color: #BA8E58;
@@ -260,7 +285,7 @@
 }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE — Ajuste para móviles
+   RESPONSIVE
    ───────────────────────────────────────── */
 @media (max-width: 600px) {
     .tooltip-icon::before {
@@ -271,10 +296,8 @@
     .tooltip-icon:hover::before {
         transform: translateX(0) translateY(0);
     }
-    .tooltip-icon::after {
-        left: 8px;
-    }
-    /* Variante derecha en móvil → cae abajo */
+    .tooltip-icon::after { left: 8px; }
+
     .tooltip-icon.tt-right::before {
         bottom:    auto;
         top:       calc(100% + 10px);
