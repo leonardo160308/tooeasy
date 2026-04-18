@@ -84,7 +84,7 @@
                     <label for="fixed-income">
                         Ingreso Fijo Mensual ($)
                         <span class="tooltip-icon tt-right tt-wide"
-                              data-tooltip="Escribe aquí tus ingresos recurrentes mensuales: salario base, renta cobrada u otros pagos que recibes de forma fija cada mes. El sistema lo suma a tus ingresos variables del calendario.">ℹ</span>
+                              data-tooltip="Escribe aquí tus ingresos recurrentes mensuales u otros pagos que recibes de forma fija cada mes. El sistema lo suma a tus ingresos variables del calendario.">ℹ</span>
                     </label>
                     <input type="number" id="fixed-income" placeholder="0.00" step="10.00">
                 </div>
@@ -93,7 +93,7 @@
                     <label for="fixed-expense">
                         Egreso Fijo Mensual ($)
                         <span class="tooltip-icon tt-right tt-wide"
-                              data-tooltip="Registra tus gastos recurrentes: renta, servicios, suscripciones u otros pagos que realizas puntualmente cada mes. Se descuentan de tus ingresos para calcular tu balance.">ℹ</span>
+                              data-tooltip="Registra tus gastos recurrentes u otros pagos que realizas puntualmente cada mes. Se descuentan de tus ingresos para calcular tu balance.">ℹ</span>
                     </label>
                     <input type="number" id="fixed-expense" placeholder="0.00" step="10.00">
                 </div>
@@ -107,7 +107,7 @@
                     <label for="goal-name">
                         Nombre de Meta
                         <span class="tooltip-icon"
-                              data-tooltip="Dale un nombre descriptivo a tu objetivo de ahorro, por ejemplo: 'Vacaciones', 'Fondo de emergencia' o 'Nuevo equipo'. Esto te ayuda a mantener el enfoque en tu propósito.">ℹ</span>
+                              data-tooltip="Dale un nombre descriptivo a tu objetivo de ahorro. Esto te ayuda a mantener el enfoque en tu propósito.">ℹ</span>
                     </label>
                     <input type="text" id="goal-name" placeholder="Ej: Vacaciones" maxlength="50">
                 </div>
@@ -116,7 +116,7 @@
                     <label for="goal-amount">
                         Monto de Meta ($)
                         <span class="tooltip-icon"
-                              data-tooltip="Indica cuánto dinero necesitas para alcanzar tu meta. El sistema calculará cuánto te falta en función de tus ingresos y gastos actuales del mes.">ℹ</span>
+                              data-tooltip="Indica cuánto dinero necesitas para alcanzar tu meta.">ℹ</span>
                     </label>
                     <input type="number" id="goal-amount" placeholder="0.00" step="10.00">
                 </div>
@@ -130,7 +130,7 @@
                     <span>
                         Ahorro Actual
                         <span class="tooltip-icon tt-light tt-right tt-wide"
-                              data-tooltip="Diferencia entre tus ingresos totales (fijos + variables del mes) y tus egresos totales. Positivo = superávit; negativo = déficit.">ℹ</span>
+                              data-tooltip="Diferencia entre tus ingresos totales (fijos + variables del mes).">ℹ</span>
                     </span>
                     <strong id="calculated-savings">$0.00</strong>
                 </div>
@@ -139,7 +139,7 @@
                     <span>
                         Falta para Meta
                         <span class="tooltip-icon tt-light tt-right tt-wide"
-                              data-tooltip="Cuánto dinero te falta aún para alcanzar tu meta del mes. Si ya lograste el objetivo, verás $0.00.">ℹ</span>
+                              data-tooltip="Cuánto dinero te falta aún para alcanzar tu meta del mes.">ℹ</span>
                     </span>
                     <strong id="calculated-remaining">$0.00</strong>
                 </div>
@@ -148,7 +148,7 @@
                     <span>
                         Estado
                         <span class="tooltip-icon tt-light tt-left tt-wide"
-                              data-tooltip="Refleja tu situación financiera: 'En progreso' (avanzando hacia la meta), '¡Meta Alcanzada!' (superávit suficiente) o 'Déficit' (gastos mayores que ingresos).">ℹ</span>
+                              data-tooltip="Refleja tu situación financiera">ℹ</span>
                     </span>
                     <strong id="goal-status">Sin datos</strong>
                 </div>
@@ -165,12 +165,12 @@
                 <button class="chart-tab-btn" data-chart-type="2">
                     Ingresos por categoría
                     <span class="tooltip-icon tt-bottom"
-                          data-tooltip="Visualiza en una gráfica de barras cuánto ingresó por cada categoría durante el mes (salario, freelance, ventas, etc.).">ℹ</span>
+                          data-tooltip="Visualiza en una gráfica de barras cuánto ingresó por cada categoría durante el mes.">ℹ</span>
                 </button>
                 <button class="chart-tab-btn" data-chart-type="3">
                     Egresos por categoría
                     <span class="tooltip-icon tt-bottom"
-                          data-tooltip="Muestra en qué categorías gastaste más dinero durante el mes (renta, comida, transporte, etc.), útil para identificar dónde recortar.">ℹ</span>
+                          data-tooltip="Muestra en qué categorías gastaste más dinero durante el mes , útil para identificar dónde recortar.">ℹ</span>
                 </button>
             </div>
 
