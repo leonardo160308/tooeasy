@@ -51,18 +51,11 @@ body {
 .pagina-principal .contenido-principal { max-width: 460px; }
 
 .pagina-principal h2 {
-    font-family: 'Baloo 2', cursive;
+    font-family: 'Baloo 2';
     font-size: 2.6rem; /* Un pelín más grande para que imponga */
     font-weight: 800;
     margin-bottom: 14px;
-    line-height: 1.25;
-    
-    /* Aquí viene la magia: gradiente animado con tus mismos colores */
-    background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientGlow 5s ease infinite;
+    line-height: 1.25; 
 }
 
 .contenido-principal p {
@@ -118,14 +111,23 @@ body {
     overflow: hidden; /* Clave para que la luz no se salga del borde */
     box-shadow: inset 0 -3px 10px rgba(0,0,0,0.15); /* Sombras internas para dar profundidad */
 }
+/* Para la versión Dorada/Accent */
 .tarjeta-headerD {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    border-bottom: 4px solid var(--accent);
+    background-color: #1e2e42; /* Color base */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(182, 130, 62, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(44, 64, 91, 0.3) 0px, transparent 50%);
+    border-bottom: 2px solid var(--accent);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1); /* Brillo en el borde superior */
 }
 
+/* Para la versión Azul/Tech */
 .tarjeta-headerA {
-    background: linear-gradient(135deg, var(--primary) 0%, #1e2d40 100%);
-    border-bottom: 4px solid var(--light-blue);
+    background-color: #1a2738;
+    background-image: 
+        radial-gradient(at 100% 0%, rgba(58, 82, 114, 0.4) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(30, 46, 66, 0.4) 0px, transparent 50%);
+    border-bottom: 2px solid var(--light-blue);
 }
 
 .tarjeta-headerA::after, 
