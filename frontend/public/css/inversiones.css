@@ -35,7 +35,6 @@ body {
 .inv-layout {
     display: flex;
     min-height: calc(100vh - 70px); /* Ajustado a la altura del header */
-    border-radius: 16px; 
     /* Quitamos overflow: hidden para que el sticky funcione */
     border-bottom: 1px solid var(--border);
     position: relative;
