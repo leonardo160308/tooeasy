@@ -34,8 +34,8 @@ body {
 /* ── LAYOUT ── */
 .inv-layout {
     display: flex;
-    min-height: calc(100vh - 80px);
-    border-radius:10% ;
+    min-height: calc(100vh - 70px);
+    overflow: hidden;
     border-bottom: 1px solid rgba(255,255,255,0.15);
 }
 
@@ -49,8 +49,8 @@ body {
     padding: 24px 16px;
     gap: 6px;
     position: sticky;
-    top: 80px;
-    height: calc(100vh - 80px);
+    top: 70px;
+    height: calc(100vh - 70px);
     overflow-y: auto;
 }
 
