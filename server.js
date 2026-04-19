@@ -12,9 +12,10 @@ import dashboardRoutes     from './backend/routes/dashboardRoutes.js';
 import gameRoutes          from './backend/routes/gameRoutes.js';
 import challengeRoutes     from './backend/routes/challengeRoutes.js';
 import adminRoutes         from './backend/routes/adminRoutes.js';
-import authRoutes          from './backend/routes/authRoutes.js';          // ✅ NUEVO
+import authRoutes          from './backend/routes/authRoutes.js';
 import authRecoveryRoutes  from './backend/routes/authRecoveryRoutes.js';
-import inversionRoutes from './backend/routes/inversionRoutes.js';
+import inversionRoutes     from './backend/routes/inversionRoutes.js';
+import progressRoutes      from './backend/routes/progressRoutes.js'; // ✅ NEW
 
 dotenv.config();
 const app = express();
@@ -38,8 +39,8 @@ app.use(express.static(path.join(__dirname, 'frontend/views')));
 // =====================
 // RUTAS API
 // =====================
-app.use('/api', authRoutes);           // ✅ /api/auth/register, /api/auth/login, etc.
-app.use('/api', authRecoveryRoutes);   // /api/auth/request-code, /api/auth/verify-code, etc.
+app.use('/api', authRoutes);
+app.use('/api', authRecoveryRoutes);
 app.use('/api', userRoutes);
 app.use('/api', movementRoutes);
 app.use('/api', skinRoutes);
@@ -48,6 +49,7 @@ app.use('/api', gameRoutes);
 app.use('/api', challengeRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', inversionRoutes);
+app.use('/api', progressRoutes); // ✅ NEW — must come after adminRoutes to avoid prefix conflicts
 
 // =====================
 // SERVIDOR

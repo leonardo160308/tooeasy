@@ -1,7 +1,6 @@
 // frontend/public/js/pages/lessons.js
-import { getUserData } from '../modules/api.js';
 import { protectRoute, getAuthData } from '../modules/auth.js';
-import { alertaError, alertaInfo } from '../modules/alerts.js';
+import { alertaError }               from '../modules/alerts.js';
 
 const API_URL = '/api';
 
@@ -9,35 +8,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!protectRoute()) return;
 
     const sessionUser = getAuthData();
-    const userId = sessionUser.id;
+    const userId      = sessionUser.id;
 
-    let userLevel = 1;
-    let allLevelsDB = [];
+    let allLevelsDB     = [];
     let allCategoriesDB = [];
 
-    // ── Contenedor de tarjetas dinámico ──────────────────────────────────
+    // KEY CHANGE: progressMap[categoryId] = [completedLevelId, ...]
+    // This replaces the old single `userLevel` integer completely.
+    let progressMap = {};
+
     const tarjetasContainer = document.querySelector('.tarjetas');
-    const loadingEl = document.querySelector('.loading-levels');
+    const loadingEl         = document.querySelector('.loading-levels');
 
-    // ── Cargar datos frescos desde la BD (sin caché) ──────────────────────
+    // ── Fetch all data fresh (no cache) ───────────────────────────────────
     async function fetchFreshData() {
-        // Forzar sin caché con timestamp + Cache-Control header
         const ts = Date.now();
+        const headers = { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' };
 
-        const [userData, categoriesRes, levelsRes] = await Promise.all([
-            getUserData(userId),
-            fetch(`${API_URL}/admin/categories?_=${ts}`, {
-                headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-            }),
-            fetch(`${API_URL}/levels?_=${ts}`, {
-                headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
-            })
+        const [categoriesRes, levelsRes, progressRes] = await Promise.all([
+            fetch(`${API_URL}/admin/categories?_=${ts}`, { headers }),
+            fetch(`${API_URL}/levels?_=${ts}`,            { headers }),
+            fetch(`${API_URL}/progress/${userId}?_=${ts}`,{ headers })
         ]);
 
-        const categoriesData = await categoriesRes.json();
-        const levelsData     = await levelsRes.json();
-
-        userLevel = userData.level || 1;
+        const [categoriesData, levelsData, progressData] = await Promise.all([
+            categoriesRes.json(),
+            levelsRes.json(),
+            progressRes.json()
+        ]);
 
         if (categoriesData.success) {
             allCategoriesDB = categoriesData.data || [];
@@ -52,9 +50,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             alertaError('No se pudieron cargar los niveles');
             allLevelsDB = [];
         }
+
+        if (progressData.success) {
+            // progressData.progress = { "42": [101, 102], "43": [201], ... }
+            // Normalize keys and values to numbers for safe comparisons
+            progressMap = {};
+            Object.entries(progressData.progress || {}).forEach(([catId, levels]) => {
+                progressMap[Number(catId)] = (levels || []).map(Number);
+            });
+        }
+        // A failed progress load is non-fatal — the page will show only the
+        // first level of each category as available, which is correct default.
     }
 
-    // ── Renderizar tarjetas dinámicamente desde la BD ─────────────────────
+    // ── Render category cards ─────────────────────────────────────────────
     function renderCategories() {
         if (!tarjetasContainer) return;
         tarjetasContainer.innerHTML = '';
@@ -67,20 +76,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Alternar entre estilos A y D para las tarjetas
         allCategoriesDB.forEach((cat, idx) => {
-            const isD = idx % 2 === 0;
-            const typeClass = isD ? 'tarjetaD' : 'tarjetaA';
-            const headerClass = isD ? 'tarjeta-headerD' : 'tarjeta-headerA';
-            const bodyClass = isD ? 'tarjeta-bodyD' : 'tarjeta-bodyA';
+            const isD        = idx % 2 === 0;
+            const typeClass  = isD ? 'tarjetaD'        : 'tarjetaA';
+            const hdrClass   = isD ? 'tarjeta-headerD' : 'tarjeta-headerA';
+            const bodyClass  = isD ? 'tarjeta-bodyD'   : 'tarjeta-bodyA';
 
             const card = document.createElement('div');
-            card.className = `${typeClass} category-card`;
-            card.dataset.categoryId = cat.id;
-            card.dataset.categoryName = cat.nombre;
+            card.className       = `${typeClass} category-card`;
+            card.dataset.catId   = cat.id;
 
             card.innerHTML = `
-                <div class="${headerClass}">
+                <div class="${hdrClass}">
                     <h3>${escHtml(cat.nombre)}</h3>
                 </div>
                 <div class="${bodyClass}">
@@ -94,99 +101,110 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             tarjetasContainer.appendChild(card);
 
-            // Evento click en la tarjeta
             card.addEventListener('click', (e) => {
                 if (e.target.tagName === 'BUTTON') return;
 
-                // Cerrar otras tarjetas
-                document.querySelectorAll('.category-card').forEach(otherCard => {
-                    if (otherCard !== card) {
-                        otherCard.querySelector('.levels-container')?.classList.add('hidden');
+                // Collapse other open cards
+                document.querySelectorAll('.category-card').forEach(other => {
+                    if (other !== card) {
+                        other.querySelector('.levels-container')?.classList.add('hidden');
                     }
                 });
 
                 const levelsContainer = card.querySelector('.levels-container');
-                const isHidden = levelsContainer.classList.contains('hidden');
+                const wasHidden       = levelsContainer.classList.contains('hidden');
                 levelsContainer.classList.toggle('hidden');
 
-                if (isHidden) {
-                    renderLevelsForCategory(card, cat.id);
+                if (wasHidden) {
+                    renderLevelsForCategory(card, Number(cat.id));
                 }
             });
         });
     }
 
-    // ── Renderizar niveles de una categoría ───────────────────────────────
+    // ── Render levels inside a category card ──────────────────────────────
+    // STATE RULES (no hidden dependencies):
+    //   completed  → level.id is in completedLevelIds
+    //   available  → it is the first level in the category  OR
+    //                the immediately preceding level (by orden) is completed
+    //   locked     → everything else
     function renderLevelsForCategory(card, categoryId) {
         const levelsContainer = card.querySelector('.levels-container');
-        const progressBar = levelsContainer.querySelector('.progress-bar');
+        const progressBarEl   = levelsContainer.querySelector('.progress-bar');
 
-        // Limpiar niveles anteriores (pero preservar la barra de progreso)
+        // Remove old level rows (keep the progress-bar element)
         Array.from(levelsContainer.children).forEach(child => {
-            if (!child.classList.contains('progress-bar')) {
-                child.remove();
-            }
+            if (!child.classList.contains('progress-bar')) child.remove();
         });
 
-        // Filtrar niveles de esta categoría, ordenados por 'orden'
+        // Levels for this category, sorted by their position
         const categoryLevels = allLevelsDB
-            .filter(l => Number(l.category_id) === Number(categoryId))
+            .filter(l => Number(l.category_id) === categoryId)
             .sort((a, b) => a.orden - b.orden);
 
         if (categoryLevels.length === 0) {
             const msg = document.createElement('p');
-            msg.textContent = 'Próximamente...';
-            msg.style.cssText = 'padding:10px;color:#666;text-align:center;font-style:italic;';
-            levelsContainer.insertBefore(msg, progressBar);
+            msg.textContent       = 'Próximamente...';
+            msg.style.cssText     = 'padding:10px;color:#666;text-align:center;font-style:italic;';
+            levelsContainer.insertBefore(msg, progressBarEl);
             return;
         }
 
-        let completedInCategory = 0;
-        const totalLevels = categoryLevels.length;
+        // All level IDs completed in this category (already normalised to Number)
+        const completedLevelIds = progressMap[categoryId] || [];
+        let completedCount = 0;
 
-        categoryLevels.forEach(nivel => {
-            const globalOrden = nivel.orden;
-            const isCompleted = globalOrden < userLevel;
-            const isActive    = globalOrden === userLevel;
-            const isLocked    = globalOrden > userLevel;
+        categoryLevels.forEach((nivel, idx) => {
+            const prevLevel = idx > 0 ? categoryLevels[idx - 1] : null;
 
-            if (isCompleted) completedInCategory++;
+            const isCompleted = completedLevelIds.includes(Number(nivel.id));
+
+            // First level is always available; subsequent levels need previous done
+            const isAvailable = idx === 0
+                || completedLevelIds.includes(Number(prevLevel.id));
+
+            const isLocked = !isCompleted && !isAvailable;
+
+            if (isCompleted) completedCount++;
 
             const levelDiv = document.createElement('div');
             levelDiv.classList.add('level-item');
-            if (isCompleted) levelDiv.classList.add('completed');
-            else if (isActive) levelDiv.classList.add('active');
-            else levelDiv.classList.add('locked');
+
+            if (isCompleted)       levelDiv.classList.add('completed');
+            else if (!isLocked)    levelDiv.classList.add('active');
+            else                   levelDiv.classList.add('locked');
+
+            const btnLabel = isCompleted ? 'Repasar' : 'Jugar';
 
             levelDiv.innerHTML = `
                 <div class="level-info">
-                    <span class="level-num">Nivel ${globalOrden}</span>
+                    <span class="level-num">Nivel ${nivel.orden}</span>
                     <span class="level-name">${escHtml(nivel.nombre)}</span>
                 </div>
-                ${(isActive || isCompleted)
-                    ? `<button class="btn-play">Jugar</button>`
+                ${!isLocked
+                    ? `<button class="btn-play">${btnLabel}</button>`
                     : `<i class="fa-solid fa-lock"></i>`}`;
 
-            if (isActive || isCompleted) {
-                const btn = levelDiv.querySelector('button');
-                btn.addEventListener('click', (e) => {
+            if (!isLocked) {
+                levelDiv.querySelector('button').addEventListener('click', (e) => {
                     e.stopPropagation();
                     window.location.href = `/nivel.html?level=${nivel.id}`;
                 });
             }
 
-            levelsContainer.insertBefore(levelDiv, progressBar);
+            levelsContainer.insertBefore(levelDiv, progressBarEl);
         });
 
-        // Actualizar barra de progreso
-        const progressFill = progressBar?.querySelector('.progress-fill');
-        if (progressFill) {
-            const percent = totalLevels === 0 ? 0 : (completedInCategory / totalLevels) * 100;
-            progressFill.style.width = `${percent}%`;
+        // Update progress bar
+        const fill = progressBarEl?.querySelector('.progress-fill');
+        if (fill) {
+            const pct = categoryLevels.length === 0
+                ? 0
+                : (completedCount / categoryLevels.length) * 100;
+            fill.style.width = `${pct}%`;
         }
     }
 
-    // ── Utilidad: escapar HTML ────────────────────────────────────────────
     function escHtml(str) {
         return String(str || '')
             .replace(/&/g, '&amp;')
@@ -195,7 +213,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/"/g, '&quot;');
     }
 
-    // ── Inicializar ───────────────────────────────────────────────────────
+    // ── Boot ──────────────────────────────────────────────────────────────
     try {
         await fetchFreshData();
         if (loadingEl) loadingEl.remove();

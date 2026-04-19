@@ -1,7 +1,5 @@
 // frontend/public/js/pages/quiz.js
-import { updateUserData, getUserData } from '../modules/api.js';
 import { protectRoute, getAuthData } from '../modules/auth.js';
-import { SKIN_REWARDS } from '../data/preguntas.js';
 
 const API_URL = '/api';
 
@@ -10,14 +8,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sessionUser = getAuthData();
 
     const urlParams   = new URLSearchParams(window.location.search);
-    const nivelActual = parseInt(urlParams.get('level')) || 1;
+    const nivelActual = parseInt(urlParams.get('level')) || 1;  // educational_levels.id
 
     let preguntas = [];
 
-    // ── Cargar preguntas desde la BD ─────────────────────────────────────
+    // ── Load questions from DB ─────────────────────────────────────────────
     try {
-        const res = await fetch(`${API_URL}/admin/questions/${nivelActual}`);
-        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const res  = await fetch(`${API_URL}/admin/questions/${nivelActual}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
 
         if (!data.success || data.data.length === 0) {
@@ -32,13 +30,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // ── Estado ────────────────────────────────────────────────────────────
+    // ── State ──────────────────────────────────────────────────────────────
     let preguntaIndex    = 0;
     let aciertos         = 0;
     let seleccionUsuario = null;
     let preguntaEvaluada = false;
 
-    // ── Referencias DOM ───────────────────────────────────────────────────
+    // ── DOM refs ───────────────────────────────────────────────────────────
     const txtPregunta   = document.getElementById('textoPregunta');
     const imgPregunta   = document.getElementById('imagenPregunta');
     const divOpciones   = document.getElementById('opcionesContainer');
@@ -62,19 +60,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     ocultarFeedback();
 
-    // ── Cargar pregunta ───────────────────────────────────────────────────
+    // ── Render question ────────────────────────────────────────────────────
     function cargarPregunta() {
         seleccionUsuario = null;
         preguntaEvaluada = false;
         ocultarFeedback();
         btnComprobar.style.display = 'none';
-        btnComprobar.disabled = false;
+        btnComprobar.disabled      = false;
 
-        const p = preguntas[preguntaIndex];
+        const p       = preguntas[preguntaIndex];
+        const numActual = preguntaIndex + 1;
+
         txtPregunta.textContent = p.pregunta;
         if (p.imagen && p.imagen.trim()) imgPregunta.src = p.imagen;
 
-        const numActual = preguntaIndex + 1;
         if (pregActualLbl)  pregActualLbl.textContent  = numActual;
         if (contadorLabel)  contadorLabel.textContent  = `${numActual} / ${preguntas.length}`;
         barraProgreso.style.width = `${(numActual / preguntas.length) * 100}%`;
@@ -83,20 +82,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         Object.keys(p.opciones).forEach((key, idx) => {
             const btn = document.createElement('div');
             btn.classList.add('opcion');
-            btn.dataset.key = key;
-            btn.style.opacity = '0';
-            btn.style.transform = 'translateX(-14px)';
+            btn.dataset.key          = key;
+            btn.style.opacity        = '0';
+            btn.style.transform      = 'translateX(-14px)';
             btn.innerHTML = `
                 <span class="letra">${key}</span>
                 <span class="texto-opcion">${p.opciones[key]}</span>
                 <span class="estado-icon" aria-hidden="true"></span>`;
             btn.addEventListener('click', () => seleccionar(btn, key));
             divOpciones.appendChild(btn);
+
             requestAnimationFrame(() => {
                 setTimeout(() => {
                     btn.style.transition = 'opacity .28s ease, transform .28s ease';
-                    btn.style.opacity = '1';
-                    btn.style.transform = 'translateX(0)';
+                    btn.style.opacity    = '1';
+                    btn.style.transform  = 'translateX(0)';
                 }, idx * 55);
             });
         });
@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnComprobar.addEventListener('click', () => {
         if (preguntaEvaluada || !seleccionUsuario) return;
-        preguntaEvaluada = true;
-        btnComprobar.disabled = true;
+        preguntaEvaluada       = true;
+        btnComprobar.disabled  = true;
         btnComprobar.style.display = 'none';
 
-        const p = preguntas[preguntaIndex];
+        const p          = preguntas[preguntaIndex];
         const esCorrecta = seleccionUsuario === p.correcta;
         if (esCorrecta) aciertos++;
 
@@ -134,13 +134,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 opt.classList.add('dimmed');
             }
         });
+
         mostrarFeedback(esCorrecta, p.correcta, p.opciones[p.correcta]);
     });
 
     function mostrarFeedback(esCorrecto, keyCorrecta, textoCorrecta) {
-        resultado.className = `resultado ${esCorrecto ? 'correcto' : 'incorrecto'}`;
-        resultIco.textContent = esCorrecto ? '' : '';
-        resultMsg.textContent = esCorrecto
+        resultado.className      = `resultado ${esCorrecto ? 'correcto' : 'incorrecto'}`;
+        resultIco.textContent    = esCorrecto ? '✓' : '✗';
+        resultMsg.textContent    = esCorrecto
             ? '¡Correcto! Muy bien.'
             : `La respuesta correcta era: ${keyCorrecta}) ${textoCorrecta}`;
         resultWrapper.classList.add('visible');
@@ -149,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function ocultarFeedback() {
         resultWrapper.classList.remove('visible');
-        resultado.className = 'resultado';
+        resultado.className   = 'resultado';
         resultIco.textContent = '';
         resultMsg.textContent = '';
     }
@@ -165,79 +166,62 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // ── Finalizar nivel ───────────────────────────────────────────────────
+    // ── Finish level ───────────────────────────────────────────────────────
     async function finalizarNivel() {
         const porcentaje = (aciertos / preguntas.length) * 100;
         const aprobado   = porcentaje >= 80;
 
         if (!aprobado) {
-            mostrarPantallaFinal(false, `Necesitas al menos ${Math.ceil(preguntas.length * 0.8)} aciertos para aprobar.`);
+            // Failed — show retry screen, do NOT call progress API
+            mostrarPantallaFinal(false,
+                `Necesitas al menos ${Math.ceil(preguntas.length * 0.8)} aciertos para aprobar.`
+            );
             return;
         }
 
         try {
-            const userData    = await getUserData(sessionUser.id);
-            let updatePayload = {};
-            let monedasGanadas = 0;
-            let mensaje        = '¡Nivel completado!';
-            let skinDesbloqueada = null;
+            // ── Single source of truth for progress + coins ────────────────
+            // The backend checks if already completed, awards coins only once,
+            // and returns the updated completedLevels for this category.
+            const res = await fetch(`${API_URL}/progress/complete-level`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    userId:  sessionUser.id,
+                    levelId: nivelActual,   // educational_levels.id
+                    score:   porcentaje
+                })
+            });
 
-            // Solo recompensar si es la primera vez que completa este nivel
-            if (nivelActual === userData.level) {
-                const nuevoNivel = userData.level + 1;
-                updatePayload.level = nuevoNivel;
-                updatePayload.coins = (userData.coins || 0) + 20;
-                monedasGanadas = 20;
-                mensaje += ' +20 monedas 🪙';
+            const data = await res.json();
 
-                // ── DESBLOQUEO REAL DE SKIN ───────────────────────────────
-                if (SKIN_REWARDS[nuevoNivel]) {
-                    skinDesbloqueada = SKIN_REWARDS[nuevoNivel];
-                    try {
-                        // Intentar añadir la skin al inventario del usuario
-                        const skinRes = await fetch('/api/skins/unlock', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                userId: sessionUser.id,
-                                skinId: skinDesbloqueada
-                            })
-                        });
-                        const skinData = await skinRes.json();
-                        if (skinData.success) {
-                            mensaje += ` · ¡Nueva apariencia desbloqueada! 🏠`;
-                        }
-                    } catch (skinErr) {
-                        console.warn('No se pudo desbloquear la skin:', skinErr);
-                        // No interrumpir el flujo principal
-                    }
-                }
-            } else {
+            if (!data.success) {
+                console.error('Error al guardar progreso:', data.message);
+                mostrarPantallaFinal(true, '¡Nivel completado! (sin recompensa — error al guardar)');
+                return;
+            }
+
+            const { alreadyCompleted, coinsAwarded } = data;
+
+            let mensaje = '¡Nivel completado!';
+            if (alreadyCompleted) {
                 mensaje = 'Repaso completado · Sin recompensa extra.';
+            } else if (coinsAwarded > 0) {
+                mensaje += ` +${coinsAwarded} monedas 🪙`;
             }
 
-            if (Object.keys(updatePayload).length > 0) {
-                await updateUserData(sessionUser.id, updatePayload);
-            }
+            mostrarPantallaFinal(true, mensaje, coinsAwarded);
 
-            mostrarPantallaFinal(true, mensaje, monedasGanadas, skinDesbloqueada);
         } catch (err) {
-            console.error(err);
-            mostrarPantallaFinal(false, 'Error al guardar progreso.');
+            console.error('Error al guardar progreso:', err);
+            // Still show success screen — progress save is best-effort
+            mostrarPantallaFinal(true, '¡Nivel completado! (sin recompensa — error de conexión)');
         }
     }
 
-    // ── Pantalla final ────────────────────────────────────────────────────
-    function mostrarPantallaFinal(exito, mensaje, monedas = 0, skinId = null) {
+    // ── Final screen ───────────────────────────────────────────────────────
+    function mostrarPantallaFinal(exito, mensaje, monedas = 0) {
         const pct = Math.round((aciertos / preguntas.length) * 100);
-
-        const skinBadge = skinId
-            ? `<div style="background:#eaf7f0;border:1px solid #a5d6a7;border-radius:12px;
-                          padding:12px 16px;margin-bottom:16px;font-size:0.88rem;color:#2e7d32;font-weight:700;">
-                🏠 Nueva apariencia de casa desbloqueada.<br>
-                <span style="font-weight:400;font-size:0.82rem">Visita tu perfil para equiparla.</span>
-               </div>`
-            : '';
 
         modalBody.innerHTML = `
             <div style="margin-bottom:6px;font-size:3.8rem;line-height:1;">
@@ -246,7 +230,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             <h2 style="font-size:1.55rem;font-weight:800;color:#2C405B;margin-bottom:8px;">
                 ${exito ? '¡Felicidades!' : '¡Casi lo logras!'}
             </h2>
-            <p style="font-size:2rem;font-weight:900;color:${exito ? '#1e8a4a' : '#c0392b'};margin-bottom:6px;">
+            <p style="font-size:2rem;font-weight:900;
+                      color:${exito ? '#1e8a4a' : '#c0392b'};margin-bottom:6px;">
                 ${aciertos} / ${preguntas.length}
             </p>
             <p style="font-size:.88rem;color:#718096;margin-bottom:4px;">${pct}% de aciertos</p>
@@ -255,17 +240,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                       border-radius:10px;padding:10px 14px;">
                 ${mensaje}
             </p>
-            ${skinBadge}
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
                 <button onclick="window.location.href='/lecciones.html'"
                         class="btn-modal btn-secondary">
                     Ver lecciones
                 </button>
-                ${!exito ? `
-                <button onclick="window.location.reload()"
-                        class="btn-modal btn-primary">
-                    🔄 Reintentar
-                </button>` : ''}
+                ${!exito
+                    ? `<button onclick="window.location.reload()"
+                              class="btn-modal btn-primary">
+                          🔄 Reintentar
+                      </button>`
+                    : ''}
             </div>`;
 
         modalFinal.style.display = 'flex';
