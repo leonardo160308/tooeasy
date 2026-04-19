@@ -1,5 +1,6 @@
+// backend/controllers/skinController.js
 import Skin from '../models/SkinModel.js';
-import User from '../models/UserModel.js'; // Necesitamos al usuario para actualizar sus monedas
+import User from '../models/UserModel.js';
 
 // R: Obtener el catálogo completo de skins
 export const getShopSkins = async (req, res) => {
@@ -12,56 +13,63 @@ export const getShopSkins = async (req, res) => {
     }
 };
 
-// C: Lógica de Compra
+// C: Compra de skin (con monedas)
 export const purchaseSkin = async (req, res) => {
-    // Nota: El costo de la skin se asume que viene del Front (body), 
-    // pero DEBE VALIDARSE en el Backend contra un valor fijo de la DB. 
-    // Por simplicidad, asumiremos que el costo viene en el cuerpo y es válido para este ejemplo.
-    const { userId, skinId, cost, currency } = req.body; 
-
-    // **NOTA DE SEGURIDAD:** En una versión real, DEBES buscar el costo real en la DB.
-    const purchaseCost = parseFloat(cost); 
+    const { userId, skinId, cost, currency } = req.body;
+    const purchaseCost = parseFloat(cost);
 
     if (!userId || !skinId || !purchaseCost || currency !== 'coins') {
         return res.status(400).json({ message: 'Faltan datos de compra válidos.' });
     }
 
     try {
-        // 1. Verificar si el usuario ya la tiene
         const alreadyOwns = await Skin.userHasSkin(userId, skinId);
-        if (alreadyOwns) {
-            return res.status(409).json({ message: 'Ya posees esta skin.' });
-        }
+        if (alreadyOwns) return res.status(409).json({ message: 'Ya posees esta skin.' });
 
-        // 2. Obtener datos del usuario
         const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
+        if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+        if (user.coins < purchaseCost) return res.status(403).json({ message: 'Fondos insuficientes (Coins).' });
 
-        // 3. Verificar saldo
-        if (user.coins < purchaseCost) {
-            return res.status(403).json({ message: 'Fondos insuficientes (Coins).' });
-        }
-
-        // --- Lógica de Transacción (Compra Exitosa) ---
-
-        // 4. Registrar la skin en el inventario del usuario
         await Skin.addSkinToUser(userId, skinId);
-
-        // 5. Descontar el costo de las monedas del usuario
         const newCoins = user.coins - purchaseCost;
         await User.update(userId, { coins: newCoins });
 
-        // 6. Respuesta
-        res.status(200).json({
-            success: true,
-            message: `¡Skin ${skinId} comprada!`,
-            new_coins: newCoins
-        });
-
+        res.status(200).json({ success: true, message: `¡Skin ${skinId} comprada!`, new_coins: newCoins });
     } catch (error) {
         console.error('Error en la compra de skin:', error);
         res.status(500).json({ message: 'Error al procesar la compra.' });
+    }
+};
+
+/**
+ * POST /api/skins/unlock
+ * Desbloquea una skin como RECOMPENSA (sin costo) al completar niveles educativos.
+ * Body: { userId, skinId }
+ */
+export const unlockSkin = async (req, res) => {
+    const { userId, skinId } = req.body;
+
+    if (!userId || !skinId) {
+        return res.status(400).json({ success: false, message: 'userId y skinId son requeridos.' });
+    }
+
+    try {
+        // Verificar que la skin existe
+        const skin = await Skin.getById(skinId);
+        if (!skin) return res.status(404).json({ success: false, message: 'Skin no encontrada.' });
+
+        // Verificar si ya la tiene (idempotente: no es error)
+        const alreadyOwns = await Skin.userHasSkin(userId, skinId);
+        if (alreadyOwns) {
+            return res.json({ success: true, message: 'La skin ya estaba desbloqueada.', already: true });
+        }
+
+        await Skin.addSkinToUser(userId, skinId);
+
+        console.log(`🎁 Skin desbloqueada como recompensa: usuario ${userId} → ${skinId}`);
+        res.json({ success: true, message: `¡Skin ${skin.nombre} desbloqueada como recompensa!` });
+    } catch (error) {
+        console.error('Error al desbloquear skin:', error);
+        res.status(500).json({ success: false, message: 'Error al desbloquear la skin.' });
     }
 };

@@ -1,14 +1,16 @@
+// backend/routes/skinRoutes.js
 import { Router } from 'express';
-import { getShopSkins, purchaseSkin } from '../controllers/skinController.js';
+import { getShopSkins, purchaseSkin, unlockSkin } from '../controllers/skinController.js';
 
 const router = Router();
 
-// R: Obtener catálogo (Tienda)
-// GET /api/skins
+// Catálogo de skins (tienda)
 router.get('/skins', getShopSkins);
 
-// C: Comprar una skin
-// POST /api/skins/purchase
+// Compra con monedas
 router.post('/skins/purchase', purchaseSkin);
+
+// Desbloqueo gratuito como recompensa educativa
+router.post('/skins/unlock', unlockSkin);
 
 export default router;

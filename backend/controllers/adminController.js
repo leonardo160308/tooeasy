@@ -1,10 +1,8 @@
-// backend/controllers/adminController.js — UPDATED with full Category CRUD
+// backend/controllers/adminController.js
 import AdminModel from '../models/AdminModel.js';
 import User from '../models/UserModel.js';
 
-// ========================================
-// MIDDLEWARE: Verificar si es Admin
-// ========================================
+// ── Auth middleware ──────────────────────────────────────────────────────────
 export async function checkAdmin(req, res, next) {
     try {
         const { userId } = req.body;
@@ -20,7 +18,7 @@ export async function checkAdmin(req, res, next) {
 }
 
 // ========================================
-// GESTIÓN DE CATEGORÍAS — CRUD COMPLETO
+// CATEGORÍAS
 // ========================================
 
 export async function getCategories(req, res) {
@@ -66,20 +64,37 @@ export async function updateCategory(req, res) {
     }
 }
 
+/**
+ * GET /api/admin/categories/:id/delete-stats
+ * Retorna cuántos elementos se eliminarán en cascada (para el diálogo de confirmación)
+ */
+export async function getCategoryDeleteStats(req, res) {
+    try {
+        const { id } = req.params;
+        const stats = await AdminModel.getCategoryDeleteStats(id);
+        res.json({ success: true, data: stats });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener estadísticas' });
+    }
+}
+
+/**
+ * Elimina categoría CON CASCADA (niveles + flashcards + preguntas)
+ */
 export async function deleteCategory(req, res) {
     try {
         const { id } = req.params;
-        const result = await AdminModel.deleteCategory(id);
-        if (!result.success) return res.status(400).json(result);
-        res.json({ success: true, message: 'Categoría eliminada correctamente' });
+        await AdminModel.deleteCategory(id);
+        res.json({ success: true, message: 'Categoría y todo su contenido eliminados correctamente.' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Error al eliminar categoría' });
+        res.status(500).json({ success: false, message: 'Error al eliminar categoría: ' + error.message });
     }
 }
 
 // ========================================
-// GESTIÓN DE NIVELES
+// NIVELES
 // ========================================
 
 export async function getLevels(req, res) {
@@ -109,17 +124,10 @@ export async function createLevel(req, res) {
         if (!nombre || !descripcion || !categoryId) {
             return res.status(400).json({ success: false, message: 'Nombre, descripción y categoría son obligatorios' });
         }
-        const canCreate = await AdminModel.checkLevelsLimit(categoryId);
-        if (!canCreate) {
-            return res.status(400).json({ success: false, message: 'Esta categoría ya tiene todos sus niveles completos.' });
-        }
         const newLevel = await AdminModel.createLevel(nombre, descripcion, categoryId);
         res.status(201).json({ success: true, data: newLevel });
     } catch (error) {
         console.error(error);
-        if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({ success: false, message: 'Ya existe un nivel con ese nombre' });
-        }
         res.status(500).json({ success: false, message: error.message || 'Error al crear nivel' });
     }
 }
@@ -139,20 +147,36 @@ export async function updateLevel(req, res) {
     }
 }
 
+/**
+ * GET /api/admin/levels/:id/delete-stats
+ */
+export async function getLevelDeleteStats(req, res) {
+    try {
+        const { id } = req.params;
+        const stats = await AdminModel.getLevelDeleteStats(id);
+        res.json({ success: true, data: stats });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener estadísticas' });
+    }
+}
+
+/**
+ * Elimina nivel CON CASCADA (flashcards + preguntas)
+ */
 export async function deleteLevel(req, res) {
     try {
         const { id } = req.params;
-        const result = await AdminModel.deleteLevel(id);
-        if (!result.success) return res.status(400).json(result);
-        res.json({ success: true, message: 'Nivel eliminado correctamente' });
+        await AdminModel.deleteLevel(id);
+        res.json({ success: true, message: 'Nivel y su contenido eliminados correctamente.' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'Error al eliminar nivel' });
+        res.status(500).json({ success: false, message: 'Error al eliminar nivel: ' + error.message });
     }
 }
 
 // ========================================
-// GESTIÓN DE FLASHCARDS
+// FLASHCARDS
 // ========================================
 
 export async function getFlashcardsByLevel(req, res) {
@@ -172,10 +196,13 @@ export async function createFlashcard(req, res) {
         if (!levelId || !titulo || !contenido) {
             return res.status(400).json({ success: false, message: 'LevelId, título y contenido son obligatorios' });
         }
-        const canCreatePerLevel = await AdminModel.checkFlashcardsLimit(levelId);
-        const canCreateTotal = await AdminModel.checkFlashcardsLimit();
-        if (!canCreatePerLevel) return res.status(400).json({ success: false, message: 'Este nivel ya tiene 30 flashcards (máximo permitido)' });
-        if (!canCreateTotal) return res.status(400).json({ success: false, message: 'Has alcanzado el límite de 300 flashcards en total' });
+        const [okLevel, okTotal] = await Promise.all([
+            AdminModel.checkFlashcardsLimit(levelId),
+            AdminModel.checkFlashcardsLimit()
+        ]);
+        if (!okLevel) return res.status(400).json({ success: false, message: 'Este nivel ya tiene 30 flashcards (máximo permitido)' });
+        if (!okTotal) return res.status(400).json({ success: false, message: 'Has alcanzado el límite de 300 flashcards en total' });
+
         const newFlashcard = await AdminModel.createFlashcard(levelId, titulo, contenido, imagen);
         res.status(201).json({ success: true, data: newFlashcard });
     } catch (error) {
@@ -223,7 +250,7 @@ export async function moveFlashcard(req, res) {
 }
 
 // ========================================
-// GESTIÓN DE PREGUNTAS
+// PREGUNTAS
 // ========================================
 
 export async function getQuestions(req, res) {
@@ -232,7 +259,7 @@ export async function getQuestions(req, res) {
         const questions = await AdminModel.getQuestionsByLevel(levelId);
         res.json({ success: true, data: questions });
     } catch (error) {
-        console.error('Error en getQuestions:', error);
+        console.error(error);
         res.status(500).json({ success: false, message: 'Error al obtener preguntas', error: error.message });
     }
 }
@@ -244,10 +271,14 @@ export async function createQuestion(req, res) {
         const numOpciones = Object.keys(opciones).length;
         if (numOpciones < 3 || numOpciones > 5) return res.status(400).json({ success: false, message: 'Debes tener entre 3 y 5 opciones' });
         if (!opciones[correcta]) return res.status(400).json({ success: false, message: 'La opción correcta no existe en las opciones' });
-        const canCreatePerLevel = await AdminModel.checkQuestionsLimit(levelId);
-        const canCreateTotal = await AdminModel.checkQuestionsLimit();
-        if (!canCreatePerLevel) return res.status(400).json({ success: false, message: 'Este nivel ya tiene 15 preguntas (máximo permitido)' });
-        if (!canCreateTotal) return res.status(400).json({ success: false, message: 'Has alcanzado el límite de 200 preguntas en total' });
+
+        const [okLevel, okTotal] = await Promise.all([
+            AdminModel.checkQuestionsLimit(levelId),
+            AdminModel.checkQuestionsLimit()
+        ]);
+        if (!okLevel) return res.status(400).json({ success: false, message: 'Este nivel ya tiene 15 preguntas (máximo permitido)' });
+        if (!okTotal) return res.status(400).json({ success: false, message: 'Has alcanzado el límite de 200 preguntas en total' });
+
         const newQuestion = await AdminModel.createQuestion(levelId, pregunta, opciones, correcta, dificultad, imagen);
         res.status(201).json({ success: true, data: newQuestion });
     } catch (error) {

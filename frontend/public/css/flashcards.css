@@ -146,7 +146,7 @@ body {
 
 .card:hover .card-inner {
     box-shadow: var(--shadow-hover);
-    transform: translateY(-6px);
+    /* SIN transform aquí para no confundir con el flip */
 }
 
 /* Estado de giro (se combina con el hover translation si se desea por JS) */
@@ -154,7 +154,48 @@ body {
     transform: rotateY(180deg) scale(1.02); 
     box-shadow: var(--shadow-hover);
 }
-
+.flip-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+    z-index: 5;
+    animation: hintPulse 2.5s ease-in-out infinite;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+ 
+.flip-hint::before {
+    content: '👆';
+    font-size: 0.85rem;
+}
+ 
+@keyframes hintPulse {
+    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    50%       { opacity: 0.6; transform: translateX(-50%) scale(0.97); }
+}
+ 
+/* Ocultar hint cuando la tarjeta ya fue volteada al menos una vez */
+.card.has-been-flipped .flip-hint {
+    display: none;
+}
+ 
+/* ── CURSOR ── */
+.card { cursor: pointer; }
+.card.has-been-flipped { cursor: pointer; }
+ 
 /* ── FACES ── */
 .card-front,
 .card-back {
