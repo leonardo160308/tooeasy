@@ -35,7 +35,7 @@ body {
 .inv-layout {
     display: flex;
     min-height: calc(100vh - 70px); /* Ajustado a la altura del header */
-    /* Quitamos overflow: hidden para que el sticky funcione */
+    align-items: stretch;          /* ← faltaba esto */
     border-bottom: 1px solid var(--border);
     position: relative;
 }
@@ -45,11 +45,11 @@ body {
     min-width: 220px;
     background: linear-gradient(160deg, #1e2e42 0%, #2C405B 100%);
     position: sticky;
-    top: 70px; /* Si sigue habiendo hueco, prueba 69px o 71px */
+    top: 70px;
     height: calc(100vh - 70px);
     overflow-y: auto;
-    
-    
+    padding: 20px 12px;           /* ← mover el padding aquí */
+    flex-shrink: 0;               /* ← evita que se comprima */
 }
 
 .sidebar-logo {
@@ -99,11 +99,19 @@ body {
     min-width: 0;
     padding: 32px;
     overflow-y: auto;
+    height: calc(100vh - 70px);   /* ← altura explícita para que el scroll funcione */
 }
 
 /* ── SECTIONS ── */
-.inv-section { display: none; }
-.inv-section.active { display: block; }
+.inv-section {
+    display: none;
+    width: 100%;
+    min-height: 100%;
+}
+
+.inv-section.active {
+    display: block;
+}
 
 /* ── SECTION HEADER ── */
 .section-title {
@@ -171,8 +179,14 @@ body {
 .wizard-step-tab.done .step-num::after { content: '✓'; }
 
 /* Wizard content panels */
-.wizard-panel { display: none; }
-.wizard-panel.active { display: block; }
+.wizard-panel {
+    display: none;
+    width: 100%;
+}
+
+.wizard-panel.active {
+    display: block;
+}
 
 /* ── CARD ── */
 .inv-card {
@@ -330,9 +344,10 @@ body {
 /* ── SUMMARY CARDS ── */
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 14px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .summary-card {
@@ -653,4 +668,15 @@ body {
     .summary-grid { grid-template-columns: 1fr 1fr; }
     .hist-stats { display: none; }
     .wizard-steps { flex-direction: column; gap: 4px; }
+}
+
+/* Agregar al <style> inline del HTML o al CSS */
+.inv-sidebar .sidebar-logo {
+    padding: 0 8px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
 }
