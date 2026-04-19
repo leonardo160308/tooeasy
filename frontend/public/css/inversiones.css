@@ -49,9 +49,7 @@ body {
     height: calc(100vh - 70px);
     overflow-y: auto;
     
-    /* Si el layout es redondeado, el sidebar debe redondear su esquina superior izquierda */
-    border-top-left-radius: 16px; 
-    border-bottom-left-radius: 16px;
+    
 }
 
 .sidebar-logo {
