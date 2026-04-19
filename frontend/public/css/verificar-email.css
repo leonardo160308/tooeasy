@@ -1,0 +1,237 @@
+/* ========================================
+   EMAIL VERIFICATION - ULTRA PREMIUM (v3)
+   Clean, Professional & High-End Aesthetic
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --input-bg:     #F1F3F6;
+    --brand-beige: #C9AD8B;
+    --brand-dark:  #B6823E;
+    --title-brown: #4A3728;
+    --text-muted:  #718096;
+    --primary-blue:#2C405B;
+    
+    /* Sombras Premium */
+    --sh-card: 0 25px 50px -12px rgba(74, 55, 40, 0.12);
+    --sh-input: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* Fondo Ambiental */
+body {
+    background: linear-gradient(135deg, #FDFBF9 0%, #E5E5E5 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Tarjeta Principal */
+.card {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 50px 40px;
+    border-radius: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--sh-card);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Animación de entrada para las vistas */
+#verify-view, #success-view {
+    animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tipografía */
+h2 {
+    color: var(--title-brown);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Email Badge (Estilo Premium) */
+.email-badge {
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(44, 64, 91, 0.15);
+}
+
+/* OTP Container & Inputs */
+.otp-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.otp-input {
+    width: 48px;
+    height: 58px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    background-color: var(--input-bg);
+    color: var(--brand-dark);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--sh-input);
+}
+
+.otp-input:focus {
+    border-color: var(--brand-beige);
+    background-color: white;
+    outline: none;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -5px rgba(201, 173, 139, 0.3);
+}
+
+.otp-input.error {
+    border-color: #e53e3e;
+    background-color: #fff5f5;
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Botones */
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--brand-beige) 0%, var(--brand-dark) 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 10px 20px -5px rgba(182, 130, 62, 0.4);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px -5px rgba(182, 130, 62, 0.5);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+}
+
+.btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--brand-dark);
+    border: 2px solid var(--brand-beige);
+    padding: 14px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: rgba(201, 173, 139, 0.05);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    border-color: #cbd5e0;
+    color: #cbd5e0;
+    cursor: not-allowed;
+}
+
+.btn-link {
+    display: inline-block;
+    margin-top: 25px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-link:hover {
+    color: var(--title-brown);
+}
+
+/* Timer */
+.timer {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
+.timer span {
+    color: var(--brand-dark);
+    font-weight: 800;
+}
+
+.timer.expired span {
+    color: #e53e3e;
+}
+
+/* Vista de Éxito */
+.success-view {
+    display: none; /* Controlado por JS */
+}
+
+.success-icon {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 20px;
+}
+.success-icon::after { content: '🏆'; } /* Icono premium */
+
+/* Responsive */
+@media (max-width: 480px) {
+    .card {
+        width: 90%;
+        padding: 40px 20px;
+    }
+    .otp-input {
+        width: 40px;
+        height: 50px;
+        font-size: 18px;
+    }
+}

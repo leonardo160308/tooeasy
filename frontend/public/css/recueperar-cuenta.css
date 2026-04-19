@@ -1,0 +1,289 @@
+/* ========================================
+   RECOVERY - ULTRA PREMIUM (v3)
+   Clean, Professional & High-End Aesthetic
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --input-bg:     #F1F3F6;
+    --brand-beige: #C9AD8B;
+    --brand-dark:  #B6823E;
+    --title-brown: #4A3728;
+    --text-muted:  #718096;
+    --primary-blue:#2C405B;
+    
+    /* Sombras Premium */
+    --sh-card: 0 25px 50px -12px rgba(74, 55, 40, 0.12);
+    --sh-input: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* Fondo Ambiental */
+body {
+    background: linear-gradient(135deg, #FDFBF9 0%, #E5E5E5 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Tarjeta Principal */
+.card {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 50px 40px;
+    border-radius: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--sh-card);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    text-align: center;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Control de Pasos */
+.step {
+    display: none;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tipografía */
+h2 {
+    color: var(--title-brown);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* Inputs Generales */
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 16px 24px;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    background-color: var(--input-bg);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--title-brown);
+    outline: none;
+    margin-bottom: 18px;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--sh-input);
+}
+
+input:focus {
+    background-color: #ffffff;
+    border-color: var(--brand-beige);
+    box-shadow: 0 10px 20px -5px rgba(201, 173, 139, 0.25);
+}
+
+/* --- OTP Inputs --- */
+.otp-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.otp-input {
+    width: 45px;
+    height: 55px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 15px;
+    border: 2px solid transparent;
+    background-color: var(--input-bg);
+    color: var(--brand-dark);
+    transition: all 0.2s ease;
+}
+
+.otp-input:focus {
+    border-color: var(--brand-beige);
+    background-color: white;
+    outline: none;
+    transform: scale(1.05);
+}
+
+/* --- Botones --- */
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--brand-beige) 0%, var(--brand-dark) 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 10px 20px -5px rgba(182, 130, 62, 0.4);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px -5px rgba(182, 130, 62, 0.5);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--brand-dark);
+    border: 2px solid var(--brand-beige);
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.btn-back {
+    display: inline-block;
+    margin-top: 25px;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 700;
+    transition: all 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-back:hover {
+    color: var(--title-brown);
+}
+
+/* --- Timer --- */
+.timer {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.timer span {
+    color: #e53e3e;
+}
+
+/* --- Action Cards (Paso 3) --- */
+.action-card {
+    width: 100%;
+    background: white;
+    border: 2px solid #f1f1f1;
+    padding: 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.action-card:hover {
+    border-color: var(--brand-beige);
+    background-color: #FDFBF9;
+    transform: translateX(5px);
+}
+
+.action-card strong {
+    display: block;
+    color: var(--title-brown);
+    font-size: 15px;
+}
+
+.action-card span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.action-divider {
+    margin: 15px 0;
+    color: #cbd5e0;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+/* --- Password Strength --- */
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-pass {
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.strength-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    margin: -10px 0 20px 0;
+    overflow: hidden;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    transition: all 0.5s ease;
+}
+
+/* Iconos de éxito */
+.success-icon {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 20px;
+}
+.success-icon::after { content: '✨'; }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .card {
+        width: 92%;
+        padding: 40px 25px;
+    }
+    
+    .otp-input {
+        width: 38px;
+        height: 50px;
+    }
+}

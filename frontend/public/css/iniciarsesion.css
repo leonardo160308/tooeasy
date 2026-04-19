@@ -1,191 +1,233 @@
+/* ========================================
+   REGISTER - ULTRA PREMIUM (v3)
+   Clean, Professional & High-End Aesthetic
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
-    --input-gray: #D9D9D9;    /* Fondo gris de los inputs */
-    --brand-beige: #C9AD8B;   /* Color del botón */
-    --title-brown: #4A3728;   /* Color del texto oscuro */
+    --input-bg:     #F1F3F6;
+    --brand-beige: #C9AD8B;
+    --brand-dark:  #B6823E;
+    --title-brown: #4A3728;
+    --text-muted:  #718096;
+    --primary-blue:#2C405B;
+    
+    /* Sombras Premium */
+    --sh-card: 0 25px 50px -12px rgba(74, 55, 40, 0.12);
+    --sh-input: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
 }
 
+/* Fondo Ambiental */
 body {
-    background-color: #E5E5E5;
+    background: linear-gradient(135deg, #FDFBF9 0%, #E5E5E5 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
-    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+/* Contenedor de Registro */
 .auth-container {
-    background-color: #ffffff;
-    padding: 30px 40px;
-    border-radius: 45px; /* Bordes muy redondeados de la tarjeta */
-    width: 40%;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 40px 35px;
+    border-radius: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--sh-card);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     text-align: center;
+    position: relative;
+    animation: fadeIn 0.6s ease-out;
 }
 
-/* Contenedor del avatar flotante */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Avatar Header */
 .avatar-header {
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160px;
+    margin-bottom: 20px;
 }
 
 .avatar-img {
-    width: 80%;
-    
+    width: 80px;
+    height: 80px;
+    border-radius: 25px;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 8px 15px rgba(201, 173, 139, 0.3);
+    background-color: var(--brand-beige);
 }
 
+/* Títulos */
 h2 {
-    text-align: center;
     color: var(--title-brown);
-    font-size: 26px;
-    margin-top: 60px; /* Espacio para el castor */
-    margin-bottom: 25px;
+    font-size: 28px;
     font-weight: 800;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
 }
 
-/* Estilo unificado para inputs y select */
+.subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+/* Inputs y Selects */
+.field {
+    margin-bottom: 16px;
+}
+
 input[type="text"],
-input[type="password"],
 input[type="email"],
+input[type="password"],
 input[type="number"],
 select {
-    width: 92%;
-    padding: 14px 20px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 30px; /* Forma de píldora */
-    background-color: var(--input-gray);
-    color: #555;
-    font-size: 14px;
-    outline: none;
-}
-
-/* Contenedor para la contraseña con el icono de ojo */
-.password-wrapper {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 20px;
-    top: 12px;
-    cursor: pointer;
-    opacity: 0.6;
-}
-
-/* Fila de Edad y Género */
-.row {
-    display: flex;
-    gap: 12px;
-}
-
-.row input, .row select {
-    flex: 1;
-}
-
-/* Botón "Crear" */
-button.btn-primary {
     width: 100%;
-    background-color: var(--brand-beige);
+    padding: 16px 20px;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    background-color: var(--input-bg);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--title-brown);
-    border: none;
-    padding: 14px;
-    border-radius: 30px;
-    font-weight: 800;
-    font-size: 17px;
-    cursor: pointer;
-    margin-top: 5px;
-    transition: 0.3s ease;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    box-shadow: var(--sh-input);
 }
 
-button.btn-primary:hover {
-    filter: brightness(0.95);
+input:focus, select:focus {
+    background-color: #ffffff;
+    border-color: var(--brand-beige);
+    box-shadow: 0 8px 20px -5px rgba(201, 173, 139, 0.25);
+    transform: translateY(-2px);
 }
 
-/* Estilo del checkbox inferior */
+/* Fila de campos combinados (Edad y Género) */
+.row-fields {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+/* Estilo para el Checkbox de Términos */
 .terms-group {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    margin-top: 15px;
-    padding-left: 10px;
+    gap: 10px;
+    margin: 20px 0 25px 5px;
+    text-align: left;
 }
 
 .terms-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    margin-right: 10px;
+    accent-color: var(--brand-dark);
     cursor: pointer;
 }
 
 .terms-group label {
     font-size: 13px;
-    color: #444;
+    color: var(--text-muted);
+    font-weight: 500;
     cursor: pointer;
 }
-.alinear{
-  display: flex;
-  width: 100%;
+
+.terms-group label span {
+    color: var(--brand-dark);
+    font-weight: 700;
+    text-decoration: underline;
 }
 
+/* Botón Principal */
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--brand-beige) 0%, var(--brand-dark) 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 16px;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 10px 20px -5px rgba(182, 130, 62, 0.4);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px -5px rgba(182, 130, 62, 0.5);
+}
+
+/* Enlace Iniciar Sesión */
+.login-ask {
+    margin-top: 25px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.login-ask .login {
+    color: var(--brand-dark);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 5px;
+    transition: all 0.2s;
+}
+
+.login-ask .login:hover {
+    text-decoration: underline;
+}
+
+/* Navegación Footer (Botón Regresar) */
 .footer-navigation {
-    position: absolute; /* Para que se quede fijo abajo a la izquierda */
-    bottom: 20px;
-    left: 20px;
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
 }
 
 .btn-back {
     display: inline-flex;
     align-items: center;
-    padding: 8px 16px;
-    background-color: #2C405B;
-    color: white; /* Color de texto sobrio */
-    border: 1.5px solid #2C405B; /* Un borde sutil */
-    border-radius: 8px; /* Esquinas redondeadas modernas */
-    font-size: 0.85rem;
-    font-weight: 600;
+    padding: 12px 20px;
+    background-color: var(--primary-blue);
+    color: white;
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transición suave */
-    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(44, 64, 91, 0.2);
+    transition: all 0.3s ease;
 }
 
-/* El efecto "Chungón" al pasar el mouse */
 .btn-back:hover {
-    background-color: #8FA3C2; /* Fondo oscuro al pasar el mouse */
-    color:white;            /* Texto blanco */
-    transform: translateY(-2px); /* Se eleva un poquito */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra elegante */
+    background-color: #3d5878;
+    transform: translateX(-5px);
 }
 
-/* Efecto cuando lo presionas */
-.btn-back:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Responsive */
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 35px 20px;
+    }
+    .row-fields {
+        grid-template-columns: 1fr;
+    }
+    .footer-navigation {
+        bottom: 20px;
+        left: 20px;
+    }
 }
-
-.login {
-    display: block;
-    margin-top: 20px;
-    font-size: 17px;
-    text-decoration: none;
-    color: var(--title-brown);
-    font-weight: 600;
-}
-
-.login:hover {
-    text-decoration: underline;
-}
-
-.login-ask {
-    display: block;
-    margin-top: 20px;
-    font-size: 14px;
-    text-decoration: none;
-    color: var(--title-brown);
-    font-weight: 600;
-}
-

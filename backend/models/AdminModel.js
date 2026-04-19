@@ -1,9 +1,10 @@
+// backend/models/AdminModel.js
 import { supabase } from '../config/supabase.js';
 
 class AdminModel {
 
     // ========================================
-    // CATEGORÍAS
+    // GESTIÓN DE CATEGORÍAS (CRUD)
     // ========================================
 
     static async getAllCategories() {
@@ -27,8 +28,115 @@ class AdminModel {
             if (error.code === 'PGRST116') return null;
             throw error;
         }
-
         return data;
+    }
+
+    static async getCategoriesStats() {
+        // Obtenemos conteos rápidos de las tablas principales para el dashboard
+        const [cat, lev, flash, quest] = await Promise.all([
+            supabase.from('learning_categories').select('id', { count: 'exact', head: true }),
+            supabase.from('educational_levels').select('id', { count: 'exact', head: true }),
+            supabase.from('flashcards').select('id', { count: 'exact', head: true }),
+            supabase.from('quiz_questions').select('id', { count: 'exact', head: true })
+        ]);
+
+        return {
+            totalCategories: cat.count || 0,
+            totalLevels: lev.count || 0,
+            totalFlashcards: flash.count || 0,
+            totalQuestions: quest.count || 0
+        };
+    }
+
+    static async createCategory(nombre, descripcion, nivel_inicio, nivel_fin) {
+        // 1. Validar si el nombre ya existe
+        const { data: existing } = await supabase
+            .from('learning_categories')
+            .select('id')
+            .ilike('nombre', nombre)
+            .maybeSingle();
+
+        if (existing) {
+            const err = new Error('Ya existe una categoría con ese nombre');
+            err.code = 'DUPLICATE_NAME';
+            throw err;
+        }
+
+        // 2. Calcular el siguiente orden
+        const { data: maxData } = await supabase
+            .from('learning_categories')
+            .select('orden')
+            .order('orden', { ascending: false })
+            .limit(1);
+        
+        const next_orden = (maxData && maxData.length > 0) ? maxData[0].orden + 1 : 1;
+
+        // 3. Insertar
+        const { data, error } = await supabase
+            .from('learning_categories')
+            .insert({ 
+                nombre, 
+                descripcion, 
+                nivel_inicio: nivel_inicio || 1, 
+                nivel_fin: nivel_fin || 10,
+                orden: next_orden 
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    static async updateCategory(id, nombre, descripcion) {
+        // Validar que no haya otra categoría con el mismo nombre (excepto la actual)
+        const { data: existing } = await supabase
+            .from('learning_categories')
+            .select('id')
+            .ilike('nombre', nombre)
+            .neq('id', id)
+            .maybeSingle();
+
+        if (existing) {
+            const err = new Error('Ya existe otra categoría con ese nombre');
+            err.code = 'DUPLICATE_NAME';
+            throw err;
+        }
+
+        const { data, error } = await supabase
+            .from('learning_categories')
+            .update({ nombre, descripcion })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    }
+
+    static async deleteCategory(id) {
+        // Verificar si tiene niveles asociados
+        const { count, error: ce } = await supabase
+            .from('educational_levels')
+            .select('id', { count: 'exact', head: true })
+            .eq('category_id', id);
+
+        if (ce) throw ce;
+
+        if (count > 0) {
+            return {
+                success: false,
+                message: `No se puede eliminar: Esta categoría tiene ${count} niveles asociados.`
+            };
+        }
+
+        const { error } = await supabase
+            .from('learning_categories')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        return { success: true };
     }
 
     // ========================================
@@ -104,7 +212,6 @@ class AdminModel {
 
         if (error) throw error;
 
-        // Normalizar para que categoria_nombre esté al mismo nivel
         return (data || []).map(level => ({
             ...level,
             categoria_nombre: level.learning_categories?.nombre || null,
@@ -132,15 +239,12 @@ class AdminModel {
             throw new Error('Esta categoría ya tiene todos sus niveles completos según su rango');
         }
 
-        // Calcular siguiente orden
-        const { data: maxData, error: maxError } = await supabase
+        const { data: maxData } = await supabase
             .from('educational_levels')
             .select('orden')
             .eq('category_id', categoryId)
             .order('orden', { ascending: false })
             .limit(1);
-
-        if (maxError) throw maxError;
 
         const next_orden = maxData && maxData.length > 0
             ? maxData[0].orden + 1
@@ -173,34 +277,19 @@ class AdminModel {
     }
 
     static async deleteLevel(id) {
-        const { count: flashCount, error: fe } = await supabase
-            .from('flashcards')
-            .select('id', { count: 'exact', head: true })
-            .eq('level_id', id);
+        const [fCount, qCount] = await Promise.all([
+            supabase.from('flashcards').select('id', { count: 'exact', head: true }).eq('level_id', id),
+            supabase.from('quiz_questions').select('id', { count: 'exact', head: true }).eq('level_id', id)
+        ]);
 
-        if (fe) throw fe;
-
-        const { count: qCount, error: qe } = await supabase
-            .from('quiz_questions')
-            .select('id', { count: 'exact', head: true })
-            .eq('level_id', id);
-
-        if (qe) throw qe;
-
-        if (flashCount > 0 || qCount > 0) {
+        if (fCount.count > 0 || qCount.count > 0) {
             return {
                 success: false,
-                message: `Este nivel tiene ${flashCount} flashcards y ${qCount} preguntas. Elimínalas primero.`,
-                flashcards: flashCount,
-                questions: qCount
+                message: `Este nivel tiene contenido (${fCount.count} flashcards y ${qCount.count} preguntas). Elimínalas primero.`
             };
         }
 
-        const { error } = await supabase
-            .from('educational_levels')
-            .delete()
-            .eq('id', id);
-
+        const { error } = await supabase.from('educational_levels').delete().eq('id', id);
         if (error) throw error;
         return { success: true };
     }
@@ -221,7 +310,6 @@ class AdminModel {
     }
 
     static async createFlashcard(levelId, titulo, contenido, imagen) {
-        // Calcular siguiente orden
         const { data: maxData } = await supabase
             .from('flashcards')
             .select('orden')
@@ -254,11 +342,7 @@ class AdminModel {
     }
 
     static async deleteFlashcard(id) {
-        const { error } = await supabase
-            .from('flashcards')
-            .delete()
-            .eq('id', id);
-
+        const { error } = await supabase.from('flashcards').delete().eq('id', id);
         if (error) throw error;
         return { success: true };
     }
@@ -285,10 +369,8 @@ class AdminModel {
             .order('id');
 
         if (error) throw error;
-
         return (data || []).map(q => ({
             ...q,
-            // Supabase devuelve JSONB ya parseado, pero por si acaso:
             opciones: typeof q.opciones === 'string' ? JSON.parse(q.opciones) : q.opciones
         }));
     }
@@ -299,7 +381,7 @@ class AdminModel {
             .insert({
                 level_id: levelId,
                 pregunta,
-                opciones, // Supabase maneja JSONB nativamente
+                opciones,
                 correcta,
                 dificultad: dificultad || 'media',
                 imagen: imagen || null
@@ -324,11 +406,7 @@ class AdminModel {
     }
 
     static async deleteQuestion(id) {
-        const { error } = await supabase
-            .from('quiz_questions')
-            .delete()
-            .eq('id', id);
-
+        const { error } = await supabase.from('quiz_questions').delete().eq('id', id);
         if (error) throw error;
         return { success: true };
     }
