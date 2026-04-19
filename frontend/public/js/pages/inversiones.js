@@ -15,7 +15,7 @@
 
 import { protectRoute, getAuthData, logout } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaInfo, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
-import { INSTRUMENTOS, INSTRUMENTOS_LISTA, RIESGO_META, COLORES_LINEA } from '../data/instrumentos-avanzado.js';
+import { INSTRUMENTOS, INSTRUMENTOS_LISTA, RIESGO_META, COLORES_LINEA } from '../data/instrumentos.js';
 
 const API = '/api';
 const MONTE_CARLO_ITERATIONS = 500;
