@@ -62,7 +62,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     card.querySelector('.card-front').appendChild(flipHint);
 
     // Header
-    
+    function getTemaYNivel(level) {
+        if (level <= 3)  return { tema: '',                nivelEnTema: level };
+        if (level <= 6)  return { tema: '',          nivelEnTema: level - 3 };
+        if (level <= 10) return { tema: '',                   nivelEnTema: level - 6 };
+        if (level <= 13) return { tema: '',  nivelEnTema: level - 10 };
+        if (level <= 17) return { tema: '',         nivelEnTema: level - 13 };
+        return { tema: 'Desconocido', nivelEnTema: 1 };
+    }
 
     const { tema, nivelEnTema } = getTemaYNivel(nivelId);
     lessonTitle.textContent = flashcards[0].titulo;
