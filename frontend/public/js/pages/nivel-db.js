@@ -58,16 +58,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Crear el elemento hint y añadirlo a la cara frontal
     const flipHint = document.createElement('div');
     flipHint.className = 'flip-hint';
-    flipHint.textContent = '';
+    flipHint.textContent = 'Haz clic para ver la información';
     card.querySelector('.card-front').appendChild(flipHint);
 
     // Header
     function getTemaYNivel(level) {
-        if (level <= 3)  return { tema: 'Fundamentos',                nivelEnTema: level };
-        if (level <= 6)  return { tema: 'Cuentas Bancarias',          nivelEnTema: level - 3 };
-        if (level <= 10) return { tema: 'Tarjetas',                   nivelEnTema: level - 6 };
-        if (level <= 13) return { tema: 'Administración del Dinero',  nivelEnTema: level - 10 };
-        if (level <= 17) return { tema: 'Deudas y Créditos',         nivelEnTema: level - 13 };
+        if (level <= 3)  return { tema: '',                nivelEnTema: level };
+        if (level <= 6)  return { tema: '',          nivelEnTema: level - 3 };
+        if (level <= 10) return { tema: '',                   nivelEnTema: level - 6 };
+        if (level <= 13) return { tema: '',  nivelEnTema: level - 10 };
+        if (level <= 17) return { tema: '',         nivelEnTema: level - 13 };
         return { tema: 'Desconocido', nivelEnTema: 1 };
     }
 
