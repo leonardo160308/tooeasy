@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecciones - TOO-EASY</title>
     <link rel="icon" type="image/x-icon" href="../public/img/Imagen1.png">
-    
+
     <link rel="stylesheet" href="../public/css/lecciones.css">
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
 
@@ -22,7 +21,6 @@
         <h1>TOO-EASY</h1>
         <p>JUEGA HOY, TRIUNFA MAÑANA</p>
     </div>
-
     <nav class="nav">
         <a href="/dashboard.html">DASHBOARD</a>
         <a href="/inversiones.html">INVERSIONES</a>
@@ -39,16 +37,16 @@
     import { logout, isAdmin } from '/public/js/modules/auth.js';
     import { alertaConfirmacion } from '/public/js/modules/alerts.js';
     import '/public/js/modules/nav-active.js';
-    // MOSTRAR ENLACE ADMIN SI ES ADMIN
+
     if (isAdmin()) {
         const nav = document.querySelector('.nav');
         const adminLink = document.createElement('a');
-        adminLink.href = '/admin.html'; // Cambiado a admin.html (o admin-new.html si usas ese)
+        adminLink.href = '/admin.html';
         adminLink.textContent = 'ADMIN';
         adminLink.style.color = '#f39c12';
         nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
     }
-    
+
     const logoutBtn = document.getElementById('logout-btn-perfil');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
@@ -67,7 +65,7 @@
         <div class="contenido-principal">
             <h2>Tu Camino hacia la Libertad Financiera</h2>
             <p>
-                Selecciona una categoría para ver tus niveles. Cada lección desbloqueada 
+                Selecciona una categoría para ver tus niveles. Cada lección desbloqueada
                 te acerca más a dominar tus finanzas personales.
             </p>
         </div>
@@ -76,93 +74,16 @@
         </div>
     </section>
 
-    <div class="loading-levels" style="text-align: center; margin: 2rem 0;">
+    <div class="loading-levels" style="text-align:center;margin:2rem 0;">
         <i class="fas fa-spinner fa-spin"></i> Cargando progreso...
     </div>
 
-    <section class="container categorias-info" style="margin-top: 2rem;">
-        <h2 style="text-align: center; font-family: 'Baloo 2', cursive; font-size: 32px; margin-bottom: 2rem; color: #2C405B;">
+    <section class="container categorias-info" style="margin-top:2rem;">
+        <h2 style="text-align:center;font-family:'Baloo 2',cursive;font-size:32px;margin-bottom:2rem;color:#2C405B;">
             Categorías de Aprendizaje
         </h2>
-        
-        <div class="tarjetas">
-            
-            <div class="tarjetaD category-card" data-category="fundamentos">
-                <div class="tarjeta-headerD">
-                    <h3>Fundamentos</h3>
-                </div>
-                <div class="tarjeta-bodyD">
-                    <p>Aprende los conceptos básicos del dinero: ingresos, gastos y ahorro.</p>
-                </div>
-
-                <div class="levels-container hidden">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    </div>
-            </div>
-
-            <div class="tarjetaA category-card" data-category="cuentas-bancarias">
-                <div class="tarjeta-headerA">
-                    <h3>Cuentas Bancarias</h3>
-                </div>
-                <div class="tarjeta-bodyA">
-                    <p>Tipos de cuentas, nómina, intereses y comisiones.</p>
-                </div>
-
-                <div class="levels-container hidden">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tarjetaD category-card" data-category="tarjetas">
-                <div class="tarjeta-headerD">
-                    <h3>Tarjetas</h3>
-                </div>
-                <div class="tarjeta-bodyD">
-                    <p>Diferencias entre débito y crédito, seguridad y uso correcto.</p>
-                </div>
-
-                <div class="levels-container hidden">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tarjetaA category-card" data-category="administracion">
-                <div class="tarjeta-headerA">
-                    <h3>Administración</h3>
-                </div>
-                <div class="tarjeta-bodyA">
-                    <p>Regla 50/30/20, presupuestos y control de gastos.</p>
-                </div>
-
-                <div class="levels-container hidden">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tarjetaD category-card" data-category="deudas-creditos">
-                <div class="tarjeta-headerD">
-                    <h3>Deudas y Créditos</h3>
-                </div>
-                <div class="tarjeta-bodyD">
-                    <p>Historial crediticio, deuda buena vs mala.</p>
-                </div>
-
-                <div class="levels-container hidden">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <!-- Las tarjetas se generan dinámicamente por lessons.js -->
+        <div class="tarjetas"></div>
     </section>
 </main>
 

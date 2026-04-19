@@ -22,19 +22,16 @@ html, body { height: 100%; }
     --card:       #ffffff;
     --border:     #e3e6ec;
     --border-med: #c8cdd9;
-
     --brand:      #2C405B;
     --brand-lt:   #4a6482;
     --accent:     #BA8E58;
     --accent-lt:  rgba(186,142,88,.12);
-
     --green:      #1a9c5b;
     --green-bg:   #eafaf2;
     --red:        #d63031;
     --red-bg:     #fff0f0;
     --orange:     #e17055;
     --orange-bg:  #fff4f0;
-
     --sh-xs:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
     --sh-sm:  0 4px 12px rgba(0,0,0,.07);
     --sh-md:  0 8px 28px rgba(0,0,0,.10);
@@ -67,220 +64,101 @@ body {
     z-index: 100;
     box-shadow: 0 2px 12px rgba(0,0,0,.18);
 }
-
-.header-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
+.header-brand { display: flex; align-items: center; gap: 12px; }
 .header-brand .logo-mark {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     background: var(--accent);
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -1px;
+    font-size: 12px; font-weight: 700; color: #fff; letter-spacing: -1px;
 }
-
-.header-brand .brand-name {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: .4px;
-    color: #fff;
-}
-
-.header-brand .brand-sub {
-    font-size: 10px;
-    color: rgba(255,255,255,.55);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-left: 4px;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
+.header-brand .brand-name { font-size: 15px; font-weight: 700; letter-spacing: .4px; color: #fff; }
+.header-brand .brand-sub { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: 1.5px; text-transform: uppercase; margin-left: 4px; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
 .btn-header {
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.18);
-    color: #fff;
-    padding: 7px 16px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background .2s;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+    color: #fff; padding: 7px 16px; border-radius: 6px;
+    font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: background .2s; text-decoration: none; display: flex; align-items: center; gap: 6px;
 }
 .btn-header:hover { background: rgba(255,255,255,.2); }
 .btn-header.danger { background: rgba(211,47,47,.25); border-color: rgba(255,100,100,.3); }
 .btn-header.danger:hover { background: rgba(211,47,47,.4); }
 
 /* ── LAYOUT ── */
-.admin-shell {
-    display: flex;
-    min-height: calc(100vh - 60px);
-}
+.admin-shell { display: flex; min-height: calc(100vh - 60px); }
 
 /* ── SIDEBAR ── */
 .admin-sidebar {
-    width: 220px;
-    min-width: 220px;
-    background: var(--card);
-    border-right: 1px solid var(--border);
-    padding: 24px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    position: sticky;
-    top: 60px;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
+    width: 220px; min-width: 220px;
+    background: var(--card); border-right: 1px solid var(--border);
+    padding: 24px 12px; display: flex; flex-direction: column; gap: 4px;
+    position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto;
 }
-
 .sidebar-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    padding: 8px 12px 4px;
-    margin-top: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--ink-muted); padding: 8px 12px 4px; margin-top: 8px;
 }
-
 .nav-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: var(--r-sm);
-    border: none;
-    background: transparent;
-    color: var(--ink-mid);
-    font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all .2s;
-    width: 100%;
-    text-align: left;
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border-radius: var(--r-sm); border: none; background: transparent;
+    color: var(--ink-mid); font-family: inherit; font-size: 13.5px; font-weight: 500;
+    cursor: pointer; transition: all .2s; width: 100%; text-align: left;
 }
 .nav-btn i { width: 16px; text-align: center; font-size: 13px; opacity: .7; }
 .nav-btn:hover { background: var(--paper); color: var(--ink); }
-.nav-btn.active {
-    background: rgba(44,64,91,.08);
-    color: var(--brand);
-    font-weight: 700;
-}
+.nav-btn.active { background: rgba(44,64,91,.08); color: var(--brand); font-weight: 700; }
 .nav-btn.active i { opacity: 1; }
 
 /* ── MAIN ── */
-.admin-main {
-    flex: 1;
-    padding: 32px;
-    min-width: 0;
-    overflow-y: auto;
-}
-
+.admin-main { flex: 1; padding: 32px; min-width: 0; overflow-y: auto; }
 .section-view { display: none; }
 .section-view.active { display: block; }
 
 /* ── PAGE HEADER ── */
 .page-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 28px;
-    gap: 16px;
-    flex-wrap: wrap;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 28px; gap: 16px; flex-wrap: wrap;
 }
-
 .page-title { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -.3px; }
 .page-sub   { font-size: 13px; color: var(--ink-muted); margin-top: 3px; font-weight: 400; }
 
 /* ── STAT CHIPS ── */
-.stat-chips {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-}
-
+.stat-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
 .stat-chip {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 12px 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: var(--sh-xs);
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 12px 18px;
+    display: flex; align-items: center; gap: 10px; box-shadow: var(--sh-xs);
 }
-.stat-chip .chip-val {
-    font-size: 22px;
-    font-weight: 700;
-    font-family: 'Space Mono', monospace;
-    line-height: 1;
-}
+.stat-chip .chip-val { font-size: 22px; font-weight: 700; font-family: 'Space Mono', monospace; line-height: 1; }
 .stat-chip .chip-label { font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-top: 2px; }
-.stat-chip .chip-icon  { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.stat-chip .chip-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
 .chip-brand  .chip-icon { background: rgba(44,64,91,.1); color: var(--brand); }
 .chip-accent .chip-icon { background: var(--accent-lt); color: var(--accent); }
 .chip-green  .chip-icon { background: var(--green-bg); color: var(--green); }
 
 /* ── ALERT BANNER ── */
 .limit-banner {
-    background: rgba(186,142,88,.1);
-    border: 1px solid rgba(186,142,88,.35);
-    border-left: 4px solid var(--accent);
-    border-radius: var(--r-sm);
-    padding: 13px 18px;
-    font-size: 13px;
-    color: #7a5a1e;
-    font-weight: 500;
-    margin-bottom: 22px;
-    display: none;
+    background: rgba(186,142,88,.1); border: 1px solid rgba(186,142,88,.35);
+    border-left: 4px solid var(--accent); border-radius: var(--r-sm);
+    padding: 13px 18px; font-size: 13px; color: #7a5a1e; font-weight: 500;
+    margin-bottom: 22px; display: none;
 }
 .limit-banner.visible { display: flex; align-items: center; gap: 10px; }
 .limit-banner i { font-size: 16px; }
 
 /* ── CATEGORY GRID ── */
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
-}
+.category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 
 /* ── CATEGORY CARD ── */
 .cat-card {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    box-shadow: var(--sh-xs);
-    transition: transform .22s ease, box-shadow .22s ease;
-    position: relative;
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-xs);
+    transition: transform .22s ease, box-shadow .22s ease; position: relative;
 }
 .cat-card:hover { transform: translateY(-3px); box-shadow: var(--sh-md); }
-
-.cat-card-stripe {
-    height: 4px;
-    background: linear-gradient(90deg, var(--brand), var(--accent));
-}
+.cat-card-stripe { height: 4px; background: linear-gradient(90deg, var(--brand), var(--accent)); }
 .cat-card-stripe.stripe-0 { background: linear-gradient(90deg, #2C405B, #4a6482); }
 .cat-card-stripe.stripe-1 { background: linear-gradient(90deg, #BA8E58, #e2b87a); }
 .cat-card-stripe.stripe-2 { background: linear-gradient(90deg, #1a9c5b, #3fc67b); }
@@ -291,166 +169,58 @@ body {
 .cat-card-stripe.stripe-7 { background: linear-gradient(90deg, #6c5ce7, #a29bfe); }
 .cat-card-stripe.stripe-8 { background: linear-gradient(90deg, #d63031, #e17055); }
 .cat-card-stripe.stripe-9 { background: linear-gradient(90deg, #0984e3, #74b9ff); }
-
-.cat-card-body {
-    padding: 18px 20px;
-}
-
-.cat-card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.cat-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--ink);
-    flex: 1;
-    line-height: 1.3;
-}
-
-.cat-actions {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-}
-
+.cat-card-body { padding: 18px 20px; }
+.cat-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.cat-name { font-size: 15px; font-weight: 700; color: var(--ink); flex: 1; line-height: 1.3; }
+.cat-actions { display: flex; gap: 4px; flex-shrink: 0; }
 .btn-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--paper);
-    color: var(--ink-mid);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all .18s ease;
-    flex-shrink: 0;
+    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--paper); color: var(--ink-mid); display: flex; align-items: center;
+    justify-content: center; font-size: 12px; cursor: pointer; transition: all .18s ease; flex-shrink: 0;
 }
 .btn-icon:hover { transform: scale(1.08); }
-.btn-icon.edit:hover  { background: rgba(44,64,91,.1); color: var(--brand); border-color: var(--brand); }
-.btn-icon.del:hover   { background: var(--red-bg); color: var(--red); border-color: var(--red); }
-
-.cat-desc {
-    font-size: 12.5px;
-    color: var(--ink-muted);
-    line-height: 1.6;
-    margin-bottom: 14px;
-    min-height: 20px;
-}
-
-.cat-meta {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
+.btn-icon.edit:hover { background: rgba(44,64,91,.1); color: var(--brand); border-color: var(--brand); }
+.btn-icon.del:hover  { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+.cat-desc { font-size: 12.5px; color: var(--ink-muted); line-height: 1.6; margin-bottom: 14px; min-height: 20px; }
+.cat-meta { display: flex; gap: 8px; flex-wrap: wrap; }
 .meta-tag {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 20px;
-    background: var(--paper);
-    color: var(--ink-muted);
-    border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500;
+    padding: 3px 8px; border-radius: 20px; background: var(--paper); color: var(--ink-muted); border: 1px solid var(--border);
 }
 .meta-tag i { font-size: 10px; }
 .meta-tag.levels { background: rgba(44,64,91,.07); color: var(--brand); border-color: rgba(44,64,91,.15); }
 
 /* ── ADD CATEGORY CARD ── */
 .cat-add-card {
-    background: var(--card);
-    border: 1.5px dashed var(--border-med);
-    border-radius: var(--r-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
-    padding: 32px;
-    cursor: pointer;
-    transition: all .22s ease;
-    min-height: 140px;
-    color: var(--ink-muted);
+    background: var(--card); border: 1.5px dashed var(--border-med);
+    border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px; padding: 32px; cursor: pointer;
+    transition: all .22s ease; min-height: 140px; color: var(--ink-muted);
 }
-.cat-add-card:hover {
-    border-color: var(--brand);
-    color: var(--brand);
-    background: rgba(44,64,91,.03);
-    transform: translateY(-2px);
-}
-.cat-add-card.disabled {
-    opacity: .4;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-.cat-add-card .add-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: var(--paper);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    transition: all .22s;
-}
+.cat-add-card:hover { border-color: var(--brand); color: var(--brand); background: rgba(44,64,91,.03); transform: translateY(-2px); }
+.cat-add-card.disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+.cat-add-card .add-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--paper); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all .22s; }
 .cat-add-card:hover .add-icon { background: rgba(44,64,91,.1); }
 .cat-add-card .add-label { font-size: 13px; font-weight: 600; }
 
 /* ── INLINE EDIT MODE ── */
-.cat-card.editing .cat-edit-view  { display: flex; }
-.cat-card.editing .cat-view-mode  { display: none; }
-.cat-card         .cat-edit-view  { display: none; flex-direction: column; gap: 10px; }
-.cat-card         .cat-view-mode  { display: block; }
-
+.cat-card.editing .cat-edit-view { display: flex; }
+.cat-card.editing .cat-view-mode { display: none; }
+.cat-card .cat-edit-view { display: none; flex-direction: column; gap: 10px; }
+.cat-card .cat-view-mode { display: block; }
 .inline-input {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-sm);
-    font-family: inherit;
-    font-size: 13px;
-    background: var(--paper);
-    color: var(--ink);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+    border-radius: var(--r-sm); font-family: inherit; font-size: 13px;
+    background: var(--paper); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s;
 }
-.inline-input:focus {
-    border-color: var(--brand);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(44,64,91,.1);
-}
-
-.edit-footer {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-}
+.inline-input:focus { border-color: var(--brand); background: #fff; box-shadow: 0 0 0 3px rgba(44,64,91,.1); }
+.edit-footer { display: flex; gap: 8px; justify-content: flex-end; }
 
 /* ── BUTTONS ── */
 .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 18px;
-    border-radius: var(--r-sm);
-    border: none;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s ease;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px;
+    border-radius: var(--r-sm); border: none; font-family: inherit; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all .2s ease; white-space: nowrap;
 }
 .btn-sm { padding: 6px 12px; font-size: 12px; }
 .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 2px 8px rgba(44,64,91,.25); }
@@ -462,288 +232,119 @@ body {
 .btn-danger  { background: var(--red); color: #fff; }
 .btn-danger:hover { filter: brightness(1.1); }
 
-/* ── LEVELS SECTION (inside categories page) ── */
-.levels-section {
-    margin-top: 40px;
-}
-
+/* ── LEVELS SECTION ── */
+.levels-section { margin-top: 40px; }
 .levels-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1.5px solid var(--border);
 }
+.levels-section-title { font-size: 16px; font-weight: 700; color: var(--ink); }
 
-.levels-section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ink);
-}
-
-/* ── MODAL ── */
+/* ── MODAL BACKDROP ── */
 .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(12,15,20,.55);
-    z-index: 9000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    backdrop-filter: blur(4px);
+    position: fixed; inset: 0; background: rgba(12,15,20,.55); z-index: 9000;
+    display: none; align-items: center; justify-content: center;
+    padding: 16px; backdrop-filter: blur(4px);
 }
 .modal-backdrop.open { display: flex; animation: bFadeIn .25s ease; }
-
 @keyframes bFadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes mSlideUp {
     from { transform: translateY(24px) scale(.97); opacity: 0; }
     to   { transform: translateY(0)    scale(1);   opacity: 1; }
 }
-
 .modal-box {
-    background: var(--card);
-    border-radius: var(--r-xl);
-    padding: 32px;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: var(--sh-lg);
-    animation: mSlideUp .3s cubic-bezier(.4,0,.2,1);
-    position: relative;
-    overflow: hidden;
+    background: var(--card); border-radius: var(--r-xl); padding: 32px;
+    width: 100%; max-width: 480px; box-shadow: var(--sh-lg);
+    animation: mSlideUp .3s cubic-bezier(.4,0,.2,1); position: relative; overflow: hidden;
 }
-
 .modal-box::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
     background: linear-gradient(90deg, var(--accent), var(--brand));
 }
-
 .modal-close {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    width: 30px;
-    height: 30px;
-    border: none;
-    background: var(--paper);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--ink-muted);
-    font-size: 14px;
-    transition: all .2s;
+    position: absolute; top: 14px; right: 16px; width: 30px; height: 30px;
+    border: none; background: var(--paper); border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; cursor: pointer; color: var(--ink-muted);
+    font-size: 14px; transition: all .2s;
 }
 .modal-close:hover { background: var(--red-bg); color: var(--red); transform: rotate(90deg); }
-
-.modal-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 6px;
-    padding-right: 36px;
-}
+.modal-title { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 6px; padding-right: 36px; }
 .modal-sub { font-size: 13px; color: var(--ink-muted); margin-bottom: 22px; }
-
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
+.field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.field-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-mid); }
+.field-group input, .field-group textarea, .field-group select {
+    padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--r-sm);
+    font-family: inherit; font-size: 13.5px; background: var(--paper); color: var(--ink);
+    outline: none; transition: border-color .2s, box-shadow .2s; width: 100%;
 }
-.field-group label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    color: var(--ink-mid);
-}
-.field-group input,
-.field-group textarea,
-.field-group select {
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-sm);
-    font-family: inherit;
-    font-size: 13.5px;
-    background: var(--paper);
-    color: var(--ink);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-    width: 100%;
-}
-.field-group input:focus,
-.field-group textarea:focus,
-.field-group select:focus {
-    border-color: var(--brand);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(44,64,91,.1);
+.field-group input:focus, .field-group textarea:focus, .field-group select:focus {
+    border-color: var(--brand); background: #fff; box-shadow: 0 0 0 3px rgba(44,64,91,.1);
 }
 .field-group textarea { resize: vertical; min-height: 80px; }
-
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
 .modal-footer {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 24px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border);
 }
 
 /* ── CONFIRM DIALOG ── */
-.confirm-box {
-    max-width: 380px;
-    text-align: center;
-}
+.confirm-box { max-width: 380px; text-align: center; }
 .confirm-icon { font-size: 48px; margin-bottom: 14px; display: block; }
 .confirm-title { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
 .confirm-text  { font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin-bottom: 24px; }
 .confirm-actions { display: flex; gap: 10px; justify-content: center; }
 
-/* ── LEVELS/FLASHCARDS/QUESTIONS TABS (kept from original but styled) ── */
+/* ── TABS ── */
 .admin-tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 6px;
-    margin-bottom: 24px;
-    box-shadow: var(--sh-xs);
+    display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 6px; margin-bottom: 24px; box-shadow: var(--sh-xs);
 }
-
 .tab-btn {
-    flex: 1;
-    padding: 10px 14px;
-    border: none;
-    border-radius: var(--r-sm);
-    background: transparent;
-    color: var(--ink-muted);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    flex: 1; padding: 10px 14px; border: none; border-radius: var(--r-sm);
+    background: transparent; color: var(--ink-muted); font-family: inherit; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .tab-btn:hover { background: var(--paper); color: var(--ink); }
 .tab-btn.active { background: var(--brand); color: #fff; box-shadow: 0 2px 8px rgba(44,64,91,.25); }
-
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* ── ITEMS GRID (flashcards/questions) ── */
-.items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 14px;
-}
-
+/* ── ITEMS GRID ── */
+.items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
 .item-card {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 18px;
-    box-shadow: var(--sh-xs);
-    transition: box-shadow .2s;
-    position: relative;
-    overflow: hidden;
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: var(--r-md); padding: 18px; box-shadow: var(--sh-xs);
+    transition: box-shadow .2s; position: relative; overflow: hidden;
 }
-.item-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--brand-lt), var(--accent));
-}
+.item-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--brand-lt), var(--accent)); }
 .item-card:hover { box-shadow: var(--sh-sm); }
 .item-card h3 { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
 .item-card p  { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; line-height: 1.55; }
-
 .item-actions { display: flex; gap: 6px; justify-content: flex-end; }
-
 .filter-select {
-    padding: 9px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-sm);
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--ink);
-    background: var(--card);
-    outline: none;
-    min-width: 220px;
-    transition: border-color .2s;
-    cursor: pointer;
+    padding: 9px 14px; border: 1.5px solid var(--border); border-radius: var(--r-sm);
+    font-family: inherit; font-size: 13px; color: var(--ink); background: var(--card);
+    outline: none; min-width: 220px; transition: border-color .2s; cursor: pointer;
 }
 .filter-select:focus { border-color: var(--brand); }
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-.section-header h2 {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ink);
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 5px;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 48px 20px;
-    color: var(--ink-muted);
-    font-size: 14px;
-    font-weight: 500;
-    grid-column: 1 / -1;
-}
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.section-header h2 { font-size: 16px; font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
+.empty-state { text-align: center; padding: 48px 20px; color: var(--ink-muted); font-size: 14px; font-weight: 500; grid-column: 1 / -1; }
 
 /* ── IMAGE SELECTOR ── */
 .image-selector-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 8px;
-    max-height: 240px;
-    overflow-y: auto;
-    padding: 10px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-sm);
-    background: var(--paper);
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px;
+    max-height: 240px; overflow-y: auto; padding: 10px;
+    border: 1.5px solid var(--border); border-radius: var(--r-sm); background: var(--paper);
 }
-.image-option {
-    aspect-ratio: 1;
-    border-radius: var(--r-sm);
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all .2s;
-}
+.image-option { aspect-ratio: 1; border-radius: var(--r-sm); overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: all .2s; }
 .image-option:hover   { border-color: var(--brand); transform: scale(1.05); }
 .image-option.selected { border-color: var(--green); box-shadow: 0 0 0 2px rgba(26,156,91,.2); }
 .image-option img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
 .selected-image-preview {
-    margin-top: 7px;
-    padding: 7px 12px;
-    background: var(--green-bg);
-    border-radius: var(--r-sm);
-    display: none;
-    font-size: 12px;
-    border: 1px solid rgba(26,156,91,.2);
+    margin-top: 7px; padding: 7px 12px; background: var(--green-bg);
+    border-radius: var(--r-sm); display: none; font-size: 12px; border: 1px solid rgba(26,156,91,.2);
 }
 .selected-image-preview.active { display: block; }
 .selected-image-preview strong { color: var(--green); }
@@ -752,61 +353,90 @@ body {
 .option-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
 .option-input { flex: 1; margin-bottom: 0 !important; }
 .btn-remove-option {
-    background: var(--red);
-    color: #fff;
-    border: none;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .2s;
-    flex-shrink: 0;
-    font-family: inherit;
+    background: var(--red); color: #fff; border: none;
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; transition: all .2s;
+    flex-shrink: 0; font-family: inherit;
 }
 .btn-remove-option:hover { filter: brightness(1.1); transform: scale(1.1); }
 
-/* ── MODAL LEVEL ── */
-.modal { display: none; position: fixed; inset: 0; background: rgba(12,15,20,.55); z-index: 9000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(4px); }
+/* ── MODAL for levels/flashcards/questions ── */
+/* FIXED: proper centering with flexbox on modal backdrop */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(12,15,20,.6);
+    z-index: 9500;
+    /* KEY FIX: use flex to center both axes */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
 .modal.active { display: flex; animation: bFadeIn .25s ease; }
-.modal-content { background: var(--card); border-radius: var(--r-xl); padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: var(--sh-lg); position: relative; animation: mSlideUp .3s; }
-.modal-content::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent), var(--brand)); }
-.modal-large { max-width: 720px; }
-.modal-content h2 { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 20px; border-bottom: 1.5px solid var(--accent); padding-bottom: 10px; }
-.modal-close-x { position: absolute; top: 14px; right: 16px; border: none; background: var(--paper); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink-muted); font-size: 14px; transition: all .2s; }
+
+.modal-content {
+    background: var(--card);
+    border-radius: var(--r-xl);
+    padding: 32px;
+    width: 100%;
+    max-width: 560px;
+    /* FIXED: limit height so it doesn't overflow viewport */
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-shadow: var(--sh-lg);
+    position: relative;
+    animation: mSlideUp .3s cubic-bezier(.4,0,.2,1);
+    /* Ensure the content block itself is positioned correctly */
+    margin: auto;
+}
+.modal-content::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--brand));
+}
+.modal-large { max-width: 680px; }
+.modal-content h2 {
+    font-size: 17px; font-weight: 700; color: var(--ink);
+    margin-bottom: 20px; border-bottom: 1.5px solid var(--accent); padding-bottom: 10px;
+}
+.modal-close-x {
+    position: absolute; top: 14px; right: 16px; border: none; background: var(--paper);
+    border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; color: var(--ink-muted); font-size: 14px; transition: all .2s;
+}
 .modal-close-x:hover { background: var(--red-bg); color: var(--red); transform: rotate(90deg); }
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border);
+}
 
 form label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-mid); }
 form input[type="text"], form textarea, form select {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-sm);
-    font-family: inherit;
-    font-size: 13px;
-    margin-bottom: 14px;
-    color: var(--ink);
-    background: var(--paper);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: var(--r-sm); font-family: inherit; font-size: 13px;
+    margin-bottom: 14px; color: var(--ink); background: var(--paper);
+    outline: none; transition: border-color .2s, box-shadow .2s;
 }
 form input:focus, form textarea:focus, form select:focus {
-    border-color: var(--brand);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(44,64,91,.1);
+    border-color: var(--brand); background: #fff; box-shadow: 0 0 0 3px rgba(44,64,91,.1);
 }
 form textarea { resize: vertical; min-height: 80px; }
 
+/* ── VALIDATION ERROR STYLE ── */
+.field-error {
+    font-size: 11px; color: var(--red); font-weight: 600;
+    margin-top: -10px; margin-bottom: 8px; display: none;
+}
+.field-error.visible { display: block; }
+input.invalid, textarea.invalid, select.invalid {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 3px rgba(214,48,49,.1) !important;
+}
+
 /* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-    .admin-sidebar { display: none; }
-    .admin-main { padding: 20px 16px; }
-}
-@media (max-width: 600px) {
-    .category-grid { grid-template-columns: 1fr; }
-    .stat-chips { flex-direction: column; }
-}
+@media (max-width: 900px) { .admin-sidebar { display: none; } .admin-main { padding: 20px 16px; } }
+@media (max-width: 600px) { .category-grid { grid-template-columns: 1fr; } .stat-chips { flex-direction: column; } }
 </style>
 </head>
 <body>
@@ -819,40 +449,25 @@ form textarea { resize: vertical; min-height: 80px; }
         <span class="brand-sub">Admin</span>
     </div>
     <div class="header-actions">
-        <a href="/dashboard.html" class="btn-header">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-        <button class="btn-header danger" id="logout-btn-admin">
-            <i class="fas fa-sign-out-alt"></i> Salir
-        </button>
+        <a href="/dashboard.html" class="btn-header"><i class="fas fa-arrow-left"></i> Volver</a>
+        <button class="btn-header danger" id="logout-btn-admin"><i class="fas fa-sign-out-alt"></i> Salir</button>
     </div>
 </header>
 
 <div class="admin-shell">
-
     <!-- ── SIDEBAR ── -->
     <nav class="admin-sidebar">
         <div class="sidebar-section-label">Contenido</div>
-        <button class="nav-btn active" data-section="categories">
-            <i class="fas fa-layer-group"></i> Categorías
-        </button>
-        <button class="nav-btn" data-section="levels">
-            <i class="fas fa-graduation-cap"></i> Niveles
-        </button>
-        <button class="nav-btn" data-section="flashcards">
-            <i class="fas fa-clone"></i> Flashcards
-        </button>
-        <button class="nav-btn" data-section="questions">
-            <i class="fas fa-question-circle"></i> Preguntas
-        </button>
+        <button class="nav-btn active" data-section="categories"><i class="fas fa-layer-group"></i> Categorías</button>
+        <button class="nav-btn" data-section="levels"><i class="fas fa-graduation-cap"></i> Niveles</button>
+        <button class="nav-btn" data-section="flashcards"><i class="fas fa-clone"></i> Flashcards</button>
+        <button class="nav-btn" data-section="questions"><i class="fas fa-question-circle"></i> Preguntas</button>
     </nav>
 
     <!-- ── MAIN ── -->
     <main class="admin-main">
 
-        <!-- ════════════════════════════════════
-             SECCIÓN: CATEGORÍAS
-        ════════════════════════════════════ -->
+        <!-- CATEGORÍAS -->
         <div id="section-categories" class="section-view active">
             <div class="page-header">
                 <div>
@@ -860,138 +475,92 @@ form textarea { resize: vertical; min-height: 80px; }
                     <div class="page-sub">Organiza el contenido educativo en categorías temáticas</div>
                 </div>
             </div>
-
             <div class="stat-chips" id="cat-stats-strip">
                 <div class="stat-chip chip-brand">
                     <div class="chip-icon"><i class="fas fa-layer-group"></i></div>
-                    <div>
-                        <div class="chip-val" id="stat-cat-total">—</div>
-                        <div class="chip-label">Categorías activas</div>
-                    </div>
+                    <div><div class="chip-val" id="stat-cat-total">—</div><div class="chip-label">Categorías activas</div></div>
                 </div>
                 <div class="stat-chip chip-accent">
                     <div class="chip-icon"><i class="fas fa-lock-open"></i></div>
-                    <div>
-                        <div class="chip-val" id="stat-cat-available">—</div>
-                        <div class="chip-label">Espacios disponibles</div>
-                    </div>
+                    <div><div class="chip-val" id="stat-cat-available">—</div><div class="chip-label">Espacios disponibles</div></div>
                 </div>
                 <div class="stat-chip chip-green">
                     <div class="chip-icon"><i class="fas fa-check-circle"></i></div>
-                    <div>
-                        <div class="chip-val">10</div>
-                        <div class="chip-label">Máximo permitido</div>
-                    </div>
+                    <div><div class="chip-val">10</div><div class="chip-label">Máximo permitido</div></div>
                 </div>
             </div>
-
             <div class="limit-banner" id="limit-banner">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span>Límite alcanzado — Ya tienes 10 categorías. Elimina una para poder crear nuevas.</span>
+                <span>Límite alcanzado — Ya tienes 10 categorías. Elimina una para crear nuevas.</span>
             </div>
-
-            <div class="category-grid" id="categories-container">
-                <!-- Dinámico -->
-            </div>
+            <div class="category-grid" id="categories-container"></div>
         </div>
 
-        <!-- ════════════════════════════════════
-             SECCIÓN: NIVELES
-        ════════════════════════════════════ -->
+        <!-- NIVELES -->
         <div id="section-levels" class="section-view">
             <div class="page-header">
-                <div>
-                    <div class="page-title">Gestión de Niveles</div>
-                    <div class="page-sub">Administra los niveles educativos por categoría</div>
-                </div>
+                <div><div class="page-title">Gestión de Niveles</div><div class="page-sub">Administra los niveles educativos por categoría</div></div>
             </div>
-            <div class="section-header">
-                <h2>Niveles por Categoría</h2>
-            </div>
-            <div id="categories-levels-container">
-                <!-- Dinámico -->
-            </div>
+            <div class="section-header"><h2>Niveles por Categoría</h2></div>
+            <div id="categories-levels-container"></div>
         </div>
 
-        <!-- ════════════════════════════════════
-             SECCIÓN: FLASHCARDS
-        ════════════════════════════════════ -->
+        <!-- FLASHCARDS -->
         <div id="section-flashcards" class="section-view">
             <div class="page-header">
-                <div>
-                    <div class="page-title">Flashcards</div>
-                    <div class="page-sub">Gestiona las tarjetas de aprendizaje</div>
-                </div>
+                <div><div class="page-title">Flashcards</div><div class="page-sub">Gestiona las tarjetas de aprendizaje</div></div>
             </div>
             <div class="section-header">
                 <h2>Gestión de Flashcards</h2>
                 <div style="display:flex;gap:10px;align-items:center">
-                    <select id="flashcard-level-filter" class="filter-select">
-                        <option value="">Selecciona un nivel</option>
-                    </select>
-                    <button class="btn btn-primary" id="btn-new-flashcard">
-                        <i class="fas fa-plus"></i> Nueva
-                    </button>
+                    <select id="flashcard-level-filter" class="filter-select"><option value="">Selecciona un nivel</option></select>
+                    <button class="btn btn-primary" id="btn-new-flashcard"><i class="fas fa-plus"></i> Nueva</button>
                 </div>
             </div>
-            <div id="flashcards-container" class="items-grid">
-                <p class="empty-state">Selecciona un nivel para ver las flashcards</p>
-            </div>
+            <div id="flashcards-container" class="items-grid"><p class="empty-state">Selecciona un nivel para ver las flashcards</p></div>
         </div>
 
-        <!-- ════════════════════════════════════
-             SECCIÓN: PREGUNTAS
-        ════════════════════════════════════ -->
+        <!-- PREGUNTAS -->
         <div id="section-questions" class="section-view">
             <div class="page-header">
-                <div>
-                    <div class="page-title">Preguntas del Quiz</div>
-                    <div class="page-sub">Gestiona las preguntas de evaluación</div>
-                </div>
+                <div><div class="page-title">Preguntas del Quiz</div><div class="page-sub">Gestiona las preguntas de evaluación</div></div>
             </div>
             <div class="section-header">
                 <h2>Preguntas de Quiz</h2>
                 <div style="display:flex;gap:10px;align-items:center">
-                    <select id="question-level-filter" class="filter-select">
-                        <option value="">Selecciona un nivel</option>
-                    </select>
-                    <button class="btn btn-primary" id="btn-new-question">
-                        <i class="fas fa-plus"></i> Nueva
-                    </button>
+                    <select id="question-level-filter" class="filter-select"><option value="">Selecciona un nivel</option></select>
+                    <button class="btn btn-primary" id="btn-new-question"><i class="fas fa-plus"></i> Nueva</button>
                 </div>
             </div>
-            <div id="questions-container" class="items-grid">
-                <p class="empty-state">Selecciona un nivel para ver las preguntas</p>
-            </div>
+            <div id="questions-container" class="items-grid"><p class="empty-state">Selecciona un nivel para ver las preguntas</p></div>
         </div>
 
     </main>
 </div>
 
-<!-- ════════════════════════════════════
-     MODALS
-════════════════════════════════════ -->
+<!-- ══ MODALS ══════════════════════════════════════════════════════ -->
 
 <!-- Modal: Crear/Editar Categoría -->
 <div class="modal-backdrop" id="modal-category">
     <div class="modal-box">
         <button class="modal-close" id="close-cat-modal">✕</button>
         <div class="modal-title" id="cat-modal-title">Nueva Categoría</div>
-        <div class="modal-sub" id="cat-modal-sub">Crea una nueva categoría temática para organizar el contenido educativo.</div>
+        <div class="modal-sub" id="cat-modal-sub">Crea una nueva categoría temática.</div>
         <input type="hidden" id="cat-id">
-
         <div class="field-group">
             <label>Nombre *</label>
             <input type="text" id="cat-nombre" placeholder="Ej: Inversiones y Ahorro" maxlength="100">
+            <span class="field-error" id="err-cat-nombre"></span>
         </div>
         <div class="field-group">
             <label>Descripción</label>
-            <textarea id="cat-descripcion" placeholder="Breve descripción de esta categoría..."></textarea>
+            <textarea id="cat-descripcion" placeholder="Breve descripción..."></textarea>
         </div>
         <div class="field-row">
             <div class="field-group">
                 <label>Nivel inicio</label>
                 <input type="number" id="cat-nivel-inicio" placeholder="Ej: 1" min="1" max="99">
+                <span class="field-error" id="err-cat-nivel"></span>
             </div>
             <div class="field-group">
                 <label>Nivel fin</label>
@@ -1000,9 +569,7 @@ form textarea { resize: vertical; min-height: 80px; }
         </div>
         <div class="modal-footer">
             <button class="btn btn-ghost" id="cancel-cat-modal">Cancelar</button>
-            <button class="btn btn-primary" id="save-cat-btn">
-                <i class="fas fa-save"></i> Guardar
-            </button>
+            <button class="btn btn-primary" id="save-cat-btn"><i class="fas fa-save"></i> Guardar</button>
         </div>
     </div>
 </div>
@@ -1013,30 +580,30 @@ form textarea { resize: vertical; min-height: 80px; }
         <button class="modal-close" id="close-confirm-del">✕</button>
         <span class="confirm-icon">🗑️</span>
         <div class="confirm-title">¿Eliminar categoría?</div>
-        <div class="confirm-text" id="confirm-del-text">Esta acción no se puede deshacer.</div>
+        <div class="confirm-text" id="confirm-del-text">Esta acción eliminará la categoría y todo su contenido.</div>
         <div class="confirm-actions">
             <button class="btn btn-ghost" id="cancel-del-btn">Cancelar</button>
-            <button class="btn btn-danger" id="confirm-del-btn">
-                <i class="fas fa-trash"></i> Eliminar
-            </button>
+            <button class="btn btn-danger" id="confirm-del-btn"><i class="fas fa-trash"></i> Eliminar</button>
         </div>
     </div>
 </div>
 
-<!-- Modal: Nivel -->
+<!-- Modal: Nivel (FIXED: centered) -->
 <div id="modal-level" class="modal">
     <div class="modal-content">
         <button class="modal-close-x" data-modal="modal-level">✕</button>
         <h2 id="modal-level-title">Nuevo Nivel</h2>
-        <form id="form-level">
+        <form id="form-level" novalidate>
             <input type="hidden" id="level-id">
             <input type="hidden" id="level-category-id">
             <label>Categoría</label>
-            <input type="text" id="level-category-name" readonly style="background:#f4f5f7;cursor:default">
+            <input type="text" id="level-category-name" readonly style="background:#f4f5f7;cursor:default;color:#8691a5;">
             <label>Nombre del Nivel *</label>
-            <input type="text" id="level-nombre" required maxlength="100">
+            <input type="text" id="level-nombre" required maxlength="100" placeholder="Ej: Ingresos y Egresos">
+            <span class="field-error" id="err-level-nombre"></span>
             <label>Descripción *</label>
-            <textarea id="level-descripcion" rows="3" required></textarea>
+            <textarea id="level-descripcion" rows="3" required placeholder="Breve descripción del contenido..."></textarea>
+            <span class="field-error" id="err-level-desc"></span>
             <div class="modal-actions">
                 <button type="button" class="btn btn-ghost" data-modal="modal-level">Cancelar</button>
                 <button type="submit" class="btn btn-primary">Guardar Nivel</button>
@@ -1045,26 +612,25 @@ form textarea { resize: vertical; min-height: 80px; }
     </div>
 </div>
 
-<!-- Modal: Flashcard -->
+<!-- Modal: Flashcard (FIXED: centered) -->
 <div id="modal-flashcard" class="modal">
     <div class="modal-content">
         <button class="modal-close-x" data-modal="modal-flashcard">✕</button>
         <h2 id="modal-flashcard-title">Nueva Flashcard</h2>
-        <form id="form-flashcard">
+        <form id="form-flashcard" novalidate>
             <input type="hidden" id="flashcard-id">
             <label>Nivel *</label>
-            <select id="flashcard-level" required>
-                <option value="">Selecciona un nivel</option>
-            </select>
+            <select id="flashcard-level" required><option value="">Selecciona un nivel</option></select>
+            <span class="field-error" id="err-fc-level"></span>
             <label>Título *</label>
-            <input type="text" id="flashcard-titulo" maxlength="200" required>
+            <input type="text" id="flashcard-titulo" maxlength="200" required placeholder="Título de la flashcard">
+            <span class="field-error" id="err-fc-titulo"></span>
             <label>Contenido *</label>
-            <textarea id="flashcard-contenido" rows="5" required></textarea>
+            <textarea id="flashcard-contenido" rows="5" required placeholder="Contenido educativo..."></textarea>
+            <span class="field-error" id="err-fc-contenido"></span>
             <label>Imagen (opcional)</label>
             <div class="image-selector-grid" id="flashcard-image-grid"></div>
-            <div class="selected-image-preview" id="flashcard-image-preview">
-                <strong>✓</strong> <span></span>
-            </div>
+            <div class="selected-image-preview" id="flashcard-image-preview"><strong>✓</strong> <span></span></div>
             <input type="hidden" id="flashcard-imagen">
             <div class="modal-actions">
                 <button type="button" class="btn btn-ghost" data-modal="modal-flashcard">Cancelar</button>
@@ -1074,32 +640,32 @@ form textarea { resize: vertical; min-height: 80px; }
     </div>
 </div>
 
-<!-- Modal: Pregunta -->
-<div id="modal-question" class="modal modal-large">
-    <div class="modal-content">
+<!-- Modal: Pregunta (FIXED: centered, larger) -->
+<div id="modal-question" class="modal">
+    <div class="modal-content modal-large">
         <button class="modal-close-x" data-modal="modal-question">✕</button>
         <h2 id="modal-question-title">Nueva Pregunta</h2>
-        <form id="form-question">
+        <form id="form-question" novalidate>
             <input type="hidden" id="question-id">
             <label>Nivel *</label>
-            <select id="question-level" required>
-                <option value="">Selecciona un nivel</option>
-            </select>
+            <select id="question-level" required><option value="">Selecciona un nivel</option></select>
+            <span class="field-error" id="err-q-level"></span>
             <label>Pregunta *</label>
-            <textarea id="question-pregunta" rows="3" required></textarea>
+            <textarea id="question-pregunta" rows="3" required placeholder="Escribe la pregunta aquí..."></textarea>
+            <span class="field-error" id="err-q-pregunta"></span>
             <label>Opciones de Respuesta *</label>
             <div id="options-container">
                 <div class="option-row"><input type="text" class="option-input" data-key="A" placeholder="Opción A" required></div>
                 <div class="option-row"><input type="text" class="option-input" data-key="B" placeholder="Opción B" required></div>
                 <div class="option-row"><input type="text" class="option-input" data-key="C" placeholder="Opción C" required></div>
             </div>
+            <span class="field-error" id="err-q-opciones"></span>
             <button type="button" id="btn-add-option" class="btn btn-ghost btn-sm" style="margin-bottom:14px">
                 <i class="fas fa-plus"></i> Añadir opción
             </button>
             <label>Respuesta Correcta *</label>
-            <select id="question-correcta" required>
-                <option value="">Selecciona la correcta</option>
-            </select>
+            <select id="question-correcta" required><option value="">Selecciona la correcta</option></select>
+            <span class="field-error" id="err-q-correcta"></span>
             <label>Dificultad</label>
             <select id="question-dificultad">
                 <option value="facil">Fácil</option>
@@ -1108,9 +674,7 @@ form textarea { resize: vertical; min-height: 80px; }
             </select>
             <label>Imagen (opcional)</label>
             <div class="image-selector-grid" id="question-image-grid"></div>
-            <div class="selected-image-preview" id="question-image-preview">
-                <strong>✓</strong> <span></span>
-            </div>
+            <div class="selected-image-preview" id="question-image-preview"><strong>✓</strong> <span></span></div>
             <input type="hidden" id="question-imagen">
             <div class="modal-actions">
                 <button type="button" class="btn btn-ghost" data-modal="modal-question">Cancelar</button>
@@ -1138,7 +702,7 @@ const AVAILABLE_IMAGES = [
     'tarjetaFrente8.jpg','tarjetaFrente9.jpg','tarjetaFrente10.jpg','tarjetaFrente11.jpg'
 ];
 
-// ── Guards ──────────────────────────────────────────────
+// ── Guards ──────────────────────────────────────────────────────────────
 if (!protectRoute()) throw new Error('no auth');
 if (!isAdmin()) {
     alertaError('Acceso denegado.', { duration: 3000, onClose: () => window.location.href = '/dashboard.html' });
@@ -1147,57 +711,107 @@ if (!isAdmin()) {
 const session = getAuthData();
 const userId  = session.id;
 
-// ── State ──────────────────────────────────────────────
+// ── State ──────────────────────────────────────────────────────────────
 let categories  = [];
 let levels      = [];
 let flashcards  = [];
 let questions   = [];
 let pendingDeleteId = null;
 
-// ── Sidebar navigation ─────────────────────────────────
+// ── Cache-busting fetch helper ─────────────────────────────────────────
+async function fetchFresh(url, options = {}) {
+    const ts = Date.now();
+    const sep = url.includes('?') ? '&' : '?';
+    return fetch(`${url}${sep}_=${ts}`, {
+        ...options,
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            ...(options.headers || {})
+        }
+    });
+}
+
+// ── Sidebar navigation ─────────────────────────────────────────────────
 document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(`section-${btn.dataset.section}`).classList.add('active');
-        if (btn.dataset.section === 'levels') renderCategoryLevelsPage();
+        if (btn.dataset.section === 'levels') {
+            // Reload fresh data when switching to levels tab
+            loadAll().then(() => renderCategoryLevelsPage());
+        }
     });
 });
 
-// ── Logout ──────────────────────────────────────────────
+// ── Logout ─────────────────────────────────────────────────────────────
 document.getElementById('logout-btn-admin').addEventListener('click', async e => {
     e.preventDefault();
     if (await alertaConfirmacion('¿Cerrar sesión?', 'Salir')) logout();
 });
 
-// ══════════════════════════════════════════════════════════
-//  CATEGORÍAS
-// ══════════════════════════════════════════════════════════
-
-async function loadCategories() {
-    try {
-        const res  = await fetch(`${API}/admin/categories`);
-        const data = await res.json();
-        if (data.success) {
-            categories = data.data;
-            const stats = data.stats || { count: categories.length, maxReached: categories.length >= MAX_CATS, max: MAX_CATS };
-            renderCategories(stats);
-        }
-    } catch (e) { alertaError('Error al cargar categorías'); }
+// ── Validation helpers ─────────────────────────────────────────────────
+function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.toggle('visible', !!msg);
+}
+function clearErrors(...ids) {
+    ids.forEach(id => showErr(id, ''));
+}
+function markInvalid(inputId, errId, msg) {
+    const inp = document.getElementById(inputId);
+    if (inp) inp.classList.toggle('invalid', !!msg);
+    showErr(errId, msg);
 }
 
-function renderCategories(stats) {
+// ══════════════════════════════════════════════════════════════════════
+//  LOAD ALL DATA (fresh, no cache)
+// ══════════════════════════════════════════════════════════════════════
+async function loadAll() {
+    try {
+        const [resCat, resLev] = await Promise.all([
+            fetchFresh(`${API}/admin/categories`),
+            fetchFresh(`${API}/admin/levels`)
+        ]);
+        const dataCat = await resCat.json();
+        const dataLev = await resLev.json();
+
+        if (dataCat.success) categories = dataCat.data || [];
+        if (dataLev.success) levels     = dataLev.data || [];
+
+        updateSelectFilters();
+        return { categories, levels };
+    } catch (e) {
+        console.error('Error loading data:', e);
+        alertaError('Error al cargar datos');
+    }
+}
+
+async function loadCategories() {
+    await loadAll();
+    renderCategories();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  CATEGORÍAS
+// ══════════════════════════════════════════════════════════════════════
+function renderCategories() {
     const container = document.getElementById('categories-container');
     const banner    = document.getElementById('limit-banner');
-    document.getElementById('stat-cat-total').textContent     = stats.count;
-    document.getElementById('stat-cat-available').textContent = Math.max(0, stats.max - stats.count);
-    banner.classList.toggle('visible', stats.maxReached);
+    const total     = categories.length;
+    const available = Math.max(0, MAX_CATS - total);
+
+    document.getElementById('stat-cat-total').textContent     = total;
+    document.getElementById('stat-cat-available').textContent = available;
+    banner.classList.toggle('visible', total >= MAX_CATS);
 
     container.innerHTML = '';
 
     categories.forEach((cat, idx) => {
-        // Count levels for this category
         const levCount = levels.filter(l => Number(l.category_id) === Number(cat.id)).length;
         const card = document.createElement('div');
         card.className = 'cat-card';
@@ -1205,13 +819,12 @@ function renderCategories(stats) {
         card.innerHTML = `
             <div class="cat-card-stripe stripe-${idx % 10}"></div>
             <div class="cat-card-body">
-                <!-- VIEW MODE -->
                 <div class="cat-view-mode">
                     <div class="cat-card-header">
                         <div class="cat-name">${escHtml(cat.nombre)}</div>
                         <div class="cat-actions">
                             <button class="btn-icon edit" title="Editar" data-id="${cat.id}"><i class="fas fa-pen"></i></button>
-                            <button class="btn-icon del"  title="Eliminar" data-id="${cat.id}"><i class="fas fa-trash"></i></button>
+                            <button class="btn-icon del" title="Eliminar" data-id="${cat.id}"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                     <div class="cat-desc">${escHtml(cat.descripcion || 'Sin descripción')}</div>
@@ -1220,7 +833,6 @@ function renderCategories(stats) {
                         <span class="meta-tag"><i class="fas fa-sort-numeric-up"></i> N${cat.nivel_inicio}–N${cat.nivel_fin}</span>
                     </div>
                 </div>
-                <!-- EDIT MODE (inline) -->
                 <div class="cat-edit-view" data-id="${cat.id}">
                     <input class="inline-input" type="text" placeholder="Nombre" value="${escHtml(cat.nombre)}" data-field="nombre">
                     <input class="inline-input" type="text" placeholder="Descripción" value="${escHtml(cat.descripcion || '')}" data-field="descripcion">
@@ -1232,32 +844,20 @@ function renderCategories(stats) {
             </div>`;
         container.appendChild(card);
 
-        // Edit button → inline mode
         card.querySelector('.btn-icon.edit').addEventListener('click', () => {
             card.classList.add('editing');
             card.querySelector('.inline-input[data-field="nombre"]').focus();
         });
-
-        // Cancel inline edit
-        card.querySelector('.btn-cancel-edit').addEventListener('click', () => {
-            card.classList.remove('editing');
-        });
-
-        // Save inline edit
+        card.querySelector('.btn-cancel-edit').addEventListener('click', () => card.classList.remove('editing'));
         card.querySelector('.btn-save-edit').addEventListener('click', () => saveInlineEdit(card, cat));
-
-        // Delete
         card.querySelector('.btn-icon.del').addEventListener('click', () => openDeleteConfirm(cat));
     });
 
-    // Add card (if not at limit)
+    // Add card
     const addCard = document.createElement('div');
-    addCard.className = `cat-add-card${stats.maxReached ? ' disabled' : ''}`;
-    addCard.title = stats.maxReached ? 'Límite de 10 categorías alcanzado' : 'Crear nueva categoría';
-    addCard.innerHTML = `
-        <div class="add-icon"><i class="fas fa-plus"></i></div>
-        <div class="add-label">${stats.maxReached ? 'Límite alcanzado' : 'Nueva categoría'}</div>`;
-    if (!stats.maxReached) addCard.addEventListener('click', openNewCategoryModal);
+    addCard.className = `cat-add-card${total >= MAX_CATS ? ' disabled' : ''}`;
+    addCard.innerHTML = `<div class="add-icon"><i class="fas fa-plus"></i></div><div class="add-label">${total >= MAX_CATS ? 'Límite alcanzado' : 'Nueva categoría'}</div>`;
+    if (total < MAX_CATS) addCard.addEventListener('click', openNewCategoryModal);
     container.appendChild(addCard);
 }
 
@@ -1266,7 +866,7 @@ async function saveInlineEdit(card, cat) {
     const descripcion = card.querySelector('.inline-input[data-field="descripcion"]').value.trim();
     if (!nombre || nombre.length < 2) { alertaAdvertencia('El nombre debe tener al menos 2 caracteres'); return; }
     try {
-        const res  = await fetch(`${API}/admin/categories/${cat.id}`, {
+        const res  = await fetchFresh(`${API}/admin/categories/${cat.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, nombre, descripcion })
@@ -1280,42 +880,45 @@ async function saveInlineEdit(card, cat) {
     } catch (e) { alertaError('Error al guardar'); }
 }
 
-// ── New Category Modal ──────────────────────────────────
+// Category modal
 function openNewCategoryModal() {
-    document.getElementById('cat-id').value             = '';
-    document.getElementById('cat-nombre').value         = '';
-    document.getElementById('cat-descripcion').value    = '';
-    document.getElementById('cat-nivel-inicio').value   = '';
-    document.getElementById('cat-nivel-fin').value      = '';
+    clearErrors('err-cat-nombre', 'err-cat-nivel');
+    document.getElementById('cat-id').value           = '';
+    document.getElementById('cat-nombre').value       = '';
+    document.getElementById('cat-descripcion').value  = '';
+    document.getElementById('cat-nivel-inicio').value = '';
+    document.getElementById('cat-nivel-fin').value    = '';
     document.getElementById('cat-modal-title').textContent = 'Nueva Categoría';
-    document.getElementById('cat-modal-sub').textContent   = 'Crea una nueva categoría temática para organizar el contenido educativo.';
     document.getElementById('modal-category').classList.add('open');
     setTimeout(() => document.getElementById('cat-nombre').focus(), 150);
 }
 
-document.getElementById('close-cat-modal').addEventListener('click', () =>
-    document.getElementById('modal-category').classList.remove('open'));
-document.getElementById('cancel-cat-modal').addEventListener('click', () =>
-    document.getElementById('modal-category').classList.remove('open'));
+['close-cat-modal','cancel-cat-modal'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', () =>
+        document.getElementById('modal-category').classList.remove('open'));
+});
 document.getElementById('modal-category').addEventListener('click', e => {
     if (e.target === document.getElementById('modal-category'))
         document.getElementById('modal-category').classList.remove('open');
 });
 
 document.getElementById('save-cat-btn').addEventListener('click', async () => {
-    const id          = document.getElementById('cat-id').value;
-    const nombre      = document.getElementById('cat-nombre').value.trim();
-    const descripcion = document.getElementById('cat-descripcion').value.trim();
+    clearErrors('err-cat-nombre', 'err-cat-nivel');
+    const id           = document.getElementById('cat-id').value;
+    const nombre       = document.getElementById('cat-nombre').value.trim();
+    const descripcion  = document.getElementById('cat-descripcion').value.trim();
     const nivel_inicio = parseInt(document.getElementById('cat-nivel-inicio').value) || null;
     const nivel_fin    = parseInt(document.getElementById('cat-nivel-fin').value)    || null;
 
-    if (!nombre || nombre.length < 2) { alertaAdvertencia('El nombre debe tener al menos 2 caracteres'); return; }
-    if (nivel_inicio && nivel_fin && nivel_inicio > nivel_fin) { alertaAdvertencia('Nivel inicio no puede ser mayor que nivel fin'); return; }
+    let valid = true;
+    if (!nombre || nombre.length < 2) { markInvalid('cat-nombre','err-cat-nombre','El nombre debe tener al menos 2 caracteres'); valid = false; }
+    if (nivel_inicio && nivel_fin && nivel_inicio > nivel_fin) { markInvalid('cat-nivel-inicio','err-cat-nivel','Nivel inicio no puede ser mayor que nivel fin'); valid = false; }
+    if (!valid) return;
 
     try {
         const url    = id ? `${API}/admin/categories/${id}` : `${API}/admin/categories`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetch(url, {
+        const res = await fetchFresh(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, nombre, descripcion, nivel_inicio, nivel_fin })
@@ -1329,27 +932,26 @@ document.getElementById('save-cat-btn').addEventListener('click', async () => {
     } catch (e) { alertaError('Error al guardar categoría'); }
 });
 
-// ── Delete Confirm ──────────────────────────────────────
+// Delete confirm
 function openDeleteConfirm(cat) {
     pendingDeleteId = cat.id;
     document.getElementById('confirm-del-text').textContent =
-        `¿Eliminar la categoría "${cat.nombre}"? Esta acción no se puede deshacer. Si tiene niveles asociados, deberás eliminarlos primero.`;
+        `¿Eliminar la categoría "${cat.nombre}"? Se eliminarán también todos sus niveles, flashcards y preguntas.`;
     document.getElementById('modal-confirm-del').classList.add('open');
 }
 
-document.getElementById('close-confirm-del').addEventListener('click', () =>
-    document.getElementById('modal-confirm-del').classList.remove('open'));
-document.getElementById('cancel-del-btn').addEventListener('click', () =>
-    document.getElementById('modal-confirm-del').classList.remove('open'));
+['close-confirm-del','cancel-del-btn'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', () =>
+        document.getElementById('modal-confirm-del').classList.remove('open'));
+});
 document.getElementById('modal-confirm-del').addEventListener('click', e => {
     if (e.target === document.getElementById('modal-confirm-del'))
         document.getElementById('modal-confirm-del').classList.remove('open');
 });
-
 document.getElementById('confirm-del-btn').addEventListener('click', async () => {
     if (!pendingDeleteId) return;
     try {
-        const res  = await fetch(`${API}/admin/categories/${pendingDeleteId}`, {
+        const res  = await fetchFresh(`${API}/admin/categories/${pendingDeleteId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId })
@@ -1367,18 +969,9 @@ document.getElementById('confirm-del-btn').addEventListener('click', async () =>
     } catch (e) { alertaError('Error al eliminar'); }
 });
 
-// ══════════════════════════════════════════════════════════
-//  LEVELS SECTION
-// ══════════════════════════════════════════════════════════
-
-async function loadLevels() {
-    try {
-        const res  = await fetch(`${API}/admin/levels`);
-        const data = await res.json();
-        if (data.success) { levels = data.data; updateSelectFilters(); }
-    } catch (e) { alertaError('Error al cargar niveles'); }
-}
-
+// ══════════════════════════════════════════════════════════════════════
+//  LEVELS
+// ══════════════════════════════════════════════════════════════════════
 function renderCategoryLevelsPage() {
     const container = document.getElementById('categories-levels-container');
     if (!container) return;
@@ -1424,7 +1017,8 @@ function renderCategoryLevelsPage() {
                             <button class="btn-icon edit btn-edit-lvl" data-id="${lvl.id}"><i class="fas fa-pen"></i></button>
                             <button class="btn-icon del btn-del-lvl" data-id="${lvl.id}"><i class="fas fa-trash"></i></button>
                         </div>
-                    </div>`).join('') : `<p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:16px;font-size:13px">No hay niveles en esta categoría.</p>`}
+                    </div>`).join('')
+                : `<p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:16px;font-size:13px">No hay niveles en esta categoría.</p>`}
             </div>`;
         container.appendChild(section);
 
@@ -1442,20 +1036,30 @@ const formLevel  = document.getElementById('form-level');
 
 function openLevelModal(levelId = null, catId = null, catName = null) {
     formLevel.reset();
+    clearErrors('err-level-nombre','err-level-desc');
+    document.querySelectorAll('#form-level .invalid').forEach(el => el.classList.remove('invalid'));
+
     if (levelId) {
         const lvl = levels.find(l => String(l.id) === String(levelId));
         if (!lvl) { alertaError('Nivel no encontrado'); return; }
+
+        // Validate that associated category still exists
         const cat = categories.find(c => Number(c.id) === Number(lvl.category_id));
+        if (!cat) {
+            alertaError('La categoría de este nivel ya no existe. Por favor, elimina o reasigna el nivel.');
+            return;
+        }
+
         document.getElementById('modal-level-title').textContent = 'Editar Nivel';
-        document.getElementById('level-id').value           = lvl.id;
-        document.getElementById('level-category-id').value  = lvl.category_id;
-        document.getElementById('level-category-name').value = cat ? cat.nombre : '—';
-        document.getElementById('level-nombre').value        = lvl.nombre;
-        document.getElementById('level-descripcion').value   = lvl.descripcion;
+        document.getElementById('level-id').value            = lvl.id;
+        document.getElementById('level-category-id').value   = lvl.category_id;
+        document.getElementById('level-category-name').value = cat.nombre;
+        document.getElementById('level-nombre').value         = lvl.nombre;
+        document.getElementById('level-descripcion').value    = lvl.descripcion;
     } else {
         document.getElementById('modal-level-title').textContent = 'Nuevo Nivel';
-        document.getElementById('level-id').value           = '';
-        document.getElementById('level-category-id').value  = catId || '';
+        document.getElementById('level-id').value            = '';
+        document.getElementById('level-category-id').value   = catId || '';
         document.getElementById('level-category-name').value = catName || '';
     }
     modalLevel.classList.add('active');
@@ -1463,47 +1067,101 @@ function openLevelModal(levelId = null, catId = null, catName = null) {
 
 formLevel.addEventListener('submit', async e => {
     e.preventDefault();
+    clearErrors('err-level-nombre','err-level-desc');
+
     const id          = document.getElementById('level-id').value;
     const categoryId  = document.getElementById('level-category-id').value;
     const nombre      = document.getElementById('level-nombre').value.trim();
     const descripcion = document.getElementById('level-descripcion').value.trim();
-    if (!nombre || !descripcion) { alertaAdvertencia('Completa todos los campos'); return; }
+
+    let valid = true;
+    if (!nombre || nombre.length < 2) { markInvalid('level-nombre','err-level-nombre','El nombre debe tener al menos 2 caracteres'); valid = false; }
+    if (!descripcion) { markInvalid('level-descripcion','err-level-desc','La descripción es obligatoria'); valid = false; }
+    if (!valid) return;
+
+    // Validate category still exists (frontend check before API call)
+    if (categoryId && !categories.find(c => String(c.id) === String(categoryId))) {
+        alertaError('La categoría seleccionada ya no existe. Recarga la página.');
+        return;
+    }
+
     try {
         const url    = id ? `${API}/admin/levels/${id}` : `${API}/admin/levels`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, nombre, descripcion, categoryId }) });
+        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, nombre, descripcion, categoryId }) });
         const data   = await res.json();
         if (data.success) {
             alertaExito(id ? 'Nivel actualizado' : 'Nivel creado');
             modalLevel.classList.remove('active');
-            await loadLevels();
+            await loadAll();
             renderCategoryLevelsPage();
         } else { alertaError(data.message); }
     } catch (e) { alertaError('Error al guardar nivel'); }
 });
 
 async function deleteLevel(id) {
-    if (!await alertaConfirmacion('¿Eliminar este nivel? Si tiene flashcards o preguntas, deberás eliminarlos primero.', '⚠️ Confirmar')) return;
+    // Check if level has flashcards or questions before deleting
+    const res = await fetchFresh(`${API}/admin/levels/${id}/delete-stats`);
+    const stats = await res.json();
+
+    let confirmMsg = '¿Eliminar este nivel?';
+    if (stats.success && (stats.data.flashcards > 0 || stats.data.questions > 0)) {
+        confirmMsg = `¿Eliminar este nivel? Se eliminarán también ${stats.data.flashcards} flashcard(s) y ${stats.data.questions} pregunta(s) asociadas.`;
+    }
+
+    if (!await alertaConfirmacion(confirmMsg, '⚠️ Confirmar')) return;
     try {
-        const res  = await fetch(`${API}/admin/levels/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+        const res  = await fetchFresh(`${API}/admin/levels/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
         const data = await res.json();
-        if (data.success) { alertaExito('Nivel eliminado'); await loadLevels(); renderCategoryLevelsPage(); }
-        else alertaAdvertencia(data.message);
+        if (data.success) {
+            alertaExito('Nivel eliminado');
+            await loadAll();
+            renderCategoryLevelsPage();
+            updateSelectFilters();
+        } else alertaAdvertencia(data.message);
     } catch (e) { alertaError('Error al eliminar'); }
 }
 
-// ══════════════════════════════════════════════════════════
-//  FLASHCARDS
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════
+//  SELECT FILTERS
+// ══════════════════════════════════════════════════════════════════════
+function updateSelectFilters() {
+    const selects = ['flashcard-level-filter','question-level-filter','flashcard-level','question-level']
+        .map(id => document.getElementById(id));
 
-document.getElementById('flashcard-level-filter').addEventListener('change', e => {
-    if (e.target.value) loadFlashcards(e.target.value);
-    else document.getElementById('flashcards-container').innerHTML = '<p class="empty-state">Selecciona un nivel para ver las flashcards</p>';
+    let html = '<option value="">— Selecciona un Nivel —</option>';
+    categories.forEach(cat => {
+        const catLevels = levels.filter(l => Number(l.category_id) === Number(cat.id));
+        if (catLevels.length > 0) {
+            html += `<optgroup label="${escHtml(cat.nombre)}">`;
+            catLevels.forEach(lvl => { html += `<option value="${lvl.id}">N${lvl.orden}: ${escHtml(lvl.nombre)}</option>`; });
+            html += `</optgroup>`;
+        }
+    });
+    selects.forEach(s => { if (s) s.innerHTML = html; });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════════════
+document.getElementById('flashcard-level-filter').addEventListener('change', async e => {
+    const levelId = e.target.value;
+    if (levelId) {
+        // Validate that the selected level still exists
+        if (!levels.find(l => String(l.id) === String(levelId))) {
+            alertaError('El nivel seleccionado ya no existe. Recarga la página.');
+            await loadAll();
+            return;
+        }
+        loadFlashcards(levelId);
+    } else {
+        document.getElementById('flashcards-container').innerHTML = '<p class="empty-state">Selecciona un nivel para ver las flashcards</p>';
+    }
 });
 
 async function loadFlashcards(levelId) {
     try {
-        const res  = await fetch(`${API}/admin/flashcards/level/${levelId}`);
+        const res  = await fetchFresh(`${API}/admin/flashcards/level/${levelId}`);
         const data = await res.json();
         if (data.success) { flashcards = data.data; renderFlashcards(levelId); }
     } catch (e) { alertaError('Error al cargar flashcards'); }
@@ -1537,14 +1195,23 @@ document.getElementById('btn-new-flashcard').addEventListener('click', () => {
 
 function openFlashcardModal(fcId = null, preLevel = null) {
     formFlashcard.reset();
+    clearErrors('err-fc-level','err-fc-titulo','err-fc-contenido');
     document.getElementById('flashcard-id').value = '';
+
     if (fcId) {
         const fc = flashcards.find(f => String(f.id) === String(fcId));
         if (!fc) { alertaError('Flashcard no encontrada'); return; }
+
+        // Validate level still exists
+        if (!levels.find(l => String(l.id) === String(fc.level_id))) {
+            alertaError('El nivel de esta flashcard ya no existe.');
+            return;
+        }
+
         document.getElementById('modal-flashcard-title').textContent = 'Editar Flashcard';
-        document.getElementById('flashcard-id').value      = fc.id;
-        document.getElementById('flashcard-level').value   = fc.level_id;
-        document.getElementById('flashcard-titulo').value  = fc.titulo;
+        document.getElementById('flashcard-id').value       = fc.id;
+        document.getElementById('flashcard-level').value    = fc.level_id;
+        document.getElementById('flashcard-titulo').value   = fc.titulo;
         document.getElementById('flashcard-contenido').value = fc.contenido;
         renderImageSelector('flashcard-image-grid', 'flashcard-image-preview', 'flashcard-imagen', fc.imagen || '');
     } else {
@@ -1557,16 +1224,31 @@ function openFlashcardModal(fcId = null, preLevel = null) {
 
 formFlashcard.addEventListener('submit', async e => {
     e.preventDefault();
+    clearErrors('err-fc-level','err-fc-titulo','err-fc-contenido');
+
     const id        = document.getElementById('flashcard-id').value;
     const levelId   = document.getElementById('flashcard-level').value;
     const titulo    = document.getElementById('flashcard-titulo').value.trim();
     const contenido = document.getElementById('flashcard-contenido').value.trim();
     const imagen    = document.getElementById('flashcard-imagen').value.trim() || null;
-    if (!levelId || !titulo || !contenido) { alertaAdvertencia('Completa todos los campos'); return; }
+
+    let valid = true;
+    if (!levelId) { markInvalid('flashcard-level','err-fc-level','Selecciona un nivel'); valid = false; }
+    if (!titulo)   { markInvalid('flashcard-titulo','err-fc-titulo','El título es obligatorio'); valid = false; }
+    if (!contenido){ markInvalid('flashcard-contenido','err-fc-contenido','El contenido es obligatorio'); valid = false; }
+    if (!valid) return;
+
+    // Validate level still exists
+    if (!levels.find(l => String(l.id) === String(levelId))) {
+        alertaError('El nivel seleccionado ya no existe. Recarga la página.');
+        await loadAll();
+        return;
+    }
+
     try {
         const url    = id ? `${API}/admin/flashcards/${id}` : `${API}/admin/flashcards`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, levelId, titulo, contenido, imagen }) });
+        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, levelId, titulo, contenido, imagen }) });
         const data   = await res.json();
         if (data.success) {
             alertaExito(id ? 'Flashcard actualizada' : 'Flashcard creada');
@@ -1580,25 +1262,34 @@ formFlashcard.addEventListener('submit', async e => {
 async function deleteFlashcard(id, levelId) {
     if (!await alertaConfirmacion('¿Eliminar esta flashcard?', '⚠️ Confirmar')) return;
     try {
-        const res  = await fetch(`${API}/admin/flashcards/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+        const res  = await fetchFresh(`${API}/admin/flashcards/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
         const data = await res.json();
         if (data.success) { alertaExito('Flashcard eliminada'); loadFlashcards(levelId); }
         else alertaError(data.message);
     } catch (e) { alertaError('Error al eliminar'); }
 }
 
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════
 //  PREGUNTAS
-// ══════════════════════════════════════════════════════════
-
-document.getElementById('question-level-filter').addEventListener('change', e => {
-    if (e.target.value) loadQuestions(e.target.value);
-    else document.getElementById('questions-container').innerHTML = '<p class="empty-state">Selecciona un nivel</p>';
+// ══════════════════════════════════════════════════════════════════════
+document.getElementById('question-level-filter').addEventListener('change', async e => {
+    const levelId = e.target.value;
+    if (levelId) {
+        // Validate level exists
+        if (!levels.find(l => String(l.id) === String(levelId))) {
+            alertaError('El nivel seleccionado ya no existe.');
+            await loadAll();
+            return;
+        }
+        loadQuestions(levelId);
+    } else {
+        document.getElementById('questions-container').innerHTML = '<p class="empty-state">Selecciona un nivel</p>';
+    }
 });
 
 async function loadQuestions(levelId) {
     try {
-        const res  = await fetch(`${API}/admin/questions/${levelId}`);
+        const res  = await fetchFresh(`${API}/admin/questions/${levelId}`);
         const data = await res.json();
         if (data.success) { questions = data.data; renderQuestions(levelId); }
     } catch (e) { alertaError('Error al cargar preguntas'); }
@@ -1635,7 +1326,9 @@ document.getElementById('btn-new-question').addEventListener('click', () => {
 
 function openQuestionModal(qId = null, preLevel = null) {
     formQuestion.reset();
+    clearErrors('err-q-level','err-q-pregunta','err-q-opciones','err-q-correcta');
     document.getElementById('question-id').value = '';
+
     const optContainer = document.getElementById('options-container');
     optContainer.innerHTML = `
         <div class="option-row"><input type="text" class="option-input" data-key="A" placeholder="Opción A" required></div>
@@ -1645,11 +1338,19 @@ function openQuestionModal(qId = null, preLevel = null) {
     if (qId) {
         const q = questions.find(x => String(x.id) === String(qId));
         if (!q) { alertaError('Pregunta no encontrada'); return; }
+
+        // Validate level still exists
+        if (!levels.find(l => String(l.id) === String(q.level_id))) {
+            alertaError('El nivel de esta pregunta ya no existe.');
+            return;
+        }
+
         document.getElementById('modal-question-title').textContent = 'Editar Pregunta';
-        document.getElementById('question-id').value        = q.id;
-        document.getElementById('question-level').value     = q.level_id;
-        document.getElementById('question-pregunta').value  = q.pregunta;
+        document.getElementById('question-id').value         = q.id;
+        document.getElementById('question-level').value      = q.level_id;
+        document.getElementById('question-pregunta').value   = q.pregunta;
         document.getElementById('question-dificultad').value = q.dificultad || 'media';
+
         optContainer.innerHTML = '';
         Object.keys(q.opciones).forEach((key, idx) => {
             const row = document.createElement('div');
@@ -1658,6 +1359,7 @@ function openQuestionModal(qId = null, preLevel = null) {
                 ${idx >= 3 ? '<button type="button" class="btn-remove-option">&times;</button>' : ''}`;
             optContainer.appendChild(row);
         });
+
         renderImageSelector('question-image-grid', 'question-image-preview', 'question-imagen', q.imagen || '');
         updateCorrectaOptions(q.correcta);
     } else {
@@ -1666,6 +1368,7 @@ function openQuestionModal(qId = null, preLevel = null) {
         renderImageSelector('question-image-grid', 'question-image-preview', 'question-imagen', '');
         updateCorrectaOptions('');
     }
+
     attachRemoveOptionEvents();
     modalQuestion.classList.add('active');
 }
@@ -1681,9 +1384,9 @@ function updateCorrectaOptions(selected = '') {
 document.getElementById('btn-add-option').addEventListener('click', () => {
     const cnt = document.getElementById('options-container');
     if (cnt.children.length >= 5) { alertaAdvertencia('Máximo 5 opciones'); return; }
-    const keys    = ['A','B','C','D','E'];
+    const keys = ['A','B','C','D','E'];
     const nextKey = keys[cnt.children.length];
-    const row     = document.createElement('div');
+    const row = document.createElement('div');
     row.className = 'option-row';
     row.innerHTML = `<input type="text" class="option-input" data-key="${nextKey}" placeholder="Opción ${nextKey}" required>
         <button type="button" class="btn-remove-option">&times;</button>`;
@@ -1705,21 +1408,37 @@ function attachRemoveOptionEvents() {
 
 formQuestion.addEventListener('submit', async e => {
     e.preventDefault();
+    clearErrors('err-q-level','err-q-pregunta','err-q-opciones','err-q-correcta');
+
     const id         = document.getElementById('question-id').value;
     const levelId    = document.getElementById('question-level').value;
     const pregunta   = document.getElementById('question-pregunta').value.trim();
     const correcta   = document.getElementById('question-correcta').value;
     const dificultad = document.getElementById('question-dificultad').value;
     const imagen     = document.getElementById('question-imagen').value.trim() || null;
-    const opciones   = {};
+
+    const opciones = {};
     document.querySelectorAll('.option-input').forEach(inp => { if (inp.value.trim()) opciones[inp.dataset.key] = inp.value.trim(); });
-    if (!levelId || !pregunta || !correcta) { alertaAdvertencia('Completa los campos obligatorios'); return; }
-    if (Object.keys(opciones).length < 3) { alertaAdvertencia('Necesitas al menos 3 opciones'); return; }
-    if (!opciones[correcta]) { alertaAdvertencia('La respuesta correcta no coincide con ninguna opción'); return; }
+
+    let valid = true;
+    if (!levelId)  { markInvalid('question-level','err-q-level','Selecciona un nivel'); valid = false; }
+    if (!pregunta) { markInvalid('question-pregunta','err-q-pregunta','La pregunta es obligatoria'); valid = false; }
+    if (Object.keys(opciones).length < 3) { showErr('err-q-opciones','Necesitas al menos 3 opciones'); valid = false; }
+    if (!correcta) { markInvalid('question-correcta','err-q-correcta','Selecciona la respuesta correcta'); valid = false; }
+    if (correcta && !opciones[correcta]) { showErr('err-q-correcta','La respuesta correcta no coincide con ninguna opción'); valid = false; }
+    if (!valid) return;
+
+    // Validate level exists
+    if (!levels.find(l => String(l.id) === String(levelId))) {
+        alertaError('El nivel seleccionado ya no existe. Recarga la página.');
+        await loadAll();
+        return;
+    }
+
     try {
         const url    = id ? `${API}/admin/questions/${id}` : `${API}/admin/questions`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, levelId, pregunta, opciones, correcta, dificultad, imagen }) });
+        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, levelId, pregunta, opciones, correcta, dificultad, imagen }) });
         const data   = await res.json();
         if (data.success) {
             alertaExito(id ? 'Pregunta actualizada' : 'Pregunta creada');
@@ -1733,31 +1452,16 @@ formQuestion.addEventListener('submit', async e => {
 async function deleteQuestion(id, levelId) {
     if (!await alertaConfirmacion('¿Eliminar esta pregunta?', '⚠️ Confirmar')) return;
     try {
-        const res  = await fetch(`${API}/admin/questions/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+        const res  = await fetchFresh(`${API}/admin/questions/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
         const data = await res.json();
         if (data.success) { alertaExito('Pregunta eliminada'); loadQuestions(levelId); }
         else alertaError(data.message);
     } catch (e) { alertaError('Error al eliminar'); }
 }
 
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════
 //  HELPERS
-// ══════════════════════════════════════════════════════════
-
-function updateSelectFilters() {
-    const selects = ['flashcard-level-filter','question-level-filter','flashcard-level','question-level'].map(id => document.getElementById(id));
-    let html = '<option value="">— Selecciona un Nivel —</option>';
-    categories.forEach(cat => {
-        const catLevels = levels.filter(l => Number(l.category_id) === Number(cat.id));
-        if (catLevels.length > 0) {
-            html += `<optgroup label="${escHtml(cat.nombre)}">`;
-            catLevels.forEach(lvl => { html += `<option value="${lvl.id}">N${lvl.orden}: ${escHtml(lvl.nombre)}</option>`; });
-            html += `</optgroup>`;
-        }
-    });
-    selects.forEach(s => { if (s) s.innerHTML = html; });
-}
-
+// ══════════════════════════════════════════════════════════════════════
 function renderImageSelector(gridId, previewId, hiddenId, currentValue = '') {
     const grid    = document.getElementById(gridId);
     const preview = document.getElementById(previewId);
@@ -1765,7 +1469,7 @@ function renderImageSelector(gridId, previewId, hiddenId, currentValue = '') {
     if (!grid) return;
     grid.innerHTML = AVAILABLE_IMAGES.map(imgName => {
         const path = `/public/img/fotos/${imgName}`;
-        return `<div class="image-option${currentValue === path ? ' selected' : ''}" data-image="${path}"><img src="${path}" alt="${imgName}"></div>`;
+        return `<div class="image-option${currentValue === path ? ' selected' : ''}" data-image="${path}"><img src="${path}" alt="${imgName}" loading="lazy"></div>`;
     }).join('');
     hidden.value = currentValue;
     if (currentValue) { preview.querySelector('span').textContent = currentValue.split('/').pop(); preview.classList.add('active'); }
@@ -1785,7 +1489,7 @@ function escHtml(str) {
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Close modals on backdrop / X
+// Close modals on X / backdrop
 document.querySelectorAll('.modal-close-x, [data-modal]').forEach(el => {
     el.addEventListener('click', () => {
         const id = el.dataset.modal || el.closest('.modal')?.id;
@@ -1796,9 +1500,10 @@ document.querySelectorAll('.modal').forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
 });
 
-// ── INIT ─────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────────────
 (async () => {
-    await Promise.all([loadCategories(), loadLevels()]);
+    await loadAll();
+    renderCategories();
 })();
 </script>
 </body>
