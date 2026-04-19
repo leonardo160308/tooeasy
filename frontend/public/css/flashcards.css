@@ -178,7 +178,7 @@ body {
 }
  
 .flip-hint::before {
-    content: '👆';
+    content: 'Clic para voltear';
     font-size: 0.85rem;
 }
  

@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Crear el elemento hint y añadirlo a la cara frontal
     const flipHint = document.createElement('div');
     flipHint.className = 'flip-hint';
-    flipHint.textContent = 'Haz clic para ver la información';
+    flipHint.textContent = '';
     card.querySelector('.card-front').appendChild(flipHint);
 
     // Header
