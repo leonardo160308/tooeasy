@@ -48,22 +48,23 @@ class AdminModel {
     }
 
     static async createCategory(nombre, descripcion, nivel_inicio, nivel_fin) {
-        const { data: existing } = await supabase
-            .from('learning_categories')
-            .select('id')
-            .ilike('nombre', nombre)
-            .maybeSingle();
+    const { data: existingName } = await supabase
+        .from('learning_categories')
+        .select('id')
+        .ilike('nombre', nombre)
+        .maybeSingle();
 
-        if (existing) {
-            const err = new Error('Ya existe una categoría con ese nombre');
-            err.code = 'DUPLICATE_NAME';
-            throw err;
-        }
-         const { data: existing } = await supabase
+    if (existingName) {
+        const err = new Error('Ya existe una categoría con ese nombre');
+        err.code = 'DUPLICATE_NAME';
+        throw err;
+    }
+
+    const { data: allCategories } = await supabase
         .from('learning_categories')
         .select('id, nombre, nivel_inicio, nivel_fin');
 
-    const overlap = (existing || []).find(cat =>
+    const overlap = (allCategories || []).find(cat =>
         nivel_inicio <= cat.nivel_fin && nivel_fin >= cat.nivel_inicio
     );
 
@@ -74,29 +75,30 @@ class AdminModel {
         err.code = 'RANGE_OVERLAP';
         throw err;
     }
-        const { data: maxData } = await supabase
-            .from('learning_categories')
-            .select('orden')
-            .order('orden', { ascending: false })
-            .limit(1);
 
-        const next_orden = (maxData && maxData.length > 0) ? maxData[0].orden + 1 : 1;
+    const { data: maxData } = await supabase
+        .from('learning_categories')
+        .select('orden')
+        .order('orden', { ascending: false })
+        .limit(1);
 
-        const { data, error } = await supabaseAdmin
-            .from('learning_categories')
-            .insert({
-                nombre,
-                descripcion,
-                nivel_inicio: nivel_inicio || 1,
-                nivel_fin:    nivel_fin    || 10,
-                orden:        next_orden
-            })
-            .select()
-            .single();
+    const next_orden = (maxData && maxData.length > 0) ? maxData[0].orden + 1 : 1;
 
-        if (error) throw error;
-        return data;
-    }
+    const { data, error } = await supabaseAdmin
+        .from('learning_categories')
+        .insert({
+            nombre,
+            descripcion,
+            nivel_inicio: nivel_inicio || 1,
+            nivel_fin:    nivel_fin    || 10,
+            orden:        next_orden
+        })
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}
 
     static async updateCategory(id, nombre, descripcion) {
         const { data: existing } = await supabase
