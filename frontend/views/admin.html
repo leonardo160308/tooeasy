@@ -913,6 +913,23 @@ document.getElementById('save-cat-btn').addEventListener('click', async () => {
     let valid = true;
     if (!nombre || nombre.length < 2) { markInvalid('cat-nombre','err-cat-nombre','El nombre debe tener al menos 2 caracteres'); valid = false; }
     if (nivel_inicio && nivel_fin && nivel_inicio > nivel_fin) { markInvalid('cat-nivel-inicio','err-cat-nivel','Nivel inicio no puede ser mayor que nivel fin'); valid = false; }
+
+    // ── VALIDACIÓN DE SOLAPAMIENTO ──────────────────────────────────────
+    if (nivel_inicio && nivel_fin) {
+        const overlap = categories.find(cat =>
+            String(cat.id) !== String(id) &&
+            nivel_inicio <= cat.nivel_fin &&
+            nivel_fin    >= cat.nivel_inicio
+        );
+        if (overlap) {
+            markInvalid('cat-nivel-inicio', 'err-cat-nivel',
+                `Rango solapado con "${overlap.nombre}" (N${overlap.nivel_inicio}–N${overlap.nivel_fin})`
+            );
+            valid = false;
+        }
+    }
+    // ───────────────────────────────────────────────────────────────────
+
     if (!valid) return;
 
     try {

@@ -287,3 +287,6 @@ input:focus {
         height: 50px;
     }
 }
+input, textarea, select {
+    caret-color: #2C405B;
+}

@@ -992,3 +992,17 @@ button:disabled {
         grid-template-columns: 1fr;
     }
 }
+/* inversiones.css */
+.field-group input,
+.field-group select,
+.field-group input:focus {
+    color: var(--text-dark);
+    caret-color: var(--primary);   /* #2C405B — azul oscuro visible */
+    background: var(--bg-alt);
+}
+
+/* También en el paso 1 del wizard */
+#cfg-nombre, #cfg-capital, #cfg-plazo,
+#cfg-aportacion, #cfg-inflacion {
+    caret-color: var(--primary);
+}

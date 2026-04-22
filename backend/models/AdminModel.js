@@ -59,7 +59,21 @@ class AdminModel {
             err.code = 'DUPLICATE_NAME';
             throw err;
         }
+         const { data: existing } = await supabase
+        .from('learning_categories')
+        .select('id, nombre, nivel_inicio, nivel_fin');
 
+    const overlap = (existing || []).find(cat =>
+        nivel_inicio <= cat.nivel_fin && nivel_fin >= cat.nivel_inicio
+    );
+
+    if (overlap) {
+        const err = new Error(
+            `El rango N${nivel_inicio}–N${nivel_fin} se solapa con la categoría "${overlap.nombre}" (N${overlap.nivel_inicio}–N${overlap.nivel_fin})`
+        );
+        err.code = 'RANGE_OVERLAP';
+        throw err;
+    }
         const { data: maxData } = await supabase
             .from('learning_categories')
             .select('orden')

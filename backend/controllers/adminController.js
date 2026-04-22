@@ -42,6 +42,8 @@ export async function createCategory(req, res) {
         res.status(201).json({ success: true, data: newCat });
     } catch (error) {
         console.error(error);
+         if (error.code === 'RANGE_OVERLAP')
+            return res.status(409).json({ success: false, message: error.message });
         if (error.code === 'LIMIT_REACHED') return res.status(400).json({ success: false, message: error.message });
         if (error.code === 'DUPLICATE_NAME') return res.status(409).json({ success: false, message: error.message });
         res.status(500).json({ success: false, message: error.message || 'Error al crear categoría' });

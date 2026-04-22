@@ -235,3 +235,6 @@ h2 {
         font-size: 18px;
     }
 }
+input, textarea, select {
+    caret-color: #2C405B;
+}

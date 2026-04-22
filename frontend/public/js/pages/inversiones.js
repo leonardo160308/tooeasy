@@ -631,16 +631,20 @@ function renderGraficaMonteCarlo(r) {
             fill: false
         },
         {
-            label: 'Capital invertido',
-            data: s.serieInvertido,
-            borderColor: '#888',
-            backgroundColor: 'transparent',
-            borderWidth: 1.5,
-            borderDash: [8, 5],
-            pointRadius: 0,
-            tension: 0,
-            fill: false
-        }
+    label: 'Capital invertido',
+    data: s.serieInvertido,
+    borderColor: '#888',
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderDash: [8, 5],
+    pointRadius: 3,           // ← antes era 0
+    pointHoverRadius: 6,
+    pointBackgroundColor: '#888',
+    pointBorderColor: '#fff',
+    pointBorderWidth: 1.5,
+    tension: 0,
+    fill: false
+}
     ];
 
     state.chartInstance = new Chart(ctx, {
