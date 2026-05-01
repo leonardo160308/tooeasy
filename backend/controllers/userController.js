@@ -1,5 +1,6 @@
 import User from '../models/UserModel.js';
 import { supabase } from '../config/supabase.js';
+import { hashPassword, comparePassword } from '../utils/security.js';
 
 // ========================================
 // REGISTRO DE USUARIO
@@ -40,7 +41,7 @@ export const registerUser = async (req, res) => {
         const newUser = {
             nombre,
             email,
-            password_hash: password, // ⚠️ Recuerda usar bcrypt
+            password_hash: await hashPassword(password),
             edad: edadNum,
             genero: genero || 'no_especificado',
             foto: null
@@ -81,7 +82,12 @@ export const loginUser = async (req, res) => {
 
         const user = users && users[0];
 
-        if (!user || user.password_hash !== password) {
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos' });
+        }
+
+        const passwordOk = await comparePassword(password, user.password_hash);
+        if (!passwordOk) {
             return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos' });
         }
 

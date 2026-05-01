@@ -18,6 +18,8 @@
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1",
+    "helmet": "^8.1.0",
     "nodemailer": "^8.0.3",
     "postgres": "^3.4.8",
     "resend": "^6.9.4"
@@ -29,5 +31,9 @@
   "bugs": {
     "url": "https://github.com/leonardo160308/preuba/issues"
   },
-  "homepage": "https://github.com/leonardo160308/preuba#readme"
+  "homepage": "https://github.com/leonardo160308/preuba#readme",
+  "devDependencies": {
+    "docx": "^9.6.1",
+    "marked": "^18.0.2"
+  }
 }

@@ -10,6 +10,15 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const FROM_EMAIL    = process.env.EMAIL_USER || 'tooeasycontactanos@gmail.com';
 const FROM_NAME     = 'Too Easy';
 
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+}
+
 // ── Función base de envío via Brevo REST API ──────────────────────────────────
 async function sendEmail({ to, subject, html }) {
     try {
@@ -89,9 +98,10 @@ function baseTemplate(title, content, accentColor = '#2C405B') {
 
 // ── Email: verificar cuenta nueva ────────────────────────────────────────────
 export async function sendVerificationEmail(toEmail, code, userName) {
+    const safeName = escapeHtml(userName);
     const content = `
 <p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
-  Hola, <strong style="color:#2C405B;">${userName}</strong> 👋
+  Hola, <strong style="color:#2C405B;">${safeName}</strong> 👋
 </p>
 <p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 28px;">
   Gracias por registrarte en Too Easy. Usa este código para <strong>verificar tu correo</strong>.
@@ -116,9 +126,10 @@ export async function sendVerificationEmail(toEmail, code, userName) {
 
 // ── Email: recuperar contraseña ───────────────────────────────────────────────
 export async function sendRecoveryEmail(toEmail, code, userName) {
+    const safeName = escapeHtml(userName);
     const content = `
 <p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
-  Hola, <strong style="color:#2C405B;">${userName}</strong>
+  Hola, <strong style="color:#2C405B;">${safeName}</strong>
 </p>
 <p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 28px;">
   Recibimos una solicitud para recuperar tu cuenta. Usa este código.
@@ -143,9 +154,10 @@ export async function sendRecoveryEmail(toEmail, code, userName) {
 
 // ── Email: bienvenida (post-verificación) ─────────────────────────────────────
 export async function sendWelcomeEmail(toEmail, userName) {
+    const safeName = escapeHtml(userName);
     const content = `
 <p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
-  ¡Bienvenido/a, <strong style="color:#2C405B;">${userName}</strong>! 🎉
+  ¡Bienvenido/a, <strong style="color:#2C405B;">${safeName}</strong>! 🎉
 </p>
 <p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 24px;">
   Tu cuenta ha sido verificada exitosamente. Ya puedes acceder a todas las funciones de Too Easy.
@@ -159,7 +171,7 @@ export async function sendWelcomeEmail(toEmail, userName) {
 </div>`;
     return sendEmail({
         to:      toEmail,
-        subject: `¡Bienvenido/a a Too Easy, ${userName}!`,
+        subject: `¡Bienvenido/a a Too Easy, ${safeName}!`,
         html:    baseTemplate('¡Tu cuenta está lista!', content, '#27ae60'),
     });
 }

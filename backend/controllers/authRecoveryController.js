@@ -2,6 +2,7 @@
 import crypto from 'crypto';
 import { supabase, supabaseAdmin } from '../config/supabase.js';
 import { sendRecoveryEmail } from '../utils/emailService.js';
+import { hashPassword } from '../utils/security.js';
 
 // ─── CONSTANTES DE SEGURIDAD ──────────────────────────────────────────────────
 const CODE_EXPIRY_MINUTES  = 10;
@@ -257,7 +258,11 @@ export const recoveryLogin = async (req, res) => {
 
         const reset = resets[0];
 
-        if (reset.code_hint !== verificationToken.substring(0, 40)) {
+        const tokenA = Buffer.from(reset.code_hint || '', 'utf8');
+        const tokenB = Buffer.from(verificationToken.substring(0, 40), 'utf8');
+        const tokenValid = tokenA.length === tokenB.length &&
+            crypto.timingSafeEqual(tokenA, tokenB);
+        if (!tokenValid) {
             return res.status(400).json({ success: false, message: 'Token de verificación inválido.' });
         }
 
@@ -334,16 +339,23 @@ export const resetPassword = async (req, res) => {
 
         const reset = resets[0];
 
-        if (reset.code_hint !== verificationToken.substring(0, 40)) {
+        const resetTokenA = Buffer.from(reset.code_hint || '', 'utf8');
+        const resetTokenB = Buffer.from(verificationToken.substring(0, 40), 'utf8');
+        const resetTokenValid = resetTokenA.length === resetTokenB.length &&
+            crypto.timingSafeEqual(resetTokenA, resetTokenB);
+        if (!resetTokenValid) {
             return res.status(400).json({ success: false, message: 'Token de verificación inválido.' });
         }
 
-        // 3. Actualizar contraseña
-        // ⚠️ IMPORTANTE: En producción, usa bcrypt: bcrypt.hashSync(newPassword, 10)
-        // Por ahora se guarda igual que el resto del sistema (texto plano)
+        // 3. Hash y actualizar contraseña
+        const hashed = await hashPassword(newPassword);
         const { error: updateError } = await supabaseAdmin
             .from('users')
-            .update({ password_hash: newPassword })
+            .update({
+                password_hash:         hashed,
+                failed_login_attempts: 0,
+                locked_until:          null,
+            })
             .eq('id', userId);
 
         if (updateError) throw updateError;
