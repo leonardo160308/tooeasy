@@ -1,4 +1,4 @@
-/* ========================================
+﻿/* ========================================
    RETOS - TOO-EASY (v2)
    ======================================== */
 
@@ -311,3 +311,111 @@ body {
     .left-panel { width: 100%; min-width: 0; }
     .right-panel-image { height: 200px; }
 }
+
+/* ── Additional styles extracted from retos.html ── */
+
+        /* ── Estilos adicionales para la sección de retos ── */
+
+        /* Banner de instrucciones (encima del panel izquierdo) */
+        .retos-how-it-works {
+            background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(240,244,248,0.95) 100%);
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(44,64,91,0.1);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .retos-how-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2C405B;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .retos-steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .reto-step {
+            background: rgba(101,133,170,0.08);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .reto-step .step-num {
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .reto-step .step-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2C405B;
+        }
+
+        .reto-step .step-desc {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        /* Chip de nivel en cada reto */
+        .challenge-level-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(101,133,170,0.12);
+            color: #6585AA;
+            flex-shrink: 0;
+        }
+
+        /* Stats bar mejorada con tooltip */
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .retos-steps { grid-template-columns: 1fr; gap: 6px; }
+        }
+    
+/* Extracted from inline styles in retos.html */
+.retos-title { color: #2C405B; font-size: 1.3rem; font-weight: 900; letter-spacing: 1px; }
+.stat-label-col { display: flex; flex-direction: column; gap: 0; }
+.wood-count-val { font-size: 1.2rem; font-weight: 800; color: #2C405B; }
+.challenges-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(101,133,170,0.2);
+}
+.challenges-list-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6585AA;
+}
+.challenges-list-hint { font-size: 0.72rem; color: #718096; font-weight: 600; }

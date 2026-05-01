@@ -1,9 +1,9 @@
-/* ========================================
+﻿/* ========================================
    EMAIL VERIFICATION - ULTRA PREMIUM (v3)
    Clean, Professional & High-End Aesthetic
    ======================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('/public/css/vendor/fonts/fonts.css');
 
 :root {
     --input-bg:     #F1F3F6;
@@ -238,3 +238,5 @@ h2 {
 input, textarea, select {
     caret-color: #2C405B;
 }
+#success-subtitle { margin-bottom: 28px; }
+

@@ -1045,3 +1045,11 @@ body {
     .btn-text span { font-size: 0.8rem; }
     .btn-text small { font-size: 0.68rem; }
 }
+
+/* Initially hidden elements (JS controls visibility) */
+#avatar-modal,
+#house-status,
+#beaver-status,
+#lbl-house-level,
+#lbl-beaver-level,
+#btn-delete-account { display: none; }

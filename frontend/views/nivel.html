@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -10,10 +10,9 @@
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
 
-    <!-- Font Awesome y Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
+
 </head>
 <body>
 
@@ -44,33 +43,7 @@
      Añade esto DESPUÉS de tu <script type="module" src="...profile.js">
      ======================================== -->
 
-<script type="module">
-    import { logout, isAdmin } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
-    
-    // ✅ MOSTRAR ENLACE ADMIN SI ES ADMIN
-    if (isAdmin()) {
-        const nav = document.querySelector('.nav');
-        const adminLink = document.createElement('a');
-        adminLink.href = '/admin.html';
-        adminLink.textContent = 'ADMIN';
-        adminLink.style.color = '#f39c12'; // Color diferente para destacar
-        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
-    }
-    
-    const logoutBtn = document.getElementById('logout-btn-perfil');
-    
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const confirmar = await alertaConfirmacion(
-                '¿Estás seguro de que deseas cerrar sesión?',
-                '👋 Salir de TOO-EASY'
-            );
-            if (confirmar) logout();
-        });
-    }
-</script>
+<script type="module" src="/public/js/modules/nav-init.js"></script>
 
 <!-- ========================================
      CONTENEDOR PRINCIPAL DE FLASHCARDS
@@ -81,11 +54,11 @@
     <!-- ========================================
          HEADER: INFORMACIÓN DEL NIVEL
          ======================================== -->
-    <div class="lesson-header" style="text-align: center; margin-bottom: 30px;">
-        <h1 id="lesson-title" style="color: #fff;background-color: #BA8E58; margin-bottom: 10px; padding: 10px;">
+    <div class="lesson-header">
+        <h1 id="lesson-title">
              Cargando lección...
         </h1>
-        <p id="lesson-subtitle" style="color: #666; font-size: 1.1rem;">
+        <p id="lesson-subtitle">
             <!-- Ej: "Tema: Fundamentos - Nivel 1" -->
         </p>
     </div>
@@ -124,16 +97,16 @@
          ======================================== -->
     
     <!-- Flechas para cambiar de tarjeta -->
-    <button class="arrow-btn" id="prevCard" style="display: none;">
+    <button class="arrow-btn" id="prevCard">
         ◄
     </button>
-    <button class="arrow-btn" id="nextCard" style="display: none;">
+    <button class="arrow-btn" id="nextCard">
         ►
     </button>
 
     <!-- Indicador de progreso -->
-    <div style="text-align: center; margin-top: 20px;">
-        <span id="card-counter" style="font-size: 1.1rem; color: #666;">
+    <div class="card-counter-wrap">
+        <span id="card-counter">
             <!-- Ej: "Tarjeta 1 de 5" -->
         </span>
     </div>

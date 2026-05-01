@@ -652,3 +652,10 @@ h2 {
     .day-number { font-size: 0.7rem; }
     .day-balance-preview { font-size: 0.42rem; }
 }
+/* Extracted from inline styles in dashboard.html */
+.legend-dot--green { background: #2e7d32; }
+.legend-dot--red   { background: #c62828; }
+.legend-dot--blue  { background: #1565C0; }
+.legend-ingresos,
+.legend-egresos { display: none; }
+#edit-movement-container { display: none; }

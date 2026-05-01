@@ -319,3 +319,13 @@ button.btn-play {
     20% { left: 200%; }
     100% { left: 200%; } /* La pausa larga hace que se vea elegante y no maree */
 }
+/* Extracted from inline styles */
+.loading-levels { text-align: center; margin: 2rem 0; }
+.categorias-info { margin-top: 2rem; }
+.categorias-titulo {
+    text-align: center;
+    font-family: 'Baloo 2', cursive;
+    font-size: 32px;
+    margin-bottom: 2rem;
+    color: #2C405B;
+}

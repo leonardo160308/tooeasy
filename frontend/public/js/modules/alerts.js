@@ -166,49 +166,11 @@ export function alertaConfirmacion(mensaje, titulo = '¿Estás seguro?') {
         `;
 
         modal.innerHTML = `
-            <style>
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes slideUp {
-                    from { transform: translateY(50px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-            </style>
-            <h2 style="margin: 0 0 15px 0; color: #2C405B; font-size: 1.5rem; text-align: center;">
-                ${titulo}
-            </h2>
-            <p style="color: #666; margin: 0 0 25px 0; line-height: 1.6; text-align: center;">
-                ${mensaje}
-            </p>
-            <div style="display: flex; gap: 12px; justify-content: center;">
-                <button id="modal-cancel" style="
-                    flex: 1;
-                    padding: 12px 24px;
-                    border: 2px solid #ddd;
-                    background: white;
-                    color: #666;
-                    border-radius: 12px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                ">
-                    Cancelar
-                </button>
-                <button id="modal-confirm" style="
-                    flex: 1;
-                    padding: 12px 24px;
-                    border: none;
-                    background: linear-gradient(135deg, #ef4444, #dc2626);
-                    color: white;
-                    border-radius: 12px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                ">
-                    Confirmar
-                </button>
+            <h2 class="confirm-title">${titulo}</h2>
+            <p class="confirm-message">${mensaje}</p>
+            <div class="confirm-buttons">
+                <button id="modal-cancel" class="confirm-btn confirm-btn-cancel">Cancelar</button>
+                <button id="modal-confirm" class="confirm-btn confirm-btn-confirm">Confirmar</button>
             </div>
         `;
 
@@ -231,14 +193,5 @@ export function alertaConfirmacion(mensaje, titulo = '¿Estás seguro?') {
             if (e.target === overlay) close(false);
         };
 
-        // Agregar animación de salida
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                from { opacity: 1; }
-                to { opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
     });
 }

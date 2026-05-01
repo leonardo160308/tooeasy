@@ -253,3 +253,6 @@ body {
     }
 }
 
+
+/* Extracted from inline style in index.html */
+#start-button { display: none; }

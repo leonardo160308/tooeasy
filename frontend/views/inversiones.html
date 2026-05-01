@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -10,161 +10,10 @@
     <link rel="stylesheet" href="../public/css/alerts.css">
     <link rel="stylesheet" href="../public/css/inversiones.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-    /* ── ESTILOS ADICIONALES PARA EL MÓDULO AVANZADO ── */
-
-    /* Tarjetas de percentil */
-    .percentile-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-    .percentile-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        padding: 16px;
-        text-align: center;
-        box-shadow: var(--shadow-sm);
-        position: relative;
-        overflow: hidden;
-    }
-    .percentile-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 3px;
-    }
-    .percentile-card.pessimist::before { background: #c0392b; }
-    .percentile-card.median::before    { background: var(--primary); }
-    .percentile-card.optimist::before  { background: #1a9c5b; }
-    .percentile-label {
-        font-size: 0.70rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 4px;
-    }
-    .percentile-sublabel {
-        font-size: 0.68rem; color: var(--text-muted); margin-bottom: 8px;
-    }
-    .percentile-value {
-        font-size: 1.2rem; font-weight: 800; color: var(--primary);
-        line-height: 1.2;
-    }
-    .percentile-card.median .percentile-value { font-size: 1.4rem; }
-
-    /* Grid de métricas de riesgo */
-    .risk-metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-    .risk-metric-card {
-        background: var(--bg-card-alt);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-    .risk-metric-label {
-        font-size: 0.70rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.6px; color: var(--text-muted);
-        display: flex; align-items: center; gap: 5px;
-    }
-    .risk-metric-value {
-        font-size: 1.1rem; font-weight: 800; color: var(--text-primary);
-    }
-    .risk-metric-sub {
-        font-size: 0.70rem; color: var(--text-muted); font-weight: 600;
-    }
-
-    /* Tooltip de ayuda */
-    .help-tip {
-        display: inline-flex; align-items: center; justify-content: center;
-        width: 14px; height: 14px; border-radius: 50%;
-        background: rgba(101,133,170,0.2); color: var(--secondary);
-        font-size: 9px; font-weight: 800; cursor: help;
-        transition: background 0.2s;
-    }
-    .help-tip:hover { background: var(--secondary); color: #fff; }
-
-    /* Leyenda de la gráfica */
-    .chart-legend-mc {
-        display: flex; gap: 16px; flex-wrap: wrap;
-        margin-bottom: 10px; font-size: 12px;
-        color: var(--text-muted); font-weight: 600;
-    }
-    .chart-legend-mc span {
-        display: flex; align-items: center; gap: 5px;
-    }
-    .legend-line {
-        width: 18px; height: 3px; border-radius: 2px; flex-shrink: 0;
-    }
-    .legend-line.dashed {
-        background: repeating-linear-gradient(90deg, #888 0, #888 4px, transparent 4px, transparent 8px);
-        height: 2px;
-    }
-
-    /* Indicadores de probabilidad */
-    .prob-badges {
-        display: flex; gap: 10px; flex-wrap: wrap;
-        margin-bottom: 14px;
-    }
-    .prob-badge {
-        display: flex; flex-direction: column; align-items: center;
-        background: var(--bg-card-alt); border: 1px solid var(--border);
-        border-radius: var(--radius-sm); padding: 10px 16px; min-width: 110px;
-    }
-    .prob-badge .pb-val {
-        font-size: 1.3rem; font-weight: 800; line-height: 1;
-    }
-    .prob-badge .pb-label {
-        font-size: 0.68rem; color: var(--text-muted); font-weight: 700;
-        text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;
-        text-align: center;
-    }
-
-    /* Selector de escenario y perfil */
-    .scenario-grid {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-        margin-bottom: 14px;
-    }
-    .scenario-card {
-        border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-        padding: 12px 16px; cursor: pointer; transition: all 0.2s ease;
-        background: var(--bg-card);
-    }
-    .scenario-card:hover { border-color: var(--secondary); background: rgba(101,133,170,0.04); }
-    .scenario-card.selected {
-        border-color: var(--primary);
-        background: rgba(44,64,91,0.07);
-        box-shadow: 0 0 0 2px rgba(44,64,91,0.1);
-    }
-    .scenario-card .sc-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 3px; }
-    .scenario-card .sc-name { font-size: 0.9rem; font-weight: 800; color: var(--primary); }
-    .scenario-card .sc-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
-
-    /* Nota metodológica */
-    .mc-note {
-        background: rgba(101,133,170,0.08); border-left: 3px solid var(--secondary);
-        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-        padding: 10px 14px; font-size: 0.78rem; color: var(--text-mid);
-        margin-bottom: 16px; line-height: 1.6;
-    }
-
-    /* Responsivo */
-    @media (max-width: 600px) {
-        .percentile-grid { grid-template-columns: 1fr; }
-        .risk-metrics-grid { grid-template-columns: 1fr 1fr; }
-        .scenario-grid { grid-template-columns: 1fr; }
-    }
-    </style>
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    
+    <script src="/public/js/vendor/chart.min.js"></script>
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
 </head>
 <body>
 
@@ -185,16 +34,7 @@
     </nav>
 </header>
 
-<script type="module">
-    import { isAdmin } from '/public/js/modules/auth.js';
-    import '/public/js/modules/nav-active.js';
-    if (isAdmin()) {
-        const nav = document.querySelector('.nav');
-        const a = document.createElement('a');
-        a.href = '/admin.html'; a.textContent = 'ADMIN'; a.style.color = '#f39c12';
-        nav.insertBefore(a, nav.children[nav.children.length - 1]);
-    }
-</script>
+<script type="module" src="/public/js/modules/nav-init.js"></script>
 
 <div class="inv-layout">
 
@@ -217,34 +57,34 @@
             <div class="section-title">Módulo de Inversiones</div>
             <div class="section-subtitle">Simulador Monte Carlo con análisis de riesgo profesional.</div>
 
-            <div id="inicio-stats" style="margin-bottom:24px"></div>
+            <div id="inicio-stats" class="inicio-stats"></div>
 
-            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px">
+            <div class="inicio-actions">
                 <button class="btn-primary" id="btn-nueva-sim">Crear nueva simulación</button>
-                <button class="btn-ghost" onclick="document.querySelector('[data-section=historial]').click()">Ver historial</button>
+                <button class="btn-ghost" id="btn-ver-historial">Ver historial</button>
             </div>
 
             <div class="inv-card">
                 <h3>¿Cómo funciona la simulación Monte Carlo?</h3>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;font-size:0.88rem;color:var(--text-mid)">
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.3rem;flex-shrink:0">1</span>
-                        <div><strong style="display:block;color:var(--primary);margin-bottom:3px">Configura</strong>
+                <div class="how-grid">
+                    <div class="how-step">
+                        <span class="how-num">1</span>
+                        <div><strong class="how-title">Configura</strong>
                         Define capital, plazo, aportaciones, inflación, perfil de riesgo y escenario de mercado.</div>
                     </div>
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.3rem;flex-shrink:0">2</span>
-                        <div><strong style="display:block;color:var(--primary);margin-bottom:3px">Selecciona</strong>
+                    <div class="how-step">
+                        <span class="how-num">2</span>
+                        <div><strong class="how-title">Selecciona</strong>
                         Elige hasta 3 instrumentos. El sistema calcula correlaciones reales entre ellos para una diversificación auténtica.</div>
                     </div>
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.3rem;flex-shrink:0">3</span>
-                        <div><strong style="display:block;color:var(--primary);margin-bottom:3px">500 escenarios</strong>
+                    <div class="how-step">
+                        <span class="how-num">3</span>
+                        <div><strong class="how-title">500 escenarios</strong>
                         Se ejecutan 500 trayectorias con distribuciones lognormales y correlaciones de Cholesky. Resultado: P10, P50 y P90.</div>
                     </div>
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="font-size:1.3rem;flex-shrink:0">4</span>
-                        <div><strong style="display:block;color:var(--primary);margin-bottom:3px">Analiza</strong>
+                    <div class="how-step">
+                        <span class="how-num">4</span>
+                        <div><strong class="how-title">Analiza</strong>
                         Sharpe Ratio, VaR 95%, Drawdown máximo, probabilidad de ganancia y recomendaciones automáticas.</div>
                     </div>
                 </div>
@@ -267,28 +107,28 @@
                 <div class="inv-card">
                     <h3>Configuración del portafolio</h3>
                     <div class="form-grid">
-                        <div class="field-group" style="grid-column: 1 / -1;">
+                        <div class="field-group field-full-row">
                             <label for="cfg-nombre">Nombre de la simulación
-                                <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;margin-left:6px">(3–60 caracteres)</span>
+                                <span class="field-hint">(3–60 caracteres)</span>
                             </label>
                             <input type="text" id="cfg-nombre" placeholder="Ej: Portafolio conservador 2025" maxlength="60" minlength="3">
                         </div>
 
                         <div class="field-group">
                             <label for="cfg-capital">Capital inicial ($)
-                                <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;margin-left:4px">máx. $999,999,999</span>
+                                <span class="field-hint">máx. $999,999,999</span>
                             </label>
                             <input type="number" id="cfg-capital" value="100000" min="0" max="999999999" step="1" inputmode="numeric">
                         </div>
                         <div class="field-group">
                             <label for="cfg-plazo">Plazo (años)
-                                <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;margin-left:4px">1–50</span>
+                                <span class="field-hint">1–50</span>
                             </label>
                             <input type="number" id="cfg-plazo" value="10" min="1" max="50" step="1" inputmode="numeric">
                         </div>
                         <div class="field-group">
                             <label for="cfg-aportacion">Aportación mensual ($)
-                                <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;margin-left:4px">máx. $99,999,999</span>
+                                <span class="field-hint">máx. $99,999,999</span>
                             </label>
                             <input type="number" id="cfg-aportacion" value="0" min="0" max="99999999" step="1" inputmode="numeric">
                         </div>
@@ -302,18 +142,18 @@
                         </div>
                         <div class="field-group">
                             <label for="cfg-inflacion">Inflación anual (%)
-                                <span style="font-size:0.72rem;color:var(--text-muted);font-weight:400;margin-left:4px">-5 a 50</span>
+                                <span class="field-hint">-5 a 50</span>
                             </label>
                             <input type="number" id="cfg-inflacion" value="4.50" min="-5" max="50" step="0.01" inputmode="decimal">
                         </div>
                     </div>
 
                     <!-- Perfil de riesgo -->
-                    <div style="margin-top:16px;margin-bottom:4px">
-                        <label for="cfg-perfil" style="font-size:0.76rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-mid);margin-bottom:8px;display:block">
+                    <div class="cfg-section-block cfg-section-block--sm">
+                        <label for="cfg-perfil" class="cfg-section-label">
                             Perfil de riesgo del inversor
                         </label>
-                        <select id="cfg-perfil" class="filter-select" style="width:100%">
+                        <select id="cfg-perfil" class="filter-select filter-select--full">
                             <option value="conservador">Conservador — reduce rendimientos y volatilidad en un 15%/30%</option>
                             <option value="moderado" selected>Moderado — parámetros base de mercado</option>
                             <option value="agresivo">Agresivo — amplifica rendimientos y volatilidad en un 15%/30%</option>
@@ -321,11 +161,11 @@
                     </div>
 
                     <!-- Escenario de mercado -->
-                    <div style="margin-top:16px">
-                        <label style="font-size:0.76rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-mid);margin-bottom:8px;display:block">
+<div class="cfg-section-block">
+                        <label for="cfg-escenario" class="cfg-section-label">
                             Escenario de mercado
                         </label>
-                        <select id="cfg-escenario" class="filter-select" style="width:100%">
+                        <select id="cfg-escenario" class="filter-select filter-select--full">
                             <option value="bull">Bull Market — ciclo alcista, tasas +4%, volatilidad ×0.7</option>
                             <option value="base" selected>Mercado base — condiciones históricas promedio</option>
                             <option value="bear">Bear Market — ciclo bajista, tasas −3%, volatilidad ×1.4</option>
@@ -333,7 +173,7 @@
                         </select>
                     </div>
 
-                    <div class="mc-note" style="margin-top:16px">
+                    <div class="mc-note mc-note--mt">
                         El motor ejecuta <strong>500 iteraciones Monte Carlo</strong> con distribución lognormal y correlaciones entre activos calculadas vía descomposición de Cholesky.
                         El escenario y el perfil ajustan los parámetros de cada instrumento de forma independiente.
                     </div>
@@ -347,7 +187,7 @@
             <div class="wizard-panel" id="wizard-panel-2">
                 <div class="inv-card">
                     <h3>Selección de instrumentos</h3>
-                    <div class="mc-note" style="margin-bottom:16px">
+                    <div class="mc-note mc-note--mb">
                         Cada instrumento tiene parámetros calibrados con datos históricos: volatilidad real, sesgo de distribución y curtosis.
                         Al combinar múltiples activos, el motor calcula las correlaciones entre ellos para estimar la diversificación real del portafolio.
                     </div>
@@ -373,19 +213,19 @@
                 </div>
 
                 <!-- Riesgo global -->
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+                <div class="res-riesgo-row">
                     <span id="res-riesgo" class="risk-badge">—</span>
-                    <span style="font-size:0.82rem;color:var(--text-muted);font-weight:600">Riesgo global del portafolio</span>
+                    <span class="res-riesgo-label">Riesgo global del portafolio</span>
                 </div>
 
                 <!-- Probabilidades -->
                 <div class="prob-badges">
                     <div class="prob-badge">
-                        <span class="pb-val" id="res-prob-gan" style="color:var(--success)">—</span>
+                        <span class="pb-val pb-val--success" id="res-prob-gan">—</span>
                         <span class="pb-label">Prob. de ganancia</span>
                     </div>
                     <div class="prob-badge">
-                        <span class="pb-val" id="res-prob-dup" style="color:#185FA5">—</span>
+                        <span class="pb-val pb-val--blue" id="res-prob-dup">—</span>
                         <span class="pb-label">Prob. de duplicar</span>
                     </div>
                 </div>
@@ -396,17 +236,17 @@
                         <div class="percentile-label">Percentil 10</div>
                         <div class="percentile-sublabel">Escenario pesimista</div>
                         <div class="percentile-value" id="res-p10-capital">—</div>
-                        <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Capital final</div>
+                        <div class="percentile-foot">Capital final</div>
                     </div>
                     <div class="percentile-card median">
                         <div class="percentile-label">Percentil 50</div>
                         <div class="percentile-sublabel">Mediana — escenario más probable</div>
                         <div class="percentile-value" id="res-p50-capital">—</div>
-                        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">
+                        <div class="percentile-detail">
                             Ganancia: <strong id="res-p50-ganancia">—</strong> ·
                             Rendimiento: <strong id="res-p50-rendimiento">—</strong>
                         </div>
-                        <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">
+                        <div class="percentile-real">
                             Capital real (−inflación): <strong id="res-p50-real">—</strong>
                         </div>
                     </div>
@@ -414,7 +254,7 @@
                         <div class="percentile-label">Percentil 90</div>
                         <div class="percentile-sublabel">Escenario optimista</div>
                         <div class="percentile-value" id="res-p90-capital">—</div>
-                        <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Capital final</div>
+                        <div class="percentile-foot">Capital final</div>
                     </div>
                 </div>
 
@@ -422,9 +262,9 @@
                 <div class="inv-card">
                     <h3>Proyección Monte Carlo — Abanico de percentiles</h3>
                     <div class="chart-legend-mc">
-                        <span><span class="legend-line" style="background:#1a9c5b"></span>P90 Optimista</span>
-                        <span><span class="legend-line" style="background:#185FA5;height:4px"></span>P50 Mediana</span>
-                        <span><span class="legend-line" style="background:#A32D2D"></span>P10 Pesimista</span>
+                        <span><span class="legend-line legend-line--p90"></span>P90 Optimista</span>
+                        <span><span class="legend-line legend-line--p50"></span>P50 Mediana</span>
+                        <span><span class="legend-line legend-line--p10"></span>P10 Pesimista</span>
                         <span><span class="legend-line dashed"></span>Capital invertido</span>
                     </div>
                     <div class="chart-wrapper">
@@ -468,7 +308,7 @@
                             <div class="risk-metric-sub">Escenarios rentables</div>
                         </div>
                     </div>
-                    <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.6">
+                    <div class="risk-metrics-note">
                         <strong>VaR (Value at Risk):</strong> el peor capital final en el 5% de las simulaciones más desfavorables. No es una garantía, sino un indicador del riesgo extremo. ·
                         <strong>Sharpe Ratio</strong> se calcula con tasa libre de riesgo del 4% anual (referencia CETES).
                     </div>
@@ -483,7 +323,7 @@
                 <!-- Guardar -->
                 <div class="inv-card">
                     <h3>Guardar simulación</h3>
-                    <div class="field-group" style="max-width:520px;margin-bottom:16px">
+                    <div class="field-group field-group--save">
                         <label for="res-nombre">Nombre para guardar</label>
                         <input type="text" id="res-nombre" maxlength="100" placeholder="Nombre descriptivo de la simulación">
                     </div>
@@ -503,7 +343,7 @@
             <div class="compare-select-info" id="compare-info">
                 Marca las casillas de 2 o más simulaciones para compararlas.
             </div>
-            <div class="btn-row" style="margin-bottom:20px">
+            <div class="btn-row btn-row--mb">
                 <button class="btn-secondary btn-small" id="btn-comparar-sel" disabled>
                     Selecciona 2 o más para comparar
                 </button>
@@ -528,27 +368,10 @@
     </main>
 </div>
 
-<script type="module">
-    import '/public/js/modules/nav-active.js';
-</script>
+
 
 <!-- Conectar el DOM de res-prob-gan2 con res-prob-gan (misma fuente de datos) -->
-<script>
-    const probGanEl = document.getElementById('res-prob-gan');
-    const probGan2El = document.getElementById('res-prob-gan2');
-    const resVar95El = document.getElementById('res-var95');
-    if (probGanEl && probGan2El) {
-        new MutationObserver(() => { probGan2El.textContent = probGanEl.textContent; })
-            .observe(probGanEl, { childList: true, characterData: true, subtree: true });
-    }
-    if (resVar95El) {
-        new MutationObserver(() => {
-            const val = document.getElementById('res-var95').textContent;
-            const colorEl = document.getElementById('res-var95');
-            if (colorEl && val !== '—') colorEl.style.color = 'var(--danger)';
-        }).observe(resVar95El, { childList: true, characterData: true, subtree: true });
-    }
-</script>
+<script src="../public/js/pages/inversiones-sync.js"></script>
 
 <script type="module" src="../public/js/pages/inversiones.js"></script>
 </body>

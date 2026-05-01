@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -12,11 +12,12 @@
     <!-- ✅ NUEVO: Sistema de tooltips -->
     <link rel="stylesheet" href="../public/css/tooltips.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
     
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    
+    <script src="/public/js/vendor/chart.min.js"></script>
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
 </head>
 <body>
 
@@ -38,31 +39,7 @@
     </nav>
 </header>
 
-<script type="module">
-    import { logout, isAdmin } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
-    import '/public/js/modules/nav-active.js';
-    if (isAdmin()) {
-        const nav = document.querySelector('.nav');
-        const adminLink = document.createElement('a');
-        adminLink.href = '/admin.html';
-        adminLink.textContent = 'ADMIN';
-        adminLink.style.color = '#f39c12';
-        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
-    }
-    
-    const logoutBtn = document.getElementById('logout-btn-perfil');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const confirmar = await alertaConfirmacion(
-                '¿Estás seguro de que deseas cerrar sesión?',
-                '👋 Salir de TOO-EASY'
-            );
-            if (confirmar) logout();
-        });
-    }
-</script>
+<script type="module" src="/public/js/modules/nav-init.js"></script>
 
 <div class="app-container">
 
@@ -177,19 +154,19 @@
             <!-- LEYENDA -->
             <div class="chart-legend" id="chart-legend">
                 <span class="legend-balance">
-                    <span class="legend-dot" style="background:#2e7d32;"></span>Ingresos
+                    <span class="legend-dot legend-dot--green"></span>Ingresos
                 </span>
                 <span class="legend-balance">
-                    <span class="legend-dot" style="background:#c62828;"></span>Egresos
+                    <span class="legend-dot legend-dot--red"></span>Egresos
                 </span>
                 <span class="legend-balance">
-                    <span class="legend-dot" style="background:#1565C0;"></span>Balance neto
+                    <span class="legend-dot legend-dot--blue"></span>Balance neto
                 </span>
-                <span class="legend-ingresos" style="display:none;">
-                    <span class="legend-dot" style="background:#2e7d32;"></span>Monto por categoría
+                <span class="legend-ingresos">
+                    <span class="legend-dot legend-dot--green"></span>Monto por categoría
                 </span>
-                <span class="legend-egresos" style="display:none;">
-                    <span class="legend-dot" style="background:#c62828;"></span>Monto por categoría
+                <span class="legend-egresos">
+                    <span class="legend-dot legend-dot--red"></span>Monto por categoría
                 </span>
             </div>
 
@@ -248,7 +225,7 @@
             </div>
 
             <!-- FORM EDICIÓN -->
-            <div class="edit-movement-form" id="edit-movement-container" style="display:none;">
+            <div class="edit-movement-form" id="edit-movement-container">
                 <div class="edit-form-header">
                     <h3>✏️ Editar Movimiento</h3>
                     <button type="button" class="btn-close-edit" id="btn-close-edit" title="Cancelar edición">✕</button>
@@ -309,26 +286,8 @@
 </div>
 
 <!-- Script leyenda + tooltips en tabs -->
-<script>
-document.querySelectorAll('.chart-tab-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        /* Evitar que el clic en el ícono tooltip dispare comportamiento extra */
-        const type = parseInt(btn.dataset.chartType);
-        const legend = document.getElementById('chart-legend');
-        legend.querySelectorAll('span[class^="legend-"]').forEach(el => el.style.display = 'none');
-        if (type === 1) {
-            legend.querySelectorAll('.legend-balance').forEach(el => el.style.display = 'flex');
-        } else if (type === 2) {
-            legend.querySelectorAll('.legend-ingresos').forEach(el => el.style.display = 'flex');
-        } else {
-            legend.querySelectorAll('.legend-egresos').forEach(el => el.style.display = 'flex');
-        }
-    });
-});
-document.querySelectorAll('.legend-balance').forEach(el => el.style.display = 'flex');
-</script>
+<script src="../public/js/pages/dashboard-tabs.js"></script>
 
 <script type="module" src="../public/js/pages/dashboard.js"></script>
-<script type="module" src="/public/js/modules/nav-active.js"></script>
 </body>
 </html>

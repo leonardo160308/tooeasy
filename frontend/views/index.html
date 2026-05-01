@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="../public/css/alerts.css">
 
     <!-- Font Awesome y Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    
+    
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
 </head>
 <body>
 <header class="header">
@@ -37,7 +38,7 @@
                 <a href="registro.html"><button class="btn-crear-cuenta">Crear Cuenta</button></a>
             </div>
             
-            <div id="start-button" style="display:none;">
+            <div id="start-button">
                  <a href="lecciones.html"><button class="btn-iniciar-sesion">EMPIEZA YA!</button></a>
             </div>
         </div>
@@ -94,50 +95,8 @@
     </p>
 </footer>
 
-<script type="module">
-    import { checkSession, logout } from '../public/js/modules/auth.js'; 
 
-    const navContainer = document.getElementById('main-nav-container');
-    const authButtons = document.getElementById('auth-buttons');
-    const startButton = document.getElementById('start-button');
 
-    const publicNav = `
-        <a href="registro.html">CREAR CUENTA</a>
-        <a href="login.html">INICIAR SESIÓN</a>
-    `;
-
-    const privateNav = `
-        <a href="dashboard.html">DASHBOARD</a>
-        <a href="retos.html">RETOS</a>
-        <a href="lecciones.html">LECCIONES</a>
-        <a href="perfil.html">PERFIL</a>
-        <a href="#" id="logout-btn-index"><img src="../assets/icons/salida.png" alt="Salir"></a>
-    `;
-
-    const initializeIndexPage = () => {
-        const userId = checkSession();
-        
-        if (userId) {
-            navContainer.innerHTML = privateNav;
-            authButtons.style.display = 'none';
-            startButton.style.display = 'block';
-            
-            const logoutBtn = document.getElementById('logout-btn-index');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    logout();
-                });
-            }
-        } else {
-            navContainer.innerHTML = publicNav;
-            authButtons.style.display = 'block';
-            startButton.style.display = 'none';
-        }
-    };
-
-    initializeIndexPage();
-</script>
 <script src="../public/js/data/terminos.js"></script>
 </body>
 

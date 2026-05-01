@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    
+    
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
 </head>
 <body>
 
@@ -33,32 +33,7 @@
     </nav>
 </header>
 
-<script type="module">
-    import { logout, isAdmin } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
-    import '/public/js/modules/nav-active.js';
-    
-    if (isAdmin()) {
-        const nav = document.querySelector('.nav');
-        const adminLink = document.createElement('a');
-        adminLink.href = '/admin.html';
-        adminLink.textContent = 'ADMIN';
-        adminLink.style.color = '#f39c12';
-        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
-    }
-    
-    const logoutBtn = document.getElementById('logout-btn-perfil');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const confirmar = await alertaConfirmacion(
-                '¿Estás seguro de que deseas cerrar sesión?',
-                '👋 Salir de TOO-EASY'
-            );
-            if (confirmar) logout();
-        });
-    }
-</script>
+<script type="module" src="/public/js/modules/nav-init.js"></script>
 
 <div class="main-container">
     
@@ -73,10 +48,9 @@
                 <img 
                     src="/public/img/icono_perfil-removebg-preview.png" 
                     alt="Avatar" 
-                    id="user-avatar" 
-                    onerror="this.src='https://via.placeholder.com/100'"
+                    id="user-avatar"
                 >
-                <button class="btn-edit" onclick="openProfileModal()" title="Editar Perfil"><p>Editar</p></button>
+                <button class="btn-edit" title="Editar Perfil"><p>Editar</p></button>
             </div>
             
             <div class="user-details">
@@ -100,7 +74,7 @@
         </div>
 
         <!-- MODAL AVATAR -->
-        <div id="avatar-modal" class="avatar-modal" style="display: none;">
+        <div id="avatar-modal" class="avatar-modal">
             <div class="avatar-modal-content">
                 <div class="avatar-modal-header">
                     <h2>Elige tu Avatar</h2>
@@ -108,20 +82,16 @@
                 </div>
                 <div class="avatar-grid">
                     <div class="avatar-option" data-avatar="avatar1">
-                        <img src="/public/img/avatars/perfil1.png" alt="Avatar 1" 
-                             onerror="this.src='https://via.placeholder.com/100/FF6B6B/fff?text=1'">
+                        <img src="/public/img/avatars/perfil1.png" alt="Avatar 1">
                     </div>
                     <div class="avatar-option" data-avatar="avatar2">
-                        <img src="/public/img/avatars/perfil2.png" alt="Avatar 2"
-                             onerror="this.src='https://via.placeholder.com/100/4ECDC4/fff?text=2'">
+                        <img src="/public/img/avatars/perfil2.png" alt="Avatar 2">
                     </div>
                     <div class="avatar-option" data-avatar="avatar3">
-                        <img src="/public/img/avatars/perfil3.png" alt="Avatar 3"
-                             onerror="this.src='https://via.placeholder.com/100/45B7D1/fff?text=3'">
+                        <img src="/public/img/avatars/perfil3.png" alt="Avatar 3">
                     </div>
                     <div class="avatar-option" data-avatar="avatar4">
-                        <img src="/public/img/avatars/perfil4.png" alt="Avatar 4"
-                             onerror="this.src='https://via.placeholder.com/100/FFA07A/fff?text=4'">
+                        <img src="/public/img/avatars/perfil4.png" alt="Avatar 4">
                     </div>
                 </div>
                 <button class="btn-select-avatar" id="btn-confirm-avatar">
@@ -166,14 +136,12 @@
                         class="house-img"
                         src="../public/img/casaBase.png"
                         alt="Casa"
-                        onerror="this.src='https://via.placeholder.com/400x300?text=Casa'"
                     >      
                     <img 
                         id="beaver-img"
                         class="beaver-img"
                         src="../public/img/mapacheBase.png"
                         alt="Castor"
-                        onerror="this.src='https://via.placeholder.com/150?text=Castor'"
                     >
                 </div>  
 
@@ -187,7 +155,7 @@
                             <span id="house-name-lbl">Choza Inicial</span>
                             <button id="btn-equip-house" class="btn-equip">Equipar</button>
                         </div>
-                        <div class="skin-status" id="house-status" style="display: none;">
+                        <div class="skin-status" id="house-status">
                             
                         </div>
                         <button id="btn-next-house" class="nav-btn">
@@ -204,7 +172,7 @@
                             <span id="beaver-name-lbl">Castor Bebé</span>
                             <button id="btn-equip-beaver" class="btn-equip">Equipar</button>
                         </div>
-                        <div class="skin-status" id="beaver-status" style="display: none;">
+                        <div class="skin-status" id="beaver-status">
                         </div>
                         <button id="btn-next-beaver" class="nav-btn">
                             <i class="fas fa-chevron-right"></i>
@@ -218,21 +186,21 @@
 <!-- MODAL EDITAR PERFIL -->
 <div class="overlay" id="profileOverlay">
     <div class="modal-perfil" id="profileModal">
-        <button class="btn-close-modal" onclick="closeProfileModal()">✕</button>
+        <button class="btn-close-modal">✕</button>
         <div class="modal-title">Editar Datos del Perfil</div>
 
         <!-- Avatar con picker -->
         <div class="avatar-wrap-modal">
             <div class="avatar-container-modal" id="avatarContainerModal">
                 <img src="/public/img/icono_perfil-removebg-preview.png" id="avatarPreview" class="avatar-preview-modal" alt="Avatar">
-                <div class="avatar-edit-btn-modal" onclick="toggleAvatarPickerModal(event)">✏️</div>
+                <div class="avatar-edit-btn-modal">✏️</div>
                 <div class="avatar-picker-modal" id="avatarPickerModal">
                     <p>Elige tu avatar</p>
                     <div class="avatar-options-modal">
-                        <div class="avatar-opt" onclick="selectAvatarModal('avatar1')"><img src="/public/img/avatars/perfil1.png" onerror="this.src='https://via.placeholder.com/60/FF6B6B/fff?text=1'"></div>
-                        <div class="avatar-opt" onclick="selectAvatarModal('avatar2')"><img src="/public/img/avatars/perfil2.png" onerror="this.src='https://via.placeholder.com/60/4ECDC4/fff?text=2'"></div>
-                        <div class="avatar-opt" onclick="selectAvatarModal('avatar3')"><img src="/public/img/avatars/perfil3.png" onerror="this.src='https://via.placeholder.com/60/45B7D1/fff?text=3'"></div>
-                        <div class="avatar-opt" onclick="selectAvatarModal('avatar4')"><img src="/public/img/avatars/perfil4.png" onerror="this.src='https://via.placeholder.com/60/FFA07A/fff?text=4'"></div>
+                        <div class="avatar-opt"><img src="/public/img/avatars/perfil1.png"></div>
+                        <div class="avatar-opt"><img src="/public/img/avatars/perfil2.png"></div>
+                        <div class="avatar-opt"><img src="/public/img/avatars/perfil3.png"></div>
+                        <div class="avatar-opt"><img src="/public/img/avatars/perfil4.png"></div>
                     </div>
                 </div>
             </div>
@@ -258,14 +226,12 @@
                 min="15"
                 max="99"
                 step="1"
-                oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)"
-                onkeydown="return event.key !== 'e' && event.key !== '.' && event.key !== '-'"
             >
         </div>
 
         <div class="modal-footer-perfil">
-            <button class="btn-delete-modal" onclick="openConfirmDelete()">Eliminar Cuenta</button>
-            <button class="btn-accept-modal" onclick="saveProfile()">ACEPTAR</button>
+            <button class="btn-delete-modal">Eliminar Cuenta</button>
+            <button class="btn-accept-modal">ACEPTAR</button>
         </div>
     </div>
 </div>
@@ -277,8 +243,8 @@
         <div class="confirm-title">¿Eliminar cuenta?</div>
         <div class="confirm-text">Esta acción es permanente y no se puede deshacer. ¿Estás seguro?</div>
         <div class="confirm-actions">
-            <button class="btn-cancel-confirm" onclick="closeConfirmDelete()">No, cancelar</button>
-            <button class="btn-confirm-delete" onclick="deleteAccountFromModal()">Sí, eliminar</button>
+            <button class="btn-cancel-confirm">No, cancelar</button>
+            <button class="btn-confirm-delete">Sí, eliminar</button>
         </div>
     </div>
 </div>
@@ -286,65 +252,13 @@
 <div class="toast-perfil" id="toastPerfil"></div>
 
 <!-- Hidden elements requeridos por profile.js -->
-<span id="lbl-house-level" style="display:none"></span>
-<span id="lbl-beaver-level" style="display:none"></span>
-<button id="btn-delete-account" style="display: none;"></button>
+<span id="lbl-house-level"></span>
+<span id="lbl-beaver-level"></span>
+<button id="btn-delete-account"></button>
 
-<script>
-    // Solo las funciones puramente de UI del modal (sin acceso a módulos)
-    function openConfirmDelete() {
-        document.getElementById('confirmOverlay').classList.add('active');
-    }
-    function closeConfirmDelete() {
-        document.getElementById('confirmOverlay').classList.remove('active');
-    }
-
-    // Avatar picker del modal de edición
-    function toggleAvatarPickerModal(e) {
-        e.stopPropagation();
-        document.getElementById('avatarPickerModal').classList.toggle('open');
-    }
-    function closeAvatarPickerModal() {
-        document.getElementById('avatarPickerModal').classList.remove('open');
-    }
-    let _avatarSeleccionadoModal = null; 
-
-    // En el <script> de perfil.html
-function selectAvatarModal(avatarKey) {
-    const paths = {
-        avatar1: '/public/img/avatars/perfil1.png',
-        avatar2: '/public/img/avatars/perfil2.png',
-        avatar3: '/public/img/avatars/perfil3.png',
-        avatar4: '/public/img/avatars/perfil4.png',
-    };
-    document.getElementById('avatarPreview').src = paths[avatarKey];
-    document.getElementById('user-avatar').src   = paths[avatarKey];
-    window._avatarSeleccionadoModal = avatarKey; // 👈 window. para que profile.js lo vea
-    closeAvatarPickerModal();
-}
-    document.addEventListener('click', function(e) {
-        const container = document.getElementById('avatarContainerModal');
-        if (container && !container.contains(e.target)) closeAvatarPickerModal();
-    });
-
-    // Toast
-    function showToastPerfil(msg) {
-        const t = document.getElementById('toastPerfil');
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2500);
-    }
-
-    // Cerrar overlay al click fuera
-    document.getElementById('profileOverlay').addEventListener('click', function(e) {
-        if (e.target === this) {
-            if (window.closeProfileModal) window.closeProfileModal();
-        }
-    });
-</script>
+<script src="../public/js/pages/perfil-ui.js"></script>
 
 <!-- El módulo profile.js expone openProfileModal, closeProfileModal, saveProfile, deleteAccountFromModal al scope global -->
 <script type="module" src="../public/js/pages/profile.js"></script>
-<script type="module" src="/public/js/modules/nav-active.js"></script>
 </body>
 </html>

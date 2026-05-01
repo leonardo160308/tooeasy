@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    
+    
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
 </head>
 <body>
 
@@ -33,32 +34,7 @@
     </nav>
 </header>
 
-<script type="module">
-    import { logout, isAdmin } from '/public/js/modules/auth.js';
-    import { alertaConfirmacion } from '/public/js/modules/alerts.js';
-    import '/public/js/modules/nav-active.js';
-
-    if (isAdmin()) {
-        const nav = document.querySelector('.nav');
-        const adminLink = document.createElement('a');
-        adminLink.href = '/admin.html';
-        adminLink.textContent = 'ADMIN';
-        adminLink.style.color = '#f39c12';
-        nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
-    }
-
-    const logoutBtn = document.getElementById('logout-btn-perfil');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const confirmar = await alertaConfirmacion(
-                '¿Estás seguro de que deseas cerrar sesión?',
-                '👋 Salir de TOO-EASY'
-            );
-            if (confirmar) logout();
-        });
-    }
-</script>
+<script type="module" src="/public/js/modules/nav-init.js"></script>
 
 <main>
     <section class="container pagina-principal">
@@ -74,12 +50,12 @@
         </div>
     </section>
 
-    <div class="loading-levels" style="text-align:center;margin:2rem 0;">
+    <div class="loading-levels">
         <i class="fas fa-spinner fa-spin"></i> Cargando progreso...
     </div>
 
-    <section class="container categorias-info" style="margin-top:2rem;">
-        <h2 style="text-align:center;font-family:'Baloo 2',cursive;font-size:32px;margin-bottom:2rem;color:#2C405B;">
+    <section class="container categorias-info">
+        <h2 class="categorias-titulo">
             Categorías de Aprendizaje
         </h2>
         <!-- Las tarjetas se generan dinámicamente por lessons.js -->
@@ -88,7 +64,6 @@
 </main>
 
 <script type="module" src="../public/js/pages/lessons.js"></script>
-<script type="module" src="/public/js/modules/nav-active.js"></script>
 
 </body>
 </html>

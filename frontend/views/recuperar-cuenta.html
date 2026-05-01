@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
             <h2>Recuperar cuenta</h2>
             <p class="subtitle">Ingresa tu correo electrónico y te enviaremos un código de 6 dígitos.</p>
             <input type="email" id="input-email" placeholder="tu@correo.com" autocomplete="email">
-            <button class="btn-primary" onclick="sendCode()">Enviar código</button>
+            <button class="btn-primary">Enviar código</button>
             <a href="login.html" class="btn-back"> Volver al inicio de sesión</a>
         </div>
 
@@ -40,11 +40,11 @@
                 El código expira en <span id="timer-count">10:00</span>
             </div>
 
-            <button class="btn-primary" onclick="verifyCode()">Verificar código</button>
-            <button class="btn-secondary" id="btn-resend" onclick="resendCode()" disabled>
+            <button class="btn-primary">Verificar código</button>
+            <button class="btn-secondary" id="btn-resend" disabled>
                 Reenviar código
             </button>
-            <button class="btn-back" onclick="goToStep(1)">← Cambiar correo</button>
+            <button class="btn-back">← Cambiar correo</button>
         </div>
 
         <!-- PASO 3: Elegir acción -->
@@ -53,7 +53,7 @@
             <h2>¡Código verificado!</h2>
             <p class="subtitle">¿Qué deseas hacer?</p>
 
-            <button class="action-card" onclick="doLogin()">
+            <button class="action-card">
                 <span class="icon"></span>
                 <div class="text">
                     <strong>Iniciar sesión directamente</strong>
@@ -63,7 +63,7 @@
 
             <div class="action-divider">o</div>
 
-            <button class="action-card" onclick="goToStep(4)">
+            <button class="action-card">
                 <span class="icon"></span>
                 <div class="text">
                     <strong>Cambiar mi contraseña</strong>
@@ -79,18 +79,18 @@
             <p class="subtitle">Elige una contraseña segura de entre 6 y 16 caracteres.</p>
 
             <div class="password-wrapper">
-                <input type="password" id="new-password" placeholder="Nueva contraseña" oninput="checkStrength(this.value)">
-                <span class="toggle-pass" onclick="togglePass('new-password', this)">👁</span>
+                <input type="password" id="new-password" placeholder="Nueva contraseña">
+                <span class="toggle-pass">👁</span>
             </div>
             <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
 
             <div class="password-wrapper">
                 <input type="password" id="confirm-password" placeholder="Confirmar contraseña">
-                <span class="toggle-pass" onclick="togglePass('confirm-password', this)">👁</span>
+                <span class="toggle-pass">👁</span>
             </div>
 
-            <button class="btn-primary" onclick="changePassword()">Guardar contraseña</button>
-            <button class="btn-back" onclick="goToStep(3)">← Atrás</button>
+            <button class="btn-primary">Guardar contraseña</button>
+            <button class="btn-back">← Atrás</button>
         </div>
 
         <!-- PASO 5: Éxito -->
@@ -98,279 +98,11 @@
             <span class="success-icon"></span>
             <h2>¡Contraseña actualizada!</h2>
             <p class="subtitle">Tu contraseña fue cambiada exitosamente. Ahora puedes iniciar sesión.</p>
-            <button class="btn-primary" onclick="window.location.href='login.html'">Ir al inicio de sesión</button>
+            <button class="btn-primary">Ir al inicio de sesión</button>
         </div>
 
     </div>
 
-    <script type="module">
-        import { mostrarAlerta, alertaExito, alertaError, alertaInfo } from '../public/js/modules/alerts.js';
-        import { saveAuthData } from '../public/js/modules/auth.js';
-
-        const API = '/api';
-
-        // Estado de la sesión de recuperación
-        let state = {
-            email: '',
-            userId: null,
-            resetId: null,
-            verificationToken: null
-        };
-
-        // ── Timer de expiración ────────────────────────────────────────────────
-        let timerInterval = null;
-
-        function startTimer(minutes = 10) {
-            clearInterval(timerInterval);
-            let seconds = minutes * 60;
-            const display = document.getElementById('timer-count');
-            const timerEl = document.getElementById('timer-display');
-            const resendBtn = document.getElementById('btn-resend');
-
-            timerInterval = setInterval(() => {
-                seconds--;
-                const m = Math.floor(seconds / 60);
-                const s = seconds % 60;
-                display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-
-                if (seconds <= 60) timerEl.classList.add('expired');
-                if (seconds <= 0) {
-                    clearInterval(timerInterval);
-                    display.textContent = '00:00';
-                    resendBtn.disabled = false;
-                    timerEl.innerHTML = 'El código ha <span>expirado</span>. Solicita uno nuevo.';
-                }
-            }, 1000);
-        }
-
-        // ── Navegación entre pasos ─────────────────────────────────────────────
-        window.goToStep = (n) => {
-            document.querySelectorAll('.step').forEach((s,i) => {
-                s.classList.toggle('active', i+1 === n);
-            });
-        };
-
-        // ── PASO 1: Enviar código ──────────────────────────────────────────────
-        window.sendCode = async () => {
-            const email = document.getElementById('input-email').value.trim();
-            if (!email) return alertaError('Ingresa tu correo electrónico.');
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) return alertaError('El formato del correo no es válido.');
-
-            state.email = email;
-
-            const btn = document.querySelector('#step-1 .btn-primary');
-            btn.disabled = true;
-            btn.textContent = 'Enviando...';
-
-            try {
-                const res = await fetch(`${API}/auth/request-code`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    document.getElementById('display-email').textContent = email;
-                    goToStep(2);
-                    startTimer(10);
-                    initOtpInputs();
-                    alertaInfo('Código enviado. Revisa tu bandeja de entrada.', { duration: 4000 });
-                } else {
-                    alertaError(data.message);
-                }
-            } catch {
-                alertaError('Error de conexión. Verifica el servidor.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Enviar código';
-            }
-        };
-
-        // ── Inputs OTP con autoavance ──────────────────────────────────────────
-        function initOtpInputs() {
-            const inputs = document.querySelectorAll('.otp-input');
-            inputs.forEach((inp, i) => {
-                inp.value = '';
-                inp.addEventListener('input', e => {
-                    e.target.value = e.target.value.replace(/\D/g, '');
-                    if (e.target.value && i < inputs.length - 1) inputs[i+1].focus();
-                });
-                inp.addEventListener('keydown', e => {
-                    if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i-1].focus();
-                });
-                inp.addEventListener('paste', e => {
-                    e.preventDefault();
-                    const text = e.clipboardData.getData('text').replace(/\D/g, '').substring(0, 6);
-                    inputs.forEach((inp2, j) => { inp2.value = text[j] || ''; });
-                    if (text.length === 6) inputs[5].focus();
-                });
-            });
-            inputs[0].focus();
-        }
-
-        function getOtpValue() {
-            return Array.from(document.querySelectorAll('.otp-input'))
-                .map(i => i.value).join('');
-        }
-
-        // ── PASO 2: Verificar código ───────────────────────────────────────────
-        window.verifyCode = async () => {
-            const code = getOtpValue();
-            if (code.length !== 6) return alertaError('Ingresa los 6 dígitos del código.');
-
-            const btn = document.querySelector('#step-2 .btn-primary');
-            btn.disabled = true;
-            btn.textContent = 'Verificando...';
-
-            try {
-                const res = await fetch(`${API}/auth/verify-code`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: state.email, code })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    state.userId            = data.userId;
-                    state.resetId           = data.resetId;
-                    state.verificationToken = data.verificationToken;
-                    clearInterval(timerInterval);
-                    goToStep(3);
-                } else {
-                    alertaError(data.message);
-                    document.querySelectorAll('.otp-input').forEach(i => {
-                        i.style.borderColor = '#e53e3e';
-                        setTimeout(() => i.style.borderColor = '', 1500);
-                    });
-                }
-            } catch {
-                alertaError('Error de conexión.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Verificar código';
-            }
-        };
-
-        // ── Reenviar código ────────────────────────────────────────────────────
-        window.resendCode = async () => {
-            const btn = document.getElementById('btn-resend');
-            btn.disabled = true;
-            btn.textContent = 'Enviando...';
-
-            try {
-                const res = await fetch(`${API}/auth/request-code`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: state.email })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    alertaInfo('Nuevo código enviado.');
-                    startTimer(10);
-                    document.querySelectorAll('.otp-input').forEach(i => i.value = '');
-                    document.querySelector('.otp-input').focus();
-                    document.getElementById('timer-display').classList.remove('expired');
-                } else {
-                    alertaError(data.message);
-                    btn.disabled = false;
-                }
-            } catch {
-                alertaError('Error al reenviar.');
-                btn.disabled = false;
-            }
-            btn.textContent = 'Reenviar código';
-        };
-
-        // ── PASO 3a: Iniciar sesión directo ────────────────────────────────────
-        window.doLogin = async () => {
-            try {
-                const res = await fetch(`${API}/auth/recovery-login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId:            state.userId,
-                        resetId:           state.resetId,
-                        verificationToken: state.verificationToken
-                    })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    saveAuthData(data.user);
-                    alertaExito('¡Bienvenido! Redirigiendo...', { duration: 1500 });
-                    setTimeout(() => window.location.href = '/dashboard.html', 1500);
-                } else {
-                    alertaError(data.message);
-                }
-            } catch {
-                alertaError('Error de conexión.');
-            }
-        };
-
-        // ── PASO 4: Cambiar contraseña ─────────────────────────────────────────
-        window.checkStrength = (pwd) => {
-            const fill = document.getElementById('strength-fill');
-            let strength = 0;
-            if (pwd.length >= 6) strength++;
-            if (pwd.length >= 10) strength++;
-            if (/[A-Z]/.test(pwd)) strength++;
-            if (/[0-9]/.test(pwd)) strength++;
-            if (/[^A-Za-z0-9]/.test(pwd)) strength++;
-
-            const colors = ['#e53e3e','#dd6b20','#d69e2e','#38a169','#27ae60'];
-            const widths = [20, 40, 60, 80, 100];
-            fill.style.width   = (widths[strength-1] || 0) + '%';
-            fill.style.background = colors[strength-1] || '#e2e8f0';
-        };
-
-        window.togglePass = (id, btn) => {
-            const inp = document.getElementById(id);
-            inp.type = inp.type === 'password' ? 'text' : 'password';
-            btn.textContent = inp.type === 'password' ? '👁' : '';
-        };
-
-        window.changePassword = async () => {
-            const newPassword     = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
-            if (!newPassword || !confirmPassword) return alertaError('Completa ambos campos.');
-            if (newPassword.length < 6 || newPassword.length > 16)
-                return alertaError('La contraseña debe tener entre 6 y 16 caracteres.');
-            if (newPassword !== confirmPassword)
-                return alertaError('Las contraseñas no coinciden.');
-
-            const btn = document.querySelector('#step-4 .btn-primary');
-            btn.disabled = true;
-            btn.textContent = 'Guardando...';
-
-            try {
-                const res = await fetch(`${API}/auth/recovery-reset-password`, {                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId:            state.userId,
-                        resetId:           state.resetId,
-                        verificationToken: state.verificationToken,
-                        newPassword
-                    })
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    goToStep(5);
-                } else {
-                    alertaError(data.message);
-                }
-            } catch {
-                alertaError('Error de conexión.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Guardar contraseña';
-            }
-        };
-    </script>
+    <script type="module" src="../public/js/pages/recovery.js"></script>
 </body>
 </html>
