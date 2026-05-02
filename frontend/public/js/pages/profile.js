@@ -317,31 +317,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-next-beaver').onclick = () => { if (idxCastor < UNLOCKS_CASTOR_LIST.length-1) idxCastor++; renderizarCastor(); };
 
     // ── Eliminar cuenta ────────────────────────────────────────────────────
+    async function ejecutarEliminacion() {
+        try {
+            if (btnDeleteAccount) {
+                btnDeleteAccount.disabled    = true;
+                btnDeleteAccount.textContent = 'Eliminando...';
+            }
+            alertaInfo('Eliminando cuenta...', { duration: 0, closable: false });
+            const result = await deleteUser(userId);
+            if (result.success) {
+                alertaExito('Cuenta eliminada exitosamente. Redirigiendo...', { duration: 2000, onClose: () => logout() });
+                setTimeout(() => logout(), 2000);
+            } else {
+                alertaError('Error: ' + result.message);
+                if (btnDeleteAccount) {
+                    btnDeleteAccount.disabled    = false;
+                    btnDeleteAccount.textContent = 'Eliminar Cuenta';
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            alertaError('Error de conexión al intentar eliminar la cuenta.');
+            if (btnDeleteAccount) {
+                btnDeleteAccount.disabled    = false;
+                btnDeleteAccount.textContent = 'Eliminar Cuenta';
+            }
+        }
+    }
+
+    // Ruta directa (btn-delete-account): muestra doble confirmación antes de eliminar
     if (btnDeleteAccount) {
         btnDeleteAccount.onclick = async () => {
             const c1 = await alertaConfirmacion('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.', 'Eliminar Cuenta');
             if (!c1) return;
             const c2 = await alertaConfirmacion('⚠️ ÚLTIMA ADVERTENCIA: Todos tus datos se perderán permanentemente. ¿Continuar?', 'Confirmación Final');
             if (!c2) return;
-            try {
-                btnDeleteAccount.disabled = true;
-                btnDeleteAccount.textContent = 'Eliminando...';
-                alertaInfo('Eliminando cuenta...', { duration: 0, closable: false });
-                const result = await deleteUser(userId);
-                if (result.success) {
-                    alertaExito('Cuenta eliminada exitosamente. Redirigiendo...', { duration: 2000, onClose: () => logout() });
-                    setTimeout(() => logout(), 2000);
-                } else {
-                    alertaError('Error: ' + result.message);
-                    btnDeleteAccount.disabled = false;
-                    btnDeleteAccount.textContent = 'Eliminar Cuenta';
-                }
-            } catch (error) {
-                console.error(error);
-                alertaError('Error de conexión al intentar eliminar la cuenta.');
-                btnDeleteAccount.disabled = false;
-                btnDeleteAccount.textContent = 'Eliminar Cuenta';
-            }
+            await ejecutarEliminacion();
         };
     }
 
@@ -492,10 +503,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    window.deleteAccountFromModal = function () {
-        window.closeConfirmDelete?.();
+    // Llamado desde perfil-ui.js tras confirmOverlay: no requiere confirmaciones adicionales
+    window.deleteAccountFromModal = async function () {
+        document.getElementById('confirmOverlay')?.classList.remove('active');
         window.closeProfileModal?.();
-        document.getElementById('btn-delete-account')?.click();
+        await ejecutarEliminacion();
     };
 
     // ── Iniciar ───────────────────────────────────────────────────────────

@@ -728,7 +728,12 @@ async function guardarSimulacion() {
             p10Capital:     r.p10.capitalFinal,
             p90Capital:     r.p90.capitalFinal
         }),
-        datos_grafica: JSON.stringify(r.seriesGrafica),
+        datos_grafica: JSON.stringify({
+            serieP10:       r.seriesGrafica.serieP10,
+            serieP50:       r.seriesGrafica.serieP50,
+            serieP90:       r.seriesGrafica.serieP90,
+            serieInvertido: r.seriesGrafica.serieInvertido
+        }),
         tabla_anual:   JSON.stringify([])
     };
 

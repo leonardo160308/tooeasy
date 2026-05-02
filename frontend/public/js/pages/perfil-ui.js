@@ -40,30 +40,30 @@ function showToastPerfil(msg) {
     setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-document.getElementById('profileOverlay').addEventListener('click', function(e) {
+document.getElementById('profileOverlay')?.addEventListener('click', function(e) {
     if (e.target === this) {
         if (window.closeProfileModal) window.closeProfileModal();
     }
 });
 
 // Wire up onclick handlers (removed from HTML)
-document.querySelector('.btn-edit').addEventListener('click', () => {
+document.querySelector('.btn-edit')?.addEventListener('click', () => {
     if (window.openProfileModal) window.openProfileModal();
 });
-document.querySelector('.btn-close-modal').addEventListener('click', () => {
+document.querySelector('.btn-close-modal')?.addEventListener('click', () => {
     if (window.closeProfileModal) window.closeProfileModal();
 });
-document.querySelector('.avatar-edit-btn-modal').addEventListener('click', toggleAvatarPickerModal);
+document.querySelector('.avatar-edit-btn-modal')?.addEventListener('click', toggleAvatarPickerModal);
 document.querySelectorAll('.avatar-opt').forEach((el, i) => {
     const key = 'avatar' + (i + 1);
     el.addEventListener('click', () => selectAvatarModal(key));
 });
-document.querySelector('.btn-delete-modal').addEventListener('click', openConfirmDelete);
-document.querySelector('.btn-accept-modal').addEventListener('click', () => {
+document.querySelector('.btn-delete-modal')?.addEventListener('click', openConfirmDelete);
+document.querySelector('.btn-accept-modal')?.addEventListener('click', () => {
     if (window.saveProfile) window.saveProfile();
 });
-document.querySelector('.btn-cancel-confirm').addEventListener('click', closeConfirmDelete);
-document.querySelector('.btn-confirm-delete').addEventListener('click', () => {
+document.querySelector('.btn-cancel-confirm')?.addEventListener('click', closeConfirmDelete);
+document.querySelector('.btn-confirm-delete')?.addEventListener('click', () => {
     if (window.deleteAccountFromModal) window.deleteAccountFromModal();
 });
 

@@ -69,10 +69,10 @@ app.use(cors({
     credentials: true,
 }));
 
-// Rate limit global (100 req / 15 min por IP)
+// Rate limit para endpoints API (300 req / 15 min por IP)
 const globalLimiter = rateLimit({
     windowMs:       15 * 60 * 1000,
-    max:            100,
+    max:            300,
     standardHeaders: true,
     legacyHeaders:  false,
     message:        { success: false, message: 'Demasiadas peticiones. Intenta en 15 minutos.' },
@@ -87,11 +87,10 @@ const authLimiter = rateLimit({
     message:        { success: false, message: 'Demasiados intentos. Intenta en 15 minutos.' },
 });
 
-app.use(globalLimiter);
 app.use(express.json({ limit: '10kb' }));
 
 // =====================
-// ARCHIVOS ESTÁTICOS
+// ARCHIVOS ESTÁTICOS — antes del rate limit para no consumir cuota
 // =====================
 app.use('/public',  express.static(path.join(__dirname, 'frontend/public')));
 app.use(express.static(path.join(__dirname, 'frontend/views')));
@@ -99,8 +98,9 @@ app.use(express.static(path.join(__dirname, 'frontend/views')));
 // =====================
 // RUTAS API
 // =====================
-// authLimiter se aplica ANTES de montar las rutas de auth
+// Rate limiting solo para /api — archivos estáticos no consumen cuota
 app.use('/api/auth', authLimiter);
+app.use('/api',      globalLimiter);
 
 app.use('/api', authRoutes);
 app.use('/api', authRecoveryRoutes);
