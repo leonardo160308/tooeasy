@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte - TOO-EASY</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/Imagen1.png">
+
+    <link rel="stylesheet" href="../public/css/soporte.css">
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
+    <link rel="stylesheet" href="../public/css/terminos.css">
+
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <h1>TOO-EASY</h1>
+        <p>JUEGA HOY, TRIUNFA MAÑANA</p>
+    </div>
+    <nav class="nav">
+        <a href="/dashboard.html">DASHBOARD</a>
+        <a href="/inversiones.html">INVERSIONES</a>
+        <a href="/retos.html">RETOS</a>
+        <a href="/lecciones.html">LECCIONES</a>
+        <a href="/soporte.html">SOPORTE</a>
+        <a href="/perfil.html">PERFIL</a>
+        <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
+            <img src="../public/img/Salida.png" alt="Salir">
+        </a>
+    </nav>
+</header>
+
+<script type="module" src="/public/js/modules/nav-init.js"></script>
+
+<main>
+    <!-- Hero -->
+    <section class="soporte-hero">
+        <div>
+            <h2><i class="fas fa-headset"></i> Centro de Soporte</h2>
+            <p>¿Tienes un problema, duda o sugerencia? Crea un ticket y nuestro equipo te ayudará lo antes posible.</p>
+        </div>
+    </section>
+
+    <!-- Layout principal -->
+    <div class="soporte-layout">
+
+        <!-- CREAR TICKET -->
+        <div class="card" id="create-ticket-card">
+            <div class="card-header">
+                <i class="fas fa-plus-circle"></i>
+                <h3>Nuevo Ticket</h3>
+            </div>
+            <div class="card-body">
+                <form id="ticket-form" novalidate>
+                    <div class="form-group">
+                        <label for="ticket-subject">Asunto</label>
+                        <input type="text" id="ticket-subject" placeholder="Describe brevemente tu problema..." maxlength="200" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ticket-description">Descripción</label>
+                        <textarea id="ticket-description" placeholder="Explica con más detalle lo que ocurre, pasos para reproducirlo, etc." maxlength="2000" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ticket-type">Tipo</label>
+                            <select id="ticket-type" required>
+                                <option value="duda">Duda</option>
+                                <option value="bug">Error / Bug</option>
+                                <option value="sugerencia">Sugerencia</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticket-priority">Prioridad</label>
+                            <select id="ticket-priority">
+                                <option value="low">Baja</option>
+                                <option value="medium">Media</option>
+                                <option value="high">Alta</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" id="btn-create-ticket">
+                        <i class="fas fa-paper-plane"></i> Enviar Ticket
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MIS TICKETS -->
+        <div class="card ticket-list-panel" id="my-tickets-card">
+            <div class="card-header">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>Mis Tickets</h3>
+                <button id="btn-refresh-tickets" title="Actualizar" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:0.9rem;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <div id="tickets-loading" class="loading-spinner" style="display:none;">
+                <i class="fas fa-spinner fa-spin"></i> Cargando tickets...
+            </div>
+
+            <div id="tickets-container" class="tickets-grid"></div>
+        </div>
+
+        <!-- DETALLE DEL TICKET -->
+        <div class="card ticket-detail" id="ticket-detail-card">
+            <div class="card-header" id="detail-header">
+                <i class="fas fa-comments"></i>
+                <h3 id="detail-title">Detalle del Ticket</h3>
+                <div id="detail-status-badge" style="margin-left:auto;"></div>
+                <button id="btn-close-detail" title="Cerrar" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:8px;font-size:1rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="detail-subject" id="detail-subject"></div>
+            <div class="detail-description" id="detail-description"></div>
+            <div class="detail-meta" id="detail-meta"></div>
+
+            <!-- Hilo de mensajes -->
+            <div id="messages-thread" class="messages-thread"></div>
+
+            <!-- Responder -->
+            <div class="reply-section" id="reply-section">
+                <textarea id="reply-input" placeholder="Escribe tu respuesta aquí..." rows="3"></textarea>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button class="btn-reply" id="btn-send-reply">
+                        <i class="fas fa-paper-plane"></i> Enviar
+                    </button>
+                    <button class="btn-close-ticket" id="btn-close-ticket">
+                        <i class="fas fa-times-circle"></i> Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /soporte-layout -->
+</main>
+
+<footer class="footer">
+    <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
+    <p>
+        <a href="mailto:tooeasycontactanos@gmail.com">Contacto: tooeasycontactanos@gmail.com</a>
+        <div class="terms-group">
+            <input type="checkbox" id="terminos" required hidden>
+            <label for="terminos">
+                <span class="terms-link">Términos y Condiciones</span>
+            </label>
+        </div>
+    </p>
+</footer>
+
+<script src="../public/js/data/terminos.js"></script>
+<script type="module" src="../public/js/pages/soporte.js"></script>
+</body>
+</html>

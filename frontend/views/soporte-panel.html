@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Soporte - TOO-EASY</title>
+    <link rel="icon" type="image/x-icon" href="../public/img/Imagen1.png">
+
+    <link rel="stylesheet" href="../public/css/soporte-panel.css">
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/alerts.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
+
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <h1>TOO-EASY</h1>
+        <p>PANEL DE SOPORTE</p>
+    </div>
+    <nav class="nav">
+        <a href="/dashboard.html">DASHBOARD</a>
+        <a href="/soporte.html">MIS TICKETS</a>
+        <a href="/soporte-panel.html" style="color:#d4b896;">PANEL</a>
+        <a href="/perfil.html">PERFIL</a>
+        <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
+            <img src="../public/img/Salida.png" alt="Salir">
+        </a>
+    </nav>
+</header>
+
+<script type="module" src="/public/js/modules/nav-init.js"></script>
+
+<main>
+
+    <!-- Toolbar -->
+    <div class="panel-toolbar">
+        <h2><i class="fas fa-headset"></i> Panel de Soporte</h2>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span class="last-update" id="last-update"></span>
+            <button class="btn-refresh" id="btn-refresh">
+                <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="panel-stats" id="panel-stats">
+        <div class="stat-card">
+            <div class="stat-number" id="stat-total">—</div>
+            <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card stat-open">
+            <div class="stat-number" id="stat-open">—</div>
+            <div class="stat-label">Abiertos</div>
+        </div>
+        <div class="stat-card stat-in-progress">
+            <div class="stat-number" id="stat-in-progress">—</div>
+            <div class="stat-label">En progreso</div>
+        </div>
+        <div class="stat-card stat-waiting">
+            <div class="stat-number" id="stat-waiting">—</div>
+            <div class="stat-label">Esperando usuario</div>
+        </div>
+        <div class="stat-card stat-resolved">
+            <div class="stat-number" id="stat-resolved">—</div>
+            <div class="stat-label">Resueltos</div>
+        </div>
+    </div>
+
+    <!-- Main body -->
+    <div class="panel-body">
+
+        <!-- Board (4 columnas) -->
+        <div class="board">
+
+            <!-- Cola: open sin asignar -->
+            <div class="board-column">
+                <div class="column-header col-open">
+                    <i class="fas fa-inbox"></i>
+                    <h4>Cola</h4>
+                    <span class="col-count" id="count-open">0</span>
+                </div>
+                <div class="column-body" id="col-open">
+                    <div class="col-empty">Sin tickets en cola</div>
+                </div>
+            </div>
+
+            <!-- En progreso -->
+            <div class="board-column">
+                <div class="column-header col-in-progress">
+                    <i class="fas fa-spinner"></i>
+                    <h4>En progreso</h4>
+                    <span class="col-count" id="count-in-progress">0</span>
+                </div>
+                <div class="column-body" id="col-in-progress">
+                    <div class="col-empty">Sin tickets en progreso</div>
+                </div>
+            </div>
+
+            <!-- Esperando usuario -->
+            <div class="board-column">
+                <div class="column-header col-waiting">
+                    <i class="fas fa-clock"></i>
+                    <h4>Esperando usuario</h4>
+                    <span class="col-count" id="count-waiting">0</span>
+                </div>
+                <div class="column-body" id="col-waiting">
+                    <div class="col-empty">Sin tickets esperando</div>
+                </div>
+            </div>
+
+            <!-- Resueltos recientes -->
+            <div class="board-column">
+                <div class="column-header col-resolved">
+                    <i class="fas fa-check-circle"></i>
+                    <h4>Resueltos recientes</h4>
+                    <span class="col-count" id="count-resolved">0</span>
+                </div>
+                <div class="column-body" id="col-resolved">
+                    <div class="col-empty">Sin tickets resueltos</div>
+                </div>
+            </div>
+
+        </div><!-- /board -->
+
+        <!-- Panel de detalle -->
+        <div class="detail-panel" id="detail-panel">
+            <div class="detail-empty" id="detail-empty">
+                <i class="fas fa-mouse-pointer"></i>
+                <p>Selecciona un ticket para ver su detalle</p>
+            </div>
+
+            <!-- Contenido del detalle (oculto hasta seleccionar) -->
+            <div id="detail-content" style="display:none;">
+
+                <div class="detail-header">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3 id="d-subject">—</h3>
+                    <button class="btn-icon" id="btn-close-detail" title="Cerrar detalle">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="detail-user-info" id="d-user-info">
+                    <span><i class="fas fa-user"></i> <span id="d-user-name">—</span></span>
+                    <span><i class="fas fa-envelope"></i> <span id="d-user-email">—</span></span>
+                </div>
+
+                <div class="detail-meta-row" id="d-meta-row">
+                    <!-- badges: status, priority, type, date -->
+                </div>
+
+                <!-- Mensajes -->
+                <div class="detail-messages" id="d-messages">
+                    <div class="messages-empty">Sin mensajes</div>
+                </div>
+
+                <!-- Historial de eventos -->
+                <div class="detail-events">
+                    <h5><i class="fas fa-history"></i> Historial</h5>
+                    <div id="d-events"></div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="detail-actions" id="d-actions">
+                    <button class="btn-action btn-take" id="btn-take">
+                        <i class="fas fa-hand-paper"></i> Tomar
+                    </button>
+                    <select class="status-select" id="status-select">
+                        <option value="">Cambiar estado...</option>
+                        <option value="open">Abierto</option>
+                        <option value="in_progress">En progreso</option>
+                        <option value="waiting_user">Esperando usuario</option>
+                        <option value="resolved">Resuelto</option>
+                        <option value="closed">Cerrado</option>
+                    </select>
+                    <button class="btn-action btn-resolve" id="btn-apply-status">
+                        <i class="fas fa-check"></i> Aplicar
+                    </button>
+                </div>
+
+                <!-- Respuesta -->
+                <div class="detail-reply">
+                    <div class="reply-tabs">
+                        <button class="tab-btn active" data-tab="reply" id="tab-reply">
+                            <i class="fas fa-reply"></i> Responder
+                        </button>
+                        <button class="tab-btn" data-tab="note" id="tab-note">
+                            <i class="fas fa-sticky-note"></i> Nota interna
+                        </button>
+                    </div>
+                    <div class="reply-input-row">
+                        <textarea id="reply-textarea" placeholder="Escribe tu respuesta..." rows="3"></textarea>
+                        <button class="btn-send" id="btn-send">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div><!-- /detail-content -->
+        </div><!-- /detail-panel -->
+
+    </div><!-- /panel-body -->
+
+</main>
+
+<footer class="footer">
+    <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
+</footer>
+
+<script type="module" src="../public/js/pages/soporte-panel.js"></script>
+</body>
+</html>

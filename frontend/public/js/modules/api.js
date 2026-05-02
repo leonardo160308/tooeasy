@@ -296,3 +296,140 @@ export async function getChallengesProgress(userId) {
         return { success: false, progress: {} };
     }
 }
+
+// ========================================
+// 7. SOPORTE — USUARIO
+// ========================================
+export async function createTicket(ticketData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(ticketData)
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error creando ticket:', error);
+        return { success: false, message: 'Error de conexión con el servidor.' };
+    }
+}
+
+export async function getMyTickets(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets/my?userId=${userId}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo tickets:', error);
+        return { success: false, data: [] };
+    }
+}
+
+export async function getMyTicketDetail(userId, ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets/my/${ticketId}?userId=${userId}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo detalle de ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function replyToMyTicket(userId, ticketId, message) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets/my/${ticketId}/reply`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, message })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error respondiendo a ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function closeMyTicket(userId, ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets/my/${ticketId}/close`, {
+            method:  'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error cerrando ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+// ========================================
+// 8. SOPORTE — PANEL SUPPORT
+// ========================================
+export async function getSupportTickets(userId, filters = {}) {
+    try {
+        const params = new URLSearchParams({ userId });
+        if (filters.status)      params.set('status',      filters.status);
+        if (filters.priority)    params.set('priority',    filters.priority);
+        if (filters.assigned_to) params.set('assigned_to', filters.assigned_to);
+        const response = await fetch(`${API_BASE_URL}/support/tickets?${params}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo tickets de soporte:', error);
+        return { success: false, data: [] };
+    }
+}
+
+export async function getSupportTicketDetail(userId, ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/tickets/${ticketId}?userId=${userId}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo detalle de soporte:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function takeTicket(userId, ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/tickets/${ticketId}/take`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error tomando ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function changeTicketStatus(userId, ticketId, status) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/tickets/${ticketId}/status`, {
+            method:  'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, status })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error cambiando estado de ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function replyAsSupport(userId, ticketId, message, isInternal = false) {
+    try {
+        const endpoint = isInternal
+            ? `${API_BASE_URL}/support/tickets/${ticketId}/note`
+            : `${API_BASE_URL}/support/tickets/${ticketId}/reply`;
+        const response = await fetch(endpoint, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, message })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error enviando mensaje de soporte:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}

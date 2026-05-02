@@ -18,6 +18,7 @@ import authRoutes          from './backend/routes/authRoutes.js';
 import authRecoveryRoutes  from './backend/routes/authRecoveryRoutes.js';
 import inversionRoutes     from './backend/routes/inversionRoutes.js';
 import progressRoutes      from './backend/routes/progressRoutes.js';
+import ticketRoutes        from './backend/routes/ticketRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -113,6 +114,7 @@ app.use('/api', challengeRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', inversionRoutes);
 app.use('/api', progressRoutes);
+app.use('/api', ticketRoutes);
 
 // =====================
 // SERVIDOR
