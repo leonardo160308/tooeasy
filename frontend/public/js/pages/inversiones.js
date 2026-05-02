@@ -826,15 +826,15 @@ function renderHistorial() {
                 </div>
             </div>
             <div class="hist-actions">
-                <button class="btn-secondary btn-small" onclick="verSimulacion(${sim.id})">Ver</button>
-                <button class="btn-danger btn-small" onclick="eliminarSimulacion(${sim.id})">Eliminar</button>
+                <button class="btn-secondary btn-small" onclick="verSimulacion('${sim.id}')">Ver</button>
+                <button class="btn-danger btn-small" onclick="eliminarSimulacion('${sim.id}')">Eliminar</button>
             </div>
         </div>`;
     }).join('');
 
     document.querySelectorAll('.compare-check').forEach(cb => {
         cb.addEventListener('change', () => {
-            const id = parseInt(cb.dataset.id);
+            const id = cb.dataset.id;
             cb.checked ? state.compareSeleccion.add(id) : state.compareSeleccion.delete(id);
             actualizarBtnComparar();
         });

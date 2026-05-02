@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
     <link rel="stylesheet" href="../public/css/inversiones.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
 
     <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
     
@@ -368,7 +369,26 @@
     </main>
 </div>
 
+<footer class="footer">
+    <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
+    <p>        
+        <a href="mailto:tooeasycontactanos@gmail.com">        Contacto: tooeasycontactanos@gmail.com</a>  
+        <div class="terms-group">
+    <!-- Checkbox oculto (solo para JS y validación) -->
+    <input type="checkbox" id="terminos" required hidden>
 
+    <!-- Texto clickeable -->
+    <label for="terminos">
+        <span class="terms-link">Términos y Condiciones</span>
+    </label>
+</div>
+
+    </p>
+</footer>
+
+
+
+<script src="../public/js/data/terminos.js"></script>
 
 <!-- Conectar el DOM de res-prob-gan2 con res-prob-gan (misma fuente de datos) -->
 <script src="../public/js/pages/inversiones-sync.js"></script>
