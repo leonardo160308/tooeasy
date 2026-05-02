@@ -233,19 +233,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${mensaje}
             </p>
             <div class="modal-final-btns">
-                <button onclick="window.location.href='/lecciones.html'"
-                        class="btn-modal btn-secondary">
+                <button id="btn-final-lecciones" class="btn-modal btn-secondary">
                     Ver lecciones
                 </button>
                 ${!exito
-                    ? `<button onclick="window.location.reload()"
-                              class="btn-modal btn-primary">
+                    ? `<button id="btn-final-reintentar" class="btn-modal btn-primary">
                           🔄 Reintentar
                       </button>`
                     : ''}
             </div>`;
 
         modalFinal.classList.add('modal-final-active');
+
+        document.getElementById('btn-final-lecciones').addEventListener('click', () => {
+            window.location.href = '/lecciones.html';
+        });
+        if (!exito) {
+            document.getElementById('btn-final-reintentar').addEventListener('click', () => {
+                window.location.reload();
+            });
+        }
     }
 
     cargarPregunta();
