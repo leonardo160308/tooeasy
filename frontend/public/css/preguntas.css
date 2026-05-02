@@ -439,7 +439,6 @@ body {
 /* ── BOTÓN COMPROBAR ── */
 .boton-comprobar {
     align-self: flex-end; /* Movido a la derecha para mejor flujo UX */
-    display: none; 
     background: linear-gradient(135deg, var(--accent), #d19a4d);
     color: #fff;
     border: none;

@@ -914,7 +914,9 @@ body {
 }
 
 /* ── CONFIRM OVERLAY ── */
-.confirm-overlay {
+/* Uses #id selector (higher specificity than .class) to override
+   the display:flex from alerts.css which also uses .confirm-overlay */
+#confirmOverlay {
     display: none;
     position: fixed;
     inset: 0;
@@ -926,7 +928,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
-.confirm-overlay.active { display: flex; animation: fadeInModal 0.28s ease; }
+#confirmOverlay.active { display: flex; animation: fadeInModal 0.28s ease; }
 
 .confirm-box {
     background: white;
