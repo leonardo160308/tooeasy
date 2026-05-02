@@ -308,7 +308,7 @@ function renderCategoryLevelsPage() {
     container.innerHTML = '';
 
     if (!categories.length) {
-        container.innerHTML = '<p style="color:var(--ink-muted);padding:40px;text-align:center">No hay categorías. Créalas primero.</p>';
+        container.innerHTML = '<p class="admin-empty-msg">No hay categorías. Créalas primero.</p>';
         return;
     }
 
@@ -318,17 +318,17 @@ function renderCategoryLevelsPage() {
         const isFull     = catLevels.length >= totalAllow;
 
         const section = document.createElement('div');
-        section.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--sh-xs)';
+        section.className = 'admin-cat-section';
         section.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1.5px solid var(--border)">
-                <div>
-                    <div style="font-size:15px;font-weight:700;color:var(--ink)">${escHtml(cat.nombre)}</div>
-                    <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">
+            <div class="admin-cat-header">
+                <div class="admin-cat-info">
+                    <div class="admin-cat-name">${escHtml(cat.nombre)}</div>
+                    <div class="admin-cat-range">
                         Rango N${cat.nivel_inicio}–N${cat.nivel_fin} &middot; ${catLevels.length}/${totalAllow} niveles
                     </div>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px">
-                    <span style="background:${isFull ? 'var(--red-bg)' : 'var(--green-bg)'};color:${isFull ? 'var(--red)' : 'var(--green)'};padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700">
+                <div class="admin-cat-actions">
+                    <span class="${isFull ? 'badge-full' : 'badge-available'}">
                         ${isFull ? '🔒 Completa' : '✓ Disponible'}
                     </span>
                     ${!isFull ? `<button class="btn btn-sm btn-primary btn-new-lvl" data-cat="${cat.id}" data-catname="${escHtml(cat.nombre)}">
@@ -338,17 +338,17 @@ function renderCategoryLevelsPage() {
             </div>
             <div class="levels-list">
                 ${catLevels.length ? catLevels.map(lvl => `
-                    <div style="background:var(--paper);padding:11px 16px;border-radius:var(--r-sm);display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border:1px solid var(--border)">
-                        <div>
-                            <div style="font-size:13.5px;font-weight:700;color:var(--ink)">N${lvl.orden}: ${escHtml(lvl.nombre)}</div>
-                            <div style="font-size:12px;color:var(--ink-muted)">${escHtml(lvl.descripcion || '')}</div>
+                    <div class="admin-level-item">
+                        <div class="admin-level-info">
+                            <div class="admin-level-name">N${lvl.orden}: ${escHtml(lvl.nombre)}</div>
+                            <div class="admin-level-desc">${escHtml(lvl.descripcion || '')}</div>
                         </div>
-                        <div style="display:flex;gap:6px">
+                        <div class="admin-level-btns">
                             <button class="btn-icon edit btn-edit-lvl" data-id="${lvl.id}"><i class="fas fa-pen"></i></button>
                             <button class="btn-icon del btn-del-lvl" data-id="${lvl.id}"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>`).join('')
-                : `<p style="color:var(--ink-muted);font-style:italic;text-align:center;padding:16px;font-size:13px">No hay niveles en esta categoría.</p>`}
+                : `<p class="admin-empty-level">No hay niveles en esta categoría.</p>`}
             </div>`;
         container.appendChild(section);
 
@@ -504,7 +504,7 @@ function renderFlashcards(levelId) {
         <div class="item-card">
             <h3>${escHtml(f.titulo)}</h3>
             <p>${escHtml(f.contenido.substring(0, 100))}${f.contenido.length > 100 ? '…' : ''}</p>
-            ${f.imagen ? `<img src="${f.imagen}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;margin-bottom:10px">` : ''}
+            ${f.imagen ? `<img src="${f.imagen}" class="admin-thumb">` : ''}
             <div class="item-actions">
                 <button class="btn btn-sm btn-ghost btn-edit-fc" data-id="${f.id}"><i class="fas fa-pen"></i></button>
                 <button class="btn btn-sm btn-danger btn-del-fc" data-id="${f.id}" data-level="${f.level_id}"><i class="fas fa-trash"></i></button>
@@ -631,10 +631,10 @@ function renderQuestions(levelId) {
     container.innerHTML = questions.map(q => `
         <div class="item-card">
             <h3>${escHtml(q.pregunta.substring(0, 70))}${q.pregunta.length > 70 ? '…' : ''}</h3>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-                <span style="font-size:11px;background:var(--paper);padding:2px 8px;border-radius:20px;border:1px solid var(--border);color:var(--ink-muted)">${Object.keys(q.opciones).length} opciones</span>
-                <span style="font-size:11px;background:var(--green-bg);padding:2px 8px;border-radius:20px;color:var(--green);font-weight:700">✓ ${q.correcta}</span>
-                <span style="font-size:11px;background:var(--paper);padding:2px 8px;border-radius:20px;border:1px solid var(--border);color:var(--ink-muted)">${q.dificultad}</span>
+            <div class="question-tags">
+                <span class="tag-options">${Object.keys(q.opciones).length} opciones</span>
+                <span class="tag-correct">✓ ${q.correcta}</span>
+                <span class="tag-difficulty">${q.dificultad}</span>
             </div>
             <div class="item-actions">
                 <button class="btn btn-sm btn-ghost btn-edit-q" data-id="${q.id}"><i class="fas fa-pen"></i></button>

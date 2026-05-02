@@ -659,3 +659,24 @@ h2 {
 .legend-ingresos,
 .legend-egresos { display: none; }
 #edit-movement-container { display: none; }
+#edit-movement-container.active { display: block; }
+
+/* ── CHART LEGEND TAB OVERRIDES ── */
+#chart-legend.show-ingresos .legend-balance { display: none; }
+#chart-legend.show-ingresos .legend-ingresos { display: flex; }
+#chart-legend.show-egresos  .legend-balance  { display: none; }
+#chart-legend.show-egresos  .legend-egresos  { display: flex; }
+
+/* ── MOVEMENT LIST ITEMS ── */
+.txt-deficit { color: #E57373; }
+.txt-surplus  { color: #81C784; }
+.mov-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+.mov-item-cat    { flex: 1; font-size: 0.9rem; color: #555; }
+.mov-item-amount { font-weight: bold; margin-right: 10px; }
+.mov-no-items    { color: #999; font-style: italic; }

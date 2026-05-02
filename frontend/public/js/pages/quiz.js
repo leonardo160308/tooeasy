@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         seleccionUsuario = null;
         preguntaEvaluada = false;
         ocultarFeedback();
-        btnComprobar.style.display = 'none';
-        btnComprobar.disabled      = false;
+        btnComprobar.classList.add('hidden');
+        btnComprobar.disabled = false;
 
         const p       = preguntas[preguntaIndex];
         const numActual = preguntaIndex + 1;
@@ -76,15 +76,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (pregActualLbl)  pregActualLbl.textContent  = numActual;
         if (contadorLabel)  contadorLabel.textContent  = `${numActual} / ${preguntas.length}`;
-        barraProgreso.style.width = `${(numActual / preguntas.length) * 100}%`;
+        barraProgreso.style.setProperty('--fill-w', `${(numActual / preguntas.length) * 100}%`);
 
         divOpciones.innerHTML = '';
         Object.keys(p.opciones).forEach((key, idx) => {
             const btn = document.createElement('div');
             btn.classList.add('opcion');
-            btn.dataset.key          = key;
-            btn.style.opacity        = '0';
-            btn.style.transform      = 'translateX(-14px)';
+            btn.dataset.key   = key;
+            btn.dataset.delay = idx;
             btn.innerHTML = `
                 <span class="letra">${key}</span>
                 <span class="texto-opcion">${p.opciones[key]}</span>
@@ -93,11 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             divOpciones.appendChild(btn);
 
             requestAnimationFrame(() => {
-                setTimeout(() => {
-                    btn.style.transition = 'opacity .28s ease, transform .28s ease';
-                    btn.style.opacity    = '1';
-                    btn.style.transform  = 'translateX(0)';
-                }, idx * 55);
+                setTimeout(() => btn.classList.add('entering'), 0);
             });
         });
     }
@@ -107,14 +102,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         divOpciones.querySelectorAll('.opcion').forEach(o => o.classList.remove('seleccionada'));
         btn.classList.add('seleccionada');
         seleccionUsuario = key;
-        btnComprobar.style.display = 'block';
+        btnComprobar.classList.remove('hidden');
     }
 
     btnComprobar.addEventListener('click', () => {
         if (preguntaEvaluada || !seleccionUsuario) return;
-        preguntaEvaluada       = true;
-        btnComprobar.disabled  = true;
-        btnComprobar.style.display = 'none';
+        preguntaEvaluada      = true;
+        btnComprobar.disabled = true;
+        btnComprobar.classList.add('hidden');
 
         const p          = preguntas[preguntaIndex];
         const esCorrecta = seleccionUsuario === p.correcta;
@@ -122,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         divOpciones.querySelectorAll('.opcion').forEach(opt => {
             const k = opt.dataset.key;
-            opt.style.pointerEvents = 'none';
+            opt.classList.add('no-interact');
             if (k === p.correcta) {
                 opt.classList.remove('seleccionada', 'dimmed');
                 opt.classList.add('correcta');
@@ -224,23 +219,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const pct = Math.round((aciertos / preguntas.length) * 100);
 
         modalBody.innerHTML = `
-            <div style="margin-bottom:6px;font-size:3.8rem;line-height:1;">
+            <div class="modal-final-ico">
                 ${exito ? '🏆' : '📚'}
             </div>
-            <h2 style="font-size:1.55rem;font-weight:800;color:#2C405B;margin-bottom:8px;">
+            <h2 class="modal-final-title">
                 ${exito ? '¡Felicidades!' : '¡Casi lo logras!'}
             </h2>
-            <p style="font-size:2rem;font-weight:900;
-                      color:${exito ? '#1e8a4a' : '#c0392b'};margin-bottom:6px;">
+            <p class="modal-final-score ${exito ? 'score-success' : 'score-fail'}">
                 ${aciertos} / ${preguntas.length}
             </p>
-            <p style="font-size:.88rem;color:#718096;margin-bottom:4px;">${pct}% de aciertos</p>
-            <p style="font-size:.88rem;color:#4a5568;margin-bottom:16px;line-height:1.55;
-                      background:${exito ? '#eaf7f0' : '#fff3e0'};
-                      border-radius:10px;padding:10px 14px;">
+            <p class="modal-final-pct">${pct}% de aciertos</p>
+            <p class="modal-final-msg ${exito ? 'msg-success' : 'msg-fail'}">
                 ${mensaje}
             </p>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <div class="modal-final-btns">
                 <button onclick="window.location.href='/lecciones.html'"
                         class="btn-modal btn-secondary">
                     Ver lecciones
@@ -253,7 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     : ''}
             </div>`;
 
-        modalFinal.style.display = 'flex';
+        modalFinal.classList.add('modal-final-active');
     }
 
     cargarPregunta();

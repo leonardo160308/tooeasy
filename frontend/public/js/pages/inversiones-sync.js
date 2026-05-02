@@ -18,6 +18,6 @@ if (resVar95El) {
     new MutationObserver(() => {
         const val = document.getElementById('res-var95').textContent;
         const colorEl = document.getElementById('res-var95');
-        if (colorEl && val !== '—') colorEl.style.color = 'var(--danger)';
+        if (colorEl && val !== '—') colorEl.classList.add('val-negative');
     }).observe(resVar95El, { childList: true, characterData: true, subtree: true });
 }

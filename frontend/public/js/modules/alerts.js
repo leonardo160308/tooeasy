@@ -142,28 +142,11 @@ export function alertaConfirmacion(mensaje, titulo = '¿Estás seguro?') {
     return new Promise((resolve) => {
         // Crear overlay
         const overlay = document.createElement('div');
-        overlay.style.cssText = `
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 99998;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s;
-        `;
+        overlay.className = 'confirm-overlay';
 
         // Crear modal
         const modal = document.createElement('div');
-        modal.style.cssText = `
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        `;
+        modal.className = 'confirm-modal';
 
         modal.innerHTML = `
             <h2 class="confirm-title">${titulo}</h2>
@@ -179,7 +162,7 @@ export function alertaConfirmacion(mensaje, titulo = '¿Estás seguro?') {
 
         // Función para cerrar
         const close = (result) => {
-            overlay.style.animation = 'fadeOut 0.3s';
+            overlay.classList.add('hiding');
             setTimeout(() => {
                 overlay.remove();
                 resolve(result);

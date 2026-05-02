@@ -70,9 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (allCategoriesDB.length === 0) {
             tarjetasContainer.innerHTML = `
-                <div style="text-align:center;padding:40px;color:#718096;font-size:1rem;font-weight:600;width:100%;">
-                    No hay categorías disponibles aún.
-                </div>`;
+                <div class="no-categories-msg">No hay categorías disponibles aún.</div>`;
             return;
         }
 
@@ -95,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="levels-container hidden">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
+                        <div class="progress-fill"></div>
                     </div>
                 </div>`;
 
@@ -144,8 +142,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (categoryLevels.length === 0) {
             const msg = document.createElement('p');
-            msg.textContent       = 'Próximamente...';
-            msg.style.cssText     = 'padding:10px;color:#666;text-align:center;font-style:italic;';
+            msg.textContent = 'Próximamente...';
+            msg.className   = 'level-soon-msg';
             levelsContainer.insertBefore(msg, progressBarEl);
             return;
         }
@@ -201,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pct = categoryLevels.length === 0
                 ? 0
                 : (completedCount / categoryLevels.length) * 100;
-            fill.style.width = `${pct}%`;
+            fill.style.setProperty('--fill-w', `${pct}%`);
         }
     }
 
@@ -222,7 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('❌ Error cargando datos:', error);
         alertaError('Error de conexión al cargar lecciones');
         if (loadingEl) {
-            loadingEl.innerHTML = '<p style="color:red;">Error al cargar. Recarga la página.</p>';
+            loadingEl.innerHTML = '<p class="error-load-msg">Error al cargar. Recarga la página.</p>';
         }
     }
 });

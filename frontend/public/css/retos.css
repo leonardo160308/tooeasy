@@ -49,6 +49,9 @@ body {
     overflow: hidden;
 }
 
+/* ── CHALLENGE STATES ── */
+.btn-reto.challenge-completed { border-color: #27ae60 !important; color: #27ae60 !important; }
+
 /* ── PANEL IZQUIERDO ── */
 .left-panel {
     width: 480px;
@@ -248,6 +251,7 @@ body {
 
 .progress-fill {
     height: 100%;
+    width: var(--fill-w, 0%);
     background: linear-gradient(90deg, rgba(255,255,255,0.7), #fff);
     border-radius: 10px;
     transition: width 0.8s cubic-bezier(0.4,0,0.2,1);

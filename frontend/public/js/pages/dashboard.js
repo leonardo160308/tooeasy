@@ -562,10 +562,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         txtRestante.textContent = `$${faltaParaMeta.toFixed(2)}`;
 
         if (ahorroMensual < 0) {
-            txtAhorro.style.color = '#E57373';
+            txtAhorro.classList.remove('txt-surplus');
+            txtAhorro.classList.add('txt-deficit');
             txtEstado.textContent = 'Déficit';
         } else {
-            txtAhorro.style.color = '#81C784';
+            txtAhorro.classList.remove('txt-deficit');
+            txtAhorro.classList.add('txt-surplus');
             txtEstado.textContent = (faltaParaMeta === 0 && datosFijos.metaCantidad > 0)
                 ? '¡Meta Alcanzada!'
                 : 'En progreso';
@@ -606,18 +608,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         ];
 
         if (todosMovs.length === 0) {
-            listMovimientos.innerHTML = '<li><em style="color:#999">Sin movimientos.</em></li>';
+            listMovimientos.innerHTML = '<li><em class="mov-no-items">Sin movimientos.</em></li>';
         } else {
             todosMovs.forEach(m => {
                 const li = document.createElement('li');
-                li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;';
+                li.className = 'mov-list-item';
                 li.innerHTML = `
-                    <span style="flex:1; font-size:0.9rem; color:#555;">${m.categoria}</span>
-                    <span class="${m.tipo === 'income' ? 'text-green' : 'text-red'}" style="font-weight:bold; margin-right:10px;">
+                    <span class="mov-item-cat">${m.categoria}</span>
+                    <span class="${m.tipo === 'income' ? 'text-green' : 'text-red'} mov-item-amount">
                         ${m.tipo === 'income' ? '+' : '-'}$${m.monto.toFixed(2)}
                     </span>
-                    <button class="btn-edit-mov" data-id="${m.id}" title="Editar movimiento"
-                        style="background:none;border:1px solid #6585AA;border-radius:6px;color:#6585AA;cursor:pointer;padding:4px 8px;font-size:0.85rem;transition:background 0.2s;">✏️</button>
+                    <button class="btn-edit-mov" data-id="${m.id}" title="Editar movimiento">✏️</button>
                 `;
                 li.querySelector('.btn-edit-mov').addEventListener('click', () => mostrarFormEdicion(m));
                 listMovimientos.appendChild(li);
@@ -630,12 +631,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         selEditTipo.value = movimiento.tipo;
         llenarCategorias(selEditCat, movimiento.tipo, movimiento.categoria);
         inpEditMonto.value = movimiento.monto;
-        editContainer.style.display = 'block';
+        editContainer.classList.add('active');
         editContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function ocultarFormEdicion() {
-        editContainer.style.display = 'none';
+        editContainer.classList.remove('active');
         movimientoEnEdicion = null;
         if (formEdicion) formEdicion.reset();
     }

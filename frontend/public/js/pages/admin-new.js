@@ -140,36 +140,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             const isFull      = catLevels.length >= totalAllow;
 
             return `
-            <div class="category-card" style="
-                border:1px solid #ddd; padding:20px; margin-bottom:20px;
-                border-radius:12px; background:white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <div class="category-card">
 
-                <div style="display:flex;justify-content:space-between;align-items:center;
-                            border-bottom:2px solid #eee;padding-bottom:10px;margin-bottom:15px;">
+                <div class="cat-section-header">
                     <div>
-                        <h3 style="margin:0;color:#2c3e50;font-size:1.3rem;">${cat.nombre}</h3>
-                        <small style="color:#7f8c8d;">Rango de niveles: ${cat.nivel_inicio} – ${cat.nivel_fin}</small>
+                        <h3>${cat.nombre}</h3>
+                        <small>Rango de niveles: ${cat.nivel_inicio} – ${cat.nivel_fin}</small>
                     </div>
-                    <span style="background:${isFull ? '#e74c3c' : '#2ecc71'};color:white;
-                                 padding:5px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;">
+                    <span class="${isFull ? 'badge-full' : 'badge-available'}">
                         ${catLevels.length} / ${totalAllow} Niveles
                     </span>
                 </div>
 
-                <p style="color:#666;margin-bottom:15px;">${cat.descripcion || 'Sin descripción'}</p>
+                <p class="cat-section-desc">${cat.descripcion || 'Sin descripción'}</p>
 
-                <div class="levels-list" style="display:flex;flex-direction:column;gap:8px;">
+                <div class="levels-list">
                     ${catLevels.length > 0 ? catLevels.map(lvl => `
-                        <div style="
-                            background:#f8f9fa;padding:12px 16px;border-radius:8px;
-                            display:flex;justify-content:space-between;align-items:center;
-                            border-left:4px solid #3498db;">
+                        <div class="level-list-item">
                             <div>
-                                <strong style="color:#2c3e50;">Nivel ${lvl.orden}: ${lvl.nombre}</strong>
-                                <br><small style="color:#7f8c8d;">${lvl.descripcion || ''}</small>
+                                <strong>Nivel ${lvl.orden}: ${lvl.nombre}</strong>
+                                <br><small>${lvl.descripcion || ''}</small>
                             </div>
-                            <div style="display:flex;gap:8px;">
+                            <div class="level-list-btns">
                                 <button class="btn-secondary btn-small btn-edit-level"
                                         data-id="${lvl.id}"
                                         title="Editar nivel">
@@ -183,20 +175,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
                         </div>
                     `).join('') : `
-                        <p style="color:#999;font-style:italic;text-align:center;padding:10px;">
-                            No hay niveles creados aún.
-                        </p>
+                        <p class="level-empty-msg">No hay niveles creados aún.</p>
                     `}
                 </div>
 
-                <div style="margin-top:16px;text-align:right;">
+                <div class="cat-section-footer">
                     ${!isFull
                         ? `<button class="btn-primary btn-new-level"
                                    data-cat-id="${cat.id}"
                                    data-cat-name="${cat.nombre}">
                                <i class="fas fa-plus"></i> Nuevo Nivel en ${cat.nombre}
                            </button>`
-                        : `<span style="color:#e74c3c;font-size:0.9em;">
+                        : `<span class="cat-section-full">
                                <i class="fas fa-lock"></i> Categoría completa
                            </span>`
                     }
@@ -356,11 +346,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         container.innerHTML = flashcards.map(f => `
             <div class="item-card">
-                <h3 style="font-size:1rem;margin-bottom:6px;">${f.titulo}</h3>
-                <p style="font-size:0.85rem;color:#666;margin-bottom:10px;">
-                    ${f.contenido.length > 100 ? f.contenido.substring(0, 100) + '...' : f.contenido}
-                </p>
-                ${f.imagen ? `<img src="${f.imagen}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-bottom:10px;">` : ''}
+                <h3>${f.titulo}</h3>
+                <p>${f.contenido.length > 100 ? f.contenido.substring(0, 100) + '...' : f.contenido}</p>
+                ${f.imagen ? `<img src="${f.imagen}" class="admin-thumb">` : ''}
                 <div class="item-actions">
                     <button class="btn-secondary btn-small btn-edit-fc" data-id="${f.id}">
                         <i class="fas fa-edit"></i> Editar
@@ -509,12 +497,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         container.innerHTML = questions.map(q => `
             <div class="item-card">
-                <h3 style="font-size:0.95rem;margin-bottom:8px;">
-                    ${q.pregunta.length > 80 ? q.pregunta.substring(0, 80) + '...' : q.pregunta}
-                </h3>
-                <div class="meta" style="display:flex;gap:12px;font-size:0.82rem;color:#7f8c8d;margin-bottom:10px;">
+                <h3>${q.pregunta.length > 80 ? q.pregunta.substring(0, 80) + '...' : q.pregunta}</h3>
+                <div class="meta">
                     <span><i class="fas fa-list"></i> ${Object.keys(q.opciones).length} opciones</span>
-                    <span><i class="fas fa-check-circle" style="color:#27ae60;"></i> Correcta: <strong>${q.correcta}</strong></span>
+                    <span><i class="fas fa-check-circle icon-correct"></i> Correcta: <strong>${q.correcta}</strong></span>
                     <span><i class="fas fa-signal"></i> ${q.dificultad || 'media'}</span>
                 </div>
                 <div class="item-actions">

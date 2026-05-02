@@ -702,6 +702,7 @@ body {
     gap: 10px;
     flex-wrap: wrap;
     line-height: 1.6;
+    margin-bottom: 6px;
 }
 
 .hist-stats {
@@ -1222,3 +1223,30 @@ button:disabled {
 
 /* Historial row button */
 .btn-row--mb { margin-bottom: 20px; }
+
+/* ── VALUE COLOR STATES ── */
+.val-positive { color: var(--success); }
+.val-negative { color: var(--danger); }
+.val-warning  { color: var(--warning); }
+
+/* ── INSTRUMENT INFO TOGGLE ── */
+.instrument-info { display: none; }
+.instrument-info.active { display: flex; }
+
+/* ── RISK GLOBAL LABEL COLORS ── */
+.risk-label-bajo  { color: #27ae60; }
+.risk-label-medio { color: #e67e22; }
+.risk-label-alto  { color: #c0392b; }
+
+/* ── RISK PREVIEW CORR INFO ── */
+.risk-corr-info { font-size: 0.78rem; opacity: 0.8; margin-left: 12px; }
+
+/* ── UTILITY ── */
+.is-hidden { display: none !important; }
+
+/* ── HISTORIAL & COMPARE HELPERS ── */
+.hist-instrs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.hist-extra-stats { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; }
+.compare-check { width: 18px; height: 18px; cursor: pointer; accent-color: var(--secondary); flex-shrink: 0; }
+.risk-badge.sm { font-size: 0.7rem; padding: 2px 8px; }
+.compare-loading { color: var(--text-muted); padding: 20px; }

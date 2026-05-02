@@ -129,8 +129,8 @@ async function verifyCode() {
         } else {
             alertaError(data.message);
             document.querySelectorAll('.otp-input').forEach(i => {
-                i.style.borderColor = '#e53e3e';
-                setTimeout(() => i.style.borderColor = '', 1500);
+                i.classList.add('otp-error');
+                setTimeout(() => i.classList.remove('otp-error'), 1500);
             });
         }
     } catch {
@@ -207,8 +207,8 @@ function checkStrength(pwd) {
 
     const colors = ['#e53e3e','#dd6b20','#d69e2e','#38a169','#27ae60'];
     const widths = [20, 40, 60, 80, 100];
-    fill.style.width      = (widths[strength - 1] || 0) + '%';
-    fill.style.background = colors[strength - 1] || '#e2e8f0';
+    fill.style.setProperty('--fill-w',  (widths[strength - 1]  || 0) + '%');
+    fill.style.setProperty('--fill-bg', colors[strength - 1]  || '#e2e8f0');
 }
 
 function togglePass(id, btn) {

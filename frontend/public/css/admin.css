@@ -494,6 +494,61 @@ form textarea { resize: vertical; min-height: 90px; }
     .modal-content { padding: 22px; }
 }
 
+/* ── CSP-SAFE CLASSES FOR JS-GENERATED ADMIN ELEMENTS ── */
+.admin-empty-msg {
+    color: var(--ink-muted);
+    padding: 40px;
+    text-align: center;
+}
+.admin-cat-section {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: var(--sh-xs);
+}
+.admin-cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px solid var(--border);
+}
+.admin-cat-info { display: flex; flex-direction: column; gap: 2px; }
+.admin-cat-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+.admin-cat-range { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+.admin-cat-actions { display: flex; align-items: center; gap: 10px; }
+.badge-full      { background: var(--red-bg);   color: var(--red);   padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-available { background: var(--green-bg); color: var(--green); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.admin-level-item {
+    background: var(--paper);
+    padding: 11px 16px;
+    border-radius: var(--r-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+}
+.admin-level-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.admin-level-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.admin-level-desc { font-size: 12px; color: var(--ink-muted); }
+.admin-level-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.admin-empty-level {
+    color: var(--ink-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 16px;
+    font-size: 13px;
+}
+.question-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.tag-options   { font-size: 11px; background: var(--paper); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--ink-muted); }
+.tag-correct   { font-size: 11px; background: var(--green-bg); padding: 2px 8px; border-radius: 20px; color: var(--green); font-weight: 700; }
+.tag-difficulty{ font-size: 11px; background: var(--paper); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--ink-muted); }
+.admin-thumb   { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+
 /* ── EXTRACTED FROM admin.html inline <style> ── */
 /* ── RESET & BASE ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1355,3 +1410,41 @@ input.invalid, textarea.invalid, select.invalid {
 .section-header-actions { display: flex; gap: 10px; align-items: center; }
 #level-category-name { background: #f4f5f7; cursor: default; color: #8691a5; }
 .btn-add-option { margin-bottom: 14px; }
+
+/* ── CATEGORY CARD (admin-new.js renderCategoriesAndLevels) ── */
+.category-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.cat-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.category-card h3 { margin: 0; color: #2c3e50; font-size: 1.3rem; }
+.category-card small { color: #7f8c8d; }
+.cat-section-desc { color: #666; margin-bottom: 15px; }
+.levels-list { display: flex; flex-direction: column; gap: 8px; }
+.level-list-item {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #3498db;
+}
+.level-list-item strong { color: #2c3e50; }
+.level-list-item small { color: #7f8c8d; }
+.level-list-btns { display: flex; gap: 8px; }
+.level-empty-msg { color: #999; font-style: italic; text-align: center; padding: 10px; }
+.cat-section-footer { margin-top: 16px; text-align: right; }
+.cat-section-full { color: #e74c3c; font-size: 0.9em; }
+.icon-correct { color: #27ae60; }

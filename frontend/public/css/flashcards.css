@@ -56,6 +56,9 @@ body {
     padding: 60px 20px 100px;
 }
 
+/* ── UTILITY ── */
+.hidden { display: none !important; }
+
 .container {
     width: 100%;
     max-width: 600px; /* Un poco más de aire */

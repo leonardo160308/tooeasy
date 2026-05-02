@@ -154,6 +154,28 @@
     to   { transform: translateY(0);    opacity: 1; }
 }
 
+/* ── CONFIRMATION OVERLAY & MODAL ── */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99998;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+}
+.confirm-overlay.hiding { animation: fadeOut 0.3s forwards; }
+.confirm-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
 /* ── CONFIRMATION MODAL ELEMENTS ── */
 .confirm-title {
     margin: 0 0 15px 0;

@@ -86,14 +86,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (current.imagen && current.imagen.trim() !== '') {
             image.src = current.imagen;
-            image.style.display = 'block';
+            image.classList.remove('hidden');
         } else {
-            image.style.display = 'none';
+            image.classList.add('hidden');
         }
 
-        btnPrev.style.display = currentIndex > 0                           ? 'flex'         : 'none';
-        btnNext.style.display = currentIndex < flashcards.length - 1      ? 'flex'         : 'none';
-        btnQuiz.style.display = currentIndex === flashcards.length - 1    ? 'inline-block' : 'none';
+        btnPrev.classList.toggle('hidden', !(currentIndex > 0));
+        btnNext.classList.toggle('hidden', !(currentIndex < flashcards.length - 1));
+        btnQuiz.classList.toggle('hidden', !(currentIndex === flashcards.length - 1));
 
         // Volver a la cara frontal al cambiar tarjeta
         cardInner.classList.remove('flipped');

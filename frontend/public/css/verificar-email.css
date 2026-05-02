@@ -211,6 +211,9 @@ h2 {
     color: #e53e3e;
 }
 
+/* ── UTILITY ── */
+.hidden { display: none !important; }
+
 /* Vista de Éxito */
 .success-view {
     display: none; /* Controlado por JS */

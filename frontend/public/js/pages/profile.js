@@ -227,28 +227,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         const nivelRequerido = idxCasa === 0 ? 1 : idxCasa * 2;
         const estaDesbloqueada = currentUserData.house_level >= nivelRequerido;
 
-        document.getElementById('house-img').src = DB_SKINS[skinId];
+        const houseImg = document.getElementById('house-img');
+        houseImg.src = DB_SKINS[skinId];
         const lblNombre = document.getElementById('house-name-lbl');
         if (estaDesbloqueada) {
             lblNombre.textContent = SKIN_NAMES[skinId];
-            document.getElementById('house-img').style.filter = 'none';
+            houseImg.classList.remove('skin-locked');
         } else {
             lblNombre.textContent = `🔒 Nivel ${nivelRequerido}`;
-            document.getElementById('house-img').style.filter = 'grayscale(100%)';
+            houseImg.classList.add('skin-locked');
         }
 
         const btn    = document.getElementById('btn-equip-house');
         const status = document.getElementById('house-status');
+        btn.classList.remove('btn-equip-equipped', 'btn-equip-equip', 'btn-equip-locked');
         if (skinId === currentUserData.current_appearance) {
-            status.style.display = 'block';
-            btn.textContent = 'Equipado'; btn.disabled = true; btn.style.background = '#4CAF50';
+            status.classList.add('active');
+            btn.textContent = 'Equipado'; btn.disabled = true; btn.classList.add('btn-equip-equipped');
         } else {
-            status.style.display = 'none';
+            status.classList.remove('active');
             if (estaDesbloqueada) {
-                btn.textContent = 'Equipar'; btn.disabled = false; btn.style.background = '#2c3e50';
+                btn.textContent = 'Equipar'; btn.disabled = false; btn.classList.add('btn-equip-equip');
                 btn.onclick = () => equiparSkinAPI(skinId, 'house');
             } else {
-                btn.textContent = 'Bloqueado'; btn.disabled = true; btn.style.background = '#999';
+                btn.textContent = 'Bloqueado'; btn.disabled = true; btn.classList.add('btn-equip-locked');
             }
         }
     }
@@ -259,28 +261,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         const nivelRequerido = idxCastor === 0 ? 1 : idxCastor * 2;
         const estaDesbloqueada = currentUserData.beaver_level >= nivelRequerido;
 
-        document.getElementById('beaver-img').src = DB_CASTORES[skinId];
+        const beaverImg = document.getElementById('beaver-img');
+        beaverImg.src = DB_CASTORES[skinId];
         const lblNombre = document.getElementById('beaver-name-lbl');
         if (estaDesbloqueada) {
             lblNombre.textContent = CASTOR_NAMES[skinId];
-            document.getElementById('beaver-img').style.filter = 'none';
+            beaverImg.classList.remove('skin-locked');
         } else {
             lblNombre.textContent = `🔒 Nivel ${nivelRequerido}`;
-            document.getElementById('beaver-img').style.filter = 'grayscale(100%)';
+            beaverImg.classList.add('skin-locked');
         }
 
         const btn    = document.getElementById('btn-equip-beaver');
         const status = document.getElementById('beaver-status');
+        btn.classList.remove('btn-equip-equipped', 'btn-equip-equip', 'btn-equip-locked');
         if (skinId === currentUserData.current_beaver) {
-            status.style.display = 'block';
-            btn.textContent = 'Equipado'; btn.disabled = true; btn.style.background = '#4CAF50';
+            status.classList.add('active');
+            btn.textContent = 'Equipado'; btn.disabled = true; btn.classList.add('btn-equip-equipped');
         } else {
-            status.style.display = 'none';
+            status.classList.remove('active');
             if (estaDesbloqueada) {
-                btn.textContent = 'Equipar'; btn.disabled = false; btn.style.background = '#2c3e50';
+                btn.textContent = 'Equipar'; btn.disabled = false; btn.classList.add('btn-equip-equip');
                 btn.onclick = () => equiparSkinAPI(skinId, 'beaver');
             } else {
-                btn.textContent = 'Bloqueado'; btn.disabled = true; btn.style.background = '#999';
+                btn.textContent = 'Bloqueado'; btn.disabled = true; btn.classList.add('btn-equip-locked');
             }
         }
     }
@@ -342,8 +346,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ── Modal avatar (standalone) ─────────────────────────────────────────
-    if (btnChangeAvatar)  btnChangeAvatar.onclick  = () => { avatarModal.style.display = 'flex'; };
-    if (closeAvatarModal) closeAvatarModal.onclick = () => { avatarModal.style.display = 'none'; };
+    if (btnChangeAvatar)  btnChangeAvatar.onclick  = () => { avatarModal.classList.add('active'); };
+    if (closeAvatarModal) closeAvatarModal.onclick = () => { avatarModal.classList.remove('active'); };
 
     document.querySelectorAll('.avatar-option').forEach(option => {
         option.onclick = () => {
@@ -371,7 +375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     applyAvatar(selectedAvatar);
                     localStorage.setItem('userAvatar', selectedAvatar);
 
-                    avatarModal.style.display = 'none';
+                    avatarModal.classList.remove('active');
                     alertaExito('¡Avatar actualizado correctamente!', { title: '¡Genial!', duration: 3000 });
 
                     // Actualizar vista previa en el modal de edición si está abierto

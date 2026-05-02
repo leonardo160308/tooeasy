@@ -1,0 +1,199 @@
+/* ========================================
+   MODAL TÉRMINOS Y CONDICIONES — TOO-EASY
+   Estilos extraídos de terminos.js para
+   cumplir con CSP style-src 'self'
+   ======================================== */
+
+/* ── Animaciones ── */
+@keyframes ttFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ttSlideUp {
+    from { transform: translateY(28px) scale(0.97); opacity: 0; }
+    to   { transform: translateY(0)     scale(1);    opacity: 1; }
+}
+
+/* ── Overlay (fondo oscuro) ── */
+.terminos-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 35, 50, 0.72);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99998;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+    animation: ttFadeIn 0.25s ease;
+}
+
+/* ── Contenedor del modal ── */
+.terminos-modal {
+    background: #ffffff;
+    color: #2d3748;
+    border-radius: 20px;
+    padding: 28px 30px 24px;
+    width: 95%;
+    max-width: 580px;
+    max-height: 82vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(26, 35, 50, 0.28);
+    position: relative;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    animation: ttSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    scrollbar-width: thin;
+    scrollbar-color: #6585AA #f0f4f8;
+}
+
+/* ── Botón cerrar ── */
+.terminos-cerrar {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: #f0f4f8;
+    border: none;
+    font-size: 22px;
+    font-weight: 700;
+    color: #718096;
+    cursor: pointer;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    line-height: 1;
+    font-family: inherit;
+}
+.terminos-cerrar:hover {
+    background: #fdecea;
+    color: #e53e3e;
+    transform: rotate(90deg);
+}
+
+/* ── Botón aceptar ── */
+.terminos-btn-aceptar {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #2C405B 0%, #3a5272 100%);
+    border: none;
+    color: white;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    border-radius: 30px;
+    padding: 13px 24px;
+    margin-top: 22px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(44, 64, 91, 0.3);
+}
+.terminos-btn-aceptar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(44, 64, 91, 0.35);
+}
+
+/* ── Label de términos ── */
+label[for="terminos"] { cursor: pointer; }
+
+/* ── Contenido HTML de los T&C ── */
+.tc-content {
+    text-align: left;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    color: #2d3748;
+}
+
+.tc-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #B6823E;
+}
+.tc-header h2 {
+    margin: 0 0 6px;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #2C405B;
+}
+.tc-header p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #718096;
+    font-weight: 600;
+}
+
+.tc-intro {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #4a5568;
+    margin: 0 0 20px;
+    background: #f0f7ff;
+    border-left: 4px solid #6585AA;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+}
+
+.tc-section-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #2C405B;
+    margin: 20px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tc-section-num {
+    background: #2C405B;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.tc-p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #4a5568;
+    margin: 0 0 14px;
+}
+.tc-p-intro { margin: 0 0 6px; }
+.tc-p-last  { margin: 0; }
+
+.tc-ul {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #4a5568;
+    margin: 0 0 14px;
+    padding-left: 20px;
+}
+
+.tc-warning {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #4a5568;
+    margin: 0 0 14px;
+    background: #fff8f0;
+    border-left: 4px solid #BA8E58;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+}
+
+.tc-link {
+    color: #2C405B;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.tc-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #a0aec0;
+    font-weight: 600;
+}

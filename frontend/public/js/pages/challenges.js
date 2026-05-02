@@ -83,11 +83,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 <div class="progress-row">
                     <div class="progress-track">
-                        <div class="progress-fill" style="width: ${percentage}%; transition: width 0.8s ease;"></div>
+                        <div class="progress-fill"></div>
                     </div>
-                    <span class="progress-text" style="color:#fff; font-weight:bold; min-width:60px; text-align:right;">
-                        ${progressLabel}
-                    </span>
+                    <span class="progress-text">${progressLabel}</span>
                     <div class="reward-pill">
                         <img src="../public/img/madera.png" alt="Madera" class="reward-icon">
                         <span>${challenge.reward_wood}</span>
@@ -95,6 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
 
+            card.querySelector('.progress-fill').style.setProperty('--fill-w', `${percentage}%`);
             challengesContainer.appendChild(card);
         });
 
@@ -118,9 +117,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const result = await completeChallenge(userId, challengeId);
 
             if (result.success) {
-                button.textContent       = '✓';
-                button.style.borderColor = '#27ae60';
-                button.style.color       = '#27ae60';
+                button.textContent = '✓';
+                button.classList.add('challenge-completed');
 
                 alertaExito(result.message || '¡Reto completado!', {
                     title: '🎉 ¡Felicidades!',

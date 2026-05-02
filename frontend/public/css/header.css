@@ -11,6 +11,9 @@
     --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
+/* ── ADMIN NAV LINK ── */
+.nav-link-admin { color: #f39c12 !important; }
+
 /* ── RESET GLOBAL anti-overflow horizontal ── */
 *, *::before, *::after {
     box-sizing: border-box;

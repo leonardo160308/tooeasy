@@ -8,7 +8,7 @@ if (isAdmin()) {
         const adminLink = document.createElement('a');
         adminLink.href = '/admin.html';
         adminLink.textContent = 'ADMIN';
-        adminLink.style.color = '#f39c12';
+        adminLink.className = 'nav-link-admin';
         nav.insertBefore(adminLink, nav.children[nav.children.length - 1]);
     }
 }

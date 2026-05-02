@@ -131,6 +131,23 @@ body {
     box-shadow: var(--shadow-md);
 }
 
+/* ── SKIN / EQUIP STATES ── */
+.skin-locked { filter: grayscale(100%); }
+
+.btn-equip-equipped { background: #4CAF50 !important; color: white !important; }
+.btn-equip-equip    { background: #2c3e50 !important; color: white !important; }
+.btn-equip-locked   { background: #999    !important; color: white !important; }
+
+/* Status badge hidden by default, shown when skin is equipped */
+#house-status,
+#beaver-status { display: none; }
+#house-status.active,
+#beaver-status.active { display: block; }
+
+/* Avatar modal toggle */
+#avatar-modal { display: none; }
+#avatar-modal.active { display: flex; }
+
 .avatar-container {
     display: flex;
     flex-direction: column;

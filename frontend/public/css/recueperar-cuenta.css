@@ -45,6 +45,16 @@ body {
     box-sizing: border-box;
 }
 
+/* ── OTP ERROR STATE ── */
+.otp-error { border-color: #e53e3e !important; }
+
+/* ── STRENGTH BAR ── */
+#strength-fill {
+    width: var(--fill-w, 0%);
+    background: var(--fill-bg, #e2e8f0);
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
 /* Control de Pasos */
 .step {
     display: none;

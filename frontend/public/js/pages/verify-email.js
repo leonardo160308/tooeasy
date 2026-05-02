@@ -95,8 +95,8 @@ async function verifyCode() {
 
             saveAuthData(data.user);
 
-            document.getElementById('verify-view').style.display  = 'none';
-            document.getElementById('success-view').style.display = 'block';
+            document.getElementById('verify-view').classList.add('hidden');
+            document.getElementById('success-view').classList.remove('hidden');
 
             alertaExito('¡Correo verificado! Bienvenido/a.', { duration: 3000 });
 

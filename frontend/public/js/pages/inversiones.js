@@ -452,7 +452,7 @@ function renderInstrumentSelects() {
                 <option value="">— Elige un instrumento —</option>
                 ${optsHtml}
             </select>
-            <div class="instrument-info" id="instr-info-${i}" style="display:none">
+            <div class="instrument-info" id="instr-info-${i}">
                 <span class="risk-badge" id="instr-risk-${i}"></span>
                 <span class="instr-desc" id="instr-desc-${i}"></span>
             </div>`;
@@ -468,13 +468,13 @@ function renderInstrumentSelects() {
 function actualizarInfoInstrumento(idx) {
     const val = $(`instr-select-${idx}`)?.value;
     const infoDiv = $(`instr-info-${idx}`);
-    if (!val || !INSTRUMENTOS[val]) { if (infoDiv) infoDiv.style.display = 'none'; return; }
+    if (!val || !INSTRUMENTOS[val]) { if (infoDiv) infoDiv.classList.remove('active'); return; }
     const instr = INSTRUMENTOS[val];
     const meta  = RIESGO_META[instr.riesgo];
     $(`instr-risk-${idx}`).className = `risk-badge ${instr.riesgo}`;
     $(`instr-risk-${idx}`).textContent = `${meta.emoji} ${meta.label} · Retorno base: ${(instr.tasa_base * 100).toFixed(1)}% · Vol: ${(instr.volatilidad * 100).toFixed(0)}%`;
     $(`instr-desc-${idx}`).textContent = instr.descripcion;
-    infoDiv.style.display = 'flex';
+    infoDiv.classList.add('active');
     $(`instr-box-${idx}`).classList.add('has-value');
 }
 
@@ -499,13 +499,14 @@ function actualizarRiesgoPreview() {
         }
         const corrProm = correlaciones.reduce((s, c) => s + c, 0) / correlaciones.length;
         const nivel = corrProm > 0.7 ? 'Alta correlación — poca diversificación' : corrProm > 0.3 ? 'Correlación moderada — diversificación media' : 'Baja correlación — buena diversificación';
-        corrInfo = `<span style="font-size:0.78rem;opacity:0.8;margin-left:12px">${nivel} (ρ promedio: ${corrProm.toFixed(2)})</span>`;
+        corrInfo = `<span class="risk-corr-info">${nivel} (ρ promedio: ${corrProm.toFixed(2)})</span>`;
     }
 
+    const riesgoClass = `risk-label-${riesgoGlobal}`;
     preview.innerHTML = `
         <span class="risk-indicator">${meta.emoji}</span>
         <div>
-            <strong>Riesgo global: <span style="color:${meta.color}">${meta.label}</span></strong>
+            <strong>Riesgo global: <span class="${riesgoClass}">${meta.label}</span></strong>
             ${corrInfo}
         </div>`;
 }
@@ -559,9 +560,11 @@ function renderResultados(r) {
     $('res-p90-capital').textContent   = fmtMXN(r.p90.capitalFinal);
     $('res-p50-real').textContent      = fmtMXN(r.p50.capitalReal);
     $('res-p50-ganancia').textContent  = fmtMXN(r.p50.ganancia);
-    $('res-p50-ganancia').style.color  = r.p50.ganancia >= 0 ? 'var(--success)' : 'var(--danger)';
+    $('res-p50-ganancia').classList.toggle('val-positive', r.p50.ganancia >= 0);
+    $('res-p50-ganancia').classList.toggle('val-negative', r.p50.ganancia < 0);
     $('res-p50-rendimiento').textContent = fmtPct(r.p50.rendimiento);
-    $('res-p50-rendimiento').style.color = r.p50.rendimiento >= 0 ? 'var(--success)' : 'var(--danger)';
+    $('res-p50-rendimiento').classList.toggle('val-positive', r.p50.rendimiento >= 0);
+    $('res-p50-rendimiento').classList.toggle('val-negative', r.p50.rendimiento < 0);
 
     // Métricas de riesgo
     $('res-sharpe').textContent      = fmtDecimal(r.avgSharpe);
@@ -581,7 +584,10 @@ function renderResultados(r) {
     // Sharpe color
     const sharpeEl = $('res-sharpe');
     if (sharpeEl) {
-        sharpeEl.style.color = r.avgSharpe >= 0.8 ? 'var(--success)' : r.avgSharpe >= 0.4 ? 'var(--warning)' : 'var(--danger)';
+        sharpeEl.classList.remove('val-positive', 'val-warning', 'val-negative');
+        if (r.avgSharpe >= 0.8)      sharpeEl.classList.add('val-positive');
+        else if (r.avgSharpe >= 0.4) sharpeEl.classList.add('val-warning');
+        else                          sharpeEl.classList.add('val-negative');
     }
 
     renderGraficaMonteCarlo(r);
@@ -678,7 +684,7 @@ function renderRecomendaciones(recs) {
     if (!list) return;
     list.innerHTML = recs.map(r => `
         <div class="rec-item ${r.tipo}">
-            <div class="rec-icon" style="font-size:0.9rem;font-weight:700;min-width:24px;text-align:center">${r.icono}</div>
+            <div class="rec-icon">${r.icono}</div>
             <div>
                 <div class="rec-title">${r.titulo}</div>
                 <div class="rec-text">${r.texto}</div>
@@ -776,7 +782,7 @@ function renderHistorial() {
     container.innerHTML = state.historial.map(sim => {
         const analisis = sim.analisis ? JSON.parse(sim.analisis) : {};
         const instrs = (sim.simulation_instruments || []).sort((a, b) => a.posicion - b.posicion)
-            .map(i => `<span class="risk-badge ${i.riesgo}" style="font-size:0.7rem;padding:2px 8px">${i.instrumento_nombre}</span>`).join('');
+            .map(i => `<span class="risk-badge sm ${i.riesgo}">${i.instrumento_nombre}</span>`).join('');
         const fecha = new Date(sim.created_at).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
         const gananciaClass = (sim.ganancia_total || 0) >= 0 ? '' : 'neg';
         const p10 = analisis.p10Capital ? fmtMXN(analisis.p10Capital) : '—';
@@ -785,16 +791,16 @@ function renderHistorial() {
 
         return `
         <div class="historial-card" id="hist-${sim.id}">
-            <input type="checkbox" class="compare-check" data-id="${sim.id}" style="width:18px;height:18px;cursor:pointer;accent-color:var(--secondary)">
+            <input type="checkbox" class="compare-check" data-id="${sim.id}">
             <div class="hist-info">
                 <div class="hist-nombre">${sim.nombre}</div>
-                <div class="hist-meta" style="gap:8px;margin-bottom:6px">
+                <div class="hist-meta">
                     <span>${fecha}</span>
                     <span>$${Math.round(sim.capital_inicial).toLocaleString('es-MX')} · ${sim.plazo_anios}a · ${sim.num_instrumentos} instr. · Infl. ${sim.inflacion ?? '—'}%</span>
                     ${analisis.escenario ? `<span>Escenario: ${ESCENARIO_FACTORES[analisis.escenario]?.nombre ?? analisis.escenario}</span>` : ''}
                 </div>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">${instrs}</div>
-                <div style="font-size:0.75rem;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap">
+                <div class="hist-instrs">${instrs}</div>
+                <div class="hist-extra-stats">
                     <span>P10: ${p10}</span><span>P50: ${fmtMXN(sim.capital_final || 0)}</span><span>P90: ${p90}</span>
                     <span>Sharpe: ${sharpe}</span>
                     ${analisis.probGanancia !== undefined ? `<span>Prob. ganancia: ${analisis.probGanancia}%</span>` : ''}
@@ -811,7 +817,7 @@ function renderHistorial() {
                 </div>
                 <div class="hist-stat">
                     <span class="risk-badge ${sim.riesgo_global}">${RIESGO_META[sim.riesgo_global]?.emoji || ''} ${RIESGO_META[sim.riesgo_global]?.label || ''}</span>
-                    <div class="hs-label" style="margin-top:2px">Riesgo</div>
+                    <div class="hs-label">Riesgo</div>
                 </div>
             </div>
             <div class="hist-actions">
@@ -916,7 +922,7 @@ async function iniciarComparacion() {
     const ids = [...state.compareSeleccion];
     if (ids.length < 2) return alertaAdvertencia('Selecciona al menos 2 simulaciones.');
     navegarA('comparar');
-    $('compare-container').innerHTML = '<p style="color:var(--text-muted);padding:20px">Cargando...</p>';
+    $('compare-container').innerHTML = '<p class="compare-loading">Cargando...</p>';
     try {
         const sims = await Promise.all(ids.map(async id => {
             const r = await fetch(`${API}/inversiones/${id}?userId=${state.userId}`);
@@ -936,7 +942,7 @@ function renderComparacion(sims) {
         { label: 'P50 capital final',       key: s => `<strong>${fmtMXN(s.capital_final || 0)}</strong>` },
         { label: 'P10 (pesimista)',         key: s => { const a = s.analisis ? JSON.parse(s.analisis) : {}; return a.p10Capital ? fmtMXN(a.p10Capital) : '—'; } },
         { label: 'P90 (optimista)',         key: s => { const a = s.analisis ? JSON.parse(s.analisis) : {}; return a.p90Capital ? fmtMXN(a.p90Capital) : '—'; } },
-        { label: 'Ganancia mediana',        key: s => `<span style="color:${(s.ganancia_total||0)>=0?'var(--success)':'var(--danger)'}">${fmtMXN(s.ganancia_total || 0)}</span>` },
+        { label: 'Ganancia mediana',        key: s => `<span class="${(s.ganancia_total||0)>=0?'val-positive':'val-negative'}">${fmtMXN(s.ganancia_total || 0)}</span>` },
         { label: 'Rendimiento mediano',     key: s => fmtPct(s.rendimiento_pct || 0) },
         { label: 'Capital real (−inf.)',    key: s => fmtMXN(s.capital_final_real || 0) },
         { label: 'Sharpe ratio',            key: s => { const a = s.analisis ? JSON.parse(s.analisis) : {}; return a.avgSharpe ? fmtDecimal(a.avgSharpe) : '—'; } },
@@ -948,13 +954,13 @@ function renderComparacion(sims) {
         { label: 'Riesgo global',           key: s => `<span class="risk-badge ${s.riesgo_global}">${RIESGO_META[s.riesgo_global]?.emoji} ${RIESGO_META[s.riesgo_global]?.label}</span>` }
     ];
 
-    const enc = `<tr><th style="text-align:left">Métrica</th>${sims.map((s, i) => `<th>Sim ${i + 1}: ${s.nombre}</th>`).join('')}</tr>`;
+    const enc = `<tr><th>Métrica</th>${sims.map((s, i) => `<th>Sim ${i + 1}: ${s.nombre}</th>`).join('')}</tr>`;
     const cuerpo = filas.map(f =>
-        `<tr><td style="font-weight:500;color:var(--primary)">${f.label}</td>${sims.map(s => `<td>${f.key(s)}</td>`).join('')}</tr>`
+        `<tr><td>${f.label}</td>${sims.map(s => `<td>${f.key(s)}</td>`).join('')}</tr>`
     ).join('');
 
     container.innerHTML = `
-        <div class="inv-card" style="margin-bottom:20px">
+        <div class="inv-card">
             <h3>Tabla comparativa (${MONTE_CARLO_ITERATIONS} iter. Monte Carlo)</h3>
             <div class="inv-table-wrapper">
                 <table class="inv-table"><thead>${enc}</thead><tbody>${cuerpo}</tbody></table>
@@ -987,7 +993,7 @@ function renderInicio() {
     if (!el || !state.historial.length) return;
     const mejor = state.historial.reduce((a, b) => (a.rendimiento_pct || 0) > (b.rendimiento_pct || 0) ? a : b);
     el.innerHTML = `
-        <div class="form-grid" style="margin:0">
+        <div class="form-grid">
             <div class="summary-card primary"><div class="card-label">Simulaciones guardadas</div><div class="card-value">${state.historial.length}</div></div>
             <div class="summary-card success"><div class="card-label">Mejor rendimiento P50</div><div class="card-value">${fmtPct(mejor.rendimiento_pct || 0)}</div><div class="card-sub">${mejor.nombre}</div></div>
             <div class="summary-card accent"><div class="card-label">Mayor capital final P50</div><div class="card-value">${fmtMXN(mejor.capital_final || 0)}</div><div class="card-sub">${mejor.plazo_anios} años · ${mejor.riesgo_global}</div></div>
