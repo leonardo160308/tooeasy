@@ -20,6 +20,11 @@ export function isAdmin() {
     return data && data.role === 'admin';
 }
 
+export function isSupport() {
+    const data = getAuthData();
+    return data && (data.role === 'support' || data.role === 'admin');
+}
+
 export function getAuthData() {
     const raw = localStorage.getItem(USER_KEY);
     if (!raw) return null;
