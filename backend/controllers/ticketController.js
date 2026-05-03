@@ -15,7 +15,7 @@ function extractUserId(req) {
 export async function requireAuth(req, res, next) {
     try {
         const userId = extractUserId(req);
-        if (!userId || !UUID_RE.test(userId)) {
+        if (!userId) {
             return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
         }
         const user = await User.findById(userId);
@@ -32,7 +32,7 @@ export async function requireAuth(req, res, next) {
 export async function requireSupport(req, res, next) {
     try {
         const userId = extractUserId(req);
-        if (!userId || !UUID_RE.test(userId)) {
+        if (!userId) {
             return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
         }
         const user = await User.findById(userId);

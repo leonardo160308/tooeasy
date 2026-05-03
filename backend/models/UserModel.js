@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase.js';
+import { supabase, supabaseAdmin } from '../config/supabase.js';
 
 class User {
 
@@ -26,7 +26,7 @@ class User {
 
     // 2. BUSCAR por ID
     static async findById(id) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('users')
             .select('*')
             .eq('id', id)
