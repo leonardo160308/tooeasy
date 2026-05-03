@@ -6,7 +6,8 @@ import {
     getSupportTicketDetail,
     takeTicket,
     changeTicketStatus,
-    replyAsSupport
+    replyAsSupport,
+    getMacros
 } from '../modules/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userId      = sessionUser.id;
     const userRole    = sessionUser.role;
 
-    if (userRole !== 'support') {
+    if (userRole !== 'support' && userRole !== 'admin') {
         window.location.href = '/dashboard.html';
         return;
     }
@@ -378,9 +379,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── MACROS ────────────────────────────────────────────────────────────
     async function loadMacros() {
         try {
-            const res  = await fetch(`/api/support/macros?userId=${userId}`);
-            const data = await res.json();
-            if (!data.success || !data.data.length) return;
+            const data = await getMacros(userId);
+            if (!data.success || !data.data?.length) return;
             const panel = document.createElement('div');
             panel.id = 'macros-panel';
             panel.className = 'macros-list';

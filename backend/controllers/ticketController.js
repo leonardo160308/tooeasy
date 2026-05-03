@@ -36,8 +36,8 @@ export async function requireSupport(req, res, next) {
             return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
         }
         const user = await User.findById(userId);
-        if (!user || user.role !== 'support') {
-            return res.status(403).json({ success: false, message: 'Acceso denegado. Solo equipo de soporte.', debug_role: user?.role, debug_userId: userId });
+        if (!user || (user.role !== 'support' && user.role !== 'admin')) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado. Solo equipo de soporte o administradores.' });
         }
         req.currentUser = user;
         next();
@@ -85,8 +85,8 @@ export async function getMyTickets(req, res) {
         const tickets = await TicketModel.getTicketsByUser(userId);
         res.json({ success: true, data: tickets });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Error al obtener tickets' });
+        console.error('[getMyTickets ERROR]', error);
+        res.status(500).json({ success: false, message: 'Error al obtener tickets', debug_error: error?.message, debug_code: error?.code });
     }
 }
 
@@ -186,8 +186,8 @@ export async function getAllTickets(req, res) {
         const tickets = await TicketModel.getAllTickets(filters);
         res.json({ success: true, data: tickets });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Error al obtener tickets' });
+        console.error('[getAllTickets ERROR]', error);
+        res.status(500).json({ success: false, message: 'Error al obtener tickets', debug_error: error?.message, debug_code: error?.code });
     }
 }
 

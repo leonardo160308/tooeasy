@@ -433,3 +433,27 @@ export async function replyAsSupport(userId, ticketId, message, isInternal = fal
         return { success: false, message: 'Error de conexión.' };
     }
 }
+
+export async function getMacros(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/macros?userId=${userId}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo macros:', error);
+        return { success: false, data: [] };
+    }
+}
+
+export async function createMacro(userId, title, body) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/macros`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, title, body })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error creando macro:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
