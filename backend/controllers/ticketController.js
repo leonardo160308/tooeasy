@@ -7,7 +7,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 // userId en body para POST/PATCH, en query para GET
 function extractUserId(req) {
-    return req.body.userId || req.query.userId;
+    return req.query.userId || req.body?.userId;
 }
 
 // ── Middlewares ──────────────────────────────────────────────────────────────
