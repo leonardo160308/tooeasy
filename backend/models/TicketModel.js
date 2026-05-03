@@ -47,8 +47,8 @@ class TicketModel {
             .from('support_tickets')
             .select(`
                 *,
-                ticket_user:users!user_id(id, nombre, email),
-                assignee:users!assigned_to(id, nombre, email)
+                ticket_user:users!support_tickets_user_id_fkey(id, nombre, email),
+                assignee:users!support_tickets_assigned_to_fkey(id, nombre, email)
             `)
             .eq('id', ticketId)
             .single();
@@ -74,8 +74,8 @@ class TicketModel {
             .from('support_tickets')
             .select(`
                 *,
-                ticket_user:users!user_id(id, nombre, email),
-                assignee:users!assigned_to(id, nombre, email)
+                ticket_user:users!support_tickets_user_id_fkey(id, nombre, email),
+                assignee:users!support_tickets_assigned_to_fkey(id, nombre, email)
             `)
             .order('created_at', { ascending: false });
 

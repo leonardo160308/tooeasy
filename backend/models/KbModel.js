@@ -1,10 +1,10 @@
 // backend/models/KbModel.js
-import { supabase, supabaseAdmin } from '../config/supabase.js';
+import { supabaseAdmin } from '../config/supabase.js';
 
 class KbModel {
 
     static async getPublished() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('kb_articles')
             .select('id, title, tags, created_at')
             .eq('is_published', true)
@@ -14,7 +14,7 @@ class KbModel {
     }
 
     static async getById(id) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('kb_articles')
             .select('*')
             .eq('id', id)
@@ -28,7 +28,7 @@ class KbModel {
     }
 
     static async search(query) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('kb_articles')
             .select('id, title, tags')
             .eq('is_published', true)
@@ -48,7 +48,7 @@ class KbModel {
     }
 
     static async listMacros() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('support_macros')
             .select('id, title, body, created_at')
             .order('created_at', { ascending: false });
