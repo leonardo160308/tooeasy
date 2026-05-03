@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnCloseDetail   = document.getElementById('btn-close-detail');
 
     let activeTicketId = null;
+    let selectedRating = 0;
 
     // ── STATUS / PRIORITY HELPERS ─────────────────────────────────────────
     const STATUS_LABELS = {
@@ -115,12 +116,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── CARGAR TICKETS ────────────────────────────────────────────────────
     async function loadMyTickets() {
-        ticketsLoading.style.display = 'block';
-        ticketsContainer.innerHTML   = '';
+        ticketsLoading.classList.add('visible');
+        ticketsContainer.innerHTML = '';
 
         const res = await getMyTickets(userId);
 
-        ticketsLoading.style.display = 'none';
+        ticketsLoading.classList.remove('visible');
 
         if (!res.success) {
             ticketsContainer.innerHTML = '<div class="tickets-empty"><p>Error al cargar tickets.</p></div>';
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="ticket-card-meta">
                     ${badgeStatus(ticket.status)}
                     ${badgePriority(ticket.priority)}
-                    <span class="badge" style="background:#f0f0f0;color:#555">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+                    <span class="badge badge-type">${TYPE_LABELS[ticket.type] || ticket.type}</span>
                 </div>
                 <div class="ticket-card-date">
                     <i class="fas fa-calendar-alt"></i> ${formatDate(ticket.created_at)}
@@ -187,14 +188,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         detailMeta.innerHTML = `
             ${badgePriority(ticket.priority)}
             ${badgeStatus(ticket.status)}
-            <span class="badge" style="background:#f0f0f0;color:#555">${TYPE_LABELS[ticket.type] || ticket.type}</span>
-            <span style="font-size:0.8rem;color:#718096;margin-left:auto">Creado: ${formatDate(ticket.created_at)}</span>`;
+            <span class="badge badge-type">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+            <span class="ticket-date-meta">Creado: ${formatDate(ticket.created_at)}</span>`;
 
         renderMessages(messages);
 
-        const isClosed = ticket.status === 'closed';
-        replySection.style.display  = isClosed ? 'none' : 'flex';
-        btnCloseTicket.style.display = (isClosed || ticket.status === 'resolved') ? 'none' : 'block';
+        const isClosed   = ticket.status === 'closed';
+        const isResolved = ticket.status === 'resolved';
+
+        replySection.hidden     = isClosed;
+        btnCloseTicket.hidden   = isClosed || isResolved;
+
+        // CSAT: mostrar si el ticket está resuelto o cerrado
+        const csatSection = document.getElementById('csat-section');
+        if (csatSection) {
+            csatSection.hidden = !(isClosed || isResolved);
+            selectedRating = 0;
+            document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('active'));
+            const csatComment = document.getElementById('csat-comment');
+            if (csatComment) csatComment.value = '';
+        }
 
         replyInput.value = '';
     }
@@ -282,6 +295,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    // ── CSAT ──────────────────────────────────────────────────────────────
+    const csatStars   = document.getElementById('csat-stars');
+    const btnSendCsat = document.getElementById('btn-send-csat');
+
+    if (csatStars) {
+        csatStars.addEventListener('click', (e) => {
+            const btn = e.target.closest('.star-btn');
+            if (!btn) return;
+            selectedRating = parseInt(btn.dataset.rating, 10);
+            document.querySelectorAll('.star-btn').forEach((s, i) => {
+                s.classList.toggle('active', i < selectedRating);
+            });
+        });
+    }
+
+    if (btnSendCsat) {
+        btnSendCsat.addEventListener('click', async () => {
+            if (!selectedRating || !activeTicketId) return alertaError('Selecciona una calificación.');
+            const comment = (document.getElementById('csat-comment')?.value || '').trim();
+            btnSendCsat.disabled = true;
+            try {
+                const res = await fetch(`/api/tickets/my/${activeTicketId}/csat`, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ userId, rating: selectedRating, comment })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alertaExito('¡Gracias por tu calificación!');
+                    document.getElementById('csat-section').hidden = true;
+                } else {
+                    alertaError(data.message || 'Error al enviar calificación.');
+                }
+            } catch {
+                alertaError('Error de conexión al enviar calificación.');
+            } finally {
+                btnSendCsat.disabled = false;
+            }
+        });
     }
 
     // ── INIT ──────────────────────────────────────────────────────────────

@@ -1,6 +1,22 @@
 // backend/models/TicketModel.js
 import { supabaseAdmin } from '../config/supabase.js';
 
+const SLA_HRS = {
+    urgent: { response: 1,   resolution: 4   },
+    high:   { response: 4,   resolution: 24  },
+    medium: { response: 24,  resolution: 72  },
+    low:    { response: 72,  resolution: 168 }
+};
+
+function slaDeadlines(priority) {
+    const sla = SLA_HRS[priority] || SLA_HRS.medium;
+    const now  = Date.now();
+    return {
+        response_deadline:   new Date(now + sla.response   * 3600000).toISOString(),
+        resolution_deadline: new Date(now + sla.resolution * 3600000).toISOString()
+    };
+}
+
 class TicketModel {
 
     // ========================================
@@ -8,9 +24,10 @@ class TicketModel {
     // ========================================
 
     static async createTicket(userId, { subject, description, type, priority }) {
+        const deadlines = slaDeadlines(priority);
         const { data, error } = await supabaseAdmin
             .from('support_tickets')
-            .insert({ user_id: userId, subject, description, type, priority })
+            .insert({ user_id: userId, subject, description, type, priority, ...deadlines })
             .select()
             .single();
         if (error) throw error;
@@ -151,6 +168,21 @@ class TicketModel {
             .single();
         if (error) throw error;
 
+        // Registrar first_response_at la primera vez que soporte responde (no nota interna)
+        if ((senderRole === 'support') && !isInternal) {
+            const { data: tk } = await supabaseAdmin
+                .from('support_tickets')
+                .select('first_response_at')
+                .eq('id', ticketId)
+                .single();
+            if (tk && !tk.first_response_at) {
+                await supabaseAdmin
+                    .from('support_tickets')
+                    .update({ first_response_at: new Date().toISOString() })
+                    .eq('id', ticketId);
+            }
+        }
+
         await supabaseAdmin.from('ticket_events').insert({
             ticket_id: ticketId,
             actor_id:  senderId,
@@ -189,6 +221,62 @@ class TicketModel {
             .order('created_at', { ascending: true });
         if (error) throw error;
         return data || [];
+    }
+
+    // ========================================
+    // CSAT
+    // ========================================
+
+    static async submitCsat(ticketId, userId, rating, comment) {
+        const { data, error } = await supabaseAdmin
+            .from('ticket_csat')
+            .upsert(
+                { ticket_id: ticketId, user_id: userId, rating, comment },
+                { onConflict: 'ticket_id' }
+            )
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    }
+
+    // ========================================
+    // MÉTRICAS
+    // ========================================
+
+    static async getMetrics() {
+        const { data: tickets, error } = await supabaseAdmin
+            .from('support_tickets')
+            .select('status, priority, assigned_to, first_response_at, created_at, response_deadline');
+        if (error) throw error;
+
+        const now       = Date.now();
+        const byStatus  = {};
+        const byAgent   = {};
+        let totalResponseMs   = 0;
+        let countWithResponse = 0;
+
+        for (const t of tickets) {
+            byStatus[t.status] = (byStatus[t.status] || 0) + 1;
+            if (t.assigned_to) byAgent[t.assigned_to] = (byAgent[t.assigned_to] || 0) + 1;
+            if (t.first_response_at) {
+                totalResponseMs += new Date(t.first_response_at) - new Date(t.created_at);
+                countWithResponse++;
+            }
+        }
+
+        const overdue = tickets.filter(t =>
+            t.status !== 'closed' && t.status !== 'resolved' &&
+            t.response_deadline && new Date(t.response_deadline).getTime() < now
+        ).length;
+
+        return {
+            total:          tickets.length,
+            byStatus,
+            byAgent,
+            avgResponseHrs: countWithResponse > 0 ? (totalResponseMs / countWithResponse) / 3600000 : null,
+            overdue
+        };
     }
 
     static async closeTicket(ticketId, actorId) {

@@ -826,8 +826,8 @@ function renderHistorial() {
                 </div>
             </div>
             <div class="hist-actions">
-                <button class="btn-secondary btn-small" onclick="verSimulacion('${sim.id}')">Ver</button>
-                <button class="btn-danger btn-small" onclick="eliminarSimulacion('${sim.id}')">Eliminar</button>
+                <button class="btn-secondary btn-small btn-ver-sim" data-id="${sim.id}" type="button">Ver</button>
+                <button class="btn-danger btn-small btn-eliminar-sim" data-id="${sim.id}" type="button">Eliminar</button>
             </div>
         </div>`;
     }).join('');
@@ -849,7 +849,7 @@ function actualizarBtnComparar() {
     btn.disabled = n < 2;
 }
 
-window.verSimulacion = async (id) => {
+async function verSimulacion(id) {
     try {
         const res = await fetch(`${API}/inversiones/${id}?userId=${state.userId}`);
         const data = await res.json();
@@ -910,9 +910,9 @@ window.verSimulacion = async (id) => {
 
         renderRecomendaciones(analisis.recomendaciones || []);
     } catch (e) { console.error(e); alertaError('Error al cargar simulación.'); }
-};
+}
 
-window.eliminarSimulacion = async (id) => {
+async function eliminarSimulacion(id) {
     if (!await alertaConfirmacion('¿Eliminar esta simulación?', '⚠️ Confirmar')) return;
     try {
         const res = await fetch(`${API}/inversiones/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: state.userId }) });
@@ -920,7 +920,7 @@ window.eliminarSimulacion = async (id) => {
         if (data.success) { alertaExito('Eliminada.'); cargarHistorial(); }
         else alertaError(data.message);
     } catch (e) { alertaError('Error al eliminar.'); }
-};
+}
 
 // ── Comparar ───────────────────────────────────────────────────────────────────
 async function iniciarComparacion() {
@@ -1056,6 +1056,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await res.json();
         if (data.success) state.historial = data.data;
     } catch (e) { /* silencioso */ }
+
+    // Event delegation para botones Ver/Eliminar del historial (reemplaza los onclick inline)
+    const historialContainer = $('historial-list');
+    if (historialContainer) {
+        historialContainer.addEventListener('click', (e) => {
+            const verBtn = e.target.closest('.btn-ver-sim');
+            const delBtn = e.target.closest('.btn-eliminar-sim');
+            if (verBtn) verSimulacion(verBtn.dataset.id);
+            if (delBtn) eliminarSimulacion(delBtn.dataset.id);
+        });
+    }
 
     navegarA('inicio');
 });

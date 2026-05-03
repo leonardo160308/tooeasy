@@ -529,6 +529,69 @@ main { flex: 1; padding: 24px 32px; }
 .loading { text-align: center; padding: 30px; color: var(--text-muted); }
 .loading i { font-size: 1.4rem; }
 
+/* ── CSP-safe: reemplaza inline styles ───────────────────────────────────────*/
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.detail-content-hidden { display: none; }
+.detail-empty.hidden   { display: none; }
+
+.ticket-mini-type-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.meta-badge-type {
+    background: #f0f0f0;
+    color: #555;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.meta-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.event-actor-icon { color: #B6823E; }
+.event-actor-dot  { font-size: 0.6rem; }
+.event-item-date  { margin-left: auto; font-size: 0.68rem; white-space: nowrap; }
+.event-empty      { color: #bbb; font-style: italic; }
+
+/* ── Macros ───────────────────────────────────────────────────────────────────*/
+.macros-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 140px;
+    overflow-y: auto;
+    margin-bottom: 8px;
+}
+
+.macro-item {
+    background: rgba(0,0,0,0.03);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-align: left;
+    color: var(--text-main);
+    font-family: inherit;
+    transition: background 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.macro-item:hover { background: #fdf8f1; border-color: var(--accent-gold); }
+
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
 @media (max-width: 1100px) {
     .panel-body { grid-template-columns: 1fr; }

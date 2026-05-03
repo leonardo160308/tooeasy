@@ -93,19 +93,17 @@
 </div>
 <footer class="footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
-    <p>        
-        <a href="mailto:tooeasycontactanos@gmail.com">        Contacto: tooeasycontactanos@gmail.com</a>  
-        <div class="terms-group">
-    <!-- Checkbox oculto (solo para JS y validación) -->
-    <input type="checkbox" id="terminos" required hidden>
-
-    <!-- Texto clickeable -->
-    <label for="terminos">
-        <span class="terms-link">Términos y Condiciones</span>
-    </label>
-</div>
-
-    </p>
+    <nav class="footer-nav">
+        <a href="mailto:tooeasycontactanos@gmail.com">Contacto</a>
+        <span aria-hidden="true">·</span>
+        <a href="/soporte.html">¿Necesitas ayuda? Soporte</a>
+    </nav>
+    <div class="terms-group">
+        <input type="checkbox" id="terminos" required hidden>
+        <label for="terminos">
+            <span class="terms-link">Términos y Condiciones</span>
+        </label>
+    </div>
 </footer>
 <script src="../public/js/data/terminos.js"></script>
 <script type="module" src="../public/js/pages/challenges.js"></script>

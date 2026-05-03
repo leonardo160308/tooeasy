@@ -38,8 +38,8 @@ class InversionModel {
             .from('investment_simulations')
             .select(`
                 id, nombre, capital_inicial, plazo_anios, aportacion_mensual,
-                num_instrumentos, riesgo_global, capital_final, total_aportado,
-                ganancia_total, rendimiento_pct, capital_final_real, created_at,
+                inflacion, num_instrumentos, riesgo_global, capital_final, total_aportado,
+                ganancia_total, rendimiento_pct, capital_final_real, analisis, created_at,
                 simulation_instruments(instrumento_id, instrumento_nombre, riesgo, posicion, capital_final, rendimiento_pct)
             `)
             .eq('user_id', userId)

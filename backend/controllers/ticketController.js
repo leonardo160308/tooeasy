@@ -1,6 +1,7 @@
 // backend/controllers/ticketController.js
 import TicketModel from '../models/TicketModel.js';
-import User from '../models/UserModel.js';
+import KbModel    from '../models/KbModel.js';
+import User       from '../models/UserModel.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -35,7 +36,7 @@ export async function requireSupport(req, res, next) {
             return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
         }
         const user = await User.findById(userId);
-        if (!user || (user.role !== 'support' && user.role !== 'admin')) {
+        if (!user || user.role !== 'support') {
             return res.status(403).json({ success: false, message: 'Acceso denegado. Solo equipo de soporte.' });
         }
         req.currentUser = user;
@@ -315,5 +316,125 @@ export async function addInternalNote(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al agregar nota interna' });
+    }
+}
+
+// ── CSAT ──────────────────────────────────────────────────────────────────────
+
+export async function submitCsat(req, res) {
+    try {
+        const userId      = req.currentUser.id;
+        const { ticketId } = req.params;
+        const { rating, comment } = req.body;
+
+        if (!UUID_RE.test(ticketId)) {
+            return res.status(400).json({ success: false, message: 'ID de ticket inválido' });
+        }
+        const r = parseInt(rating, 10);
+        if (!r || r < 1 || r > 5) {
+            return res.status(400).json({ success: false, message: 'Rating debe ser entre 1 y 5.' });
+        }
+
+        const ticket = await TicketModel.getTicketById(ticketId);
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket no encontrado' });
+        if (ticket.user_id !== userId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado' });
+        }
+        if (ticket.status !== 'resolved' && ticket.status !== 'closed') {
+            return res.status(400).json({ success: false, message: 'Solo puedes calificar tickets resueltos o cerrados.' });
+        }
+
+        const csat = await TicketModel.submitCsat(ticketId, userId, r, comment?.trim() || '');
+        res.status(201).json({ success: true, data: csat });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al guardar calificación' });
+    }
+}
+
+// ── MÉTRICAS ──────────────────────────────────────────────────────────────────
+
+export async function getSupportMetrics(req, res) {
+    try {
+        const metrics = await TicketModel.getMetrics();
+        res.json({ success: true, data: metrics });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener métricas' });
+    }
+}
+
+// ── BASE DE CONOCIMIENTO ──────────────────────────────────────────────────────
+
+export async function getKbArticles(req, res) {
+    try {
+        const { q } = req.query;
+        const data = q?.trim() ? await KbModel.search(q.trim()) : await KbModel.getPublished();
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener artículos' });
+    }
+}
+
+export async function getKbArticle(req, res) {
+    try {
+        const article = await KbModel.getById(req.params.articleId);
+        if (!article) return res.status(404).json({ success: false, message: 'Artículo no encontrado' });
+        res.json({ success: true, data: article });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener artículo' });
+    }
+}
+
+export async function createKbArticle(req, res) {
+    try {
+        const userId = req.currentUser.id;
+        const { title, content, tags } = req.body;
+        if (!title?.trim() || !content?.trim()) {
+            return res.status(400).json({ success: false, message: 'Título y contenido requeridos.' });
+        }
+        const article = await KbModel.create({
+            title:     title.trim(),
+            content:   content.trim(),
+            tags:      Array.isArray(tags) ? tags : [],
+            createdBy: userId
+        });
+        res.status(201).json({ success: true, data: article });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al crear artículo' });
+    }
+}
+
+// ── MACROS ────────────────────────────────────────────────────────────────────
+
+export async function getMacros(req, res) {
+    try {
+        const data = await KbModel.listMacros();
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener macros' });
+    }
+}
+
+export async function createMacro(req, res) {
+    try {
+        const userId = req.currentUser.id;
+        const { title, body } = req.body;
+        if (!title?.trim() || !body?.trim()) {
+            return res.status(400).json({ success: false, message: 'Título y cuerpo requeridos.' });
+        }
+        const macro = await KbModel.createMacro({
+            title:     title.trim(),
+            body:      body.trim(),
+            createdBy: userId
+        });
+        res.status(201).json({ success: true, data: macro });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al crear macro' });
     }
 }

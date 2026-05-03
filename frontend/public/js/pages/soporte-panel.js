@@ -17,8 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userId      = sessionUser.id;
     const userRole    = sessionUser.role;
 
-    if (userRole !== 'support' && userRole !== 'admin') {
-        alert('Acceso denegado. Esta sección es solo para el equipo de soporte.');
+    if (userRole !== 'support') {
         window.location.href = '/dashboard.html';
         return;
     }
@@ -135,9 +134,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="ticket-mini-subject">${escapeHtml(ticket.subject)}</div>
             <div class="ticket-mini-meta">
                 ${badgePriority(ticket.priority)}
-                <span style="font-size:0.7rem;color:#718096">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+                <span class="ticket-mini-type-label">${TYPE_LABELS[ticket.type] || ticket.type}</span>
             </div>
-            <div class="ticket-mini-user"><i class="fas fa-user" style="font-size:0.65rem"></i> ${escapeHtml(userName)}</div>`;
+            <div class="ticket-mini-user">
+                <i class="fas fa-user"></i> ${escapeHtml(userName)}
+            </div>`;
 
         card.addEventListener('click', () => openDetail(ticket.id));
         return card;
@@ -197,8 +198,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        detailEmpty.style.display   = 'none';
-        detailContent.style.display = 'block';
+        detailEmpty.classList.add('hidden');
+        detailContent.classList.remove('detail-content-hidden');
         dSubject.textContent        = 'Cargando...';
         dMessages.innerHTML         = '<div class="loading"><i class="fas fa-spinner fa-spin"></i></div>';
         dEvents.innerHTML           = '';
@@ -220,8 +221,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         dMetaRow.innerHTML = `
             ${badgeStatus(ticket.status)}
             ${badgePriority(ticket.priority)}
-            <span class="badge" style="background:#f0f0f0;color:#555">${TYPE_LABELS[ticket.type] || ticket.type}</span>
-            <span style="font-size:0.72rem;color:#718096;margin-left:auto">${formatDate(ticket.created_at)}</span>`;
+            <span class="badge meta-badge-type">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+            <span class="meta-date">${formatDate(ticket.created_at)}</span>`;
 
         renderMessages(messages);
         renderEvents(events);
@@ -256,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderEvents(events) {
         dEvents.innerHTML = '';
         if (!events || events.length === 0) {
-            dEvents.innerHTML = '<div class="event-item" style="color:#aaa">Sin eventos</div>';
+            dEvents.innerHTML = '<div class="event-item event-empty">Sin eventos</div>';
             return;
         }
         events.slice(-8).forEach(ev => {
@@ -266,9 +267,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const actor = ev.actor?.nombre || 'Sistema';
             const desc  = describeEvent(ev);
 
-            item.innerHTML = `<span style="color:#B6823E"><i class="fas fa-dot-circle" style="font-size:0.6rem"></i></span>
+            item.innerHTML = `
+                <span class="event-actor-icon"><i class="fas fa-dot-circle event-actor-dot"></i></span>
                 <span>${escapeHtml(actor)}: ${desc}</span>
-                <span style="margin-left:auto">${formatDate(ev.created_at)}</span>`;
+                <span class="event-item-date">${formatDate(ev.created_at)}</span>`;
 
             dEvents.appendChild(item);
         });
@@ -338,10 +340,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     btnCloseDetail.addEventListener('click', () => {
-        detailEmpty.style.display   = 'flex';
-        detailContent.style.display = 'none';
-        activeTicketId              = null;
-        activeTicketData            = null;
+        detailEmpty.classList.remove('hidden');
+        detailContent.classList.add('detail-content-hidden');
+        activeTicketId   = null;
+        activeTicketData = null;
         document.querySelectorAll('.ticket-mini').forEach(c => c.classList.remove('active'));
     });
 
@@ -373,7 +375,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (activeTicketId) await openDetail(activeTicketId);
     });
 
+    // ── MACROS ────────────────────────────────────────────────────────────
+    async function loadMacros() {
+        try {
+            const res  = await fetch(`/api/support/macros?userId=${userId}`);
+            const data = await res.json();
+            if (!data.success || !data.data.length) return;
+            const panel = document.createElement('div');
+            panel.id = 'macros-panel';
+            panel.className = 'macros-list';
+            data.data.forEach(m => {
+                const btn = document.createElement('button');
+                btn.className  = 'macro-item';
+                btn.type       = 'button';
+                btn.textContent = m.title;
+                btn.title       = m.body;
+                btn.addEventListener('click', () => { if (replyTextarea) replyTextarea.value = m.body; });
+                panel.appendChild(btn);
+            });
+            const replyDiv = replyTextarea?.closest('.detail-reply');
+            if (replyDiv) replyDiv.insertBefore(panel, replyDiv.firstChild);
+        } catch { /* silencioso — macros son opcionales */ }
+    }
+
     // ── INIT ──────────────────────────────────────────────────────────────
     await loadBoard();
+    await loadMacros();
     startPolling();
 });

@@ -68,7 +68,6 @@ export function logout() {
 
 export function protectRoute() {
     if (!isAuthenticated()) {
-        alert("⚠️ Acceso denegado. Debes iniciar sesión.");
         window.location.href = '/login.html';
         return false;
     }

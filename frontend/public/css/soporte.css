@@ -398,12 +398,129 @@ main { flex: 1; }
 
 /* ── LOADING ─────────────────────────────────────────────────────────────────*/
 .loading-spinner {
+    display: none;
     text-align: center;
     padding: 40px;
     color: var(--text-muted);
 }
 
+.loading-spinner.visible { display: block; }
+
 .loading-spinner i { font-size: 1.5rem; }
+
+/* ── CSP-safe: reemplaza inline styles ───────────────────────────────────────*/
+.btn-card-icon {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+    line-height: 1;
+    transition: color 0.15s;
+}
+.btn-card-icon:hover { color: #fff; }
+
+.detail-status-wrapper { margin-left: auto; }
+
+.reply-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.badge-type {
+    background: #f0f0f0;
+    color: #555;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ticket-date-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-left: auto;
+}
+
+/* ── CSAT ─────────────────────────────────────────────────────────────────────*/
+.csat-section {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fffdf8;
+}
+
+.csat-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.csat-stars {
+    display: flex;
+    gap: 4px;
+}
+
+.star-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #ddd;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s, transform 0.1s;
+}
+.star-btn:hover,
+.star-btn.active { color: #f6c90e; transform: scale(1.1); }
+
+.csat-comment {
+    resize: vertical;
+    min-height: 60px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--text-main);
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-family: inherit;
+}
+.csat-comment:focus { outline: none; border-color: var(--accent-gold); }
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.15s;
+}
+.btn-small:hover { opacity: 0.85; }
+
+/* ── Footer nav ───────────────────────────────────────────────────────────────*/
+.footer-nav {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    font-size: 0.85rem;
+}
+.footer-nav a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-nav a:hover { color: #BA8E58; }
 
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
 @media (max-width: 768px) {

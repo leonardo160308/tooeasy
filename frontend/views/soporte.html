@@ -97,12 +97,12 @@
             <div class="card-header">
                 <i class="fas fa-ticket-alt"></i>
                 <h3>Mis Tickets</h3>
-                <button id="btn-refresh-tickets" title="Actualizar" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:0.9rem;">
+                <button id="btn-refresh-tickets" class="btn-card-icon" title="Actualizar">
                     <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
 
-            <div id="tickets-loading" class="loading-spinner" style="display:none;">
+            <div id="tickets-loading" class="loading-spinner">
                 <i class="fas fa-spinner fa-spin"></i> Cargando tickets...
             </div>
 
@@ -114,8 +114,8 @@
             <div class="card-header" id="detail-header">
                 <i class="fas fa-comments"></i>
                 <h3 id="detail-title">Detalle del Ticket</h3>
-                <div id="detail-status-badge" style="margin-left:auto;"></div>
-                <button id="btn-close-detail" title="Cerrar" style="background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;margin-left:8px;font-size:1rem;">
+                <div id="detail-status-badge" class="detail-status-wrapper"></div>
+                <button id="btn-close-detail" class="btn-card-icon" title="Cerrar">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -130,7 +130,7 @@
             <!-- Responder -->
             <div class="reply-section" id="reply-section">
                 <textarea id="reply-input" placeholder="Escribe tu respuesta aquí..." rows="3"></textarea>
-                <div style="display:flex;flex-direction:column;gap:8px;">
+                <div class="reply-actions">
                     <button class="btn-reply" id="btn-send-reply">
                         <i class="fas fa-paper-plane"></i> Enviar
                     </button>
@@ -142,19 +142,36 @@
         </div>
 
     </div><!-- /soporte-layout -->
+
+    <!-- CSAT: visible solo cuando el ticket está resuelto/cerrado -->
+    <div class="csat-section" id="csat-section" hidden>
+        <p class="csat-label"><i class="fas fa-star"></i> ¿Cómo fue tu experiencia con este ticket?</p>
+        <div class="csat-stars" id="csat-stars" role="group" aria-label="Calificación de 1 a 5 estrellas">
+            <button class="star-btn" data-rating="1" type="button" aria-label="1 estrella">★</button>
+            <button class="star-btn" data-rating="2" type="button" aria-label="2 estrellas">★</button>
+            <button class="star-btn" data-rating="3" type="button" aria-label="3 estrellas">★</button>
+            <button class="star-btn" data-rating="4" type="button" aria-label="4 estrellas">★</button>
+            <button class="star-btn" data-rating="5" type="button" aria-label="5 estrellas">★</button>
+        </div>
+        <textarea id="csat-comment" class="csat-comment" placeholder="Comentario opcional..." maxlength="500"></textarea>
+        <button class="btn-primary btn-small" id="btn-send-csat" type="button">Enviar calificación</button>
+    </div>
+
 </main>
 
 <footer class="footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
-    <p>
-        <a href="mailto:tooeasycontactanos@gmail.com">Contacto: tooeasycontactanos@gmail.com</a>
-        <div class="terms-group">
-            <input type="checkbox" id="terminos" required hidden>
-            <label for="terminos">
-                <span class="terms-link">Términos y Condiciones</span>
-            </label>
-        </div>
-    </p>
+    <nav class="footer-nav">
+        <a href="mailto:tooeasycontactanos@gmail.com">Contacto</a>
+        <span aria-hidden="true">·</span>
+        <a href="/soporte.html">Soporte</a>
+    </nav>
+    <div class="terms-group">
+        <input type="checkbox" id="terminos" required hidden>
+        <label for="terminos">
+            <span class="terms-link">Términos y Condiciones</span>
+        </label>
+    </div>
 </footer>
 
 <script src="../public/js/data/terminos.js"></script>
