@@ -17,22 +17,17 @@
 </head>
 <body>
 
-<header class="header">
+<header class="soporte-header-minimal">
+    <a href="/dashboard.html" class="soporte-back-btn">
+        <i class="fas fa-arrow-left"></i> Regresar
+    </a>
     <div class="logo">
         <h1>TOO-EASY</h1>
-        <p>JUEGA HOY, TRIUNFA MAÑANA</p>
+        <p>CENTRO DE SOPORTE</p>
     </div>
-    <nav class="nav">
-        <a href="/dashboard.html">DASHBOARD</a>
-        <a href="/inversiones.html">INVERSIONES</a>
-        <a href="/retos.html">RETOS</a>
-        <a href="/lecciones.html">LECCIONES</a>
-        <a href="/soporte.html">SOPORTE</a>
-        <a href="/perfil.html">PERFIL</a>
-        <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
-            <img src="../public/img/Salida.png" alt="Salir">
-        </a>
-    </nav>
+    <a href="#" id="logout-btn-perfil" class="soporte-logout-btn" title="Cerrar Sesión">
+        <img src="../public/img/Salida.png" alt="Salir">
+    </a>
 </header>
 
 <script type="module" src="/public/js/modules/nav-init.js"></script>
@@ -89,6 +84,153 @@
                         <i class="fas fa-paper-plane"></i> Enviar Ticket
                     </button>
                 </form>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="card faq-card" id="faq-card">
+            <div class="card-header">
+                <i class="fas fa-question-circle"></i>
+                <h3>Preguntas Frecuentes</h3>
+            </div>
+            <div class="faq-body">
+
+                <div class="faq-group">
+                    <p class="faq-group-title">Sistema de soporte</p>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo creo un ticket?</summary>
+                        <div class="faq-answer">Rellena el formulario de la izquierda con un asunto descriptivo, detalla tu problema y selecciona el tipo y prioridad. Haz clic en "Enviar Ticket" y nuestro equipo lo recibirá de inmediato.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cuánto tarda en responder el equipo de soporte?</summary>
+                        <div class="faq-answer">Los tiempos varían según la prioridad: Urgente (1 h), Alta (4 h), Media (24 h), Baja (72 h). Estos son tiempos estimados de primera respuesta.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo veo el estado de mi ticket?</summary>
+                        <div class="faq-answer">En la sección "Mis Tickets" de esta misma página puedes ver todos tus tickets con su estado actual: Abierto, En progreso, Esperando respuesta, Resuelto o Cerrado.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Puedo responder a un ticket después de enviarlo?</summary>
+                        <div class="faq-answer">Sí. Haz clic en cualquier ticket de "Mis Tickets", se abrirá el detalle y podrás escribir un mensaje adicional en la sección de respuesta.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué hago si mi problema es urgente?</summary>
+                        <div class="faq-answer">Al crear el ticket selecciona "Urgente" en el campo de prioridad. Esto alerta al equipo y reduce el tiempo de respuesta a aproximadamente 1 hora.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Puedo cerrar un ticket yo mismo?</summary>
+                        <div class="faq-answer">Sí, una vez que tu problema esté resuelto puedes cerrarlo desde su detalle usando el botón "Cerrar ticket". También puedes dejar una calificación de satisfacción.</div>
+                    </details>
+                </div>
+
+                <div class="faq-group">
+                    <p class="faq-group-title">Dashboard y movimientos</p>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo registro un ingreso o gasto en el Dashboard?</summary>
+                        <div class="faq-answer">Haz clic en cualquier día del calendario, se abrirá un modal donde puedes seleccionar el tipo (ingreso/egreso), la categoría y el monto. El balance se actualiza automáticamente.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Puedo editar o eliminar un movimiento ya registrado?</summary>
+                        <div class="faq-answer">Sí. En el modal del día, cada movimiento tiene un botón de edición (✏️). Puedes cambiar el tipo, categoría y monto, o eliminarlo completamente.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué significan los colores del calendario?</summary>
+                        <div class="faq-answer">Verde indica que los ingresos superaron los gastos ese día. Rojo significa que los gastos fueron mayores. Gris indica balance neutro (ingresos = gastos).</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Para qué sirven los datos de "Ingreso Fijo" y "Egreso Fijo"?</summary>
+                        <div class="faq-answer">Son tus entradas y salidas recurrentes mensuales (como salario o renta). Se suman a los movimientos del calendario para calcular tu balance y progreso hacia la meta mensual.</div>
+                    </details>
+                </div>
+
+                <div class="faq-group">
+                    <p class="faq-group-title">Inversiones y simulador</p>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué es el simulador Monte Carlo de Inversiones?</summary>
+                        <div class="faq-answer">Es una herramienta que ejecuta 500 escenarios de inversión con variables aleatorias para proyectar el rango probable de resultados (pesimista P10, mediano P50, optimista P90) de tu portafolio.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué significa P10, P50 y P90 en los resultados?</summary>
+                        <div class="faq-answer">Son percentiles. P10 es el escenario pesimista (solo el 10% de simulaciones fue peor), P50 es la mediana o resultado más probable, y P90 es el escenario optimista.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué es el Sharpe Ratio que aparece en los resultados?</summary>
+                        <div class="faq-answer">Mide la relación entre el rendimiento y el riesgo asumido. Mayor a 0.8 es excelente, entre 0.4-0.8 es aceptable, menor a 0.4 indica que el riesgo no está bien compensado.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Puedo guardar y comparar varias simulaciones?</summary>
+                        <div class="faq-answer">Sí. Después de simular, escribe un nombre y guarda en tu historial. En la sección "Comparar" puedes seleccionar 2 o más simulaciones para ver una tabla comparativa con todas las métricas.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué diferencia hay entre el perfil "Conservador", "Moderado" y "Agresivo"?</summary>
+                        <div class="faq-answer">Ajustan los parámetros del motor: Conservador reduce rendimientos y volatilidad un 15%/30%, Moderado usa los datos históricos base, Agresivo los amplifica un 15%/30%.</div>
+                    </details>
+                </div>
+
+                <div class="faq-group">
+                    <p class="faq-group-title">Retos y recompensas</p>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo funcionan los Retos?</summary>
+                        <div class="faq-answer">Los retos se completan registrando movimientos específicos en el Dashboard. Cuando el progreso llega al 100%, aparece el botón "Reclamar" para obtener tu recompensa en Madera.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Para qué sirve la Madera que gano en los Retos?</summary>
+                        <div class="faq-answer">La Madera es el recurso para mejorar tu Casa en la sección de Perfil. Cada mejora cuesta 20 unidades de Madera y desbloquea una apariencia visual más avanzada.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Por qué no puedo reclamar un reto que parece completado?</summary>
+                        <div class="faq-answer">El sistema verifica en tiempo real los movimientos del Dashboard. Asegúrate de que los movimientos correspondan exactamente a la categoría y tipo requeridos por el reto (por ejemplo, "Salario" no es lo mismo que "Trabajo extra").</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Los retos de balance mensual se reinician cada mes?</summary>
+                        <div class="faq-answer">Sí. Los retos que dependen del balance del mes actual (como "Balance Positivo" o "Mes Rentable") se calculan únicamente con los movimientos del mes en curso.</div>
+                    </details>
+                </div>
+
+                <div class="faq-group">
+                    <p class="faq-group-title">Lecciones y progreso educativo</p>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo desbloqueo el siguiente nivel en Lecciones?</summary>
+                        <div class="faq-answer">Debes completar el quiz del nivel anterior con al menos 80% de aciertos. Si no lo logras, puedes intentarlo nuevamente sin límite de veces.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué pasa si repaso un nivel que ya completé?</summary>
+                        <div class="faq-answer">Puedes repasar libremente cualquier nivel y su quiz sin perder tu progreso. Las monedas solo se otorgan la primera vez que completas un nivel.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Para qué sirven las monedas que gano en las Lecciones?</summary>
+                        <div class="faq-answer">Las monedas permiten mejorar a tu Castor en la sección de Perfil. Cada mejora cuesta 34 monedas y desbloquea una apariencia visual más avanzada.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿El progreso de lecciones se guarda automáticamente?</summary>
+                        <div class="faq-answer">Sí, al completar exitosamente un quiz el progreso se guarda en el servidor de forma inmediata. No necesitas hacer nada adicional.</div>
+                    </details>
+                </div>
+
+                <div class="faq-group">
+                    <p class="faq-group-title">Perfil y cuenta</p>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo cambio mi avatar o apariencia?</summary>
+                        <div class="faq-answer">En la sección de Perfil, haz clic en "Editar" para acceder al modal de edición donde puedes seleccionar entre 4 avatares disponibles.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo equipo una skin de casa o castor?</summary>
+                        <div class="faq-answer">Usa las flechas en la sección visual del Perfil para navegar entre las skins disponibles. Las skins desbloqueadas muestran el botón "Equipar"; las bloqueadas requieren subir de nivel primero.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Puedo cambiar mi nombre de usuario?</summary>
+                        <div class="faq-answer">Sí, desde el modal de edición en Perfil. El nombre debe tener entre 3 y 16 caracteres y no puede estar en uso por otro usuario.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Qué sucede si elimino mi cuenta?</summary>
+                        <div class="faq-answer">La eliminación es permanente e irreversible. Se borran todos tus datos: movimientos, progreso de lecciones, simulaciones, retos completados y recursos acumulados.</div>
+                    </details>
+                    <details class="faq-item">
+                        <summary class="faq-question">¿Cómo recupero mi contraseña si la olvidé?</summary>
+                        <div class="faq-answer">En la pantalla de Login haz clic en "¿Olvidaste tu contraseña?" y sigue el flujo de verificación por correo electrónico con código de 6 dígitos.</div>
+                    </details>
+                </div>
+
             </div>
         </div>
 

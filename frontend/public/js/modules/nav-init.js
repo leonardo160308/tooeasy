@@ -6,14 +6,6 @@ const nav        = document.querySelector('.nav');
 const _authData  = getAuthData();
 const _userRole  = _authData?.role || '';
 
-// Link SOPORTE para todos los usuarios autenticados (si no existe ya en el HTML)
-if (nav && !nav.querySelector('a[href="/soporte.html"]')) {
-    const soporteLink = document.createElement('a');
-    soporteLink.href = '/soporte.html';
-    soporteLink.textContent = 'SOPORTE';
-    nav.insertBefore(soporteLink, nav.children[nav.children.length - 1]);
-}
-
 // Link PANEL solo para rol support (NO para admin)
 if (_userRole === 'support' && nav && !nav.querySelector('a[href="/soporte-panel.html"]')) {
     const panelLink = document.createElement('a');
