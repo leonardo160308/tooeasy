@@ -1,5 +1,7 @@
 // backend/controllers/inversionController.js
 import InversionModel from '../models/InversionModel.js';
+import MarketDataModel from '../models/MarketDataModel.js';
+import { ensureStaticParams, refreshApiInstruments } from '../services/marketDataService.js';
 
 export async function getSettings(req, res) {
     try {
@@ -72,4 +74,29 @@ export async function deleteSimulacion(req, res) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al eliminar simulación.' });
     }
+}
+
+// ── Parámetros de mercado ─────────────────────────────────────────────────────
+
+export async function getParametrosMercado(req, res) {
+    try {
+        // Inserta parámetros estáticos si la tabla acaba de crearse (idempotente)
+        await ensureStaticParams();
+        const params  = await MarketDataModel.getAllParameters();
+        const isStale = await MarketDataModel.isStale(24);
+        res.json({ success: true, data: params, stale: isStale });
+    } catch (error) {
+        console.error('[MarketData] getParametrosMercado:', error.message);
+        // El frontend cae silenciosamente al fallback estático de instrumentos.js
+        res.json({ success: false, data: {}, message: 'Tabla market_parameters no disponible. Ejecuta backend/sql/market_parameters.sql en Supabase.' });
+    }
+}
+
+export async function refreshParametrosMercado(req, res) {
+    // Responde inmediatamente para evitar timeout en Render free tier (~45 s de proceso)
+    res.json({ success: true, message: 'Actualización iniciada. Los parámetros estarán listos en ~1 minuto.' });
+    // Fire-and-forget: actualiza Grupo A en background sin bloquear la respuesta
+    refreshApiInstruments().catch(err =>
+        console.error('[MarketData] refresh fallido:', err.message)
+    );
 }

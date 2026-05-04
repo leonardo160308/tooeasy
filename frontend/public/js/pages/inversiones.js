@@ -1057,6 +1057,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (data.success) state.historial = data.data;
     } catch (e) { /* silencioso */ }
 
+    // Cargar parámetros reales de mercado y parchear INSTRUMENTOS en memoria.
+    // Si falla (sin API key, tabla inexistente, red caída) se usan los valores
+    // estáticos de instrumentos.js sin interrumpir la experiencia del usuario.
+    try {
+        const mktRes  = await fetch(`${API}/inversiones/parametros-mercado`);
+        const mktData = await mktRes.json();
+        if (mktData.success && mktData.data) {
+            Object.entries(mktData.data).forEach(([id, p]) => {
+                if (INSTRUMENTOS[id]) {
+                    INSTRUMENTOS[id].tasa_base   = parseFloat(p.tasa_base);
+                    INSTRUMENTOS[id].volatilidad = parseFloat(p.volatilidad);
+                }
+            });
+        }
+    } catch (_) { /* usa valores estáticos de instrumentos.js */ }
+
     // Event delegation para botones Ver/Eliminar del historial (reemplaza los onclick inline)
     const historialContainer = $('historial-list');
     if (historialContainer) {
