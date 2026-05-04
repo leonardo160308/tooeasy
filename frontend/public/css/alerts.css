@@ -101,6 +101,7 @@
 }
 
 .alert-close:hover { background: #f0f4f8; color: #333; transform: rotate(90deg); }
+.alert-close:focus-visible { outline: 3px solid #6585AA; outline-offset: 2px; }
 
 /* ── TIPOS ── */
 .alert-box.success::before { background: #10b981; }
@@ -199,8 +200,15 @@
     padding: 12px 24px;
     border-radius: 12px;
     font-weight: bold;
+    font-family: inherit;
     cursor: pointer;
     transition: all 0.3s;
+    min-height: 44px;
+}
+
+.confirm-btn:focus-visible {
+    outline: 3px solid #2C405B;
+    outline-offset: 2px;
 }
 .confirm-btn-cancel {
     border: 2px solid #ddd;

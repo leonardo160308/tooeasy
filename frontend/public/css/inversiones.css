@@ -18,6 +18,8 @@
     --text-dark:  #1a2332;
     --text-mid:   #4a5568;
     --text-muted: #718096;
+    --text-primary: #1a2332;   /* alias */
+    --bg-card-alt: #f8fafc;    /* alias */
 
     --shadow-xs:  0 1px 3px rgba(44,64,91,0.07);
     --shadow-sm:  0 2px 8px rgba(44,64,91,0.09);
@@ -1145,13 +1147,7 @@ button:disabled {
     .scenario-card .sc-name { font-size: 0.9rem; font-weight: 800; color: var(--primary); }
     .scenario-card .sc-desc { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
 
-    /* Nota metodológica */
-    .mc-note {
-        background: rgba(101,133,170,0.08); border-left: 3px solid var(--secondary);
-        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-        padding: 10px 14px; font-size: 0.78rem; color: var(--text-mid);
-        margin-bottom: 16px; line-height: 1.6;
-    }
+    /* .mc-note — uses canonical definition at line 765 */
 
     /* Responsivo */
     @media (max-width: 600px) {

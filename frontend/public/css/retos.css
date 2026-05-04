@@ -24,10 +24,10 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-dark);
     font-family: 'Nunito', 'Segoe UI', sans-serif;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 /* ── LOGO ── */
@@ -54,8 +54,7 @@ body {
 
 /* ── PANEL IZQUIERDO ── */
 .left-panel {
-    width: 480px;
-    min-width: 380px;
+    width: clamp(320px, 40%, 480px);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -311,8 +310,8 @@ body {
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
     .split-layout { flex-direction: column; padding: 14px; overflow-y: auto; }
-    body { overflow: auto; height: auto; }
-    .left-panel { width: 100%; min-width: 0; }
+    body { overflow-y: auto; }
+    .left-panel { width: 100%; }
     .right-panel-image { height: 200px; }
 }
 

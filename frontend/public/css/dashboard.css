@@ -59,8 +59,8 @@ body {
     gap: 24px;
 }
 
-.izquierda { flex: 65%; min-width: 0; }
-.derecha   { flex: 35%; min-width: 0; }
+.izquierda { flex: 0 0 65%; min-width: 0; }
+.derecha   { flex: 0 0 35%; min-width: 0; }
 
 /* ── CARD ── */
 .card {

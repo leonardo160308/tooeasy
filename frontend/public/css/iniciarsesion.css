@@ -172,6 +172,11 @@ input:focus, select:focus {
     box-shadow: 0 15px 30px -5px rgba(182, 130, 62, 0.5);
 }
 
+.btn-primary:focus-visible {
+    outline: 3px solid var(--brand-beige);
+    outline-offset: 2px;
+}
+
 /* Enlace Iniciar Sesión */
 .login-ask {
     margin-top: 25px;

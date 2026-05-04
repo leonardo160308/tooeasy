@@ -124,7 +124,7 @@ body {
 
 /* ── FLASHCARD ── */
 .card {
-    perspective: 1500px; /* Mayor perspectiva para un efecto 3D más dramático */
+    perspective: 1500px;
     width: 100%;
     max-width: 560px;
     height: 440px;
@@ -132,8 +132,11 @@ body {
     cursor: pointer;
     background: transparent;
     border: none;
-    outline: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+.card:focus-visible .card-inner {
+    box-shadow: 0 0 0 3px var(--accent), var(--shadow-card);
 }
 
 .card-inner {
@@ -195,7 +198,6 @@ body {
 }
  
 /* ── CURSOR ── */
-.card { cursor: pointer; }
 .card.has-been-flipped { cursor: pointer; }
  
 /* ── FACES ── */
@@ -345,6 +347,11 @@ body {
     border-color: var(--primary);
     transform: translateY(-50%) scale(1.15);
     box-shadow: 0 10px 25px rgba(44,64,91,0.3);
+}
+
+.arrow-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
 }
 
 #prevCard { left: -75px; }

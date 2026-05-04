@@ -156,6 +156,12 @@ html, body {
     background: rgba(255, 255, 255, 0.07);
 }
 
+.nav a:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
+    border-radius: 10px;
+}
+
 /* Indicador inferior animado */
 .nav a::after {
     content: '';

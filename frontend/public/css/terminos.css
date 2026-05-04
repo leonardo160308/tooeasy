@@ -70,6 +70,11 @@
     transform: rotate(90deg);
 }
 
+.terminos-cerrar:focus-visible {
+    outline: 3px solid #6585AA;
+    outline-offset: 2px;
+}
+
 /* ── Botón aceptar ── */
 .terminos-btn-aceptar {
     display: block;
@@ -90,6 +95,11 @@
 .terminos-btn-aceptar:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 22px rgba(44, 64, 91, 0.35);
+}
+
+.terminos-btn-aceptar:focus-visible {
+    outline: 3px solid #6585AA;
+    outline-offset: 2px;
 }
 
 /* ── Label de términos ── */
@@ -186,6 +196,12 @@ label[for="terminos"] { cursor: pointer; }
     color: #2C405B;
     font-weight: 700;
     text-decoration: underline;
+}
+
+.tc-link:focus-visible {
+    outline: 3px solid #6585AA;
+    outline-offset: 2px;
+    border-radius: 2px;
 }
 
 .tc-footer {

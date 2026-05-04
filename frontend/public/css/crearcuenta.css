@@ -27,12 +27,9 @@ body {
     min-height: 100vh;
     margin: 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
 }
-
-/* Decoración de fondo (Manchas de color abstractas) */
-
 
 /* Tarjeta principal */
 .container {
@@ -106,7 +103,7 @@ input:focus {
 }
 
 /* Botón Principal */
-button {
+.container button {
     width: 100%;
     background: linear-gradient(135deg, var(--brand-beige) 0%, var(--brand-dark) 100%);
     color: white; /* Cambiado a blanco para mayor contraste premium */
@@ -130,6 +127,11 @@ button:hover {
 
 button:active {
     transform: translateY(0) scale(0.98);
+}
+
+.container button:focus-visible {
+    outline: 3px solid var(--brand-beige);
+    outline-offset: 2px;
 }
 
 /* Mensaje error/login */

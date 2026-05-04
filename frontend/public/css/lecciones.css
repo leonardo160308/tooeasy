@@ -31,6 +31,7 @@ body {
 
 /* ── UTILITY ── */
 .hidden { display: none !important; }
+
 .level-soon-msg {
     padding: 10px;
     color: #666;
@@ -98,7 +99,7 @@ body {
 .tarjetaD {
     background: var(--bg-card);
     border-radius: 20px;
-    width: 300px;
+    width: min(300px, 100%);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     display: flex;
@@ -231,8 +232,6 @@ body {
     gap: 8px;
     background: #fafbfc;
 }
-
-.hidden { display: none !important; }
 
 /* ── LEVEL ITEMS ── */
 .level-item {

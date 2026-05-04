@@ -1,155 +1,148 @@
-/* ======== RESETEO GENERAL ======== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ========================================
+   INICIO - TOO-EASY
+   ======================================== */
+
+:root {
+    --primary: #2C405B;
+    --secondary: #6585AA;
+    --accent: #BA8E58;
 }
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Arial', sans-serif;
-  line-height: 1.6;
-  background-color: white;
-  color: black;
-  
+    font-family: 'Nunito', 'Segoe UI', 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #ffffff;
+    color: #1a2332;
 }
 
-/* ======== ENCABEZADO ======== */
-/* ======== ENCABEZADO ======== */
-
-
-/* ======== SECCIONES GENERALES ======== */
+/* ── LAYOUT CONTAINER ── */
 .container {
-  width: 90%;
-  max-width: 1000px;
-  margin: 60px auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-  flex-wrap: wrap;
+    width: 90%;
+    max-width: 1000px;
+    margin: 60px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
 }
 
 .container img {
-  width: 320px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
+    width: 320px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
 }
 
-/* ======== SECCIÓN PRINCIPAL ======== */
+/* ── SECCIÓN PRINCIPAL ── */
 .pagina-principal {
-  justify-content: center;
-  text-align: center;
-  flex-direction:row-reverse; /* <-- Imagen a la derecha */
+    justify-content: center;
+    text-align: center;
+    flex-direction: row-reverse;
 }
 
 .pagina-principal .contenido-principal {
-  max-width: 400px;
+    max-width: 400px;
 }
 
 .pagina-principal h2 {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
+/* ── BOTONES HERO ── */
 .btn-iniciar-sesion,
 .btn-crear-cuenta {
-  font-family: 'Baloo 2', cursive;
-  font-weight: bold;
-  font-size: 24px;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 10px 30px;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    border: none;
+    cursor: pointer;
+    border-radius: 40px;
+    padding: 10px 30px;
+    min-height: 44px;
+    transition: opacity 0.2s ease;
 }
 
 .btn-iniciar-sesion {
-  background-color: #6585AA; /* Cambia color */
-  color: #fff;
-  border-radius: 40px;
+    background-color: var(--secondary);
+    color: #fff;
 }
 
 .btn-crear-cuenta {
-  background-color: #BA8E58; /* Cambia color */
-  color: #fff;
-  border-radius: 40px;
+    background-color: var(--accent);
+    color: #fff;
 }
 
 .btn-iniciar-sesion:hover,
-.btn-crear-cuenta:hover {
-  opacity: 0.85;
+.btn-crear-cuenta:hover { opacity: 0.85; }
+
+.btn-iniciar-sesion:focus-visible,
+.btn-crear-cuenta:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
 }
 
-/* ======== SECCIONES INTERMEDIAS ======== */
+/* ── BLOQUES DE TEXTO ── */
 .texto1 {
-  flex: 1;
-  min-width: 280px;
-  color: white;
+    flex: 1;
+    min-width: 280px;
+    background-color: var(--primary);
+    color: #fff;
+    padding: clamp(24px, 5vw, 70px);
 }
 
-.texto1 h2 {
-  margin-bottom: 15px;
-  color: white;
-}
+.texto1 h2,
+.texto1 p { color: #fff; }
 
-.texto1 p {
-  text-align: justify;
-  color: white;
-}
+.texto1 p { text-align: justify; }
+
 .texto {
-  flex: 1;
-  min-width: 280px;
+    flex: 1;
+    min-width: 280px;
 }
 
-.texto h2 {
-  margin-bottom: 15px;
-}
+.texto h2 { margin-bottom: 15px; }
 
-.texto p {
-  text-align: justify;
-  
-}
+.texto p { text-align: justify; }
 
-/* ======== SECCIONES ALTERNADAS ======== */
-
-/* Todas las secciones con imagen a la derecha */
+/* ── SECCIONES ALTERNADAS ── */
 .pagina-principal2,
-.pagina-principal4
- {
-  flex-direction: row; /* Imagen a la derecha */
-}
+.pagina-principal4 { flex-direction: row; }
 
 .pagina-principal3,
-.pagina-principal5 {
-  flex-direction:row-reverse; /* Imagen a la derecha */
-}
+.pagina-principal5 { flex-direction: row-reverse; }
 
-/* ======== LISTA DE TEMAS ======== */
-.pagina-principal5 ul {
-  list-style: none;
-  padding: 0;
-}
+/* ── LISTA DE TEMAS ── */
+.pagina-principal5 ul { list-style: none; padding: 0; }
 
-.pagina-principal5 li {
-  margin: 10px 0;
-}
+.pagina-principal5 li { margin: 10px 0; }
 
 .pagina-principal5 button {
-  padding: 10px 18px;
-  border: 2px solid #6585AA;
-  border-radius: 3px;
-  background: none;
-  cursor: pointer;
-  transition: 0.3s;
-  color: #6585AA;
+    padding: 10px 18px;
+    border: 2px solid var(--secondary);
+    border-radius: 3px;
+    background: none;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--secondary);
+    min-height: 44px;
+    font-family: inherit;
 }
 
 .pagina-principal5 button:hover {
-  background-color: #8FA3C2;
-  color: #fff;
+    background-color: #8FA3C2;
+    color: #fff;
 }
 
-/* ======== PIE DE PÁGINA ======== */
-/* ── FOOTER ── */
+.pagina-principal5 button:focus-visible {
+    outline: 3px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+/* ── PIE DE PÁGINA ── */
 .footer {
     background: linear-gradient(135deg, #1e2e42 0%, #2C405B 100%);
     color: rgba(255,255,255,0.8);
@@ -160,16 +153,14 @@ body {
 }
 
 .footer a {
-   font-size: 0.85rem;
+    font-size: 0.85rem;
     cursor: pointer;
     color: rgba(255,255,255,0.7);
     transition: color 0.2s;
     text-decoration: none;
 }
 
-.footer a:hover {
-    color: #BA8E58;
-}
+.footer a:hover { color: var(--accent); }
 
 .terms-group {
     display: inline-flex;
@@ -185,36 +176,9 @@ body {
     transition: color 0.2s;
 }
 
-.terms-group label:hover {
-    color: #BA8E58;
-}
-/* ======== RESPONSIVO ======== */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    text-align: center;
-  }
+.terms-group label:hover { color: var(--accent); }
 
-  .pagina-principal {
-    flex-direction: column-reverse;
-  }
-
-  .container img {
-    width: 250px;
-    margin-top: 20px;
-  }
-}
-
-
-.texto1{
-  background-color: #2C405B;
-  padding: 70px;
-}
-
-/* ========================================
-   TARJETAS DE CARACTERÍSTICAS
-   ======================================== */
-
+/* ── TARJETAS DE CARACTERÍSTICAS ── */
 .feature-card {
     background: white;
     padding: 30px;
@@ -229,13 +193,10 @@ body {
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 15px;
-}
+.feature-icon { font-size: 3rem; margin-bottom: 15px; }
 
 .feature-card h3 {
-    color: #2C405B;
+    color: var(--primary);
     margin-bottom: 10px;
     font-size: 1.2rem;
 }
@@ -246,13 +207,28 @@ body {
     line-height: 1.5;
 }
 
-/* Responsive para feature cards */
+/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-    .pagina-principal5 > div {
-        grid-template-columns: 1fr !important;
+    .container {
+        flex-direction: column;
+        text-align: center;
+        margin: 30px auto;
     }
+
+    .pagina-principal { flex-direction: column-reverse; }
+
+    .pagina-principal2,
+    .pagina-principal3,
+    .pagina-principal4,
+    .pagina-principal5 { flex-direction: column; }
+
+    .container img {
+        width: 250px;
+        margin-top: 20px;
+    }
+
+    .pagina-principal5 > div { grid-template-columns: 1fr !important; }
 }
 
-
-/* Extracted from inline style in index.html */
+/* CSP-safe */
 #start-button { display: none; }

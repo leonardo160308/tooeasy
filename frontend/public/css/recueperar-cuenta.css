@@ -286,16 +286,24 @@ input:focus {
 .success-icon::after { content: '✨'; }
 
 /* Responsive */
+@media (max-width: 600px) {
+    .card {
+        padding: 40px 28px;
+    }
+}
+
 @media (max-width: 480px) {
     .card {
         width: 92%;
-        padding: 40px 25px;
+        padding: 36px 20px;
     }
-    
+
     .otp-input {
         width: 38px;
         height: 50px;
     }
+
+    h2 { font-size: 1.5rem; }
 }
 input, textarea, select {
     caret-color: #2C405B;
