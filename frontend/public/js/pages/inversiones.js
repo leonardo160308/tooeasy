@@ -41,7 +41,10 @@ const state = {
     compareChartInstance: null,
     monteCarloChart: null,
     wizardStep: 1,
-    simulacionGuardada: false
+    simulacionGuardada: false,
+    mktLiveCount: 0,
+    mktLastUpdated: null,
+    mktIsStale: false
 };
 
 // ── Factores por escenario de mercado ─────────────────────────────────────────
@@ -330,6 +333,28 @@ const fmtMXN = n => `$${fmt(n)}`;
 const fmtPct = n => `${n >= 0 ? '+' : ''}${Number(n).toFixed(1)}%`;
 const fmtDecimal = (n, d = 2) => Number(n).toFixed(d);
 
+// ── Estado de fuente de datos de mercado ──────────────────────────────────────
+function renderDataSourceStatus() {
+    const el = $('data-source-status');
+    if (!el) return;
+    const count = state.mktLiveCount;
+    if (count > 0) {
+        const stale = state.mktIsStale;
+        const fechaStr = state.mktLastUpdated
+            ? new Date(state.mktLastUpdated).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' })
+            : null;
+        const dotClass = stale ? 'dss-stale' : 'dss-live';
+        const msg = stale
+            ? `Datos de mercado desactualizados (&gt;24 h) · ${count} instrumentos vía <strong>Alpha Vantage</strong>`
+            : `Conectado a datos reales · ${count} instrumentos actualizados vía <strong>Alpha Vantage</strong>`;
+        el.innerHTML = `<span class="dss-dot ${dotClass}"></span><span>${msg}${fechaStr ? ' · Actualizado: ' + fechaStr : ''}</span>`;
+        el.className = 'data-source-status dss-active';
+    } else {
+        el.innerHTML = `<span class="dss-dot dss-static"></span><span>Parámetros históricos calibrados — sin conexión a API activa</span>`;
+        el.className = 'data-source-status dss-inactive';
+    }
+}
+
 // ── Validación Paso 1 ─────────────────────────────────────────────────────────
 function validarPaso1() {
     const errors = [];
@@ -471,8 +496,11 @@ function actualizarInfoInstrumento(idx) {
     if (!val || !INSTRUMENTOS[val]) { if (infoDiv) infoDiv.classList.remove('active'); return; }
     const instr = INSTRUMENTOS[val];
     const meta  = RIESGO_META[instr.riesgo];
+    const liveTag = instr.fuente === 'alpha_vantage'
+        ? ' <span class="instr-live-tag">&#9679; datos reales</span>'
+        : '';
     $(`instr-risk-${idx}`).className = `risk-badge ${instr.riesgo}`;
-    $(`instr-risk-${idx}`).textContent = `${meta.emoji} ${meta.label} · Retorno base: ${(instr.tasa_base * 100).toFixed(1)}% · Vol: ${(instr.volatilidad * 100).toFixed(0)}%`;
+    $(`instr-risk-${idx}`).innerHTML = `${meta.emoji} ${meta.label} · ${(instr.tasa_base * 100).toFixed(1)}% base · vol ${(instr.volatilidad * 100).toFixed(0)}%${liveTag}`;
     $(`instr-desc-${idx}`).textContent = instr.descripcion;
     infoDiv.classList.add('active');
     $(`instr-box-${idx}`).classList.add('has-value');
@@ -1064,14 +1092,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         const mktRes  = await fetch(`${API}/inversiones/parametros-mercado`);
         const mktData = await mktRes.json();
         if (mktData.success && mktData.data) {
+            let liveCount = 0;
+            let lastUpdated = null;
             Object.entries(mktData.data).forEach(([id, p]) => {
                 if (INSTRUMENTOS[id]) {
                     INSTRUMENTOS[id].tasa_base   = parseFloat(p.tasa_base);
                     INSTRUMENTOS[id].volatilidad = parseFloat(p.volatilidad);
+                    INSTRUMENTOS[id].fuente = p.fuente || 'static';
+                    if (p.fuente === 'alpha_vantage') {
+                        liveCount++;
+                        if (p.last_updated && (!lastUpdated || p.last_updated > lastUpdated)) {
+                            lastUpdated = p.last_updated;
+                        }
+                    }
                 }
             });
+            state.mktLiveCount   = liveCount;
+            state.mktLastUpdated = lastUpdated;
+            state.mktIsStale     = mktData.stale || false;
         }
     } catch (_) { /* usa valores estáticos de instrumentos.js */ }
+    renderDataSourceStatus();
 
     // Event delegation para botones Ver/Eliminar del historial (reemplaza los onclick inline)
     const historialContainer = $('historial-list');

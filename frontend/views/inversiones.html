@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
     <link rel="stylesheet" href="../public/css/inversiones.css">
+    <link rel="stylesheet" href="../public/css/tooltips.css">
     <link rel="stylesheet" href="../public/css/footer.css">
     <link rel="stylesheet" href="../public/css/terminos.css">
 
@@ -154,6 +155,7 @@
                     <div class="cfg-section-block cfg-section-block--sm">
                         <label for="cfg-perfil" class="cfg-section-label">
                             Perfil de riesgo del inversor
+                            <span class="tooltip-icon tt-right tt-wide" data-tooltip="Ajusta cómo se amplifica o reduce la rentabilidad y la volatilidad de tus instrumentos. Conservador: retorno ×0.85, vol ×0.70 · Moderado: parámetros base · Agresivo: retorno ×1.15, vol ×1.30.">ℹ</span>
                         </label>
                         <select id="cfg-perfil" class="filter-select filter-select--full">
                             <option value="conservador">Conservador — reduce rendimientos y volatilidad en un 15%/30%</option>
@@ -166,6 +168,7 @@
 <div class="cfg-section-block">
                         <label for="cfg-escenario" class="cfg-section-label">
                             Escenario de mercado
+                            <span class="tooltip-icon tt-right tt-wide" data-tooltip="Simula distintas condiciones macroeconómicas aplicadas a todos los instrumentos. Bull: +4% retorno, vol ×0.7 · Base: historia promedio · Bear: −3%, vol ×1.4 · Crisis: −8%, vol ×2.2. No predice el futuro — sirve para comparar estrategias.">ℹ</span>
                         </label>
                         <select id="cfg-escenario" class="filter-select filter-select--full">
                             <option value="bull">Bull Market — ciclo alcista, tasas +4%, volatilidad ×0.7</option>
@@ -193,6 +196,7 @@
                         Cada instrumento tiene parámetros calibrados con datos históricos: volatilidad real, sesgo de distribución y curtosis.
                         Al combinar múltiples activos, el motor calcula las correlaciones entre ellos para estimar la diversificación real del portafolio.
                     </div>
+                    <div id="data-source-status" class="data-source-status"></div>
                     <div id="instruments-container" class="instruments-grid"></div>
                     <div class="risk-preview" id="risk-preview">
                         Selecciona instrumentos para ver el análisis de correlación del portafolio
@@ -283,7 +287,7 @@
                         <div class="risk-metric-card">
                             <div class="risk-metric-label">
                                 Sharpe Ratio
-                                <span class="help-tip" title="Retorno excedente sobre la tasa libre de riesgo por unidad de riesgo. >0.8: excelente · 0.4-0.8: aceptable · <0.4: deficiente">?</span>
+                                <span class="tooltip-icon tt-right tt-wide" data-tooltip="Retorno excedente sobre la tasa libre de riesgo (CETES 4%) por unidad de riesgo. >0.8: excelente · 0.4–0.8: aceptable · <0.4: deficiente.">ℹ</span>
                             </div>
                             <div class="risk-metric-value" id="res-sharpe">—</div>
                             <div class="risk-metric-sub">Riesgo/retorno ajustado</div>
@@ -291,7 +295,7 @@
                         <div class="risk-metric-card">
                             <div class="risk-metric-label">
                                 Drawdown máximo
-                                <span class="help-tip" title="Caída máxima promedio desde el pico hasta el valle. Representa la pérdida temporal más grande esperada antes de recuperarse.">?</span>
+                                <span class="tooltip-icon tt-right tt-wide" data-tooltip="Caída máxima promedio desde el pico hasta el valle en las 500 simulaciones. Representa la pérdida temporal más grande esperada antes de recuperarse. Un drawdown alto es normal en activos de riesgo alto con plazos largos.">ℹ</span>
                             </div>
                             <div class="risk-metric-value" id="res-drawdown">—</div>
                             <div class="risk-metric-sub">Pérdida temporal esperada</div>
@@ -299,7 +303,7 @@
                         <div class="risk-metric-card">
                             <div class="risk-metric-label">
                                 VaR 95% capital
-                                <span class="help-tip" title="Value at Risk: en el peor 5% de escenarios, el capital final sería menor o igual a este valor.">?</span>
+                                <span class="tooltip-icon tt-right tt-wide" data-tooltip="Value at Risk: capital final en el peor 5% de las 500 simulaciones. Si tu VaR 95% es $80,000 partiendo de $100,000, hay un 5% de probabilidad de terminar con menos de esa cifra.">ℹ</span>
                             </div>
                             <div class="risk-metric-value" id="res-var95">—</div>
                             <div class="risk-metric-sub">Nivel: <span id="res-var-pct">—</span></div>
