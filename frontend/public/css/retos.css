@@ -1,5 +1,5 @@
 ﻿/* ========================================
-   RETOS - TOO-EASY (v2)
+   RETOS - TOO-EASY (v3)
    ======================================== */
 
 :root {
@@ -24,10 +24,11 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-dark);
     font-family: 'Nunito', 'Segoe UI', sans-serif;
-    min-height: 100vh;
+    /* height fijo para que la cadena flex propague alturas a los hijos */
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
 }
 
 /* ── LOGO ── */
@@ -41,11 +42,10 @@ body {
 .split-layout {
     display: flex;
     flex: 1;
-    width: 100%;
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 24px;
-    gap: 28px;
+    min-height: 0;        /* permite que el ítem flex se comprima */
+    width: 100%;          /* sin max-width: llena todo el ancho disponible */
+    padding: clamp(12px, 2vw, 24px);
+    gap: clamp(16px, 2vw, 28px);
     overflow: hidden;
 }
 
@@ -54,11 +54,12 @@ body {
 
 /* ── PANEL IZQUIERDO ── */
 .left-panel {
-    width: clamp(320px, 40%, 480px);
+    width: clamp(320px, 42%, 520px);
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    height: 100%;
+    min-height: 0;        /* permite que los hijos flex shrinkeen */
 }
 
 /* ── STATS CARD ── */
@@ -71,6 +72,7 @@ body {
     align-items: center;
     box-shadow: var(--shadow-sm);
     border: 1px solid rgba(255,255,255,0.5);
+    flex-shrink: 0;       /* nunca comprimir la stats card */
 }
 
 .top-stats-card h2 {
@@ -115,6 +117,7 @@ body {
     border-radius: 22px;
     padding: 20px;
     flex: 1;
+    min-height: 0;        /* crítico: activa el overflow-y del hijo */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -135,6 +138,7 @@ body {
 
 #challenges-container {
     flex: 1;
+    min-height: 0;        /* sin esto overflow-y nunca se activa */
     overflow-y: auto;
     padding-right: 8px;
     display: flex;
@@ -292,12 +296,13 @@ body {
 /* ── PANEL DERECHO (imagen) ── */
 .right-panel-image {
     flex: 1;
-    height: 100%;
+    min-height: 0;        /* sin height:100% —flex stretch lo gestiona */
+    max-width: clamp(300px, 55%, 860px); /* evita que ocupe demasiado en pantallas muy anchas */
     border-radius: 24px;
     background-image: url("../img/mapacheEscalando.png");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: bottom right;
+    background-position: bottom center;
     opacity: 0.9;
 }
 
@@ -309,10 +314,40 @@ body {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-    .split-layout { flex-direction: column; padding: 14px; overflow-y: auto; }
-    body { overflow-y: auto; }
-    .left-panel { width: 100%; }
-    .right-panel-image { height: 200px; }
+    /* en mobile el body puede scrollear normalmente */
+    body {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .split-layout {
+        flex-direction: column;
+        padding: 14px;
+        min-height: unset;
+        overflow: visible;
+    }
+
+    .left-panel {
+        width: 100%;
+        min-height: unset;
+    }
+
+    .challenges-list-container {
+        min-height: unset;
+        max-height: 65vh;  /* en mobile: contenedor con altura máxima y scroll */
+    }
+
+    #challenges-container {
+        min-height: unset;
+    }
+
+    .right-panel-image {
+        height: 220px;
+        max-width: 100%;
+        flex: unset;
+    }
 }
 
 /* ── Additional styles extracted from retos.html ── */
