@@ -73,13 +73,16 @@
                         <div class="form-group">
                             <label for="ticket-module">Módulo</label>
                             <select id="ticket-module" required>
-                                <option value="general">General</option>
                                 <option value="dashboard">Dashboard</option>
                                 <option value="inversiones">Inversiones</option>
                                 <option value="lecciones">Lecciones</option>
                                 <option value="retos">Retos</option>
                                 <option value="perfil">Perfil</option>
-                                <option value="soporte">Soporte</option>
+                                <option value="inicio_sesion">Inicio de sesión</option>
+                                <option value="registro">Registro de usuario</option>
+                                <option value="recuperar_cuenta">Recuperar cuenta</option>
+                                <option value="verificar_email">Verificar email</option>
+                                <option value="otro">Otro</option>
                             </select>
                         </div>
                     </div>
@@ -89,7 +92,7 @@
                             <i class="fas fa-upload"></i> Seleccionar imagen
                         </label>
                         <input type="file" id="ticket-image" accept=".png,.jpg,.jpeg,.webp" class="file-input-hidden">
-                        <div id="image-preview-wrap" class="image-preview-wrap" hidden>
+                        <div id="image-preview-wrap" class="image-preview-wrap">
                             <img id="image-preview" src="" alt="Vista previa" class="image-preview-thumb">
                             <button type="button" id="btn-remove-image" class="btn-remove-img" title="Quitar imagen">
                                 <i class="fas fa-times"></i> Quitar

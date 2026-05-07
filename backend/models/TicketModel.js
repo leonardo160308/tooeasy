@@ -23,7 +23,7 @@ class TicketModel {
     // TICKETS
     // ========================================
 
-    static async createTicket(userId, { subject, description, type, module = 'general', image_url = null }) {
+    static async createTicket(userId, { subject, description, type, module = 'otro', image_url = null }) {
         const priority  = 'low';
         const deadlines = slaDeadlines(priority);
         const { data, error } = await supabaseAdmin

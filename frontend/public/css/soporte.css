@@ -564,7 +564,7 @@ main { flex: 1; }
 }
 
 .image-preview-wrap {
-    display: flex;
+    display: none;
     align-items: center;
     gap: 12px;
     margin-top: 10px;
@@ -572,6 +572,10 @@ main { flex: 1; }
     background: #f7f8fa;
     border: 1px solid var(--border);
     border-radius: 8px;
+}
+
+.image-preview-wrap.show {
+    display: flex;
 }
 
 .image-preview-thumb {

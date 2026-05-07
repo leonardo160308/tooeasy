@@ -95,8 +95,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const MODULE_LABELS = {
-        dashboard: 'Dashboard', inversiones: 'Inversiones', lecciones: 'Lecciones',
-        retos: 'Retos', perfil: 'Perfil', soporte: 'Soporte', general: 'General'
+        dashboard:        'Dashboard',
+        inversiones:      'Inversiones',
+        lecciones:        'Lecciones',
+        retos:            'Retos',
+        perfil:           'Perfil',
+        inicio_sesion:    'Inicio de sesión',
+        registro:         'Registro de usuario',
+        recuperar_cuenta: 'Recuperar cuenta',
+        verificar_email:  'Verificar email',
+        otro:             'Otro'
     };
 
     const PRIORITY_ORDER = { urgent: 4, high: 3, medium: 2, low: 1 };
@@ -161,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="ticket-mini-meta">
                 ${badgePriority(ticket.priority)}
                 <span class="ticket-mini-type-label">${TYPE_LABELS[ticket.type] || ticket.type}</span>
-                ${ticket.module && ticket.module !== 'general' ? `<span class="ticket-mini-module">${MODULE_LABELS[ticket.module] || ticket.module}</span>` : ''}
+                ${ticket.module ? `<span class="ticket-mini-module">${MODULE_LABELS[ticket.module] || ticket.module}</span>` : ''}
             </div>
             <div class="ticket-mini-user">
                 <i class="fas fa-user"></i> ${escapeHtml(userName)}

@@ -66,8 +66,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const MODULE_LABELS = {
-        dashboard: 'Dashboard', inversiones: 'Inversiones', lecciones: 'Lecciones',
-        retos: 'Retos', perfil: 'Perfil', soporte: 'Soporte', general: 'General'
+        dashboard:        'Dashboard',
+        inversiones:      'Inversiones',
+        lecciones:        'Lecciones',
+        retos:            'Retos',
+        perfil:           'Perfil',
+        inicio_sesion:    'Inicio de sesión',
+        registro:         'Registro de usuario',
+        recuperar_cuenta: 'Recuperar cuenta',
+        verificar_email:  'Verificar email',
+        otro:             'Otro'
     };
 
     function badgeStatus(status) {
@@ -90,7 +98,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     imageInput.addEventListener('change', () => {
         const file = imageInput.files[0];
         if (!file) {
-            imagePreviewWrap.hidden = true;
+            imagePreviewWrap.classList.remove('show');
+            imagePreviewEl.src = '';
             return;
         }
         const allowedMimes = ['image/png', 'image/jpeg', 'image/webp'];
@@ -104,15 +113,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             imageInput.value = '';
             return;
         }
-        const url = URL.createObjectURL(file);
-        imagePreviewEl.src     = url;
-        imagePreviewWrap.hidden = false;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imagePreviewEl.src = e.target.result;
+            imagePreviewWrap.classList.add('show');
+        };
+        reader.readAsDataURL(file);
     });
 
     btnRemoveImage.addEventListener('click', () => {
-        imageInput.value        = '';
-        imagePreviewWrap.hidden = true;
-        imagePreviewEl.src      = '';
+        imageInput.value = '';
+        imagePreviewEl.src = '';
+        imagePreviewWrap.classList.remove('show');
     });
 
     // ── CREAR TICKET ─────────────────────────────────────────────────────────
@@ -154,8 +166,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         alertaExito('¡Ticket creado! Nuestro equipo te responderá pronto.');
         ticketForm.reset();
-        imagePreviewWrap.hidden = true;
         imagePreviewEl.src = '';
+        imagePreviewWrap.classList.remove('show');
         await loadMyTickets();
     });
 
