@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const detailStatusBadge= document.getElementById('detail-status-badge');
     const detailSubject    = document.getElementById('detail-subject');
     const detailDesc       = document.getElementById('detail-description');
+    const detailImageSection = document.getElementById('detail-image-section');
+    const detailImage      = document.getElementById('detail-image');
+    const detailImageLink  = document.getElementById('detail-image-link');
     const detailMeta       = document.getElementById('detail-meta');
     const messagesThread   = document.getElementById('messages-thread');
     const replySection     = document.getElementById('reply-section');
@@ -36,10 +39,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnCloseTicket   = document.getElementById('btn-close-ticket');
     const btnCloseDetail   = document.getElementById('btn-close-detail');
 
+    // ── Image upload DOM refs ────────────────────────────────────────────────
+    const imageInput       = document.getElementById('ticket-image');
+    const imagePreviewWrap = document.getElementById('image-preview-wrap');
+    const imagePreviewEl   = document.getElementById('image-preview');
+    const btnRemoveImage   = document.getElementById('btn-remove-image');
+
     let activeTicketId = null;
     let selectedRating = 0;
 
-    // ── STATUS / PRIORITY HELPERS ─────────────────────────────────────────
+    // ── LABELS ────────────────────────────────────────────────────────────────
     const STATUS_LABELS = {
         open:         'Abierto',
         in_progress:  'En progreso',
@@ -49,17 +58,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const PRIORITY_LABELS = {
-        low:    'Baja',
-        medium: 'Media',
-        high:   'Alta',
-        urgent: 'Urgente'
+        low: 'Baja', medium: 'Media', high: 'Alta', urgent: 'Urgente'
     };
 
     const TYPE_LABELS = {
-        bug:        'Error / Bug',
-        duda:       'Duda',
-        sugerencia: 'Sugerencia',
-        otro:       'Otro'
+        bug: 'Error / Bug', duda: 'Duda', sugerencia: 'Sugerencia', otro: 'Otro'
+    };
+
+    const MODULE_LABELS = {
+        dashboard: 'Dashboard', inversiones: 'Inversiones', lecciones: 'Lecciones',
+        retos: 'Retos', perfil: 'Perfil', soporte: 'Soporte', general: 'General'
     };
 
     function badgeStatus(status) {
@@ -73,22 +81,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     function formatDate(iso) {
         if (!iso) return '—';
         return new Date(iso).toLocaleString('es-MX', {
-            day:    '2-digit',
-            month:  'short',
-            year:   'numeric',
-            hour:   '2-digit',
-            minute: '2-digit'
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
         });
     }
 
-    // ── CREAR TICKET ──────────────────────────────────────────────────────
+    // ── IMAGE UPLOAD PREVIEW ─────────────────────────────────────────────────
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (!file) {
+            imagePreviewWrap.hidden = true;
+            return;
+        }
+        const allowedMimes = ['image/png', 'image/jpeg', 'image/webp'];
+        if (!allowedMimes.includes(file.type)) {
+            alertaError('Formato no válido. Usa PNG, JPG o WEBP.');
+            imageInput.value = '';
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            alertaError('La imagen no debe superar 5 MB.');
+            imageInput.value = '';
+            return;
+        }
+        const url = URL.createObjectURL(file);
+        imagePreviewEl.src     = url;
+        imagePreviewWrap.hidden = false;
+    });
+
+    btnRemoveImage.addEventListener('click', () => {
+        imageInput.value        = '';
+        imagePreviewWrap.hidden = true;
+        imagePreviewEl.src      = '';
+    });
+
+    // ── CREAR TICKET ─────────────────────────────────────────────────────────
     ticketForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const subject     = document.getElementById('ticket-subject').value.trim();
         const description = document.getElementById('ticket-description').value.trim();
         const type        = document.getElementById('ticket-type').value;
-        const priority    = document.getElementById('ticket-priority').value;
+        const module      = document.getElementById('ticket-module').value;
+        const imageFile   = imageInput.files[0];
 
         if (subject.length < 5) {
             return alertaError('El asunto debe tener al menos 5 caracteres.');
@@ -97,10 +132,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             return alertaError('La descripción debe tener al menos 10 caracteres.');
         }
 
+        const fd = new FormData();
+        fd.append('userId',      userId);
+        fd.append('subject',     subject);
+        fd.append('description', description);
+        fd.append('type',        type);
+        fd.append('module',      module);
+        if (imageFile) fd.append('image', imageFile);
+
         btnCreate.disabled = true;
         btnCreate.textContent = 'Enviando...';
 
-        const res = await createTicket({ userId, subject, description, type, priority });
+        const res = await createTicket(fd);
 
         btnCreate.disabled = false;
         btnCreate.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Ticket';
@@ -111,10 +154,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         alertaExito('¡Ticket creado! Nuestro equipo te responderá pronto.');
         ticketForm.reset();
+        imagePreviewWrap.hidden = true;
+        imagePreviewEl.src = '';
         await loadMyTickets();
     });
 
-    // ── CARGAR TICKETS ────────────────────────────────────────────────────
+    // ── CARGAR TICKETS ────────────────────────────────────────────────────────
     async function loadMyTickets() {
         ticketsLoading.classList.add('visible');
         ticketsContainer.innerHTML = '';
@@ -150,6 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ${badgeStatus(ticket.status)}
                     ${badgePriority(ticket.priority)}
                     <span class="badge badge-type">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+                    ${ticket.module ? `<span class="badge badge-module">${MODULE_LABELS[ticket.module] || ticket.module}</span>` : ''}
                 </div>
                 <div class="ticket-card-date">
                     <i class="fas fa-calendar-alt"></i> ${formatDate(ticket.created_at)}
@@ -160,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // ── DETALLE DEL TICKET ────────────────────────────────────────────────
+    // ── DETALLE DEL TICKET ────────────────────────────────────────────────────
     async function openTicketDetail(ticketId, cardEl) {
         activeTicketId = ticketId;
 
@@ -180,15 +226,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const { ticket, messages } = res.data;
 
-        detailTitle.textContent      = `#${ticket.id.slice(0, 8)}`;
-        detailStatusBadge.innerHTML  = badgeStatus(ticket.status);
-        detailSubject.textContent    = ticket.subject;
-        detailDesc.textContent       = ticket.description;
+        detailTitle.textContent     = `#${ticket.id.slice(0, 8)}`;
+        detailStatusBadge.innerHTML = badgeStatus(ticket.status);
+        detailSubject.textContent   = ticket.subject;
+        detailDesc.textContent      = ticket.description;
+
+        // Imagen adjunta
+        if (ticket.image_url) {
+            detailImage.src           = ticket.image_url;
+            detailImageLink.href      = ticket.image_url;
+            detailImageSection.hidden = false;
+        } else {
+            detailImageSection.hidden = true;
+        }
 
         detailMeta.innerHTML = `
             ${badgePriority(ticket.priority)}
             ${badgeStatus(ticket.status)}
             <span class="badge badge-type">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+            ${ticket.module ? `<span class="badge badge-module">${MODULE_LABELS[ticket.module] || ticket.module}</span>` : ''}
             <span class="ticket-date-meta">Creado: ${formatDate(ticket.created_at)}</span>`;
 
         renderMessages(messages);
@@ -196,10 +252,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isClosed   = ticket.status === 'closed';
         const isResolved = ticket.status === 'resolved';
 
-        replySection.hidden     = isClosed;
-        btnCloseTicket.hidden   = isClosed || isResolved;
+        replySection.hidden   = isClosed;
+        btnCloseTicket.hidden = isClosed || isResolved;
 
-        // CSAT: mostrar si el ticket está resuelto o cerrado
         const csatSection = document.getElementById('csat-section');
         if (csatSection) {
             csatSection.hidden = !(isClosed || isResolved);
@@ -237,14 +292,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         messagesThread.scrollTop = messagesThread.scrollHeight;
     }
 
-    // ── CERRAR DETALLE ────────────────────────────────────────────────────
+    // ── CERRAR DETALLE ────────────────────────────────────────────────────────
     btnCloseDetail.addEventListener('click', () => {
         detailCard.classList.remove('visible');
         document.querySelectorAll('.ticket-card').forEach(c => c.classList.remove('selected'));
         activeTicketId = null;
     });
 
-    // ── ENVIAR RESPUESTA ──────────────────────────────────────────────────
+    // ── ENVIAR RESPUESTA ──────────────────────────────────────────────────────
     btnSendReply.addEventListener('click', async () => {
         const message = replyInput.value.trim();
         if (!message) return alertaError('Escribe un mensaje antes de enviar.');
@@ -255,8 +310,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const res = await replyToMyTicket(userId, activeTicketId, message);
 
-        btnSendReply.disabled     = false;
-        btnSendReply.innerHTML    = '<i class="fas fa-paper-plane"></i> Enviar';
+        btnSendReply.disabled  = false;
+        btnSendReply.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar';
 
         if (!res.success) {
             return alertaError(res.message || 'Error al enviar respuesta.');
@@ -267,7 +322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await openTicketDetail(activeTicketId, null);
     });
 
-    // ── CERRAR TICKET ─────────────────────────────────────────────────────
+    // ── CERRAR TICKET ─────────────────────────────────────────────────────────
     btnCloseTicket.addEventListener('click', async () => {
         if (!activeTicketId) return;
         if (!confirm('¿Seguro que quieres cerrar este ticket?')) return;
@@ -283,10 +338,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         await openTicketDetail(activeTicketId, null);
     });
 
-    // ── REFRESH ───────────────────────────────────────────────────────────
+    // ── REFRESH ───────────────────────────────────────────────────────────────
     btnRefresh.addEventListener('click', () => loadMyTickets());
 
-    // ── HELPERS ───────────────────────────────────────────────────────────
+    // ── HELPERS ───────────────────────────────────────────────────────────────
     function escapeHtml(str) {
         if (!str) return '';
         return str
@@ -297,7 +352,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/'/g, '&#039;');
     }
 
-    // ── CSAT ──────────────────────────────────────────────────────────────
+    // ── CSAT ──────────────────────────────────────────────────────────────────
     const csatStars   = document.getElementById('csat-stars');
     const btnSendCsat = document.getElementById('btn-send-csat');
 
@@ -338,7 +393,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // ── FAQ ACCORDION ─────────────────────────────────────────────────────
+    // ── FAQ ACCORDION ─────────────────────────────────────────────────────────
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {
         item.addEventListener('toggle', () => {
@@ -348,6 +403,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // ── INIT ──────────────────────────────────────────────────────────────
+    // ── INIT ──────────────────────────────────────────────────────────────────
     await loadMyTickets();
 });

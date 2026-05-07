@@ -51,7 +51,7 @@ export async function requireSupport(req, res, next) {
 
 export async function createTicket(req, res) {
     try {
-        const { userId, subject, description, type, priority } = req.body;
+        const { userId, subject, description, type, module } = req.body;
 
         if (!subject || subject.trim().length < 5) {
             return res.status(400).json({ success: false, message: 'El asunto debe tener al menos 5 caracteres.' });
@@ -63,14 +63,20 @@ export async function createTicket(req, res) {
         if (!type || !validTypes.includes(type)) {
             return res.status(400).json({ success: false, message: 'Tipo de ticket inválido.' });
         }
-        const validPriorities = ['low', 'medium', 'high', 'urgent'];
-        const finalPriority = validPriorities.includes(priority) ? priority : 'low';
+        const validModules = ['dashboard', 'inversiones', 'lecciones', 'retos', 'perfil', 'soporte', 'general'];
+        const finalModule = validModules.includes(module) ? module : 'general';
+
+        let image_url = null;
+        if (req.file) {
+            image_url = `/public/img/tickets/${req.file.filename}`;
+        }
 
         const ticket = await TicketModel.createTicket(userId, {
             subject:     subject.trim(),
             description: description.trim(),
             type,
-            priority:    finalPriority
+            module:      finalModule,
+            image_url
         });
         res.status(201).json({ success: true, data: ticket });
     } catch (error) {
@@ -317,6 +323,31 @@ export async function addInternalNote(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al agregar nota interna' });
+    }
+}
+
+export async function changePriority(req, res) {
+    try {
+        const userId   = req.currentUser.id;
+        const { ticketId } = req.params;
+        const { priority } = req.body;
+
+        if (!UUID_RE.test(ticketId)) {
+            return res.status(400).json({ success: false, message: 'ID de ticket inválido' });
+        }
+        const validPriorities = ['low', 'medium', 'high', 'urgent'];
+        if (!priority || !validPriorities.includes(priority)) {
+            return res.status(400).json({ success: false, message: 'Prioridad inválida.' });
+        }
+
+        const ticket = await TicketModel.getTicketById(ticketId);
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket no encontrado' });
+
+        const updated = await TicketModel.updateTicketPriority(ticketId, priority, userId);
+        res.json({ success: true, data: updated });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al cambiar prioridad' });
     }
 }
 

@@ -1,9 +1,10 @@
 // backend/routes/ticketRoutes.js
 import { Router } from 'express';
+import { handleTicketUpload } from '../utils/upload.js';
 import {
     requireAuth, requireSupport,
     createTicket, getMyTickets, getMyTicketDetail, replyToTicket, closeMyTicket,
-    getAllTickets, getTicketDetail, takeTicket, changeTicketStatus,
+    getAllTickets, getTicketDetail, takeTicket, changeTicketStatus, changePriority,
     replyAsSupport, addInternalNote,
     submitCsat,
     getSupportMetrics,
@@ -14,7 +15,7 @@ import {
 const router = Router();
 
 // ── USUARIO ───────────────────────────────────────────────────────────────────
-router.post('/tickets',                              requireAuth, createTicket);
+router.post('/tickets',                              handleTicketUpload, requireAuth, createTicket);
 router.get('/tickets/my',                            requireAuth, getMyTickets);
 router.get('/tickets/my/:ticketId',                  requireAuth, getMyTicketDetail);
 router.post('/tickets/my/:ticketId/reply',           requireAuth, replyToTicket);
@@ -30,6 +31,7 @@ router.get('/support/tickets',                            requireSupport, getAll
 router.get('/support/tickets/:ticketId',                  requireSupport, getTicketDetail);
 router.post('/support/tickets/:ticketId/take',            requireSupport, takeTicket);
 router.patch('/support/tickets/:ticketId/status',         requireSupport, changeTicketStatus);
+router.patch('/support/tickets/:ticketId/priority',       requireSupport, changePriority);
 router.post('/support/tickets/:ticketId/reply',           requireSupport, replyAsSupport);
 router.post('/support/tickets/:ticketId/note',            requireSupport, addInternalNote);
 router.get('/support/metrics',                            requireSupport, getSupportMetrics);

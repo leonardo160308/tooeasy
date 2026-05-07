@@ -71,13 +71,29 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ticket-priority">Prioridad</label>
-                            <select id="ticket-priority">
-                                <option value="low">Baja</option>
-                                <option value="medium">Media</option>
-                                <option value="high">Alta</option>
-                                <option value="urgent">Urgente</option>
+                            <label for="ticket-module">Módulo</label>
+                            <select id="ticket-module" required>
+                                <option value="general">General</option>
+                                <option value="dashboard">Dashboard</option>
+                                <option value="inversiones">Inversiones</option>
+                                <option value="lecciones">Lecciones</option>
+                                <option value="retos">Retos</option>
+                                <option value="perfil">Perfil</option>
+                                <option value="soporte">Soporte</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ticket-image">Imagen adjunta <span class="label-optional">(opcional · PNG, JPG, WEBP · máx. 5 MB)</span></label>
+                        <label class="file-upload-label" for="ticket-image">
+                            <i class="fas fa-upload"></i> Seleccionar imagen
+                        </label>
+                        <input type="file" id="ticket-image" accept=".png,.jpg,.jpeg,.webp" class="file-input-hidden">
+                        <div id="image-preview-wrap" class="image-preview-wrap" hidden>
+                            <img id="image-preview" src="" alt="Vista previa" class="image-preview-thumb">
+                            <button type="button" id="btn-remove-image" class="btn-remove-img" title="Quitar imagen">
+                                <i class="fas fa-times"></i> Quitar
+                            </button>
                         </div>
                     </div>
                     <button type="submit" class="btn-primary" id="btn-create-ticket">
@@ -99,7 +115,7 @@
                     <p class="faq-group-title">Sistema de soporte</p>
                     <details class="faq-item">
                         <summary class="faq-question">¿Cómo creo un ticket?</summary>
-                        <div class="faq-answer">Rellena el formulario de la izquierda con un asunto descriptivo, detalla tu problema y selecciona el tipo y prioridad. Haz clic en "Enviar Ticket" y nuestro equipo lo recibirá de inmediato.</div>
+                        <div class="faq-answer">Rellena el formulario de la izquierda con un asunto descriptivo, detalla tu problema, selecciona el tipo y el módulo del sistema afectado, y adjunta una imagen si lo deseas. Haz clic en "Enviar Ticket" y nuestro equipo lo recibirá de inmediato.</div>
                     </details>
                     <details class="faq-item">
                         <summary class="faq-question">¿Cuánto tarda en responder el equipo de soporte?</summary>
@@ -115,7 +131,7 @@
                     </details>
                     <details class="faq-item">
                         <summary class="faq-question">¿Qué hago si mi problema es urgente?</summary>
-                        <div class="faq-answer">Al crear el ticket selecciona "Urgente" en el campo de prioridad. Esto alerta al equipo y reduce el tiempo de respuesta a aproximadamente 1 hora.</div>
+                        <div class="faq-answer">Describe con claridad en el asunto y la descripción que se trata de un problema urgente. El equipo de soporte asignará la prioridad correspondiente y el tiempo de respuesta para tickets urgentes es de aproximadamente 1 hora.</div>
                     </details>
                     <details class="faq-item">
                         <summary class="faq-question">¿Puedo cerrar un ticket yo mismo?</summary>
@@ -264,6 +280,12 @@
 
             <div class="detail-subject" id="detail-subject"></div>
             <div class="detail-description" id="detail-description"></div>
+            <div id="detail-image-section" class="detail-image-section" hidden>
+                <span class="detail-image-label"><i class="fas fa-image"></i> Imagen adjunta:</span>
+                <a id="detail-image-link" href="#" target="_blank" rel="noopener noreferrer">
+                    <img id="detail-image" src="" alt="Imagen adjunta" class="ticket-attachment-img">
+                </a>
+            </div>
             <div class="detail-meta" id="detail-meta"></div>
 
             <!-- Hilo de mensajes -->

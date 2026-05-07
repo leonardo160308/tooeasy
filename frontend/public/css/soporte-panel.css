@@ -569,6 +569,105 @@ main { flex: 1; padding: 24px 32px; }
 .event-item-date  { margin-left: auto; font-size: 0.68rem; white-space: nowrap; }
 .event-empty      { color: #bbb; font-style: italic; }
 
+/* ── MODULE BADGE ────────────────────────────────────────────────────────────*/
+.meta-badge-module {
+    background: #eef2ff;
+    color: #5c6bc0;
+}
+
+.ticket-mini-module {
+    font-size: 0.68rem;
+    color: #5c6bc0;
+    background: #eef2ff;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ── FILTER SELECT ───────────────────────────────────────────────────────────*/
+.filter-select {
+    padding: 7px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-family: inherit;
+    background: white;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+}
+
+/* ── DESCRIPTION SECTION ─────────────────────────────────────────────────────*/
+.detail-desc-section {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfc;
+}
+
+.section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.detail-desc-text {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ── IMAGE SECTION ───────────────────────────────────────────────────────────*/
+.detail-image-section {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbfc;
+}
+
+.ticket-attachment-img {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 8px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    cursor: zoom-in;
+    display: block;
+    margin-top: 6px;
+    transition: transform 0.15s;
+}
+
+.ticket-attachment-img:hover { transform: scale(1.02); }
+
+/* ── PRIORITY ACTIONS ────────────────────────────────────────────────────────*/
+.detail-actions-priority {
+    background: #fdf8f1;
+    border-top: 1px solid #f5e9d6;
+}
+
+.priority-icon {
+    color: var(--accent-gold);
+    font-size: 0.9rem;
+}
+
+.btn-priority {
+    background: var(--accent-gold);
+    color: white;
+}
+
+.btn-priority:hover { opacity: 0.85; }
+
 /* ── Macros ───────────────────────────────────────────────────────────────────*/
 .macros-list {
     display: flex;

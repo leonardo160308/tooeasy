@@ -42,6 +42,16 @@
         <h2><i class="fas fa-headset"></i> Panel de Soporte</h2>
         <div class="toolbar-actions">
             <span class="last-update" id="last-update"></span>
+            <select class="filter-select" id="filter-module" title="Filtrar por módulo">
+                <option value="">Todos los módulos</option>
+                <option value="dashboard">Dashboard</option>
+                <option value="inversiones">Inversiones</option>
+                <option value="lecciones">Lecciones</option>
+                <option value="retos">Retos</option>
+                <option value="perfil">Perfil</option>
+                <option value="soporte">Soporte</option>
+                <option value="general">General</option>
+            </select>
             <button class="btn-refresh" id="btn-refresh">
                 <i class="fas fa-sync-alt"></i> Actualizar
             </button>
@@ -152,7 +162,21 @@
                 </div>
 
                 <div class="detail-meta-row" id="d-meta-row">
-                    <!-- badges: status, priority, type, date -->
+                    <!-- badges: status, priority, type, module, date -->
+                </div>
+
+                <!-- Descripción del ticket -->
+                <div class="detail-desc-section">
+                    <div class="section-label"><i class="fas fa-align-left"></i> Descripción</div>
+                    <div id="d-description" class="detail-desc-text"></div>
+                </div>
+
+                <!-- Imagen adjunta -->
+                <div id="d-image-section" class="detail-image-section" hidden>
+                    <div class="section-label"><i class="fas fa-image"></i> Imagen adjunta</div>
+                    <a id="d-image-link" href="#" target="_blank" rel="noopener noreferrer">
+                        <img id="d-image" src="" alt="Imagen del ticket" class="ticket-attachment-img">
+                    </a>
                 </div>
 
                 <!-- Mensajes -->
@@ -180,6 +204,19 @@
                         <option value="closed">Cerrado</option>
                     </select>
                     <button class="btn-action btn-resolve" id="btn-apply-status">
+                        <i class="fas fa-check"></i> Aplicar
+                    </button>
+                </div>
+                <div class="detail-actions detail-actions-priority" id="d-actions-priority">
+                    <i class="fas fa-flag priority-icon"></i>
+                    <select class="status-select" id="priority-select">
+                        <option value="">Asignar prioridad...</option>
+                        <option value="low">Baja</option>
+                        <option value="medium">Media</option>
+                        <option value="high">Alta</option>
+                        <option value="urgent">Urgente</option>
+                    </select>
+                    <button class="btn-action btn-priority" id="btn-apply-priority">
                         <i class="fas fa-check"></i> Aplicar
                     </button>
                 </div>

@@ -300,12 +300,12 @@ export async function getChallengesProgress(userId) {
 // ========================================
 // 7. SOPORTE — USUARIO
 // ========================================
-export async function createTicket(ticketData) {
+export async function createTicket(formData) {
     try {
+        // formData must be a FormData object (multipart, may include image)
         const response = await fetch(`${API_BASE_URL}/tickets`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify(ticketData)
+            method: 'POST',
+            body:   formData
         });
         return await response.json();
     } catch (error) {
@@ -413,6 +413,20 @@ export async function changeTicketStatus(userId, ticketId, status) {
         return await response.json();
     } catch (error) {
         console.error('Error cambiando estado de ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function changeTicketPriority(userId, ticketId, priority) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/tickets/${ticketId}/priority`, {
+            method:  'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, priority })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error cambiando prioridad de ticket:', error);
         return { success: false, message: 'Error de conexión.' };
     }
 }

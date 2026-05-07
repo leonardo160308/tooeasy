@@ -6,6 +6,7 @@ import {
     getSupportTicketDetail,
     takeTicket,
     changeTicketStatus,
+    changeTicketPriority,
     replyAsSupport,
     getMacros
 } from '../modules/api.js';
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── DOM refs ────────────────────────────────────────────────────────────
     const btnRefresh    = document.getElementById('btn-refresh');
     const lastUpdateEl  = document.getElementById('last-update');
+    const filterModule  = document.getElementById('filter-module');
 
     const colOpen       = document.getElementById('col-open');
     const colInProgress = document.getElementById('col-in-progress');
@@ -50,26 +52,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dUserName     = document.getElementById('d-user-name');
     const dUserEmail    = document.getElementById('d-user-email');
     const dMetaRow      = document.getElementById('d-meta-row');
+    const dDescription  = document.getElementById('d-description');
+    const dImageSection = document.getElementById('d-image-section');
+    const dImage        = document.getElementById('d-image');
+    const dImageLink    = document.getElementById('d-image-link');
     const dMessages     = document.getElementById('d-messages');
     const dEvents       = document.getElementById('d-events');
 
-    const btnTake       = document.getElementById('btn-take');
-    const statusSelect  = document.getElementById('status-select');
-    const btnApply      = document.getElementById('btn-apply-status');
-    const replyTextarea = document.getElementById('reply-textarea');
-    const btnSend       = document.getElementById('btn-send');
-    const btnCloseDetail= document.getElementById('btn-close-detail');
+    const btnTake          = document.getElementById('btn-take');
+    const statusSelect     = document.getElementById('status-select');
+    const btnApply         = document.getElementById('btn-apply-status');
+    const prioritySelect   = document.getElementById('priority-select');
+    const btnApplyPriority = document.getElementById('btn-apply-priority');
+    const replyTextarea    = document.getElementById('reply-textarea');
+    const btnSend          = document.getElementById('btn-send');
+    const btnCloseDetail   = document.getElementById('btn-close-detail');
 
-    const tabReply      = document.getElementById('tab-reply');
-    const tabNote       = document.getElementById('tab-note');
+    const tabReply         = document.getElementById('tab-reply');
+    const tabNote          = document.getElementById('tab-note');
 
-    let activeTicketId     = null;
-    let activeTicketData   = null;
-    let isInternalMode     = false;
-    let allTickets         = [];
-    let pollingInterval    = null;
+    let activeTicketId   = null;
+    let activeTicketData = null;
+    let isInternalMode   = false;
+    let allTickets       = [];
+    let pollingInterval  = null;
 
-    // ── HELPERS ───────────────────────────────────────────────────────────
+    // ── HELPERS ────────────────────────────────────────────────────────────
     const STATUS_LABELS = {
         open:         'Abierto',
         in_progress:  'En progreso',
@@ -86,6 +94,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         bug: 'Bug', duda: 'Duda', sugerencia: 'Sugerencia', otro: 'Otro'
     };
 
+    const MODULE_LABELS = {
+        dashboard: 'Dashboard', inversiones: 'Inversiones', lecciones: 'Lecciones',
+        retos: 'Retos', perfil: 'Perfil', soporte: 'Soporte', general: 'General'
+    };
+
     const PRIORITY_ORDER = { urgent: 4, high: 3, medium: 2, low: 1 };
 
     function badge(text, cls) {
@@ -98,6 +111,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function badgePriority(p) {
         return badge(PRIORITY_LABELS[p] || p, `badge-${p}`);
+    }
+
+    function badgeModule(m) {
+        if (!m) return '';
+        return badge(MODULE_LABELS[m] || m, 'meta-badge-module');
     }
 
     function formatDate(iso) {
@@ -113,6 +131,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         return str
             .replace(/&/g, '&amp;').replace(/</g, '&lt;')
             .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ── FILTRO POR MÓDULO ──────────────────────────────────────────────────
+    function getFilteredTickets() {
+        const mod = filterModule.value;
+        if (!mod) return allTickets;
+        return allTickets.filter(t => t.module === mod);
     }
 
     function setColumnContent(colEl, tickets, emptyMsg) {
@@ -136,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="ticket-mini-meta">
                 ${badgePriority(ticket.priority)}
                 <span class="ticket-mini-type-label">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+                ${ticket.module && ticket.module !== 'general' ? `<span class="ticket-mini-module">${MODULE_LABELS[ticket.module] || ticket.module}</span>` : ''}
             </div>
             <div class="ticket-mini-user">
                 <i class="fas fa-user"></i> ${escapeHtml(userName)}
@@ -145,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return card;
     }
 
-    // ── CARGAR TODOS LOS TICKETS ──────────────────────────────────────────
+    // ── CARGAR TODOS LOS TICKETS ───────────────────────────────────────────
     async function loadBoard() {
         const res = await getSupportTickets(userId);
 
@@ -155,12 +181,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         allTickets = res.data || [];
+        renderBoard();
+        lastUpdateEl.textContent = `Actualizado: ${new Date().toLocaleTimeString('es-MX')}`;
+    }
 
-        const openTickets      = allTickets.filter(t => t.status === 'open' && !t.assigned_to)
+    function renderBoard() {
+        const filtered = getFilteredTickets();
+
+        const openTickets     = filtered.filter(t => t.status === 'open' && !t.assigned_to)
             .sort((a, b) => (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0));
-        const inProgTickets    = allTickets.filter(t => t.status === 'in_progress');
-        const waitingTickets   = allTickets.filter(t => t.status === 'waiting_user');
-        const resolvedTickets  = allTickets
+        const inProgTickets   = filtered.filter(t => t.status === 'in_progress');
+        const waitingTickets  = filtered.filter(t => t.status === 'waiting_user');
+        const resolvedTickets = filtered
             .filter(t => t.status === 'resolved' || t.status === 'closed')
             .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
             .slice(0, 10);
@@ -170,40 +202,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         setColumnContent(colWaiting,    waitingTickets, 'Sin tickets esperando');
         setColumnContent(colResolved,   resolvedTickets,'Sin resueltos recientes');
 
-        countOpen.textContent    = openTickets.length;
-        countInProg.textContent  = inProgTickets.length;
-        countWaiting.textContent = waitingTickets.length;
-        countResolved.textContent= resolvedTickets.length;
+        countOpen.textContent     = openTickets.length;
+        countInProg.textContent   = inProgTickets.length;
+        countWaiting.textContent  = waitingTickets.length;
+        countResolved.textContent = resolvedTickets.length;
 
-        statTotal.textContent    = allTickets.length;
-        statOpen.textContent     = allTickets.filter(t => t.status === 'open').length;
-        statInProg.textContent   = inProgTickets.length;
-        statWaiting.textContent  = waitingTickets.length;
-        statResolved.textContent = allTickets.filter(t => t.status === 'resolved').length;
-
-        lastUpdateEl.textContent = `Actualizado: ${new Date().toLocaleTimeString('es-MX')}`;
+        statTotal.textContent   = allTickets.length;
+        statOpen.textContent    = allTickets.filter(t => t.status === 'open').length;
+        statInProg.textContent  = allTickets.filter(t => t.status === 'in_progress').length;
+        statWaiting.textContent = allTickets.filter(t => t.status === 'waiting_user').length;
+        statResolved.textContent= allTickets.filter(t => t.status === 'resolved').length;
     }
 
-    // ── ABRIR DETALLE ─────────────────────────────────────────────────────
+    filterModule.addEventListener('change', renderBoard);
+
+    // ── ABRIR DETALLE ──────────────────────────────────────────────────────
     async function openDetail(ticketId) {
         activeTicketId = ticketId;
 
         document.querySelectorAll('.ticket-mini').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll(`.ticket-mini`).forEach(c => {
-            if (c.querySelector('.ticket-mini-subject')) {
-                const t = allTickets.find(tk => tk.id === ticketId);
-                if (t && c.closest('.column-body')) {
-                    const found = allTickets.find(tk => c.textContent.includes(tk.subject.slice(0, 20)));
-                    if (found && found.id === ticketId) c.classList.add('active');
-                }
-            }
-        });
 
         detailEmpty.classList.add('hidden');
         detailContent.classList.remove('detail-content-hidden');
-        dSubject.textContent        = 'Cargando...';
-        dMessages.innerHTML         = '<div class="loading"><i class="fas fa-spinner fa-spin"></i></div>';
-        dEvents.innerHTML           = '';
+        dSubject.textContent    = 'Cargando...';
+        dDescription.textContent = '';
+        dMessages.innerHTML     = '<div class="loading"><i class="fas fa-spinner fa-spin"></i></div>';
+        dEvents.innerHTML       = '';
+        dImageSection.hidden    = true;
 
         const res = await getSupportTicketDetail(userId, ticketId);
 
@@ -216,20 +241,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         activeTicketData = ticket;
 
         dSubject.textContent   = ticket.subject;
-        dUserName.textContent  = ticket.ticket_user?.nombre  || '—';
-        dUserEmail.textContent = ticket.ticket_user?.email   || '—';
+        dUserName.textContent  = ticket.ticket_user?.nombre || '—';
+        dUserEmail.textContent = ticket.ticket_user?.email  || '—';
 
         dMetaRow.innerHTML = `
             ${badgeStatus(ticket.status)}
             ${badgePriority(ticket.priority)}
             <span class="badge meta-badge-type">${TYPE_LABELS[ticket.type] || ticket.type}</span>
+            ${badgeModule(ticket.module)}
             <span class="meta-date">${formatDate(ticket.created_at)}</span>`;
+
+        // Descripción
+        dDescription.textContent = ticket.description || '';
+
+        // Imagen
+        if (ticket.image_url) {
+            dImage.src         = ticket.image_url;
+            dImageLink.href    = ticket.image_url;
+            dImageSection.hidden = false;
+        } else {
+            dImageSection.hidden = true;
+        }
 
         renderMessages(messages);
         renderEvents(events);
 
-        btnTake.disabled = !!(ticket.assigned_to && ticket.assigned_to !== userId) || ticket.status === 'closed';
+        btnTake.disabled   = !!(ticket.assigned_to && ticket.assigned_to !== userId) || ticket.status === 'closed';
         statusSelect.value = '';
+        prioritySelect.value = '';
+
+        // Highlight active mini-card
+        document.querySelectorAll('.ticket-mini').forEach(c => {
+            const found = allTickets.find(tk => tk.id === ticketId);
+            if (found && c.querySelector('.ticket-mini-subject')?.textContent === found.subject) {
+                c.classList.add('active');
+            }
+        });
     }
 
     function renderMessages(messages) {
@@ -243,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             bubble.className = `msg-bubble from-${msg.sender_role}`;
             if (msg.is_internal) bubble.classList.add('internal-note');
 
-            const senderName = msg.sender?.nombre || msg.sender_role;
+            const senderName  = msg.sender?.nombre || msg.sender_role;
             const internalTag = msg.is_internal ? '<span class="internal-label">INTERNO</span>' : '';
 
             bubble.innerHTML = `
@@ -262,31 +309,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         events.slice(-8).forEach(ev => {
-            const item = document.createElement('div');
+            const item  = document.createElement('div');
             item.className = 'event-item';
-
             const actor = ev.actor?.nombre || 'Sistema';
             const desc  = describeEvent(ev);
-
             item.innerHTML = `
                 <span class="event-actor-icon"><i class="fas fa-dot-circle event-actor-dot"></i></span>
                 <span>${escapeHtml(actor)}: ${desc}</span>
                 <span class="event-item-date">${formatDate(ev.created_at)}</span>`;
-
             dEvents.appendChild(item);
         });
     }
 
     function describeEvent(ev) {
         switch (ev.type) {
-            case 'created':       return 'Creó el ticket';
-            case 'status_changed': return `Cambió estado: ${STATUS_LABELS[ev.data?.from] || ev.data?.from} → ${STATUS_LABELS[ev.data?.to] || ev.data?.to}`;
-            case 'priority_changed': return `Cambió prioridad: ${ev.data?.from} → ${ev.data?.to}`;
-            case 'assigned':      return 'Tomó el ticket';
-            case 'message_sent':  return ev.data?.is_internal ? 'Agregó nota interna' : 'Envió mensaje';
-            case 'closed':        return 'Cerró el ticket';
-            case 'reopened':      return 'Reabrió el ticket';
-            default:              return ev.type;
+            case 'created':          return 'Creó el ticket';
+            case 'status_changed':   return `Cambió estado: ${STATUS_LABELS[ev.data?.from] || ev.data?.from} → ${STATUS_LABELS[ev.data?.to] || ev.data?.to}`;
+            case 'priority_changed': return `Cambió prioridad: ${PRIORITY_LABELS[ev.data?.from] || ev.data?.from} → ${PRIORITY_LABELS[ev.data?.to] || ev.data?.to}`;
+            case 'assigned':         return 'Tomó el ticket';
+            case 'message_sent':     return ev.data?.is_internal ? 'Agregó nota interna' : 'Envió mensaje';
+            case 'closed':           return 'Cerró el ticket';
+            case 'reopened':         return 'Reabrió el ticket';
+            default:                 return ev.type;
         }
     }
 
@@ -315,6 +359,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         alertaExito('Estado actualizado.');
         statusSelect.value = '';
+        await loadBoard();
+        await openDetail(activeTicketId);
+    });
+
+    btnApplyPriority.addEventListener('click', async () => {
+        if (!activeTicketId || !prioritySelect.value) return;
+
+        const res = await changeTicketPriority(userId, activeTicketId, prioritySelect.value);
+        if (!res.success) {
+            return alertaError(res.message || 'Error al cambiar prioridad.');
+        }
+        alertaExito('Prioridad actualizada.');
+        prioritySelect.value = '';
         await loadBoard();
         await openDetail(activeTicketId);
     });
@@ -385,7 +442,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             panel.id = 'macros-panel';
             panel.className = 'macros-list';
             data.data.forEach(m => {
-                const btn = document.createElement('button');
+                const btn      = document.createElement('button');
                 btn.className  = 'macro-item';
                 btn.type       = 'button';
                 btn.textContent = m.title;
@@ -395,7 +452,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             const replyDiv = replyTextarea?.closest('.detail-reply');
             if (replyDiv) replyDiv.insertBefore(panel, replyDiv.firstChild);
-        } catch { /* silencioso — macros son opcionales */ }
+        } catch { /* macros son opcionales */ }
     }
 
     // ── INIT ──────────────────────────────────────────────────────────────

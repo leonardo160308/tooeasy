@@ -23,11 +23,12 @@ class TicketModel {
     // TICKETS
     // ========================================
 
-    static async createTicket(userId, { subject, description, type, priority }) {
+    static async createTicket(userId, { subject, description, type, module = 'general', image_url = null }) {
+        const priority  = 'low';
         const deadlines = slaDeadlines(priority);
         const { data, error } = await supabaseAdmin
             .from('support_tickets')
-            .insert({ user_id: userId, subject, description, type, priority, ...deadlines })
+            .insert({ user_id: userId, subject, description, type, priority, module, image_url, ...deadlines })
             .select()
             .single();
         if (error) throw error;
@@ -36,7 +37,35 @@ class TicketModel {
             ticket_id: data.id,
             actor_id:  userId,
             type:      'created',
-            data:      { subject, type, priority }
+            data:      { subject, type, module }
+        });
+
+        return data;
+    }
+
+    static async updateTicketPriority(ticketId, priority, actorId) {
+        const { data: prev } = await supabaseAdmin
+            .from('support_tickets')
+            .select('priority')
+            .eq('id', ticketId)
+            .single();
+
+        const { data, error } = await supabaseAdmin
+            .from('support_tickets')
+            .update({ priority, updated_at: new Date().toISOString() })
+            .eq('id', ticketId)
+            .select()
+            .single();
+        if (error) {
+            if (error.code === 'PGRST116') return null;
+            throw error;
+        }
+
+        await supabaseAdmin.from('ticket_events').insert({
+            ticket_id: ticketId,
+            actor_id:  actorId,
+            type:      'priority_changed',
+            data:      { from: prev?.priority, to: priority }
         });
 
         return data;
@@ -62,7 +91,7 @@ class TicketModel {
     static async getTicketsByUser(userId) {
         const { data, error } = await supabaseAdmin
             .from('support_tickets')
-            .select('id, subject, type, priority, status, created_at, updated_at')
+            .select('id, subject, type, priority, status, module, created_at, updated_at')
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
         if (error) throw error;
