@@ -207,14 +207,14 @@ function checkStrength(pwd) {
 
     const colors = ['#e53e3e','#dd6b20','#d69e2e','#38a169','#27ae60'];
     const widths = [20, 40, 60, 80, 100];
-    fill.style.setProperty('--fill-w',  (widths[strength - 1]  || 0) + '%');
-    fill.style.setProperty('--fill-bg', colors[strength - 1]  || '#e2e8f0');
+    fill.style.width      = (widths[strength - 1] || 0) + '%';
+    fill.style.background = colors[strength - 1] || 'transparent';
 }
 
 function togglePass(id, btn) {
     const inp = document.getElementById(id);
     inp.type = inp.type === 'password' ? 'text' : 'password';
-    btn.textContent = inp.type === 'password' ? '👁' : '';
+    btn.classList.toggle('active', inp.type === 'text');
 }
 
 async function changePassword() {
