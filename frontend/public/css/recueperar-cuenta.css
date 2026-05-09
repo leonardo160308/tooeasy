@@ -83,7 +83,7 @@ h2 {
 /* Inputs Generales */
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+.password-wrapper input {
     width: 100%;
     padding: 16px 24px;
     border: 2px solid transparent;
@@ -262,6 +262,10 @@ input:focus {
 .toggle-pass.active {
     opacity: 1;
 }
+
+.toggle-pass .icon-eye-off { display: none; }
+.toggle-pass.active .icon-eye { display: none; }
+.toggle-pass.active .icon-eye-off { display: block; }
 
 .strength-bar {
     height: 6px;
