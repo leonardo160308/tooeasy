@@ -323,12 +323,12 @@ class TicketModel {
         if (fetchError) throw fetchError;
         if (!expired || expired.length === 0) return { deleted: 0 };
 
-        // Borrar imágenes de Supabase Storage
-        const imageNames = expired
-            .filter(t => t.image_url)
+        // Borrar imágenes de Supabase Storage (solo las que vengan de ahí)
+        const storageNames = expired
+            .filter(t => t.image_url?.startsWith('http'))
             .map(t => t.image_url.split('/').pop());
-        if (imageNames.length > 0) {
-            await supabaseAdmin.storage.from('tickets').remove(imageNames);
+        if (storageNames.length > 0) {
+            await supabaseAdmin.storage.from('tickets').remove(storageNames).catch(() => {});
         }
 
         const ids = expired.map(t => t.id);
