@@ -1,12 +1,5 @@
 // backend/models/TicketModel.js
 import { supabaseAdmin } from '../config/supabase.js';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import fs   from 'fs';
-
-const __filename  = fileURLToPath(import.meta.url);
-const __dirname   = path.dirname(__filename);
-const TICKETS_DIR = path.join(__dirname, '../../frontend/public/img/tickets');
 
 const SLA_HRS = {
     urgent: { response: 1,   resolution: 4   },
@@ -330,12 +323,12 @@ class TicketModel {
         if (fetchError) throw fetchError;
         if (!expired || expired.length === 0) return { deleted: 0 };
 
-        for (const ticket of expired) {
-            if (ticket.image_url) {
-                const filename = path.basename(ticket.image_url);
-                const filePath = path.join(TICKETS_DIR, filename);
-                fs.unlink(filePath, () => {});
-            }
+        // Borrar imágenes de Supabase Storage
+        const imageNames = expired
+            .filter(t => t.image_url)
+            .map(t => t.image_url.split('/').pop());
+        if (imageNames.length > 0) {
+            await supabaseAdmin.storage.from('tickets').remove(imageNames);
         }
 
         const ids = expired.map(t => t.id);

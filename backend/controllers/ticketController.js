@@ -1,7 +1,9 @@
 // backend/controllers/ticketController.js
-import TicketModel from '../models/TicketModel.js';
-import KbModel    from '../models/KbModel.js';
-import User       from '../models/UserModel.js';
+import TicketModel          from '../models/TicketModel.js';
+import KbModel              from '../models/KbModel.js';
+import User                 from '../models/UserModel.js';
+import { supabaseAdmin }    from '../config/supabase.js';
+import path                 from 'path';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -68,7 +70,16 @@ export async function createTicket(req, res) {
 
         let image_url = null;
         if (req.file) {
-            image_url = `/public/img/tickets/${req.file.filename}`;
+            const ext      = path.extname(req.file.originalname).toLowerCase();
+            const filename = `tk-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
+            const { data: stored, error: storageErr } = await supabaseAdmin.storage
+                .from('tickets')
+                .upload(filename, req.file.buffer, { contentType: req.file.mimetype, upsert: false });
+            if (storageErr) {
+                return res.status(500).json({ success: false, message: 'Error al guardar la imagen. Intenta sin imagen.' });
+            }
+            const { data: urlData } = supabaseAdmin.storage.from('tickets').getPublicUrl(stored.path);
+            image_url = urlData.publicUrl;
         }
 
         const ticket = await TicketModel.createTicket(userId, {
