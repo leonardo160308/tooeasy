@@ -1,4 +1,4 @@
-﻿import { protectRoute, getAuthData, logout, isAdmin } from '../modules/auth.js';
+﻿import { protectRoute, getAuthData, isAdmin } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
 
 const API = '/api';
@@ -57,12 +57,6 @@ document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
             loadAll().then(() => renderCategoryLevelsPage());
         }
     });
-});
-
-// ── Logout ─────────────────────────────────────────────────────────────
-document.getElementById('logout-btn-admin').addEventListener('click', async e => {
-    e.preventDefault();
-    if (await alertaConfirmacion('¿Cerrar sesión?', 'Salir')) logout();
 });
 
 // ── Validation helpers ─────────────────────────────────────────────────

@@ -9,25 +9,32 @@
     <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
     <link rel="stylesheet" href="../public/css/footer.css">
+    <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/admin.css">
     <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
-        <link rel="stylesheet" href="../public/css/terminos.css">
 
 </head>
 <body>
 
 <!-- ── HEADER ── -->
-<header class="admin-header">
-    <div class="header-brand">
-        <div class="logo-mark">TE</div>
-        <span class="brand-name">TOO-EASY</span>
-        <span class="brand-sub">Admin</span>
+<header class="header">
+    <div class="logo">
+        <h1>TOO-EASY</h1>
+        <p>JUEGA HOY, TRIUNFA MAÑANA</p>
     </div>
-    <div class="header-actions">
-        <a href="/dashboard.html" class="btn-header"><i class="fas fa-arrow-left"></i> Volver</a>
-        <button class="btn-header danger" id="logout-btn-admin"><i class="fas fa-sign-out-alt"></i> Salir</button>
-    </div>
+    <nav class="nav">
+        <a href="/dashboard.html">DASHBOARD</a>
+        <a href="/inversiones.html">INVERSIONES</a>
+        <a href="/retos.html">RETOS</a>
+        <a href="/lecciones.html">LECCIONES</a>
+        <a href="/perfil.html">PERFIL</a>
+        <a href="#" id="logout-btn-perfil" title="Cerrar Sesión">
+            <img src="../public/img/Salida.png" alt="Salir">
+        </a>
+    </nav>
 </header>
+
+<script type="module" src="/public/js/modules/nav-init.js"></script>
 
 <div class="admin-shell">
     <!-- ── SIDEBAR ── -->
@@ -260,24 +267,7 @@
 </div>
 <footer class="footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
-    <p>        
-        <a href="mailto:tooeasycontactanos@gmail.com">        Contacto: tooeasycontactanos@gmail.com</a>  
-        <div class="terms-group">
-    <!-- Checkbox oculto (solo para JS y validación) -->
-    <input type="checkbox" id="terminos" required hidden>
-
-    <!-- Texto clickeable -->
-    <label for="terminos">
-        <span class="terms-link">Términos y Condiciones</span>
-    </label>
-</div>
-
-    </p>
 </footer>
-
-
-
-<script src="../public/js/data/terminos.js"></script>
 <script type="module" src="../public/js/pages/admin-init.js"></script>
 </body>
 </html>

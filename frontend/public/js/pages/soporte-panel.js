@@ -264,9 +264,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Imagen
         if (ticket.image_url) {
-            dImage.src         = ticket.image_url;
-            dImageLink.href    = ticket.image_url;
+            dImage.src           = ticket.image_url;
+            dImageLink.href      = ticket.image_url;
             dImageSection.hidden = false;
+            dImage.onerror       = () => { dImageSection.hidden = true; };
         } else {
             dImageSection.hidden = true;
         }

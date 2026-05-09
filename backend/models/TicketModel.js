@@ -1,5 +1,12 @@
 // backend/models/TicketModel.js
 import { supabaseAdmin } from '../config/supabase.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs   from 'fs';
+
+const __filename  = fileURLToPath(import.meta.url);
+const __dirname   = path.dirname(__filename);
+const TICKETS_DIR = path.join(__dirname, '../../frontend/public/img/tickets');
 
 const SLA_HRS = {
     urgent: { response: 1,   resolution: 4   },
@@ -306,6 +313,39 @@ class TicketModel {
             avgResponseHrs: countWithResponse > 0 ? (totalResponseMs / countWithResponse) / 3600000 : null,
             overdue
         };
+    }
+
+    // ========================================
+    // LIMPIEZA AUTOMÁTICA (30 días)
+    // ========================================
+
+    static async deleteExpiredTickets() {
+        const cutoff = new Date(Date.now() - 30 * 24 * 3600000).toISOString();
+
+        const { data: expired, error: fetchError } = await supabaseAdmin
+            .from('support_tickets')
+            .select('id, image_url')
+            .lt('created_at', cutoff);
+
+        if (fetchError) throw fetchError;
+        if (!expired || expired.length === 0) return { deleted: 0 };
+
+        for (const ticket of expired) {
+            if (ticket.image_url) {
+                const filename = path.basename(ticket.image_url);
+                const filePath = path.join(TICKETS_DIR, filename);
+                fs.unlink(filePath, () => {});
+            }
+        }
+
+        const ids = expired.map(t => t.id);
+        const { error: deleteError } = await supabaseAdmin
+            .from('support_tickets')
+            .delete()
+            .in('id', ids);
+
+        if (deleteError) throw deleteError;
+        return { deleted: ids.length };
     }
 
     static async closeTicket(ticketId, actorId) {

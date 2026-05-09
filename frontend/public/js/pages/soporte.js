@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             detailImage.src           = ticket.image_url;
             detailImageLink.href      = ticket.image_url;
             detailImageSection.hidden = false;
+            detailImage.onerror       = () => { detailImageSection.hidden = true; };
         } else {
             detailImageSection.hidden = true;
         }

@@ -19,6 +19,7 @@ import authRecoveryRoutes  from './backend/routes/authRecoveryRoutes.js';
 import inversionRoutes     from './backend/routes/inversionRoutes.js';
 import progressRoutes      from './backend/routes/progressRoutes.js';
 import ticketRoutes        from './backend/routes/ticketRoutes.js';
+import TicketModel         from './backend/models/TicketModel.js';
 
 dotenv.config();
 const app = express();
@@ -115,6 +116,23 @@ app.use('/api', adminRoutes);
 app.use('/api', inversionRoutes);
 app.use('/api', progressRoutes);
 app.use('/api', ticketRoutes);
+
+// =====================
+// LIMPIEZA AUTOMÁTICA DE TICKETS (cada 24 h)
+// =====================
+async function runTicketCleanup() {
+    try {
+        const result = await TicketModel.deleteExpiredTickets();
+        if (result.deleted > 0) {
+            console.log(`[Cleanup] ${result.deleted} ticket(s) con más de 30 días eliminado(s).`);
+        }
+    } catch (err) {
+        console.error('[Cleanup] Error al limpiar tickets expirados:', err.message);
+    }
+}
+
+setTimeout(runTicketCleanup, 10_000);
+setInterval(runTicketCleanup, 24 * 60 * 60 * 1000);
 
 // =====================
 // SERVIDOR
