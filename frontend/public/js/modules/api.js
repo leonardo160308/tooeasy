@@ -458,6 +458,19 @@ export async function getMacros(userId) {
     }
 }
 
+// ========================================
+// 9. RECOMENDACIONES INTELIGENTES
+// ========================================
+export async function getRecommendations(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/recommendations/${userId}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo recomendaciones:', error);
+        return { success: false, data: { recommendations: [], summary: {} } };
+    }
+}
+
 export async function createMacro(userId, title, body) {
     try {
         const response = await fetch(`${API_BASE_URL}/support/macros`, {

@@ -12,6 +12,7 @@
     <!-- ✅ NUEVO: Sistema de tooltips -->
     <link rel="stylesheet" href="../public/css/tooltips.css">
     <link rel="stylesheet" href="../public/css/footer.css">
+    <link rel="stylesheet" href="../public/css/recommendations.css">
     <link rel="stylesheet" href="../public/css/terminos.css">
 
     <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
@@ -303,10 +304,46 @@
 
 
 
+<!-- ── RECOMENDACIONES INTELIGENTES ── -->
+
+<!-- Overlay -->
+<div id="rec-overlay" class="rec-overlay" role="presentation"></div>
+
+<!-- Panel lateral -->
+<aside id="rec-panel" class="rec-panel" role="complementary" aria-label="Recomendaciones financieras">
+    <div class="rec-panel-header">
+        <div class="rec-panel-header-top">
+            <h2 class="rec-panel-title">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                Recomendaciones
+            </h2>
+            <button id="rec-panel-close" class="rec-panel-close" aria-label="Cerrar panel">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <p class="rec-panel-subtitle">Análisis automático basado en tus movimientos del mes</p>
+    </div>
+
+    <div id="rec-summary-bar" class="rec-summary-bar"></div>
+
+    <div id="rec-list" class="rec-list" role="list"></div>
+
+    <div class="rec-panel-footer">
+        Actualizado con tus datos más recientes
+    </div>
+</aside>
+
+<!-- Botón flotante -->
+<button id="rec-fab" class="rec-fab" aria-label="Ver recomendaciones financieras" title="Recomendaciones inteligentes">
+    <i class="fas fa-wand-magic-sparkles"></i>
+    <span id="rec-badge" class="rec-badge hidden">0</span>
+</button>
+
 <script src="../public/js/data/terminos.js"></script>
 <!-- Script leyenda + tooltips en tabs -->
 <script src="../public/js/pages/dashboard-tabs.js"></script>
 
 <script type="module" src="../public/js/pages/dashboard.js"></script>
+<script type="module" src="../public/js/pages/recommendations.js"></script>
 </body>
 </html>

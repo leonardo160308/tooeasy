@@ -18,8 +18,9 @@ import authRoutes          from './backend/routes/authRoutes.js';
 import authRecoveryRoutes  from './backend/routes/authRecoveryRoutes.js';
 import inversionRoutes     from './backend/routes/inversionRoutes.js';
 import progressRoutes      from './backend/routes/progressRoutes.js';
-import ticketRoutes        from './backend/routes/ticketRoutes.js';
-import TicketModel         from './backend/models/TicketModel.js';
+import ticketRoutes           from './backend/routes/ticketRoutes.js';
+import recommendationRoutes   from './backend/routes/recommendationRoutes.js';
+import TicketModel            from './backend/models/TicketModel.js';
 
 dotenv.config();
 const app = express();
@@ -116,6 +117,7 @@ app.use('/api', adminRoutes);
 app.use('/api', inversionRoutes);
 app.use('/api', progressRoutes);
 app.use('/api', ticketRoutes);
+app.use('/api', recommendationRoutes);
 
 // =====================
 // LIMPIEZA AUTOMÁTICA DE TICKETS (cada 24 h)
