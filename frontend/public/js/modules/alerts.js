@@ -24,6 +24,18 @@ const ALERT_TITLES = {
 };
 
 /**
+ * Escapa caracteres HTML para prevenir XSS al insertar texto dinámico
+ */
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+}
+
+/**
  * Crea el contenedor de alertas si no existe
  */
 function createAlertsContainer() {
@@ -65,12 +77,12 @@ export function mostrarAlerta(message, type = 'info', options = {}) {
     const alertBox = document.createElement('div');
     alertBox.className = `alert-box ${type}`;
 
-    // HTML interno
+    // HTML interno — escapamos title y message para prevenir XSS
     alertBox.innerHTML = `
         <div class="alert-icon">${ALERT_ICONS[type]}</div>
         <div class="alert-content">
-            <p class="alert-title">${title}</p>
-            <p class="alert-message">${message}</p>
+            <p class="alert-title">${escapeHtml(title)}</p>
+            <p class="alert-message">${escapeHtml(message)}</p>
         </div>
         ${closable ? '<button class="alert-close" aria-label="Cerrar">×</button>' : ''}
         ${duration > 0 ? '<div class="alert-progress"></div>' : ''}
@@ -149,8 +161,8 @@ export function alertaConfirmacion(mensaje, titulo = '¿Estás seguro?') {
         modal.className = 'confirm-modal';
 
         modal.innerHTML = `
-            <h2 class="confirm-title">${titulo}</h2>
-            <p class="confirm-message">${mensaje}</p>
+            <h2 class="confirm-title">${escapeHtml(titulo)}</h2>
+            <p class="confirm-message">${escapeHtml(mensaje)}</p>
             <div class="confirm-buttons">
                 <button id="modal-cancel" class="confirm-btn confirm-btn-cancel">Cancelar</button>
                 <button id="modal-confirm" class="confirm-btn confirm-btn-confirm">Confirmar</button>

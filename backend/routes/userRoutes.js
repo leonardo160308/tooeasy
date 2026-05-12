@@ -1,37 +1,23 @@
 // backend/routes/userRoutes.js
+// NOTA: Los endpoints /login y POST /users (registro) fueron eliminados.
+// Usar /api/auth/login y /api/auth/register (con verificación de email y protección brute-force).
 
 import { Router } from 'express';
-import { 
-    registerUser, 
-    loginUser, 
-    getUserProfile, 
-    updateUser, 
-    deleteUser 
+import {
+    getUserProfile,
+    updateUser,
+    deleteUser
 } from '../controllers/userController.js';
 
 const router = Router();
 
-// ========================================
-// RUTAS DE AUTENTICACIÓN
-// ========================================
-
-// POST /api/login - Iniciar sesión
-router.post('/login', loginUser);
-
-// POST /api/users - Crear cuenta (Registro)
-router.post('/users', registerUser);
-
-// ========================================
-// RUTAS DE GESTIÓN DE USUARIOS
-// ========================================
-
-// GET /api/users/:id - Ver perfil de usuario
+// GET /api/users/:id — Ver perfil de usuario
 router.get('/users/:id', getUserProfile);
 
-// PUT /api/users/:id - Actualizar datos del usuario
+// PUT /api/users/:id — Actualizar datos del usuario
 router.put('/users/:id', updateUser);
 
-// DELETE /api/users/:id - Borrar usuario (baja lógica)
+// DELETE /api/users/:id — Baja de usuario
 router.delete('/users/:id', deleteUser);
 
 export default router;

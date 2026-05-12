@@ -1,7 +1,7 @@
 // frontend/public/js/pages/auth.js - VERSIÓN FINAL CON BLOQUEO DE TECLAS
-import { login, register } from '../modules/api.js'; 
-import { saveAuthData } from '../modules/auth.js'; 
-import { alertaExito, alertaError, alertaInfo } from '../modules/alerts.js';
+import { login, register } from '../modules/api.js';
+import { saveAuthData } from '../modules/auth.js';
+import { alertaExito, alertaError, alertaInfo, alertaAdvertencia } from '../modules/alerts.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -141,7 +141,6 @@ if (loginForm) {
             } else if (data.requiresVerification) {
                 // Cuenta existe pero email no verificado
                 sessionStorage.setItem('pendingVerificationUserId', data.userId);
-                sessionStorage.setItem('pendingVerificationEmail', email);
                 alertaAdvertencia('Debes verificar tu correo primero.', {
                     duration: 4000,
                     onClose:  () => { window.location.href = '/verificar-email.html'; },
@@ -156,18 +155,5 @@ if (loginForm) {
     });
 }
 
-    // =========================================================
-    // 4. OBSERVER (Para detectar cambios en el DOM si usas SPA)
-    // =========================================================
-    const observer = new MutationObserver((mutations) => {
-        // Tu lógica de observer original
-    });
-
-    document.querySelectorAll('#registerForm input, #registerForm select')
-      .forEach(el => {
-        observer.observe(el, {
-          attributes: true,
-          attributeFilter: ['type', 'required', 'value']
-        });
-      });
+    // MutationObserver removido: no había lógica implementada y acumulaba referencias DOM.
 });

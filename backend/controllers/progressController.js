@@ -22,7 +22,7 @@ export async function getAllProgress(req, res) {
         res.json({ success: true, progress });
     } catch (error) {
         console.error('Error in getAllProgress:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: 'Error al obtener progreso.' });
     }
 }
 
@@ -34,7 +34,7 @@ export async function getCategoryProgress(req, res) {
         res.json({ success: true, completedLevels });
     } catch (error) {
         console.error('Error in getCategoryProgress:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: 'Error al obtener progreso de categoría.' });
     }
 }
 
@@ -104,6 +104,6 @@ export async function completeLevel(req, res) {
 
     } catch (error) {
         console.error('Error in completeLevel:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: 'Error al completar nivel.' });
     }
 }

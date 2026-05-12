@@ -51,7 +51,7 @@ export async function requireSupport(req, res, next) {
         next();
     } catch (error) {
         console.error('[requireSupport ERROR]', error);
-        res.status(500).json({ success: false, message: 'Error de autenticación', debug_error: error?.message, debug_code: error?.code });
+        res.status(500).json({ success: false, message: 'Error de autenticación.' });
     }
 }
 
@@ -64,8 +64,14 @@ export async function createTicket(req, res) {
         if (!subject || subject.trim().length < 5) {
             return res.status(400).json({ success: false, message: 'El asunto debe tener al menos 5 caracteres.' });
         }
+        if (subject.trim().length > 200) {
+            return res.status(400).json({ success: false, message: 'El asunto no puede superar los 200 caracteres.' });
+        }
         if (!description || description.trim().length < 10) {
             return res.status(400).json({ success: false, message: 'La descripción debe tener al menos 10 caracteres.' });
+        }
+        if (description.trim().length > 2000) {
+            return res.status(400).json({ success: false, message: 'La descripción no puede superar los 2000 caracteres.' });
         }
         const validTypes = ['bug', 'duda', 'sugerencia', 'otro'];
         if (!type || !validTypes.includes(type)) {
@@ -121,7 +127,7 @@ export async function getMyTickets(req, res) {
         res.json({ success: true, data: tickets });
     } catch (error) {
         console.error('[getMyTickets ERROR]', error);
-        res.status(500).json({ success: false, message: 'Error al obtener tickets', debug_error: error?.message, debug_code: error?.code });
+        res.status(500).json({ success: false, message: 'Error al obtener tickets.' });
     }
 }
 
@@ -159,6 +165,9 @@ export async function replyToTicket(req, res) {
         }
         if (!message || message.trim().length < 2) {
             return res.status(400).json({ success: false, message: 'El mensaje debe tener al menos 2 caracteres.' });
+        }
+        if (message.trim().length > 2000) {
+            return res.status(400).json({ success: false, message: 'El mensaje no puede superar los 2000 caracteres.' });
         }
 
         const ticket = await TicketModel.getTicketById(ticketId);
@@ -211,18 +220,21 @@ export async function closeMyTicket(req, res) {
 
 // ── SOPORTE ───────────────────────────────────────────────────────────────────
 
+const VALID_STATUSES    = new Set(['open', 'in_progress', 'waiting_user', 'resolved', 'closed']);
+const VALID_PRIORITIES  = new Set(['low', 'medium', 'high', 'urgent']);
+
 export async function getAllTickets(req, res) {
     try {
         const filters = {};
-        if (req.query.status)      filters.status      = req.query.status;
-        if (req.query.priority)    filters.priority    = req.query.priority;
-        if (req.query.assigned_to) filters.assigned_to = req.query.assigned_to;
+        if (req.query.status   && VALID_STATUSES.has(req.query.status))     filters.status      = req.query.status;
+        if (req.query.priority && VALID_PRIORITIES.has(req.query.priority)) filters.priority    = req.query.priority;
+        if (req.query.assigned_to && UUID_RE.test(req.query.assigned_to))   filters.assigned_to = req.query.assigned_to;
 
         const tickets = await TicketModel.getAllTickets(filters);
         res.json({ success: true, data: tickets });
     } catch (error) {
         console.error('[getAllTickets ERROR]', error);
-        res.status(500).json({ success: false, message: 'Error al obtener tickets', debug_error: error?.message, debug_code: error?.code });
+        res.status(500).json({ success: false, message: 'Error al obtener tickets.' });
     }
 }
 
@@ -477,7 +489,7 @@ export async function getMacros(req, res) {
         res.json({ success: true, data });
     } catch (error) {
         console.error('[getMacros ERROR]', error);
-        res.status(500).json({ success: false, message: 'Error al obtener macros', debug_error: error?.message, debug_code: error?.code });
+        res.status(500).json({ success: false, message: 'Error al obtener macros.' });
     }
 }
 

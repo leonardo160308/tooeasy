@@ -15,7 +15,8 @@ import {
 const router = Router();
 
 // ── USUARIO ───────────────────────────────────────────────────────────────────
-router.post('/tickets',                              handleTicketUpload, requireAuth, createTicket);
+// requireAuth ANTES de handleTicketUpload para no procesar archivos de usuarios no autenticados
+router.post('/tickets',                              requireAuth, handleTicketUpload, createTicket);
 router.get('/tickets/my',                            requireAuth, getMyTickets);
 router.get('/tickets/my/:ticketId',                  requireAuth, getMyTicketDetail);
 router.post('/tickets/my/:ticketId/reply',           requireAuth, replyToTicket);

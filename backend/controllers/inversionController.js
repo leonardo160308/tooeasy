@@ -16,9 +16,12 @@ export async function getSettings(req, res) {
 export async function updateSettings(req, res) {
     try {
         const { inflacion } = req.body;
-        if (inflacion === undefined || inflacion < 0 || inflacion > 25) {
+        const inflNum = Number(inflacion);
+        if (inflacion === undefined || !Number.isFinite(inflNum) || inflNum < 0 || inflNum > 25) {
             return res.status(400).json({ success: false, message: 'Inflación inválida (0–25%).' });
         }
+        // Reasignamos para usar el valor numérico en el modelo
+        req.body.inflacion = inflNum;
         const data = await InversionModel.upsertSettings(req.params.userId, inflacion);
         res.json({ success: true, data });
     } catch (error) {

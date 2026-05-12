@@ -1,46 +1,57 @@
 import User from '../models/UserModel.js';
 
+const MAX_LEVEL      = 10;
+const COSTO_MADERA   = 20;
+const COSTO_MONEDAS  = 34;
+
 // POST: Mejorar Casa o Castor
 export const upgradeItem = async (req, res) => {
     try {
-        const { userId, type } = req.body; // type puede ser 'house' o 'beaver'
-        const user = await User.findById(userId);
+        const { userId, type } = req.body;
 
-        if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+        if (!userId || !type) {
+            return res.status(400).json({ success: false, message: 'userId y type son requeridos.' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
 
         let updateData = {};
 
-        // Lógica de Precios (Según tu documento)
         if (type === 'house') {
-            const costoMadera = 20; 
-            if (user.wood < costoMadera) {
-                return res.status(400).json({ message: 'No tienes suficiente madera (20).' });
+            if ((user.house_level || 1) >= MAX_LEVEL) {
+                return res.status(400).json({ success: false, message: 'La casa ya está al nivel máximo.' });
             }
-            updateData.wood = user.wood - costoMadera;
-            updateData.house_level = user.house_level + 1;
+            if ((user.wood || 0) < COSTO_MADERA) {
+                return res.status(400).json({ success: false, message: `No tienes suficiente madera (${COSTO_MADERA}).` });
+            }
+            updateData.wood        = user.wood - COSTO_MADERA;
+            updateData.house_level = (user.house_level || 1) + 1;
 
         } else if (type === 'beaver') {
-            const costoMonedas = 34;
-            if (user.coins < costoMonedas) {
-                return res.status(400).json({ message: 'No tienes suficientes monedas (34).' });
+            if ((user.beaver_level || 1) >= MAX_LEVEL) {
+                return res.status(400).json({ success: false, message: 'El castor ya está al nivel máximo.' });
             }
-            updateData.coins = user.coins - costoMonedas;
-            updateData.beaver_level = user.beaver_level + 1;
+            if ((user.coins || 0) < COSTO_MONEDAS) {
+                return res.status(400).json({ success: false, message: `No tienes suficientes monedas (${COSTO_MONEDAS}).` });
+            }
+            updateData.coins        = user.coins - COSTO_MONEDAS;
+            updateData.beaver_level = (user.beaver_level || 1) + 1;
         } else {
-            return res.status(400).json({ message: 'Tipo de mejora inválido' });
+            return res.status(400).json({ success: false, message: 'Tipo de mejora inválido. Usa: house o beaver.' });
         }
 
-        // Aplicar cambio
         await User.update(userId, updateData);
 
-        res.json({ 
-            success: true, 
-            message: `¡${type} mejorado al nivel ${type === 'house' ? updateData.house_level : updateData.beaver_level}!`,
-            new_stats: updateData 
+        res.json({
+            success:   true,
+            message:   `¡${type} mejorado al nivel ${type === 'house' ? updateData.house_level : updateData.beaver_level}!`,
+            new_stats: updateData
         });
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error en upgradeItem:', error);
+        res.status(500).json({ success: false, message: 'Error del servidor.' });
     }
 };
 
@@ -49,8 +60,6 @@ export const upgradeItem = async (req, res) => {
 export const equipSkin = async (req, res) => {
     try {
         const { userId, skinId, type } = req.body;
-        
-        console.log('Equipando skin:', { userId, skinId, type }); // Debug
         
         if (!userId || !skinId || !type) {
             return res.status(400).json({ 
@@ -74,8 +83,6 @@ export const equipSkin = async (req, res) => {
             });
         }
 
-        console.log('Actualizando con:', updateData); // Debug
-        
         const result = await User.update(userId, updateData);
         
         if (!result || result.affectedRows === 0) {
@@ -92,9 +99,9 @@ export const equipSkin = async (req, res) => {
         
     } catch (error) {
         console.error('Error en equipSkin:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             success: false,
-            message: 'Error del servidor: ' + error.message 
+            message: 'Error del servidor.'
         });
     }
 };

@@ -11,9 +11,13 @@ export async function hashPassword(plainText) {
 }
 
 export async function comparePassword(plainText, hash) {
-    // Si el hash no empieza con $2b$ es texto plano (legado) — comparación directa
+    // Todos los hashes nuevos son bcrypt. Si por alguna razón legacy existe texto plano,
+    // comparamos con timingSafeEqual para evitar timing attacks.
     if (!hash.startsWith('$2b$') && !hash.startsWith('$2a$')) {
-        return plainText === hash;
+        const bufA = Buffer.from(plainText);
+        const bufB = Buffer.from(hash);
+        if (bufA.length !== bufB.length) return false;
+        return crypto.timingSafeEqual(bufA, bufB);
     }
     return bcrypt.compare(plainText, hash);
 }

@@ -236,18 +236,6 @@ export const claimChallenge = async (req, res) => {
     const cId = parseInt(challengeId);
 
     try {
-        // Verificar si ya fue reclamado
-        const { data: existing } = await supabase
-            .from('user_challenges')
-            .select('claimed')
-            .eq('user_id', userId)
-            .eq('challenge_id', cId)
-            .single();
-
-        if (existing && existing.claimed) {
-            return res.status(400).json({ success: false, message: '¡Ya reclamaste este reto anteriormente!' });
-        }
-
         // Cargar movimientos y validar progreso
         const { data: allMovements } = await supabase
             .from('movements')
@@ -269,10 +257,27 @@ export const claimChallenge = async (req, res) => {
             });
         }
 
-        // Recompensa correcta según el reto
-        const rewardAmount = CHALLENGE_REWARDS[cId] || 5;
+        // Registrar reto como completado PRIMERO (insert atómico con restricción unique)
+        // Si dos requests llegan simultáneamente, solo uno tendrá éxito en el insert.
+        const { error: challengeError } = await supabase
+            .from('user_challenges')
+            .insert({
+                user_id:    userId,
+                challenge_id: cId,
+                claimed:    true,
+                claimed_at: new Date().toISOString()
+            });
 
-        // Actualizar recursos del usuario
+        // Si ya existe (23505 = unique violation) → ya fue reclamado concurrentemente
+        if (challengeError) {
+            if (challengeError.code === '23505') {
+                return res.status(400).json({ success: false, message: '¡Ya reclamaste este reto anteriormente!' });
+            }
+            throw challengeError;
+        }
+
+        // Solo si el insert fue exitoso otorgamos la recompensa
+        const rewardAmount = CHALLENGE_REWARDS[cId] || 5;
         const user = await User.findById(userId);
         const updateData = { wood: (user.wood || 0) + rewardAmount };
 
@@ -282,18 +287,6 @@ export const claimChallenge = async (req, res) => {
             .eq('id', userId);
 
         if (userError) throw userError;
-
-        // Registrar reto como completado
-        const { error: challengeError } = await supabase
-            .from('user_challenges')
-            .upsert({
-                user_id: userId,
-                challenge_id: cId,
-                claimed: true,
-                claimed_at: new Date().toISOString()
-            }, { onConflict: 'user_id,challenge_id' });
-
-        if (challengeError) throw challengeError;
 
         const updatedUser = await User.findById(userId);
 
@@ -305,6 +298,6 @@ export const claimChallenge = async (req, res) => {
 
     } catch (error) {
         console.error('Error en claimChallenge:', error);
-        res.status(500).json({ success: false, message: 'Error en el servidor.', error: error.message });
+        res.status(500).json({ success: false, message: 'Error en el servidor.' });
     }
 };

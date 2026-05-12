@@ -58,7 +58,7 @@ export const registerUser = async (req, res) => {
             return res.status(409).json({ success: false, message: 'Ese nombre de usuario o email ya están registrados' });
         }
 
-        res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
+        res.status(500).json({ success: false, message: 'Error interno del servidor.' });
     }
 };
 
@@ -118,9 +118,18 @@ export const getUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ success: false, message: 'No encontrado' });
-        res.json(user);
+
+        // Nunca exponer campos sensibles al cliente
+        const {
+            password_hash, failed_login_attempts, locked_until,
+            email_verified_at, last_login_at,
+            ...safeUser
+        } = user;
+
+        res.json(safeUser);
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error('Error en getUserProfile:', error);
+        res.status(500).json({ success: false, message: 'Error al obtener perfil.' });
     }
 };
 

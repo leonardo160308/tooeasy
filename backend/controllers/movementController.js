@@ -62,8 +62,7 @@ export const createMovement = async (req, res) => {
         console.error('Error al crear movimiento:', error);
         res.status(500).json({
             success: false,
-            message: 'Error en el servidor al registrar movimiento.',
-            error: error.message
+            message: 'Error en el servidor al registrar movimiento.'
         });
     }
 };
@@ -100,6 +99,12 @@ export const updateMovement = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Movimiento no encontrado.' });
         }
 
+        // Verificar que el movimiento pertenece al usuario que hace la petición
+        const { user_id: requestUserId } = req.body;
+        if (!requestUserId || oldMovement.user_id !== requestUserId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado.' });
+        }
+
         // Obtener usuario
         const user = await User.findById(oldMovement.user_id);
         if (!user) {
@@ -134,8 +139,7 @@ export const updateMovement = async (req, res) => {
         console.error('Error al actualizar movimiento:', error);
         res.status(500).json({
             success: false,
-            message: 'Error en el servidor al actualizar movimiento.',
-            error: error.message
+            message: 'Error en el servidor al actualizar movimiento.'
         });
     }
 };
@@ -144,9 +148,13 @@ export const updateMovement = async (req, res) => {
 export const deleteMovement = async (req, res) => {
     try {
         const { movementId } = req.params;
+        const { user_id } = req.body;
 
         if (!movementId) {
             return res.status(400).json({ success: false, message: 'ID del movimiento requerido.' });
+        }
+        if (!user_id) {
+            return res.status(400).json({ success: false, message: 'user_id requerido.' });
         }
 
         const movement = await Movement.findById(movementId);
@@ -154,7 +162,12 @@ export const deleteMovement = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Movimiento no encontrado.' });
         }
 
-        const user = await User.findById(movement.user_id);
+        // Verificar que el movimiento pertenece al usuario solicitante
+        if (movement.user_id !== user_id) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado.' });
+        }
+
+        const user = await User.findById(user_id);
         if (!user) {
             return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
         }
@@ -166,8 +179,9 @@ export const deleteMovement = async (req, res) => {
         const currentBalance = parseFloat(user.dashboard_balance) || 0;
         const newBalance = currentBalance + balanceChange;
 
-        await User.update(movement.user_id, { dashboard_balance: newBalance });
-        await Movement.delete(movementId);
+        await User.update(user_id, { dashboard_balance: newBalance });
+        // Usar deleteById que filtra también por user_id en la BD
+        await Movement.deleteById(movementId, user_id);
 
         res.json({
             success: true,
@@ -179,8 +193,7 @@ export const deleteMovement = async (req, res) => {
         console.error('Error al eliminar movimiento:', error);
         res.status(500).json({
             success: false,
-            message: 'Error en el servidor al eliminar movimiento.',
-            error: error.message
+            message: 'Error en el servidor al eliminar movimiento.'
         });
     }
 };
