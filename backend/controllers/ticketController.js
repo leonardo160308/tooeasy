@@ -91,15 +91,18 @@ export async function createTicket(req, res) {
                 .upload(filename, req.file.buffer, { contentType: req.file.mimetype, upsert: false });
 
             if (!storageErr && stored) {
-                // Guardar solo el filename — el proxy /api/tickets/image/:filename sirve la imagen
-                // usando la service key admin, sin depender de visibilidad pública del bucket
+                console.log(`[Tickets] Imagen subida a Supabase Storage: bucket=tickets, file=${filename}`);
                 image_url = `/api/tickets/image/${filename}`;
             } else {
-                // Fallback: guardar en disco local
-                console.warn('[Tickets] Supabase Storage no disponible, guardando localmente:', storageErr?.message);
+                console.error(
+                    `[Tickets] Supabase Storage FALLÓ al subir "${filename}": ${storageErr?.message ?? '(sin mensaje)'} | status: ${storageErr?.statusCode ?? 'N/A'}\n` +
+                    `  ACCIÓN REQUERIDA: Verifica que el bucket "tickets" exista en Supabase Storage y que SUPABASE_SERVICE_ROLE_KEY tenga permisos de Storage.\n` +
+                    `  Intentando fallback a disco local...`
+                );
                 try {
                     fs.mkdirSync(LOCAL_UPLOAD_DIR, { recursive: true });
                     fs.writeFileSync(path.join(LOCAL_UPLOAD_DIR, filename), req.file.buffer);
+                    console.log(`[Tickets] Imagen guardada en disco local (EPHEMERAL en Render/Railway): ${path.join(LOCAL_UPLOAD_DIR, filename)}`);
                     image_url = `/api/tickets/image/${filename}`;
                 } catch (fsErr) {
                     console.error('[Tickets] Fallback local también falló:', fsErr.message);
@@ -220,41 +223,72 @@ export async function closeMyTicket(req, res) {
 }
 
 // ── IMAGEN PROXY ─────────────────────────────────────────────────────────────
-// Sirve imágenes de tickets usando la service key admin de Supabase.
-// No requiere que el bucket sea público — bypasea visibilidad a nivel de bucket.
-// Maneja también el fallback de disco local para entornos de desarrollo.
+const MIME_BY_EXT = {
+    '.png':  'image/png',
+    '.jpg':  'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.gif':  'image/gif',
+};
+
 export async function serveTicketImage(req, res) {
     const { filename } = req.params;
 
-    // Validar nombre de archivo (sin traversal de directorios)
     if (!filename || !/^[a-zA-Z0-9._-]+$/.test(filename)) {
         return res.status(400).end();
     }
 
-    // 1) Intentar Supabase Storage con admin key (no requiere bucket público)
+    const ext         = path.extname(filename).toLowerCase();
+    const contentType = MIME_BY_EXT[ext] || 'image/png';
+
+    // 1) Signed URL redirect — el cliente descarga directamente de Supabase (sin proxear datos)
     try {
-        const { data: blob, error } = await supabaseAdmin.storage
+        const { data: signed, error: signErr } = await supabaseAdmin.storage
+            .from('tickets')
+            .createSignedUrl(filename, 3600);
+
+        if (!signErr && signed?.signedUrl) {
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            return res.redirect(302, signed.signedUrl);
+        }
+        console.warn(`[serveTicketImage] signed URL falló para "${filename}": ${signErr?.message ?? '(sin mensaje)'} | status: ${signErr?.statusCode ?? 'N/A'}`);
+    } catch (err) {
+        console.error(`[serveTicketImage] excepción en signed URL para "${filename}":`, err.message);
+    }
+
+    // 2) Descarga directa proxy (si el bucket tiene archivos pero signed URL falla por configuración)
+    try {
+        const { data: blob, error: dlErr } = await supabaseAdmin.storage
             .from('tickets')
             .download(filename);
 
-        if (!error && blob) {
-            const contentType = blob.type || 'application/octet-stream';
+        if (!dlErr && blob) {
             res.setHeader('Content-Type', contentType);
             res.setHeader('Cache-Control', 'public, max-age=86400');
             const buf = Buffer.from(await blob.arrayBuffer());
             return res.end(buf);
         }
+        console.warn(`[serveTicketImage] download también falló para "${filename}": ${dlErr?.message ?? '(sin mensaje)'} | status: ${dlErr?.statusCode ?? 'N/A'}`);
     } catch (err) {
-        console.warn('[serveTicketImage] Supabase download falló:', err.message);
+        console.error(`[serveTicketImage] excepción en download para "${filename}":`, err.message);
     }
 
-    // 2) Fallback: disco local
+    // 3) Fallback: disco local (desarrollo / entornos sin Supabase Storage)
     const localPath = path.join(LOCAL_UPLOAD_DIR, filename);
     if (fs.existsSync(localPath)) {
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
         return res.sendFile(localPath);
     }
 
-    res.status(404).end();
+    console.error(
+        `[serveTicketImage] IMAGEN NO ENCONTRADA: "${filename}"\n` +
+        `  → Supabase bucket: "tickets"\n` +
+        `  → Disco local:     ${localPath}\n` +
+        `  ACCIÓN REQUERIDA: Verifica que el bucket "tickets" exista en Supabase Storage ` +
+        `y que SUPABASE_SERVICE_ROLE_KEY tenga permisos de Storage.`
+    );
+    res.status(404).json({ success: false, message: 'Imagen no encontrada' });
 }
 
 // ── SOPORTE ───────────────────────────────────────────────────────────────────

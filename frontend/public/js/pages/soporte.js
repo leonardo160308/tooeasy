@@ -246,6 +246,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         detailDesc.textContent      = ticket.description;
 
         // Imagen adjunta
+        const oldFallback = detailImageSection.querySelector('.ticket-img-error');
+        if (oldFallback) oldFallback.remove();
+        detailImage.style.display = '';
+        if (detailImageLink) detailImageLink.style.display = '';
+
         if (ticket.image_url) {
             const proxiedUrl          = getProxiedImageUrl(ticket.image_url);
             detailImage.src           = proxiedUrl;
@@ -253,7 +258,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             detailImageSection.hidden = false;
             detailImage.onerror       = () => {
                 console.warn('[Soporte] No se pudo cargar la imagen del ticket:', proxiedUrl);
-                detailImageSection.hidden = true;
+                detailImage.style.display = 'none';
+                if (detailImageLink) detailImageLink.style.display = 'none';
+                if (!detailImageSection.querySelector('.ticket-img-error')) {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'ticket-img-error';
+                    placeholder.style.cssText = 'display:flex;align-items:center;gap:6px;color:#9ca3af;font-size:0.85rem;padding:8px 0;';
+                    placeholder.innerHTML = '<i class="fas fa-image"></i> Imagen no disponible';
+                    detailImageSection.appendChild(placeholder);
+                }
             };
         } else {
             detailImageSection.hidden = true;
