@@ -3,9 +3,9 @@ import { Router } from 'express';
 import { handleTicketUpload } from '../utils/upload.js';
 import {
     requireAuth, requireSupport,
-    createTicket, getMyTickets, getMyTicketDetail, replyToTicket, closeMyTicket,
+    createTicket, getMyTickets, getMyTicketDetail, replyToTicket, closeMyTicket, deleteMyTicket,
     getAllTickets, getTicketDetail, takeTicket, changeTicketStatus, changePriority,
-    replyAsSupport, addInternalNote,
+    replyAsSupport, addInternalNote, deleteTicket,
     submitCsat,
     getSupportMetrics,
     getKbArticles, getKbArticle, createKbArticle,
@@ -28,6 +28,7 @@ router.get('/tickets/my/:ticketId',                  requireAuth, getMyTicketDet
 router.post('/tickets/my/:ticketId/reply',           requireAuth, replyToTicket);
 router.patch('/tickets/my/:ticketId/close',          requireAuth, closeMyTicket);
 router.post('/tickets/my/:ticketId/csat',            requireAuth, submitCsat);
+router.delete('/tickets/my/:ticketId',               requireAuth, deleteMyTicket);
 
 // ── BASE DE CONOCIMIENTO (disponible para usuarios autenticados) ───────────────
 router.get('/kb',              requireAuth, getKbArticles);
@@ -45,5 +46,6 @@ router.get('/support/metrics',                            requireSupport, getSup
 router.get('/support/macros',                             requireSupport, getMacros);
 router.post('/support/macros',                            requireSupport, createMacro);
 router.post('/support/kb',                                requireSupport, createKbArticle);
+router.delete('/support/tickets/:ticketId',               requireSupport, deleteTicket);
 
 export default router;

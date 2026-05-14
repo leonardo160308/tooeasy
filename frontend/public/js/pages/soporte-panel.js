@@ -8,7 +8,8 @@ import {
     changeTicketStatus,
     changeTicketPriority,
     replyAsSupport,
-    getMacros
+    getMacros,
+    deleteSupportTicket
 } from '../modules/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const tabReply         = document.getElementById('tab-reply');
     const tabNote          = document.getElementById('tab-note');
+    const btnDeleteTicket  = document.getElementById('btn-delete-ticket');
 
     let activeTicketId   = null;
     let activeTicketData = null;
@@ -432,6 +434,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         activeTicketId   = null;
         activeTicketData = null;
         document.querySelectorAll('.ticket-mini').forEach(c => c.classList.remove('active'));
+    });
+
+    btnDeleteTicket.addEventListener('click', async () => {
+        if (!activeTicketId) return;
+        if (!confirm('¿Seguro que quieres eliminar este ticket? Esta acción es irreversible.')) return;
+
+        btnDeleteTicket.disabled = true;
+
+        const res = await deleteSupportTicket(userId, activeTicketId);
+
+        btnDeleteTicket.disabled = false;
+
+        if (!res.success) {
+            return alertaError(res.message || 'Error al eliminar el ticket.');
+        }
+
+        alertaExito('Ticket eliminado.');
+        detailEmpty.classList.remove('hidden');
+        detailContent.classList.add('detail-content-hidden');
+        activeTicketId   = null;
+        activeTicketData = null;
+        await loadBoard();
     });
 
     // ── TABS REPLY / NOTE ─────────────────────────────────────────────────

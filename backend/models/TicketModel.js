@@ -341,6 +341,22 @@ class TicketModel {
         return { deleted: ids.length };
     }
 
+    static async deleteTicket(ticketId) {
+        const { data: ticket } = await supabaseAdmin
+            .from('support_tickets')
+            .select('id, image_url')
+            .eq('id', ticketId)
+            .single();
+
+        const { error } = await supabaseAdmin
+            .from('support_tickets')
+            .delete()
+            .eq('id', ticketId);
+
+        if (error) throw error;
+        return ticket;
+    }
+
     static async closeTicket(ticketId, actorId) {
         const { data, error } = await supabaseAdmin
             .from('support_tickets')

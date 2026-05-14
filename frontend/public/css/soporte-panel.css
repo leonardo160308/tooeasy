@@ -668,6 +668,18 @@ main { flex: 1; padding: 24px 32px; }
 
 .btn-priority:hover { opacity: 0.85; }
 
+.detail-actions-delete {
+    background: #fff5f5;
+    border-top: 1px solid #fde8e8;
+}
+
+.btn-delete-ticket {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-delete-ticket:hover { opacity: 0.85; }
+
 /* ── Macros ───────────────────────────────────────────────────────────────────*/
 .macros-list {
     display: flex;

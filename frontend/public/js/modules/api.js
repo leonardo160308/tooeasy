@@ -452,6 +452,30 @@ export async function replyAsSupport(userId, ticketId, message, isInternal = fal
     }
 }
 
+export async function deleteMyTicket(userId, ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets/my/${ticketId}?userId=${userId}`, {
+            method: 'DELETE'
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error eliminando ticket:', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
+export async function deleteSupportTicket(userId, ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/tickets/${ticketId}?userId=${userId}`, {
+            method: 'DELETE'
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error eliminando ticket (soporte):', error);
+        return { success: false, message: 'Error de conexión.' };
+    }
+}
+
 export async function getMacros(userId) {
     try {
         const response = await fetch(`${API_BASE_URL}/support/macros?userId=${userId}`);

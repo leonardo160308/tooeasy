@@ -6,7 +6,8 @@ import {
     getMyTickets,
     getMyTicketDetail,
     replyToMyTicket,
-    closeMyTicket
+    closeMyTicket,
+    deleteMyTicket
 } from '../modules/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const replyInput       = document.getElementById('reply-input');
     const btnSendReply     = document.getElementById('btn-send-reply');
     const btnCloseTicket   = document.getElementById('btn-close-ticket');
+    const btnDeleteTicket  = document.getElementById('btn-delete-ticket');
     const btnCloseDetail   = document.getElementById('btn-close-detail');
 
     // ── Image upload DOM refs ────────────────────────────────────────────────
@@ -353,6 +355,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         alertaExito('Ticket cerrado.');
         await loadMyTickets();
         await openTicketDetail(activeTicketId, null);
+    });
+
+    // ── ELIMINAR TICKET ───────────────────────────────────────────────────────
+    btnDeleteTicket.addEventListener('click', async () => {
+        if (!activeTicketId) return;
+        if (!confirm('¿Seguro que quieres eliminar este ticket? Esta acción es irreversible.')) return;
+
+        btnDeleteTicket.disabled = true;
+
+        const res = await deleteMyTicket(userId, activeTicketId);
+
+        btnDeleteTicket.disabled = false;
+
+        if (!res.success) {
+            return alertaError(res.message || 'Error al eliminar el ticket.');
+        }
+
+        alertaExito('Ticket eliminado.');
+        detailCard.classList.remove('visible');
+        document.querySelectorAll('.ticket-card').forEach(c => c.classList.remove('selected'));
+        activeTicketId = null;
+        await loadMyTickets();
     });
 
     // ── REFRESH ───────────────────────────────────────────────────────────────

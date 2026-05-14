@@ -431,6 +431,61 @@ export async function changePriority(req, res) {
     }
 }
 
+// ── ELIMINAR TICKET ───────────────────────────────────────────────────────────
+
+async function cleanupTicketImage(imageUrl) {
+    if (!imageUrl) return;
+    const filename = imageUrl.split('/').pop();
+    await supabaseAdmin.storage.from('tickets').remove([filename]).catch(() => {});
+    const localPath = path.join(LOCAL_UPLOAD_DIR, filename);
+    try { if (fs.existsSync(localPath)) fs.unlinkSync(localPath); } catch {}
+}
+
+export async function deleteTicket(req, res) {
+    try {
+        const { ticketId } = req.params;
+        if (!UUID_RE.test(ticketId)) {
+            return res.status(400).json({ success: false, message: 'ID de ticket inválido' });
+        }
+
+        const ticket = await TicketModel.getTicketById(ticketId);
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket no encontrado' });
+
+        await TicketModel.deleteTicket(ticketId);
+        await cleanupTicketImage(ticket.image_url);
+
+        res.json({ success: true, message: 'Ticket eliminado.' });
+    } catch (error) {
+        console.error('[deleteTicket ERROR]', error);
+        res.status(500).json({ success: false, message: 'Error al eliminar ticket' });
+    }
+}
+
+export async function deleteMyTicket(req, res) {
+    try {
+        const userId = req.currentUser.id;
+        const { ticketId } = req.params;
+
+        if (!UUID_RE.test(ticketId)) {
+            return res.status(400).json({ success: false, message: 'ID de ticket inválido' });
+        }
+
+        const ticket = await TicketModel.getTicketById(ticketId);
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket no encontrado' });
+        if (ticket.user_id !== userId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado' });
+        }
+
+        await TicketModel.deleteTicket(ticketId);
+        await cleanupTicketImage(ticket.image_url);
+
+        res.json({ success: true, message: 'Ticket eliminado.' });
+    } catch (error) {
+        console.error('[deleteMyTicket ERROR]', error);
+        res.status(500).json({ success: false, message: 'Error al eliminar ticket' });
+    }
+}
+
 // ── CSAT ──────────────────────────────────────────────────────────────────────
 
 export async function submitCsat(req, res) {

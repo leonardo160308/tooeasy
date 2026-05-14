@@ -400,6 +400,24 @@ main { flex: 1; }
 
 .btn-close-ticket:hover { background: #707b7c; }
 
+.btn-delete-ticket {
+    padding: 8px 16px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-delete-ticket:hover { background: #c0392b; }
+.btn-delete-ticket:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* ── LOADING ─────────────────────────────────────────────────────────────────*/
 .loading-spinner {
     display: none;
