@@ -9,13 +9,19 @@ import {
     submitCsat,
     getSupportMetrics,
     getKbArticles, getKbArticle, createKbArticle,
-    getMacros, createMacro
+    getMacros, createMacro,
+    serveTicketImage
 } from '../controllers/ticketController.js';
 
 const router = Router();
 
+// ── IMAGEN PROXY (sin auth — filenames son aleatorios e imposibles de adivinar) ─
+router.get('/tickets/image/:filename',               serveTicketImage);
+
 // ── USUARIO ───────────────────────────────────────────────────────────────────
-// requireAuth ANTES de handleTicketUpload para no procesar archivos de usuarios no autenticados
+// requireAuth ANTES de handleTicketUpload para no procesar archivos de usuarios no autenticados.
+// userId llega como query param (?userId=xxx) para estar disponible antes de que multer
+// procese el body multipart — así requireAuth puede validar sin esperar al body.
 router.post('/tickets',                              requireAuth, handleTicketUpload, createTicket);
 router.get('/tickets/my',                            requireAuth, getMyTickets);
 router.get('/tickets/my/:ticketId',                  requireAuth, getMyTicketDetail);

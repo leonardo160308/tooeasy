@@ -91,15 +91,16 @@ export async function createTicket(req, res) {
                 .upload(filename, req.file.buffer, { contentType: req.file.mimetype, upsert: false });
 
             if (!storageErr && stored) {
-                const { data: urlData } = supabaseAdmin.storage.from('tickets').getPublicUrl(stored.path);
-                image_url = urlData.publicUrl;
+                // Guardar solo el filename — el proxy /api/tickets/image/:filename sirve la imagen
+                // usando la service key admin, sin depender de visibilidad pública del bucket
+                image_url = `/api/tickets/image/${filename}`;
             } else {
                 // Fallback: guardar en disco local
                 console.warn('[Tickets] Supabase Storage no disponible, guardando localmente:', storageErr?.message);
                 try {
                     fs.mkdirSync(LOCAL_UPLOAD_DIR, { recursive: true });
                     fs.writeFileSync(path.join(LOCAL_UPLOAD_DIR, filename), req.file.buffer);
-                    image_url = `/public/img/tickets/${filename}`;
+                    image_url = `/api/tickets/image/${filename}`;
                 } catch (fsErr) {
                     console.error('[Tickets] Fallback local también falló:', fsErr.message);
                 }
@@ -216,6 +217,44 @@ export async function closeMyTicket(req, res) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al cerrar ticket' });
     }
+}
+
+// ── IMAGEN PROXY ─────────────────────────────────────────────────────────────
+// Sirve imágenes de tickets usando la service key admin de Supabase.
+// No requiere que el bucket sea público — bypasea visibilidad a nivel de bucket.
+// Maneja también el fallback de disco local para entornos de desarrollo.
+export async function serveTicketImage(req, res) {
+    const { filename } = req.params;
+
+    // Validar nombre de archivo (sin traversal de directorios)
+    if (!filename || !/^[a-zA-Z0-9._-]+$/.test(filename)) {
+        return res.status(400).end();
+    }
+
+    // 1) Intentar Supabase Storage con admin key (no requiere bucket público)
+    try {
+        const { data: blob, error } = await supabaseAdmin.storage
+            .from('tickets')
+            .download(filename);
+
+        if (!error && blob) {
+            const contentType = blob.type || 'application/octet-stream';
+            res.setHeader('Content-Type', contentType);
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            const buf = Buffer.from(await blob.arrayBuffer());
+            return res.end(buf);
+        }
+    } catch (err) {
+        console.warn('[serveTicketImage] Supabase download falló:', err.message);
+    }
+
+    // 2) Fallback: disco local
+    const localPath = path.join(LOCAL_UPLOAD_DIR, filename);
+    if (fs.existsSync(localPath)) {
+        return res.sendFile(localPath);
+    }
+
+    res.status(404).end();
 }
 
 // ── SOPORTE ───────────────────────────────────────────────────────────────────

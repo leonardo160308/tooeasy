@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnCreate.disabled = true;
         btnCreate.textContent = 'Enviando...';
 
-        const res = await createTicket(fd);
+        const res = await createTicket(fd, userId);
 
         btnCreate.disabled = false;
         btnCreate.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Ticket';
@@ -245,10 +245,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Imagen adjunta
         if (ticket.image_url) {
-            detailImage.src           = ticket.image_url;
-            detailImageLink.href      = ticket.image_url;
+            const proxiedUrl          = getProxiedImageUrl(ticket.image_url);
+            detailImage.src           = proxiedUrl;
+            detailImageLink.href      = proxiedUrl;
             detailImageSection.hidden = false;
-            detailImage.onerror       = () => { detailImageSection.hidden = true; };
+            detailImage.onerror       = () => {
+                console.warn('[Soporte] No se pudo cargar la imagen del ticket:', proxiedUrl);
+                detailImageSection.hidden = true;
+            };
         } else {
             detailImageSection.hidden = true;
         }
@@ -355,6 +359,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnRefresh.addEventListener('click', () => loadMyTickets());
 
     // ── HELPERS ───────────────────────────────────────────────────────────────
+    // Normaliza cualquier URL de imagen de ticket al endpoint proxy del backend.
+    // Maneja: nuevas URLs (/api/tickets/image/...), rutas locales antiguas (/public/img/tickets/...)
+    // y URLs antiguas de Supabase Storage (https://xxx.supabase.co/storage/...).
+    function getProxiedImageUrl(rawUrl) {
+        if (!rawUrl) return null;
+        if (rawUrl.startsWith('/api/tickets/image/')) return rawUrl;
+        if (rawUrl.startsWith('/public/img/tickets/')) {
+            return '/api/tickets/image/' + rawUrl.split('/').pop();
+        }
+        // URL absoluta de Supabase — extrae solo el filename
+        try {
+            const parsed   = new URL(rawUrl);
+            const filename = parsed.pathname.split('/').pop();
+            if (filename) return '/api/tickets/image/' + filename;
+        } catch {}
+        return rawUrl;
+    }
+
     function escapeHtml(str) {
         if (!str) return '';
         return str

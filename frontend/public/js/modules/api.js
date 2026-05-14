@@ -300,10 +300,14 @@ export async function getChallengesProgress(userId) {
 // ========================================
 // 7. SOPORTE — USUARIO
 // ========================================
-export async function createTicket(formData) {
+export async function createTicket(formData, userId) {
     try {
-        // formData must be a FormData object (multipart, may include image)
-        const response = await fetch(`${API_BASE_URL}/tickets`, {
+        // userId se pasa como query param para que requireAuth pueda leerlo
+        // antes de que multer procese el body multipart
+        const url = userId
+            ? `${API_BASE_URL}/tickets?userId=${encodeURIComponent(userId)}`
+            : `${API_BASE_URL}/tickets`;
+        const response = await fetch(url, {
             method: 'POST',
             body:   formData
         });

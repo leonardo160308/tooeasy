@@ -141,6 +141,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    // Normaliza cualquier URL de imagen de ticket al endpoint proxy del backend.
+    // Maneja: nuevas URLs (/api/tickets/image/...), rutas locales antiguas y URLs de Supabase.
+    function getProxiedImageUrl(rawUrl) {
+        if (!rawUrl) return null;
+        if (rawUrl.startsWith('/api/tickets/image/')) return rawUrl;
+        if (rawUrl.startsWith('/public/img/tickets/')) {
+            return '/api/tickets/image/' + rawUrl.split('/').pop();
+        }
+        try {
+            const parsed   = new URL(rawUrl);
+            const filename = parsed.pathname.split('/').pop();
+            if (filename) return '/api/tickets/image/' + filename;
+        } catch {}
+        return rawUrl;
+    }
+
     // ── FILTRO POR MÓDULO ──────────────────────────────────────────────────
     function getFilteredTickets() {
         const mod = filterModule.value;
@@ -264,10 +280,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Imagen
         if (ticket.image_url) {
-            dImage.src           = ticket.image_url;
-            dImageLink.href      = ticket.image_url;
+            const proxiedUrl     = getProxiedImageUrl(ticket.image_url);
+            dImage.src           = proxiedUrl;
+            dImageLink.href      = proxiedUrl;
             dImageSection.hidden = false;
-            dImage.onerror       = () => { dImageSection.hidden = true; };
+            dImage.onerror       = () => {
+                console.warn('[SoportePanel] No se pudo cargar la imagen del ticket:', proxiedUrl);
+                dImageSection.hidden = true;
+            };
         } else {
             dImageSection.hidden = true;
         }
