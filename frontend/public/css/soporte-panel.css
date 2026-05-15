@@ -39,10 +39,10 @@ main { flex: 1; padding: 24px 32px; }
 
 /* ── STATS BAR ───────────────────────────────────────────────────────────────*/
 .panel-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     gap: 16px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
 .stat-card {
@@ -50,16 +50,10 @@ main { flex: 1; padding: 24px 32px; }
     border-radius: 10px;
     padding: 16px 24px;
     border: 1px solid var(--border);
+    flex: 1;
+    min-width: 130px;
     text-align: center;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-/* Total: último en mostrarse, centrado en su propia fila */
-.stat-card:first-child {
-    order: 5;
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: calc(50% - 8px);
 }
 
 .stat-card .stat-number {
@@ -97,9 +91,15 @@ main { flex: 1; padding: 24px 32px; }
 /* ── BOARD ───────────────────────────────────────────────────────────────────*/
 .board {
     display: grid;
-    grid-template-columns: repeat(5, minmax(180px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    overflow-x: auto;
+}
+
+/* Última columna (Resueltos recientes) centrada en su propia fila */
+.board-column:last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 8px);
 }
 
 .board-column {
@@ -718,13 +718,13 @@ main { flex: 1; padding: 24px 32px; }
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
 @media (max-width: 1100px) {
     .panel-body { grid-template-columns: 1fr; }
-    .board { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
+    .board { grid-template-columns: 1fr 1fr; }
     .detail-panel { position: static; }
 }
 
 @media (max-width: 700px) {
     main { padding: 16px; }
-    .board { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+    .board { grid-template-columns: 1fr; }
+    .board-column:last-child { grid-column: auto; justify-self: stretch; width: 100%; }
     .panel-stats { gap: 10px; }
-    .stat-card:first-child { width: 100%; }
 }
