@@ -39,10 +39,10 @@ main { flex: 1; padding: 24px 32px; }
 
 /* ── STATS BAR ───────────────────────────────────────────────────────────────*/
 .panel-stats {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 24px;
-    flex-wrap: wrap;
 }
 
 .stat-card {
@@ -50,10 +50,16 @@ main { flex: 1; padding: 24px 32px; }
     border-radius: 10px;
     padding: 16px 24px;
     border: 1px solid var(--border);
-    flex: 1;
-    min-width: 130px;
     text-align: center;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* Total: último en mostrarse, centrado en su propia fila */
+.stat-card:first-child {
+    order: 5;
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 8px);
 }
 
 .stat-card .stat-number {
@@ -720,4 +726,5 @@ main { flex: 1; padding: 24px 32px; }
     main { padding: 16px; }
     .board { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
     .panel-stats { gap: 10px; }
+    .stat-card:first-child { width: 100%; }
 }
