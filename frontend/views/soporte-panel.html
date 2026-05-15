@@ -88,7 +88,7 @@
     <!-- Main body -->
     <div class="panel-body">
 
-        <!-- Board (4 columnas) -->
+        <!-- Board (5 columnas) -->
         <div class="board">
 
             <!-- Cola: open sin asignar -->
@@ -100,6 +100,18 @@
                 </div>
                 <div class="column-body" id="col-open">
                     <div class="col-empty">Sin tickets en cola</div>
+                </div>
+            </div>
+
+            <!-- Abiertos: open con asignado -->
+            <div class="board-column">
+                <div class="column-header col-assigned-open">
+                    <i class="fas fa-folder-open"></i>
+                    <h4>Abiertos</h4>
+                    <span class="col-count" id="count-assigned-open">0</span>
+                </div>
+                <div class="column-body" id="col-assigned-open">
+                    <div class="col-empty">Sin tickets abiertos</div>
                 </div>
             </div>
 

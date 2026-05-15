@@ -91,8 +91,9 @@ main { flex: 1; padding: 24px 32px; }
 /* ── BOARD ───────────────────────────────────────────────────────────────────*/
 .board {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
     gap: 16px;
+    overflow-x: auto;
 }
 
 .board-column {
@@ -129,10 +130,11 @@ main { flex: 1; padding: 24px 32px; }
     font-weight: 700;
 }
 
-.col-open        { color: var(--status-open);        border-top: 3px solid var(--status-open); }
-.col-in-progress { color: var(--status-in-progress); border-top: 3px solid var(--status-in-progress); }
-.col-waiting     { color: var(--status-waiting);     border-top: 3px solid var(--status-waiting); }
-.col-resolved    { color: var(--status-resolved);    border-top: 3px solid var(--status-resolved); }
+.col-open          { color: var(--status-open);        border-top: 3px solid var(--status-open); }
+.col-assigned-open { color: #8e44ad;                  border-top: 3px solid #8e44ad; }
+.col-in-progress   { color: var(--status-in-progress); border-top: 3px solid var(--status-in-progress); }
+.col-waiting       { color: var(--status-waiting);     border-top: 3px solid var(--status-waiting); }
+.col-resolved      { color: var(--status-resolved);    border-top: 3px solid var(--status-resolved); }
 
 .column-body {
     padding: 12px;
@@ -710,12 +712,12 @@ main { flex: 1; padding: 24px 32px; }
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
 @media (max-width: 1100px) {
     .panel-body { grid-template-columns: 1fr; }
-    .board { grid-template-columns: repeat(2, 1fr); }
+    .board { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
     .detail-panel { position: static; }
 }
 
 @media (max-width: 700px) {
     main { padding: 16px; }
-    .board { grid-template-columns: 1fr; }
+    .board { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
     .panel-stats { gap: 10px; }
 }

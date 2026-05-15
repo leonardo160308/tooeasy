@@ -30,15 +30,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const lastUpdateEl  = document.getElementById('last-update');
     const filterModule  = document.getElementById('filter-module');
 
-    const colOpen       = document.getElementById('col-open');
-    const colInProgress = document.getElementById('col-in-progress');
-    const colWaiting    = document.getElementById('col-waiting');
-    const colResolved   = document.getElementById('col-resolved');
+    const colOpen         = document.getElementById('col-open');
+    const colAssignedOpen = document.getElementById('col-assigned-open');
+    const colInProgress   = document.getElementById('col-in-progress');
+    const colWaiting      = document.getElementById('col-waiting');
+    const colResolved     = document.getElementById('col-resolved');
 
-    const countOpen     = document.getElementById('count-open');
-    const countInProg   = document.getElementById('count-in-progress');
-    const countWaiting  = document.getElementById('count-waiting');
-    const countResolved = document.getElementById('count-resolved');
+    const countOpen         = document.getElementById('count-open');
+    const countAssignedOpen = document.getElementById('count-assigned-open');
+    const countInProg       = document.getElementById('count-in-progress');
+    const countWaiting      = document.getElementById('count-waiting');
+    const countResolved     = document.getElementById('count-resolved');
 
     const statTotal     = document.getElementById('stat-total');
     const statOpen      = document.getElementById('stat-open');
@@ -214,24 +216,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderBoard() {
         const filtered = getFilteredTickets();
 
-        const openTickets     = filtered.filter(t => t.status === 'open' && !t.assigned_to)
-            .sort((a, b) => (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0));
-        const inProgTickets   = filtered.filter(t => t.status === 'in_progress');
-        const waitingTickets  = filtered.filter(t => t.status === 'waiting_user');
-        const resolvedTickets = filtered
+        const sortByPriority = (a, b) => (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0);
+
+        const openTickets         = filtered.filter(t => t.status === 'open' && !t.assigned_to).sort(sortByPriority);
+        const assignedOpenTickets = filtered.filter(t => t.status === 'open' && t.assigned_to).sort(sortByPriority);
+        const inProgTickets       = filtered.filter(t => t.status === 'in_progress');
+        const waitingTickets      = filtered.filter(t => t.status === 'waiting_user');
+        const resolvedTickets     = filtered
             .filter(t => t.status === 'resolved' || t.status === 'closed')
             .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
             .slice(0, 10);
 
-        setColumnContent(colOpen,       openTickets,    'Sin tickets en cola');
-        setColumnContent(colInProgress, inProgTickets,  'Sin tickets en progreso');
-        setColumnContent(colWaiting,    waitingTickets, 'Sin tickets esperando');
-        setColumnContent(colResolved,   resolvedTickets,'Sin resueltos recientes');
+        setColumnContent(colOpen,         openTickets,         'Sin tickets en cola');
+        setColumnContent(colAssignedOpen, assignedOpenTickets, 'Sin tickets abiertos');
+        setColumnContent(colInProgress,   inProgTickets,       'Sin tickets en progreso');
+        setColumnContent(colWaiting,      waitingTickets,      'Sin tickets esperando');
+        setColumnContent(colResolved,     resolvedTickets,     'Sin resueltos recientes');
 
-        countOpen.textContent     = openTickets.length;
-        countInProg.textContent   = inProgTickets.length;
-        countWaiting.textContent  = waitingTickets.length;
-        countResolved.textContent = resolvedTickets.length;
+        countOpen.textContent         = openTickets.length;
+        countAssignedOpen.textContent = assignedOpenTickets.length;
+        countInProg.textContent       = inProgTickets.length;
+        countWaiting.textContent      = waitingTickets.length;
+        countResolved.textContent     = resolvedTickets.length;
 
         statTotal.textContent   = allTickets.length;
         statOpen.textContent    = allTickets.filter(t => t.status === 'open').length;
