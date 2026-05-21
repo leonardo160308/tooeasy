@@ -512,3 +512,28 @@ export async function createMacro(userId, title, body) {
         return { success: false, message: 'Error de conexión.' };
     }
 }
+
+// ========================================
+// 10. FAQ
+// ========================================
+export async function trackFaqClick(userId, faqKey) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/faq/click`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, faqKey })
+        });
+        return await response.json();
+    } catch {
+        return { success: false };
+    }
+}
+
+export async function getFaqStats(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/support/faq-stats?userId=${userId}`);
+        return await response.json();
+    } catch {
+        return { success: false, data: [] };
+    }
+}

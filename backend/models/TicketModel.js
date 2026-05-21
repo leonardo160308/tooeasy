@@ -382,6 +382,38 @@ class TicketModel {
 
         return data;
     }
+
+    // ========================================
+    // FAQ VIEWS
+    // ========================================
+
+    static async trackFaqView(faqKey) {
+        const { data: existing } = await supabaseAdmin
+            .from('faq_views')
+            .select('id, views')
+            .eq('faq_key', faqKey)
+            .maybeSingle();
+
+        if (existing) {
+            await supabaseAdmin
+                .from('faq_views')
+                .update({ views: existing.views + 1, last_viewed_at: new Date().toISOString() })
+                .eq('id', existing.id);
+        } else {
+            await supabaseAdmin
+                .from('faq_views')
+                .insert({ faq_key: faqKey, views: 1, last_viewed_at: new Date().toISOString() });
+        }
+    }
+
+    static async getFaqStats() {
+        const { data, error } = await supabaseAdmin
+            .from('faq_views')
+            .select('faq_key, views, last_viewed_at')
+            .order('views', { ascending: false });
+        if (error) throw error;
+        return data || [];
+    }
 }
 
 export default TicketModel;

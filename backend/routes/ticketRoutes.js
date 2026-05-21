@@ -10,7 +10,8 @@ import {
     getSupportMetrics,
     getKbArticles, getKbArticle, createKbArticle,
     getMacros, createMacro,
-    serveTicketImage
+    serveTicketImage,
+    trackFaqClick, getFaqStats
 } from '../controllers/ticketController.js';
 
 const router = Router();
@@ -47,5 +48,9 @@ router.get('/support/macros',                             requireSupport, getMac
 router.post('/support/macros',                            requireSupport, createMacro);
 router.post('/support/kb',                                requireSupport, createKbArticle);
 router.delete('/support/tickets/:ticketId',               requireSupport, deleteTicket);
+
+// ── FAQ TRACKING ──────────────────────────────────────────────────────────────
+router.post('/faq/click',                                 requireAuth,    trackFaqClick);
+router.get('/support/faq-stats',                          requireSupport, getFaqStats);
 
 export default router;

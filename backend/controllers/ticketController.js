@@ -639,3 +639,27 @@ export async function createMacro(req, res) {
         res.status(500).json({ success: false, message: 'Error al crear macro' });
     }
 }
+
+export async function trackFaqClick(req, res) {
+    try {
+        const { faqKey } = req.body;
+        if (!faqKey || typeof faqKey !== 'string' || faqKey.length > 120) {
+            return res.status(400).json({ success: false, message: 'faqKey inválido.' });
+        }
+        await TicketModel.trackFaqView(faqKey.trim());
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al registrar vista de FAQ.' });
+    }
+}
+
+export async function getFaqStats(req, res) {
+    try {
+        const data = await TicketModel.getFaqStats();
+        res.json({ success: true, data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener estadísticas de FAQ.' });
+    }
+}

@@ -7,7 +7,8 @@ import {
     getMyTicketDetail,
     replyToMyTicket,
     closeMyTicket,
-    deleteMyTicket
+    deleteMyTicket,
+    trackFaqClick
 } from '../modules/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -471,6 +472,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         item.addEventListener('toggle', () => {
             if (item.open) {
                 faqItems.forEach(other => { if (other !== item) other.open = false; });
+
+                const question = item.querySelector('.faq-question')?.textContent?.trim() || '';
+                const faqKey = question.slice(0, 100).toLowerCase()
+                    .replace(/[¿?¡!]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '')
+                    .slice(0, 80);
+                if (faqKey) trackFaqClick(userId, faqKey).catch(() => {});
             }
         });
     });

@@ -9,7 +9,8 @@ import {
     changeTicketPriority,
     replyAsSupport,
     getMacros,
-    deleteSupportTicket
+    deleteSupportTicket,
+    getFaqStats
 } from '../modules/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -47,6 +48,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const statInProg    = document.getElementById('stat-in-progress');
     const statWaiting   = document.getElementById('stat-waiting');
     const statResolved  = document.getElementById('stat-resolved');
+    const statFaqTotal  = document.getElementById('stat-faq-total');
+
+    const colFaq        = document.getElementById('col-faq');
+    const countFaq      = document.getElementById('count-faq');
 
     const detailEmpty   = document.getElementById('detail-empty');
     const detailContent = document.getElementById('detail-content');
@@ -501,8 +506,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnRefresh.addEventListener('click', async () => {
         await loadBoard();
+        await loadFaqStats();
         if (activeTicketId) await openDetail(activeTicketId);
     });
+
+    // ── FAQ STATS ─────────────────────────────────────────────────────────
+    async function loadFaqStats() {
+        try {
+            const res = await getFaqStats(userId);
+            if (!res.success || !res.data) return;
+
+            const stats = res.data;
+            const totalViews = stats.reduce((sum, item) => sum + (item.views || 0), 0);
+
+            if (statFaqTotal) statFaqTotal.textContent = totalViews;
+            if (countFaq) countFaq.textContent = stats.length;
+
+            if (!colFaq) return;
+            colFaq.innerHTML = '';
+
+            if (stats.length === 0) {
+                colFaq.innerHTML = '<div class="col-empty">Sin datos de FAQ</div>';
+                return;
+            }
+
+            stats.slice(0, 15).forEach((item, idx) => {
+                const label = item.faq_key
+                    .replace(/-/g, ' ')
+                    .replace(/\b\w/g, c => c.toUpperCase());
+
+                const card = document.createElement('div');
+                card.className = 'faq-stat-item';
+                card.innerHTML = `
+                    <div class="faq-stat-rank">#${idx + 1}</div>
+                    <div class="faq-stat-body">
+                        <div class="faq-stat-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div>
+                        <div class="faq-stat-bar-wrap">
+                            <div class="faq-stat-bar" style="width:${Math.round((item.views / stats[0].views) * 100)}%"></div>
+                        </div>
+                    </div>
+                    <div class="faq-stat-count">${item.views}</div>`;
+                colFaq.appendChild(card);
+            });
+        } catch { /* FAQ stats son opcionales */ }
+    }
 
     // ── MACROS ────────────────────────────────────────────────────────────
     async function loadMacros() {
@@ -529,5 +576,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── INIT ──────────────────────────────────────────────────────────────
     await loadBoard();
     await loadMacros();
+    await loadFaqStats();
     startPolling();
 });
