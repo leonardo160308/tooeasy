@@ -758,16 +758,17 @@ progress.faq-stat-bar::-moz-progress-bar {
     background: rgba(255, 255, 255, 0.28);
 }
 
-/* ── LOGOUT BUTTON: tamaño consistente con resto del sitio ──────────────────*/
+/* ── LOGOUT BUTTON ──────────────────────────────────────────────────────────*/
 #logout-btn-perfil {
     display: inline-flex;
     align-items: center;
-    padding: 8px 14px;
+    padding: 10px 18px;
+    min-height: 44px;
 }
 
 #logout-btn-perfil img {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
 }
 
 .detail-actions-delete {

@@ -44,6 +44,8 @@ body {
     min-height: 100vh;
     line-height: 1.6;
     font-size: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ══════════════════════════════════════════
@@ -51,7 +53,7 @@ body {
 ══════════════════════════════════════════ */
 .inv-layout {
     display: flex;
-    min-height: calc(100vh - 70px);
+    flex: 1;
     align-items: stretch;
 }
 
