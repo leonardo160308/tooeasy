@@ -691,8 +691,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    let _submittingMovimiento = false;
+
     async function agregarMovimiento(e) {
         e.preventDefault();
+
+        if (_submittingMovimiento) return;
 
         const tipo      = document.getElementById('trans-type').value;
         const categoria = document.getElementById('trans-category').value;
@@ -710,6 +714,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             tipo, categoria, monto, descripcion: 'Movimiento desde Dashboard'
         };
 
+        _submittingMovimiento = true;
+        const btnSubmit = formMovimiento.querySelector('button[type="submit"]');
+        const originalText = btnSubmit.textContent;
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = 'Guardando...';
+
         try {
             await createMovement(movementData);
             document.getElementById('trans-amount').value = '';
@@ -718,6 +728,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Error al crear movimiento:', error);
             alert('No se pudo guardar el movimiento.');
+        } finally {
+            _submittingMovimiento = false;
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = originalText;
         }
     }
 

@@ -51,6 +51,10 @@
                 <h3>Nuevo Ticket</h3>
             </div>
             <div class="card-body">
+                <div id="ticket-quota-bar" class="ticket-quota-bar quota-ok" aria-live="polite" hidden>
+                    <i class="fas fa-ticket-alt"></i>
+                    <span id="ticket-quota-text">Cargando...</span>
+                </div>
                 <form id="ticket-form" novalidate>
                     <div class="form-group">
                         <label for="ticket-subject">Asunto</label>
@@ -285,7 +289,7 @@
             <div class="detail-description" id="detail-description"></div>
             <div id="detail-image-section" class="detail-image-section" hidden>
                 <span class="detail-image-label"><i class="fas fa-image"></i> Imagen adjunta:</span>
-                <a id="detail-image-link" href="#" target="_blank" rel="noopener noreferrer">
+                <a id="detail-image-link" href="#" role="button" aria-label="Ver imagen completa">
                     <img id="detail-image" src="" alt="Imagen adjunta" class="ticket-attachment-img">
                 </a>
             </div>

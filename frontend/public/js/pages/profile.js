@@ -42,12 +42,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const CASTOR_NAMES = {
-        "castor_default": "Mapache Bebé",
-        "castor_1": "Mapache Aprendiz",
-        "castor_2": "Mapache Obrero",
-        "castor_3": "Mapache Ingeniero",
-        "castor_4": "Mapache Maestro",
-        "castor_5": "Rey Mapache"
+        "castor_default": "Castor Bebé",
+        "castor_1": "Castor Aprendiz",
+        "castor_2": "Castor Obrero",
+        "castor_3": "Castor Ingeniero",
+        "castor_4": "Castor Maestro",
+        "castor_5": "Rey Castor"
     };
 
     const UNLOCKS_CASA_LIST   = ["skin_default","skin_1","skin_2","skin_3","skin_4","skin_5"];
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (currentUserData.beaver_level >= MAX_LEVEL) {
-            btnBeaver.textContent = '¡Mapache al Máximo! 🦝';
+            btnBeaver.textContent = '¡Castor al Máximo! 🦫';
             btnBeaver.disabled = true;
         } else if (currentUserData.coins < COSTO_CASTOR_BASE) {
             btnBeaver.disabled = true;
@@ -205,15 +205,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         try {
-            alertaInfo('Entrenando a tu mapache...', { duration: 2000 });
+            alertaInfo('Entrenando a tu castor...', { duration: 2000 });
             const result = await upgradeItem(userId, 'beaver');
             if (result.success) {
                 currentUserData.coins        = result.new_stats.coins;
                 currentUserData.beaver_level = result.new_stats.beaver_level;
-                alertaExito(`¡Mapache entrenado a nivel ${result.new_stats.beaver_level}! 🦝`, { title: '¡Entrenamiento exitoso!', duration: 4000 });
+                alertaExito(`¡Castor entrenado a nivel ${result.new_stats.beaver_level}! 🦝`, { title: '¡Entrenamiento exitoso!', duration: 4000 });
                 actualizarUI();
             } else { alertaError(result.message); }
-        } catch (error) { console.error(error); alertaError('Error de conexión al entrenar mapache.'); }
+        } catch (error) { console.error(error); alertaError('Error de conexión al entrenar castor.'); }
     });
 
     // ── Visores de skins ───────────────────────────────────────────────────

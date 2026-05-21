@@ -13,6 +13,13 @@ const LOCAL_UPLOAD_DIR = path.join(__dirname, '../../frontend/public/img/tickets
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Límite mensual de tickets para usuarios regulares
+const MONTHLY_TICKET_LIMIT = 5;
+
+function isPrivilegedRole(role) {
+    return role === 'support' || role === 'admin';
+}
+
 // userId en body para POST/PATCH, en query para GET
 function extractUserId(req) {
     return req.query.userId || req.body?.userId;
@@ -77,8 +84,25 @@ export async function createTicket(req, res) {
         if (!type || !validTypes.includes(type)) {
             return res.status(400).json({ success: false, message: 'Tipo de ticket inválido.' });
         }
-        const validModules = ['dashboard', 'inversiones', 'lecciones', 'retos', 'perfil', 'soporte', 'general'];
+        const validModules = [
+            'dashboard', 'inversiones', 'lecciones', 'retos', 'perfil',
+            'soporte', 'inicio_sesion', 'registro', 'recuperar_cuenta',
+            'verificar_email', 'otro', 'general'
+        ];
         const finalModule = validModules.includes(module) ? module : 'general';
+
+        // Verificar límite mensual (solo usuarios regulares)
+        const user = req.currentUser;
+        if (!isPrivilegedRole(user.role)) {
+            const usedThisMonth = await TicketModel.countUserTicketsThisMonth(userId);
+            if (usedThisMonth >= MONTHLY_TICKET_LIMIT) {
+                return res.status(429).json({
+                    success: false,
+                    message: `Has alcanzado el límite de ${MONTHLY_TICKET_LIMIT} tickets por mes. Podrás crear uno nuevo el próximo mes.`,
+                    code: 'QUOTA_EXCEEDED'
+                });
+            }
+        }
 
         let image_url = null;
         if (req.file) {
@@ -637,6 +661,30 @@ export async function createMacro(req, res) {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al crear macro' });
+    }
+}
+
+export async function getTicketQuota(req, res) {
+    try {
+        const userId = extractUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });
+        }
+        const user = await User.findById(userId);
+        if (!user || !user.is_active) {
+            return res.status(401).json({ success: false, message: 'Usuario no encontrado.' });
+        }
+
+        if (isPrivilegedRole(user.role)) {
+            return res.json({ success: true, data: { used: 0, limit: null, remaining: null } });
+        }
+
+        const used      = await TicketModel.countUserTicketsThisMonth(userId);
+        const remaining = Math.max(0, MONTHLY_TICKET_LIMIT - used);
+        res.json({ success: true, data: { used, limit: MONTHLY_TICKET_LIMIT, remaining } });
+    } catch (error) {
+        console.error('[getTicketQuota ERROR]', error);
+        res.status(500).json({ success: false, message: 'Error al obtener cuota de tickets.' });
     }
 }
 

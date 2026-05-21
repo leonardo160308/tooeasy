@@ -11,13 +11,17 @@ import {
     getKbArticles, getKbArticle, createKbArticle,
     getMacros, createMacro,
     serveTicketImage,
-    trackFaqClick, getFaqStats
+    trackFaqClick, getFaqStats,
+    getTicketQuota
 } from '../controllers/ticketController.js';
 
 const router = Router();
 
 // ── IMAGEN PROXY (sin auth — filenames son aleatorios e imposibles de adivinar) ─
 router.get('/tickets/image/:filename',               serveTicketImage);
+
+// ── CUOTA DE TICKETS (sin middleware extra — valida internamente) ─────────────
+router.get('/tickets/quota',                         getTicketQuota);
 
 // ── USUARIO ───────────────────────────────────────────────────────────────────
 // requireAuth ANTES de handleTicketUpload para no procesar archivos de usuarios no autenticados.

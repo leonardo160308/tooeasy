@@ -11,6 +11,58 @@ import {
     trackFaqClick
 } from '../modules/api.js';
 
+// ── IMAGE MODAL (SweetAlert2-style) ─────────────────────────────────────────
+function openImageModal(src) {
+    const overlay = document.createElement('div');
+    overlay.className = 'img-modal-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Vista previa de imagen');
+
+    const box = document.createElement('div');
+    box.className = 'img-modal-box';
+    box.addEventListener('click', (e) => e.stopPropagation());
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'img-modal-close';
+    closeBtn.setAttribute('aria-label', 'Cerrar imagen');
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+
+    const img = document.createElement('img');
+    img.className = 'img-modal-img';
+    img.alt = 'Imagen adjunta del ticket';
+
+    img.onerror = () => {
+        box.innerHTML = '';
+        box.appendChild(closeBtn);
+        const errDiv = document.createElement('div');
+        errDiv.className = 'img-modal-error';
+        errDiv.innerHTML = '<i class="fas fa-image"></i><p>Imagen no disponible</p>';
+        box.appendChild(errDiv);
+    };
+
+    img.src = src;
+    box.appendChild(closeBtn);
+    box.appendChild(img);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+
+    function closeModal() {
+        overlay.classList.add('img-modal-closing');
+        setTimeout(() => {
+            overlay.remove();
+            document.body.style.overflow = '';
+        }, 180);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function onKeyDown(e) {
+        if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', onKeyDown); }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
 
     if (!protectRoute()) return;
@@ -171,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         ticketForm.reset();
         imagePreviewEl.src = '';
         imagePreviewWrap.classList.remove('show');
-        await loadMyTickets();
+        await Promise.all([loadMyTickets(), loadTicketQuota()]);
     });
 
     // ── CARGAR TICKETS ────────────────────────────────────────────────────────
@@ -264,10 +316,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!detailImageSection.querySelector('.ticket-img-error')) {
                     const placeholder = document.createElement('div');
                     placeholder.className = 'ticket-img-error';
-                    placeholder.style.cssText = 'display:flex;align-items:center;gap:6px;color:#9ca3af;font-size:0.85rem;padding:8px 0;';
                     placeholder.innerHTML = '<i class="fas fa-image"></i> Imagen no disponible';
                     detailImageSection.appendChild(placeholder);
                 }
+            };
+            detailImage.onclick = (e) => {
+                e.preventDefault();
+                openImageModal(proxiedUrl);
+            };
+            if (detailImageLink) detailImageLink.onclick = (e) => {
+                e.preventDefault();
+                openImageModal(proxiedUrl);
             };
         } else {
             detailImageSection.hidden = true;
@@ -486,6 +545,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // ── TICKET QUOTA ─────────────────────────────────────────────────────────
+    async function loadTicketQuota() {
+        const bar  = document.getElementById('ticket-quota-bar');
+        const text = document.getElementById('ticket-quota-text');
+        if (!bar || !text) return;
+
+        try {
+            const res = await fetch(`/api/tickets/quota?userId=${userId}`);
+            const data = await res.json();
+            if (!data.success) return;
+
+            const { remaining, limit, used } = data.data;
+            bar.hidden = false;
+
+            if (limit === null) {
+                bar.className = 'ticket-quota-bar quota-ok';
+                text.textContent = 'Sin límite mensual de tickets';
+                return;
+            }
+
+            if (remaining <= 0) {
+                bar.className = 'ticket-quota-bar quota-exhausted';
+                text.textContent = `Has alcanzado el límite mensual (${limit} tickets). Podrás crear uno nuevo el próximo mes.`;
+                document.getElementById('btn-create-ticket').disabled = true;
+                document.getElementById('btn-create-ticket').title = 'Límite mensual alcanzado';
+            } else if (remaining <= 2) {
+                bar.className = 'ticket-quota-bar quota-low';
+                text.textContent = `Te ${remaining === 1 ? 'queda' : 'quedan'} ${remaining} ticket${remaining > 1 ? 's' : ''} este mes (${used}/${limit} usados).`;
+            } else {
+                bar.className = 'ticket-quota-bar quota-ok';
+                text.textContent = `${remaining} ticket${remaining !== 1 ? 's' : ''} disponible${remaining !== 1 ? 's' : ''} este mes (${used}/${limit} usados).`;
+            }
+        } catch {
+            // Silently ignore — quota display is optional
+        }
+    }
+
     // ── INIT ──────────────────────────────────────────────────────────────────
-    await loadMyTickets();
+    await Promise.all([loadMyTickets(), loadTicketQuota()]);
 });

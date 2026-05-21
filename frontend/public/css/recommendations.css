@@ -177,7 +177,7 @@
 
 .rec-panel-subtitle {
     font-size: 12px;
-    opacity: 0.75;
+    color: rgba(255,255,255,0.88);
     font-weight: 500;
     margin-top: 2px;
 }
@@ -202,8 +202,8 @@
 
 .rec-summary-label {
     font-size: 10px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.65);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
     text-transform: uppercase;
     letter-spacing: 0.4px;
 }

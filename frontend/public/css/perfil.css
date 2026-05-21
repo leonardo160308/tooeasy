@@ -69,7 +69,7 @@ body {
     gap: 28px;
     max-width: 1280px;
     margin: 32px auto;
-    padding: 0 24px;
+    padding: 0 24px 80px;
     align-items: start;
 }
 
@@ -1020,7 +1020,7 @@ body {
 @media (max-width: 1024px) {
     .main-container {
         grid-template-columns: 1fr;
-        padding: 0 16px;
+        padding: 0 16px 80px;
         margin: 20px auto;
         gap: 20px;
     }
@@ -1028,10 +1028,13 @@ body {
     .right-column {
         position: static;
         order: -1;
-        min-height: 440px;
+        min-height: 400px;
     }
 
-    .scene { height: 280px; }
+    .scene { height: 260px; }
+
+    .upgrade-actions { gap: 8px; }
+    .btn-text span { font-size: 0.84rem; }
 }
 
 @media (max-width: 600px) {

@@ -82,6 +82,18 @@ function showError(list) {
     list.appendChild(state);
 }
 
+let _recCount = 0;
+
+function getSeenKey(userId) { return `rec_seen_${userId}`; }
+
+function markAsRead(userId) {
+    localStorage.setItem(getSeenKey(userId), String(_recCount));
+}
+
+function getSeenCount(userId) {
+    return parseInt(localStorage.getItem(getSeenKey(userId)) || '0', 10);
+}
+
 async function loadAndRender(userId) {
     const fab    = document.getElementById('rec-fab');
     const badge  = document.getElementById('rec-badge');
@@ -106,14 +118,22 @@ async function loadAndRender(userId) {
         if (!recommendations || recommendations.length === 0) {
             showEmpty(list);
             badge.classList.add('hidden');
+            fab.classList.remove('has-recs');
             return;
         }
 
-        // Update badge
-        const count = recommendations.length;
-        badge.textContent = count;
-        badge.classList.remove('hidden');
-        fab.classList.add('has-recs');
+        _recCount = recommendations.length;
+
+        // Show badge only if unread recommendations exist
+        const seen = getSeenCount(userId);
+        if (_recCount !== seen) {
+            badge.textContent = _recCount;
+            badge.classList.remove('hidden');
+            fab.classList.add('has-recs');
+        } else {
+            badge.classList.add('hidden');
+            fab.classList.remove('has-recs');
+        }
 
         // Render cards
         list.innerHTML = '';
@@ -126,10 +146,17 @@ async function loadAndRender(userId) {
     }
 }
 
-function openPanel() {
+function openPanel(userId) {
     document.getElementById('rec-overlay').classList.add('open');
     document.getElementById('rec-panel').classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Mark all as read
+    markAsRead(userId);
+    const badge = document.getElementById('rec-badge');
+    const fab   = document.getElementById('rec-fab');
+    badge.classList.add('hidden');
+    fab.classList.remove('has-recs');
 }
 
 function closePanel() {
@@ -144,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const userId = auth.id;
 
-    document.getElementById('rec-fab')?.addEventListener('click', openPanel);
+    document.getElementById('rec-fab')?.addEventListener('click', () => openPanel(userId));
     document.getElementById('rec-panel-close')?.addEventListener('click', closePanel);
     document.getElementById('rec-overlay')?.addEventListener('click', closePanel);
 

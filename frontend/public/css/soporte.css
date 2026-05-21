@@ -52,7 +52,7 @@ main { flex: 1; }
 
 .soporte-hero h2 {
     font-size: 1.8rem;
-    color: #d4b896;
+    color: #f0d5b0;
     margin-bottom: 8px;
 }
 
@@ -852,6 +852,139 @@ main { flex: 1; }
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── TICKET IMAGE ERROR (reemplaza inline style bloqueado por CSP) ──────────*/
+.ticket-img-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #9ca3af;
+    font-size: 0.85rem;
+    padding: 8px 0;
+}
+
+/* ── TICKET QUOTA ─────────────────────────────────────────────────────────────*/
+.ticket-quota-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    border: 1px solid;
+}
+
+.ticket-quota-bar.quota-ok {
+    background: #f0fff4;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+
+.ticket-quota-bar.quota-low {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+.ticket-quota-bar.quota-exhausted {
+    background: #fff5f5;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+.ticket-quota-bar i { flex-shrink: 0; font-size: 1rem; }
+
+/* ── IMAGEN MODAL (tipo SweetAlert2) ─────────────────────────────────────────*/
+.img-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: imgModalFadeIn 0.2s ease;
+    cursor: zoom-out;
+}
+
+@keyframes imgModalFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.img-modal-overlay.img-modal-closing {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.img-modal-box {
+    position: relative;
+    max-width: min(90vw, 900px);
+    max-height: 90vh;
+    background: #1a1f2e;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+    animation: imgModalSlideIn 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes imgModalSlideIn {
+    from { transform: scale(0.88); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+.img-modal-img {
+    display: block;
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.img-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: white;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+    z-index: 1;
+    backdrop-filter: blur(4px);
+}
+
+.img-modal-close:hover {
+    background: rgba(220, 38, 38, 0.7);
+    transform: scale(1.1);
+}
+
+.img-modal-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+}
+
+.img-modal-error i { font-size: 3rem; opacity: 0.35; }
+.img-modal-error p { font-size: 0.9rem; font-weight: 500; }
 
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
 @media (max-width: 768px) {

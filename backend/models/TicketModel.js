@@ -406,6 +406,18 @@ class TicketModel {
         }
     }
 
+    static async countUserTicketsThisMonth(userId) {
+        const now        = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+        const { count, error } = await supabaseAdmin
+            .from('support_tickets')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .gte('created_at', monthStart);
+        if (error) throw error;
+        return count || 0;
+    }
+
     static async getFaqStats() {
         const { data, error } = await supabaseAdmin
             .from('faq_views')
