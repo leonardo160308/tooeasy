@@ -294,7 +294,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Imagen
         const oldFallback = dImageSection.querySelector('.ticket-img-error');
         if (oldFallback) oldFallback.remove();
-        dImage.style.display = '';
+        dImage.classList.remove('sp-img-hidden');
+        dImageLink.classList.remove('sp-img-hidden');
 
         if (ticket.image_url) {
             const proxiedUrl     = getProxiedImageUrl(ticket.image_url);
@@ -303,12 +304,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             dImageSection.hidden = false;
             dImage.onerror       = () => {
                 console.warn('[SoportePanel] No se pudo cargar la imagen del ticket:', proxiedUrl);
-                dImage.style.display = 'none';
-                dImageLink.style.display = 'none';
+                dImage.classList.add('sp-img-hidden');
+                dImageLink.classList.add('sp-img-hidden');
                 if (!dImageSection.querySelector('.ticket-img-error')) {
                     const placeholder = document.createElement('div');
                     placeholder.className = 'ticket-img-error';
-                    placeholder.style.cssText = 'display:flex;align-items:center;gap:6px;color:#9ca3af;font-size:0.85rem;padding:8px 0;';
                     placeholder.innerHTML = '<i class="fas fa-image"></i> Imagen no disponible';
                     dImageSection.appendChild(placeholder);
                 }
@@ -534,6 +534,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const label = item.faq_key
                     .replace(/-/g, ' ')
                     .replace(/\b\w/g, c => c.toUpperCase());
+                const pct = Math.round((item.views / stats[0].views) * 100);
 
                 const card = document.createElement('div');
                 card.className = 'faq-stat-item';
@@ -542,7 +543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="faq-stat-body">
                         <div class="faq-stat-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div>
                         <div class="faq-stat-bar-wrap">
-                            <div class="faq-stat-bar" style="width:${Math.round((item.views / stats[0].views) * 100)}%"></div>
+                            <progress class="faq-stat-bar" max="100" value="${pct}" title="${pct}%"></progress>
                         </div>
                     </div>
                     <div class="faq-stat-count">${item.views}</div>`;
@@ -572,6 +573,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (replyDiv) replyDiv.insertBefore(panel, replyDiv.firstChild);
         } catch { /* macros son opcionales */ }
     }
+
+    // ── IMAGE LIGHTBOX ────────────────────────────────────────────────────
+    const lightbox      = document.getElementById('img-lightbox');
+    const lightboxImg   = document.getElementById('img-lightbox-img');
+    const lightboxClose = document.getElementById('img-lightbox-close');
+
+    function closeLightbox() {
+        if (lightbox) lightbox.classList.remove('img-lightbox-open');
+    }
+
+    if (lightbox && lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+    }
+
+    dImageLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (lightbox && lightboxImg && dImage.src && !dImage.classList.contains('sp-img-hidden')) {
+            lightboxImg.src = dImage.src;
+            lightbox.classList.add('img-lightbox-open');
+        }
+    });
 
     // ── INIT ──────────────────────────────────────────────────────────────
     await loadBoard();

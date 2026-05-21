@@ -109,17 +109,8 @@
 (function(){
     const footer = document.getElementById('site-footer');
     if (!footer) return;
-
-    function checkFooter() {
-        if (window.scrollY > 40 || document.documentElement.scrollHeight <= window.innerHeight + 120) {
-            footer.classList.add('visible');
-        }
-    }
-
-    window.addEventListener('scroll', checkFooter, { passive: true });
-    // Show footer on load if page is not scrollable
-    window.addEventListener('load', checkFooter);
-    setTimeout(checkFooter, 300);
+    // Esta página usa overflow:hidden — el footer siempre es visible
+    footer.classList.add('visible');
 })();
 </script>
 <script src="../public/js/data/terminos.js"></script>

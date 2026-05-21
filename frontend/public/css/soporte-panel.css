@@ -671,6 +671,105 @@ main { flex: 1; padding: 24px 32px; }
 
 .btn-priority:hover { opacity: 0.85; }
 
+/* ── CSP-SAFE: reemplaza estilos inline ─────────────────────────────────────*/
+.sp-img-hidden { display: none !important; }
+
+.ticket-img-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #9ca3af;
+    font-size: 0.85rem;
+    padding: 8px 0;
+}
+
+/* ── FAQ PROGRESS BAR (reemplaza div con style="width:X%") ──────────────────*/
+progress.faq-stat-bar {
+    width: 100%;
+    height: 6px;
+    border: none;
+    border-radius: 3px;
+    background: #e2e8f0;
+    appearance: none;
+    -webkit-appearance: none;
+    display: block;
+}
+
+progress.faq-stat-bar::-webkit-progress-bar {
+    background: #e2e8f0;
+    border-radius: 3px;
+}
+
+progress.faq-stat-bar::-webkit-progress-value {
+    background: linear-gradient(90deg, #0891b2, #06b6d4);
+    border-radius: 3px;
+}
+
+progress.faq-stat-bar::-moz-progress-bar {
+    background: linear-gradient(90deg, #0891b2, #06b6d4);
+    border-radius: 3px;
+}
+
+/* ── IMAGE LIGHTBOX ─────────────────────────────────────────────────────────*/
+.img-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.img-lightbox.img-lightbox-open {
+    display: flex;
+}
+
+.img-lightbox-img {
+    max-width: 92vw;
+    max-height: 88vh;
+    border-radius: 10px;
+    object-fit: contain;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    display: block;
+}
+
+.img-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.img-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+/* ── LOGOUT BUTTON: tamaño consistente con resto del sitio ──────────────────*/
+#logout-btn-perfil {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+}
+
+#logout-btn-perfil img {
+    width: 28px;
+    height: 28px;
+}
+
 .detail-actions-delete {
     background: #fff5f5;
     border-top: 1px solid #fde8e8;
@@ -746,18 +845,11 @@ main { flex: 1; padding: 24px 32px; }
 }
 
 .faq-stat-bar-wrap {
-    height: 4px;
-    background: #e2e8f0;
+    height: 6px;
     border-radius: 4px;
     overflow: hidden;
-}
-
-.faq-stat-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #0891b2, #06b6d4);
-    border-radius: 4px;
-    min-width: 4px;
-    transition: width 0.4s ease;
+    display: flex;
+    align-items: center;
 }
 
 .faq-stat-count {

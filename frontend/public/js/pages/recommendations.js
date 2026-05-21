@@ -17,7 +17,7 @@ function renderCard(rec, idx) {
     const meta = TYPE_META[rec.type] || TYPE_META.info;
     const card = document.createElement('article');
     card.className = `rec-card ${rec.type}`;
-    card.style.animationDelay = `${idx * 0.06}s`;
+    // animación manejada por CSS :nth-child()
     card.innerHTML = `
         <div class="rec-card-icon" aria-hidden="true">
             <i class="fas ${rec.icon}"></i>
@@ -84,27 +84,29 @@ function showError(list) {
 
 let _recCount = 0;
 
-function getSeenKey(userId) { return `rec_seen_${userId}`; }
+function getSeenKey(userId, month, year) { return `rec_seen_${userId}_${year}_${month}`; }
 
-function markAsRead(userId) {
-    localStorage.setItem(getSeenKey(userId), String(_recCount));
+function markAsRead(userId, month, year) {
+    localStorage.setItem(getSeenKey(userId, month, year), String(_recCount));
 }
 
-function getSeenCount(userId) {
-    return parseInt(localStorage.getItem(getSeenKey(userId)) || '0', 10);
+function getSeenCount(userId, month, year) {
+    return parseInt(localStorage.getItem(getSeenKey(userId, month, year)) || '0', 10);
 }
 
-async function loadAndRender(userId) {
+async function loadAndRender(userId, month, year) {
     const fab    = document.getElementById('rec-fab');
     const badge  = document.getElementById('rec-badge');
     const list   = document.getElementById('rec-list');
 
     if (!list) return;
 
+    // Limpiar recomendaciones anteriores al cambiar mes
+    list.innerHTML = '';
     showLoading(list);
 
     try {
-        const res = await getRecommendations(userId);
+        const res = await getRecommendations(userId, month, year);
 
         if (!res.success) {
             showError(list);
@@ -124,8 +126,7 @@ async function loadAndRender(userId) {
 
         _recCount = recommendations.length;
 
-        // Show badge only if unread recommendations exist
-        const seen = getSeenCount(userId);
+        const seen = getSeenCount(userId, month, year);
         if (_recCount !== seen) {
             badge.textContent = _recCount;
             badge.classList.remove('hidden');
@@ -135,7 +136,6 @@ async function loadAndRender(userId) {
             fab.classList.remove('has-recs');
         }
 
-        // Render cards
         list.innerHTML = '';
         recommendations.forEach((rec, idx) => {
             list.appendChild(renderCard(rec, idx));
@@ -146,13 +146,15 @@ async function loadAndRender(userId) {
     }
 }
 
+let _panelMonth = null;
+let _panelYear  = null;
+
 function openPanel(userId) {
     document.getElementById('rec-overlay').classList.add('open');
     document.getElementById('rec-panel').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    document.documentElement.classList.add('rec-panel-open');
 
-    // Mark all as read
-    markAsRead(userId);
+    markAsRead(userId, _panelMonth, _panelYear);
     const badge = document.getElementById('rec-badge');
     const fab   = document.getElementById('rec-fab');
     badge.classList.add('hidden');
@@ -162,7 +164,7 @@ function openPanel(userId) {
 function closePanel() {
     document.getElementById('rec-overlay').classList.remove('open');
     document.getElementById('rec-panel').classList.remove('open');
-    document.body.style.overflow = '';
+    document.documentElement.classList.remove('rec-panel-open');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -170,6 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!auth?.id) return;
 
     const userId = auth.id;
+    const now    = new Date();
+    _panelMonth  = now.getMonth() + 1;
+    _panelYear   = now.getFullYear();
 
     document.getElementById('rec-fab')?.addEventListener('click', () => openPanel(userId));
     document.getElementById('rec-panel-close')?.addEventListener('click', closePanel);
@@ -179,5 +184,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') closePanel();
     });
 
-    loadAndRender(userId);
+    // Escuchar cambios de mes desde el calendario del dashboard
+    document.addEventListener('mes-changed', (e) => {
+        _panelMonth = e.detail.month;
+        _panelYear  = e.detail.year;
+        loadAndRender(userId, _panelMonth, _panelYear);
+    });
+
+    loadAndRender(userId, _panelMonth, _panelYear);
 });

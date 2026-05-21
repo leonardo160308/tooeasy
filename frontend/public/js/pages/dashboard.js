@@ -491,6 +491,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (mesVisualizado < 0) { mesVisualizado = 11; anioVisualizado--; }
         renderizarCalendario();
         actualizarDashboard();
+        document.dispatchEvent(new CustomEvent('mes-changed', {
+            detail: { month: mesVisualizado + 1, year: anioVisualizado }
+        }));
     }
 
     function renderizarCalendario() {

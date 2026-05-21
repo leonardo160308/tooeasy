@@ -44,7 +44,7 @@ body {
     flex: 1;
     min-height: 0;        /* permite que el ítem flex se comprima */
     width: 100%;          /* sin max-width: llena todo el ancho disponible */
-    padding: clamp(12px, 2vw, 24px) 0 clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px);
+    padding: clamp(12px, 2vw, 24px) 0 72px clamp(12px, 2vw, 24px);
     gap: clamp(16px, 2vw, 28px);
     overflow: hidden;
 }
@@ -323,7 +323,7 @@ body {
 
     .split-layout {
         flex-direction: column;
-        padding: 14px;
+        padding: 14px 14px 76px;
         min-height: unset;
         overflow: visible;
     }

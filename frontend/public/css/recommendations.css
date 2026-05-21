@@ -149,6 +149,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #fff;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 
 .rec-panel-title i {
@@ -365,6 +369,9 @@
 @keyframes recSpin {
     to { transform: rotate(360deg); }
 }
+
+/* Bloquea scroll del body cuando el panel está abierto (CSP-safe via clase) */
+html.rec-panel-open { overflow: hidden; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 480px) {

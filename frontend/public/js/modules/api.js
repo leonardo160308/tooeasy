@@ -489,9 +489,13 @@ export async function getMacros(userId) {
 // ========================================
 // 9. RECOMENDACIONES INTELIGENTES
 // ========================================
-export async function getRecommendations(userId) {
+export async function getRecommendations(userId, month, year) {
     try {
-        const response = await fetch(`${API_BASE_URL}/recommendations/${userId}`);
+        const params = new URLSearchParams();
+        if (month) params.set('month', month);
+        if (year)  params.set('year',  year);
+        const qs = params.toString() ? `?${params.toString()}` : '';
+        const response = await fetch(`${API_BASE_URL}/recommendations/${userId}${qs}`);
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo recomendaciones:', error);

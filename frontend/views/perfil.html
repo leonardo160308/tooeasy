@@ -277,14 +277,16 @@
     if (!footer) return;
 
     function checkFooter() {
-        if (window.scrollY > 40 || document.documentElement.scrollHeight <= window.innerHeight + 120) {
+        if (window.scrollY > 40 || document.body.offsetHeight <= window.innerHeight + 60) {
             footer.classList.add('visible');
         }
     }
 
     window.addEventListener('scroll', checkFooter, { passive: true });
+    window.addEventListener('resize', checkFooter);
+    checkFooter();
     window.addEventListener('load', checkFooter);
-    setTimeout(checkFooter, 300);
+    setTimeout(checkFooter, 150);
 })();
 </script>
 

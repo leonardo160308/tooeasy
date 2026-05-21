@@ -45,11 +45,12 @@ export const getRecommendations = async (req, res) => {
         const metaCantidad  = parseFloat(fixed.meta_cantidad) || 0;
         const metaNombre    = fixed.meta_nombre || '';
 
-        const now  = new Date();
-        const cY   = now.getFullYear();
-        const cM   = now.getMonth();
-        const pM   = cM === 0 ? 11 : cM - 1;
-        const pY   = cM === 0 ? cY - 1 : cY;
+        const now = new Date();
+        // Acepta mes/año del frontend (mes es 1-based); si no se envían, usa el mes actual
+        const cY = req.query.year  ? parseInt(req.query.year,  10) : now.getFullYear();
+        const cM = req.query.month ? parseInt(req.query.month, 10) - 1 : now.getMonth();
+        const pM = cM === 0 ? 11 : cM - 1;
+        const pY = cM === 0 ? cY - 1 : cY;
 
         const curPrefix  = monthPrefix(cY, cM);
         const prevPrefix = monthPrefix(pY, pM);
