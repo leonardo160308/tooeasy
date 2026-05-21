@@ -257,7 +257,7 @@
 <span id="lbl-house-level"></span>
 <span id="lbl-beaver-level"></span>
 <button id="btn-delete-account"></button>
-<footer class="footer footer-scroll-reveal" id="site-footer">
+<footer class="footer" id="site-footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
     <nav class="footer-nav">
         <a href="mailto:tooeasycontactanos@gmail.com">Contacto</a>
@@ -271,24 +271,6 @@
         </label>
     </div>
 </footer>
-<script>
-(function(){
-    const footer = document.getElementById('site-footer');
-    if (!footer) return;
-
-    function checkFooter() {
-        if (window.scrollY > 40 || document.body.offsetHeight <= window.innerHeight + 60) {
-            footer.classList.add('visible');
-        }
-    }
-
-    window.addEventListener('scroll', checkFooter, { passive: true });
-    window.addEventListener('resize', checkFooter);
-    checkFooter();
-    window.addEventListener('load', checkFooter);
-    setTimeout(checkFooter, 150);
-})();
-</script>
 
 
 
