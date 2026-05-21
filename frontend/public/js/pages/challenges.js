@@ -44,7 +44,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!challengesContainer) return;
         challengesContainer.innerHTML = '';
 
-        challengesData.forEach(challenge => {
+        // Completados al fondo, activos arriba
+        const sorted = [...challengesData].sort((a, b) => {
+            const aComp = completedChallengesIds.includes(a.id) ? 1 : 0;
+            const bComp = completedChallengesIds.includes(b.id) ? 1 : 0;
+            return aComp - bComp;
+        });
+
+        sorted.forEach(challenge => {
             const isCompleted = completedChallengesIds.includes(challenge.id);
             const prog = challengeProgress[challenge.id] || { current: 0, required: 1, percentage: 0 };
 

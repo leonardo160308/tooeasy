@@ -44,7 +44,7 @@
 body {
     background-color: var(--bg-page);
     color: var(--text-primary);
-    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Nunito', 'Segoe UI', sans-serif;
     line-height: 1.6;
     font-size: 15px;
 }

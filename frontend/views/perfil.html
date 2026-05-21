@@ -122,7 +122,7 @@
             </button>
             <button id="btn-upgrade-beaver" class="btn-upgrade btn-coin">
                 <div class="btn-text">
-                    <span>Entrenar Castor</span>
+                    <span>Entrenar Mapache</span>
                     <small>Costo: <span id="cost-beaver">34</span> 🪙</small>
                 </div>
             </button>
@@ -139,11 +139,11 @@
                         src="../public/img/casaBase.png"
                         alt="Casa"
                     >      
-                    <img 
+                    <img
                         id="beaver-img"
                         class="beaver-img"
                         src="../public/img/mapacheBase.png"
-                        alt="Castor"
+                        alt="Mapache"
                     >
                 </div>  
 
@@ -165,13 +165,13 @@
                         </button>
                     </div>
                  
-                    <!-- CASTOR -->
+                    <!-- MAPACHE -->
                     <div class="skin-controls beaver-controls">
                         <button id="btn-prev-beaver" class="nav-btn">
                             <i class="fas fa-chevron-left"></i>
                         </button>
                         <div class="skin-info-center">
-                            <span id="beaver-name-lbl">Castor Bebé</span>
+                            <span id="beaver-name-lbl">Mapache Bebé</span>
                             <button id="btn-equip-beaver" class="btn-equip">Equipar</button>
                         </div>
                         <div class="skin-status" id="beaver-status">
@@ -257,7 +257,7 @@
 <span id="lbl-house-level"></span>
 <span id="lbl-beaver-level"></span>
 <button id="btn-delete-account"></button>
-<footer class="footer">
+<footer class="footer footer-scroll-reveal" id="site-footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
     <nav class="footer-nav">
         <a href="mailto:tooeasycontactanos@gmail.com">Contacto</a>
@@ -271,6 +271,18 @@
         </label>
     </div>
 </footer>
+<script>
+(function(){
+    const footer = document.getElementById('site-footer');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 80) {
+            footer.classList.add('visible');
+        } else {
+            footer.classList.remove('visible');
+        }
+    }, { passive: true });
+})();
+</script>
 
 
 

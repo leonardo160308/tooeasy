@@ -288,7 +288,7 @@ input:focus {
     display: block;
     margin-bottom: 20px;
 }
-.success-icon::after { content: '✨'; }
+.success-icon::after { content: ''; }
 
 /* Responsive */
 @media (max-width: 600px) {

@@ -178,6 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="level-info">
                     <span class="level-num">Nivel ${nivel.orden}</span>
                     <span class="level-name">${escHtml(nivel.nombre)}</span>
+                    ${nivel.descripcion ? `<span class="level-desc">${escHtml(nivel.descripcion)}</span>` : ''}
                 </div>
                 ${!isLocked
                     ? `<button class="btn-play">${btnLabel}</button>`

@@ -38,7 +38,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Nunito', 'Segoe UI', sans-serif;
     background: var(--bg-page);
     color: var(--text-dark);
     min-height: 100vh;
@@ -267,6 +267,16 @@ body {
     border-bottom: 2px solid var(--accent);
     display: inline-block;
     letter-spacing: 0.1px;
+}
+
+/* Tarjeta de recomendaciones — título en blanco */
+.inv-card--rec {
+    background: linear-gradient(135deg, #1e2e42 0%, #2C405B 100%);
+}
+
+.inv-card--rec h3 {
+    color: #ffffff;
+    border-bottom-color: rgba(255,255,255,0.3);
 }
 
 /* ══════════════════════════════════════════

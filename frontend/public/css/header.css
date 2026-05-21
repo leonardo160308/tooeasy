@@ -88,7 +88,7 @@ html, body {
     font-size: 24px;
     letter-spacing: 3px;
     font-weight: 900;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Nunito', sans-serif;
     background: linear-gradient(
         to right,
         #fff 20%,
@@ -219,9 +219,9 @@ html, body {
 
 /* Icono de salida */
 .nav img {
-    width: 18px;
-    height: 18px;
-    filter: brightness(0) invert(1) opacity(0.6);
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1) opacity(0.7);
     transition: var(--transition);
     vertical-align: middle;
 }
