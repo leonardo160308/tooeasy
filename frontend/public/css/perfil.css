@@ -71,11 +71,11 @@ body {
 /* ── MAIN LAYOUT ── */
 .main-container {
     display: grid;
-    grid-template-columns: minmax(260px, 320px) 1fr;
-    gap: 24px;
-    max-width: 1600px;
+    grid-template-columns: minmax(240px, 280px) 1fr;
+    gap: 20px;
+    width: 100%;
     margin: 32px auto;
-    padding: 0 32px 80px;
+    padding: 0 28px 80px;
     align-items: start;
 }
 
