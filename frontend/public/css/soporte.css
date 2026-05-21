@@ -750,8 +750,8 @@ main { flex: 1; }
 .soporte-logout-btn:hover { background: rgba(255,255,255,0.1); }
 
 .soporte-logout-btn img {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     filter: brightness(0) invert(1) opacity(0.6);
     transition: filter 0.2s, transform 0.2s;
 }
