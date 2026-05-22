@@ -454,6 +454,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         await openDetail(activeTicketId);
     });
 
+    replyTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            if (!btnSend.disabled) btnSend.click();
+        }
+    });
+
     btnSend.addEventListener('click', async () => {
         const message = replyTextarea.value.trim();
         if (!message) return alertaError('Escribe un mensaje antes de enviar.');

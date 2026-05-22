@@ -399,6 +399,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ── ENVIAR RESPUESTA ──────────────────────────────────────────────────────
+    replyInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            if (!btnSendReply.disabled) btnSendReply.click();
+        }
+    });
+
     btnSendReply.addEventListener('click', async () => {
         const message = replyInput.value.trim();
         if (!message) return alertaError('Escribe un mensaje antes de enviar.');

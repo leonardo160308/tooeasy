@@ -1074,6 +1074,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inflEl = $('cfg-inflacion');
     if (inflEl) aplicarRestriccionDecimal(inflEl, -5, 50);
 
+    ['cfg-nombre','cfg-capital','cfg-plazo','cfg-aportacion','cfg-inflacion'].forEach(id => {
+        const el = $(id);
+        if (el) el.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); siguientePaso1(); }
+        });
+    });
+
+    const resNombreEl = $('res-nombre');
+    if (resNombreEl) {
+        resNombreEl.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const btnG = $('btn-guardar');
+                if (btnG && !btnG.disabled) guardarSimulacion();
+            }
+        });
+    }
+
     document.getElementById('logout-btn-inv')?.addEventListener('click', async e => {
         e.preventDefault();
         if (await alertaConfirmacion('¿Cerrar sesión?', '👋 Salir')) logout();

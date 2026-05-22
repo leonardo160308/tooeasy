@@ -54,6 +54,10 @@ inputs.forEach((inp, i) => {
     });
     inp.addEventListener('keydown', e => {
         if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
+        if (e.key === 'Enter') {
+            const btn = document.getElementById('btn-verify');
+            if (getCode().length === 6 && !btn.disabled) verifyCode();
+        }
     });
     inp.addEventListener('paste', e => {
         e.preventDefault();

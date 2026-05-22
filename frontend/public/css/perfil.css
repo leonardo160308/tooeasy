@@ -389,9 +389,9 @@ body {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 900px;
-    height: 400px;
+    width: 94%;
+    max-width: 1050px;
+    height: 500px;
     object-fit: contain;
     z-index: 1;
     pointer-events: none;
@@ -402,8 +402,8 @@ body {
     position: absolute;
     bottom: 6px;
     right: 14%;
-    width: 15%;
-    max-height: 42%;
+    width: 20%;
+    max-height: 54%;
     object-fit: contain;
     z-index: 2;
     filter: drop-shadow(3px 6px 10px rgba(0,0,0,0.28));
@@ -1049,8 +1049,8 @@ body {
     }
 
     .scene { height: 300px; }
-    .house-img { height: 350px; width: 88%; }
-    .beaver-img { width: 16%; max-height: 44%; }
+    .house-img { height: 440px; width: 92%; }
+    .beaver-img { width: 21%; max-height: 54%; }
 
     .upgrade-actions { gap: 8px; }
     .btn-text span { font-size: 0.84rem; }
@@ -1079,8 +1079,8 @@ body {
     .skin-controls-container { flex-direction: column; }
 
     .scene { height: 260px; }
-    .house-img { height: 300px; width: 86%; }
-    .beaver-img { width: 18%; max-height: 40%; right: 8%; }
+    .house-img { height: 370px; width: 90%; }
+    .beaver-img { width: 23%; max-height: 50%; right: 8%; }
 
     .modal-perfil { padding: 22px 18px 18px; }
     .modal-title { font-size: 1rem; }

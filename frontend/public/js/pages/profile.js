@@ -91,6 +91,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         inputEdad.addEventListener('keydown', (e) => {
             if (e.key === 'e' || e.key === '.' || e.key === '-') e.preventDefault();
+            if (e.key === 'Enter') { e.preventDefault(); window.saveProfile(); }
+        });
+    }
+
+    const inputUsernameEl = document.getElementById('inputUsername');
+    if (inputUsernameEl) {
+        inputUsernameEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); window.saveProfile(); }
         });
     }
 

@@ -51,6 +51,10 @@ function initOtpInputs() {
         });
         inp.addEventListener('keydown', e => {
             if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
+            if (e.key === 'Enter') {
+                const btn = document.querySelector('#step-2 .btn-primary');
+                if (getOtpValue().length === 6 && !btn.disabled) verifyCode();
+            }
         });
         inp.addEventListener('paste', e => {
             e.preventDefault();
@@ -259,6 +263,14 @@ async function changePassword() {
 
 // ── Wire up event listeners ───────────────────────────────────────────────────
 document.querySelector('#step-1 .btn-primary').addEventListener('click', sendCode);
+
+document.getElementById('input-email').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        const btn = document.querySelector('#step-1 .btn-primary');
+        if (!btn.disabled) sendCode();
+    }
+});
+
 document.querySelector('#step-2 .btn-primary').addEventListener('click', verifyCode);
 document.getElementById('btn-resend').addEventListener('click', resendCode);
 document.querySelector('#step-2 .btn-back').addEventListener('click', () => goToStep(1));
@@ -268,5 +280,15 @@ document.getElementById('new-password').addEventListener('input', e => checkStre
 document.querySelectorAll('.toggle-pass')[0].addEventListener('click', function() { togglePass('new-password', this); });
 document.querySelectorAll('.toggle-pass')[1].addEventListener('click', function() { togglePass('confirm-password', this); });
 document.querySelector('#step-4 .btn-primary').addEventListener('click', changePassword);
+
+['new-password', 'confirm-password'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            const btn = document.querySelector('#step-4 .btn-primary');
+            if (!btn.disabled) changePassword();
+        }
+    });
+});
+
 document.querySelector('#step-4 .btn-back').addEventListener('click', () => goToStep(3));
 document.querySelector('#step-5 .btn-primary').addEventListener('click', () => { window.location.href = 'login.html'; });
