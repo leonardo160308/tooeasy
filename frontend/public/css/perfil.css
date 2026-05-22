@@ -390,8 +390,9 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: 94%;
-    max-width: 1050px;
-    height: 500px;
+    max-width: 560px;
+    height: auto;
+    max-height: 96%;
     object-fit: contain;
     z-index: 1;
     pointer-events: none;
@@ -1049,7 +1050,7 @@ body {
     }
 
     .scene { height: 300px; }
-    .house-img { height: 440px; width: 92%; }
+    .house-img { height: auto; max-height: 96%; width: 92%; }
     .beaver-img { width: 21%; max-height: 54%; }
 
     .upgrade-actions { gap: 8px; }
@@ -1079,7 +1080,7 @@ body {
     .skin-controls-container { flex-direction: column; }
 
     .scene { height: 260px; }
-    .house-img { height: 370px; width: 90%; }
+    .house-img { height: auto; max-height: 96%; width: 90%; }
     .beaver-img { width: 23%; max-height: 50%; right: 8%; }
 
     .modal-perfil { padding: 22px 18px 18px; }

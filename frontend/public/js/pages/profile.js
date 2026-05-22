@@ -16,42 +16,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const DB_SKINS = {
         "skin_default": "../public/img/casaBase.png",
-        "skin_1": "../public/img/casaN1.png",
-        "skin_2": "../public/img/casaN2.png",
-        "skin_3": "../public/img/casaN3.png",
-        "skin_4": "../public/img/casaN4.png",
-        "skin_5": "../public/img/casaN5.png"
+        "skin_1":       "../public/img/casaN1.png",
+        "skin_2":       "../public/img/CASA_N2.png",
+        "skin_3":       "../public/img/casaN2.png",
+        "skin_4":       "../public/img/CASA_N3.png",
+        "skin_5":       "../public/img/CASA_6.png",
+        "skin_6":       "../public/img/CASA_N4.png",
+        "skin_7":       "../public/img/CASA_8.png",
+        "skin_8":       "../public/img/casaN4.png",
+        "skin_9":       "../public/img/casaN5.png",
     };
 
     const SKIN_NAMES = {
         "skin_default": "Choza Inicial",
-        "skin_1": "Casa Nivel 2",
-        "skin_2": "Casa Nivel 4",
-        "skin_3": "Casa Nivel 6",
-        "skin_4": "Casa Nivel 8",
-        "skin_5": "Mansión Nivel 10"
+        "skin_1":       "Casa Nivel 2",
+        "skin_2":       "Casa Nivel 3",
+        "skin_3":       "Casa Nivel 4",
+        "skin_4":       "Casa Nivel 5",
+        "skin_5":       "Casa Nivel 6",
+        "skin_6":       "Casa Nivel 7",
+        "skin_7":       "Casa Nivel 8",
+        "skin_8":       "Casa Nivel 9",
+        "skin_9":       "Mansión Nivel 10",
     };
 
     const DB_CASTORES = {
         "castor_default": "../public/img/mapacheBase.png",
-        "castor_1": "../public/img/mapacheN1.png",
-        "castor_2": "../public/img/mapacheN2.png",
-        "castor_3": "../public/img/mapacheN3.png",
-        "castor_4": "../public/img/mapacheN4.png",
-        "castor_5": "../public/img/mapacheN5.png"
+        "castor_1":       "../public/img/mapacheN1.png",
+        "castor_2":       "../public/img/CASTOR_N2.png",
+        "castor_3":       "../public/img/CASTOR_N3.png",
+        "castor_4":       "../public/img/mapacheN2.png",
+        "castor_5":       "../public/img/CASTOR_N4.png",
+        "castor_6":       "../public/img/CASTOR_N7.png",
+        "castor_7":       "../public/img/CASTOR_N5.png",
+        "castor_8":       "../public/img/mapacheN4.png",
+        "castor_9":       "../public/img/mapacheN5.png",
     };
 
     const CASTOR_NAMES = {
         "castor_default": "Castor Bebé",
-        "castor_1": "Castor Aprendiz",
-        "castor_2": "Castor Obrero",
-        "castor_3": "Castor Ingeniero",
-        "castor_4": "Castor Maestro",
-        "castor_5": "Rey Castor"
+        "castor_1":       "Castor Aprendiz",
+        "castor_2":       "Castor Novato",
+        "castor_3":       "Castor Obrero",
+        "castor_4":       "Castor Artesano",
+        "castor_5":       "Castor Experto",
+        "castor_6":       "Castor Ingeniero",
+        "castor_7":       "Castor Maestro",
+        "castor_8":       "Gran Castor",
+        "castor_9":       "Rey Castor",
     };
 
-    const UNLOCKS_CASA_LIST   = ["skin_default","skin_1","skin_2","skin_3","skin_4","skin_5"];
-    const UNLOCKS_CASTOR_LIST = ["castor_default","castor_1","castor_2","castor_3","castor_4","castor_5"];
+    const UNLOCKS_CASA_LIST   = ["skin_default","skin_1","skin_2","skin_3","skin_4","skin_5","skin_6","skin_7","skin_8","skin_9"];
+    const UNLOCKS_CASTOR_LIST = ["castor_default","castor_1","castor_2","castor_3","castor_4","castor_5","castor_6","castor_7","castor_8","castor_9"];
 
     // ── Helper: ruta de imagen de avatar ──────────────────────────────────
     function avatarSrc(key) {
@@ -232,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderizarCasa() {
         const listaSkins = getSkinsDesbloqueadas('house');
         const skinId = listaSkins[idxCasa];
-        const nivelRequerido = idxCasa === 0 ? 1 : idxCasa * 2;
+        const nivelRequerido = idxCasa + 1;
         const estaDesbloqueada = currentUserData.house_level >= nivelRequerido;
 
         const houseImg = document.getElementById('house-img');
@@ -266,7 +282,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderizarCastor() {
         const listaSkins = getSkinsDesbloqueadas('beaver');
         const skinId = listaSkins[idxCastor];
-        const nivelRequerido = idxCastor === 0 ? 1 : idxCastor * 2;
+        const nivelRequerido = idxCastor + 1;
         const estaDesbloqueada = currentUserData.beaver_level >= nivelRequerido;
 
         const beaverImg = document.getElementById('beaver-img');
