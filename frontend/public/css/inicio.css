@@ -42,6 +42,8 @@ body {
     justify-content: center;
     text-align: center;
     flex-direction: row-reverse;
+    min-height: calc(100vh - 70px);
+    margin-top: 0;
 }
 
 .pagina-principal .contenido-principal {

@@ -76,8 +76,9 @@ body {
     max-width: 1380px;
     width: 100%;
     margin: 32px auto;
-    padding: 0 28px 80px;
+    padding: 0 28px 40px;
     align-items: start;
+    min-height: calc(100vh - 70px);
 }
 
 /* ── LEFT COLUMN ── */
@@ -369,7 +370,7 @@ body {
 .scene {
     position: relative;
     width: 100%;
-    height: 260px;
+    height: 340px;
     border-radius: var(--radius-md);
     overflow: hidden;
     flex-shrink: 0;
@@ -380,9 +381,9 @@ body {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
+    width: 90%;
     max-width: 900px;
-    height: 300px;
+    height: 400px;
     object-fit: contain;
     z-index: 1;
     pointer-events: none;
@@ -392,9 +393,9 @@ body {
 .beaver-img {
     position: absolute;
     bottom: 6px;
-    right: 16%;
-    width: 22%;
-    max-height: 62%;
+    right: 14%;
+    width: 15%;
+    max-height: 42%;
     object-fit: contain;
     z-index: 2;
     filter: drop-shadow(3px 6px 10px rgba(0,0,0,0.28));
@@ -1039,8 +1040,9 @@ body {
         min-height: 400px;
     }
 
-    .scene { height: 240px; }
-    .house-img { height: 280px; }
+    .scene { height: 300px; }
+    .house-img { height: 350px; width: 88%; }
+    .beaver-img { width: 16%; max-height: 44%; }
 
     .upgrade-actions { gap: 8px; }
     .btn-text span { font-size: 0.84rem; }
@@ -1068,9 +1070,9 @@ body {
     .upgrade-actions { flex-direction: column; }
     .skin-controls-container { flex-direction: column; }
 
-    .scene { height: 220px; }
-    .house-img { height: 260px; }
-    .beaver-img { width: 26%; right: 8%; }
+    .scene { height: 260px; }
+    .house-img { height: 300px; width: 86%; }
+    .beaver-img { width: 18%; max-height: 40%; right: 8%; }
 
     .modal-perfil { padding: 22px 18px 18px; }
     .modal-title { font-size: 1rem; }
