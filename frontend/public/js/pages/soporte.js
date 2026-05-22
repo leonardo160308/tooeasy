@@ -1,6 +1,7 @@
 // frontend/public/js/pages/soporte.js
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaExito, alertaError } from '../modules/alerts.js';
+import { initOfflineBanner } from '../modules/offline.js';
 import {
     createTicket,
     getMyTickets,
@@ -100,8 +101,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const imagePreviewEl   = document.getElementById('image-preview');
     const btnRemoveImage   = document.getElementById('btn-remove-image');
 
-    let activeTicketId = null;
-    let selectedRating = 0;
+    let activeTicketId  = null;
+    let selectedRating  = 0;
+    let ratingForTicket = null;
 
     // ── LABELS ────────────────────────────────────────────────────────────────
     const STATUS_LABELS = {
@@ -350,10 +352,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const csatSection = document.getElementById('csat-section');
         if (csatSection) {
             csatSection.hidden = !(isClosed || isResolved);
-            selectedRating = 0;
-            document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('active'));
-            const csatComment = document.getElementById('csat-comment');
-            if (csatComment) csatComment.value = '';
+            if (ticketId !== ratingForTicket) {
+                selectedRating  = 0;
+                ratingForTicket = ticketId;
+                document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('active'));
+                const csatComment = document.getElementById('csat-comment');
+                if (csatComment) csatComment.value = '';
+            }
         }
 
         replyInput.value = '';
@@ -581,6 +586,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Silently ignore — quota display is optional
         }
     }
+
+    // ── OFFLINE DETECTION ─────────────────────────────────────────────────────
+    initOfflineBanner(() => Promise.all([loadMyTickets(), loadTicketQuota()]));
 
     // ── INIT ──────────────────────────────────────────────────────────────────
     await Promise.all([loadMyTickets(), loadTicketQuota()]);

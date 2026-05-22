@@ -8,6 +8,7 @@ import {
     updateMovement,
     deleteMovement
 } from '../modules/api.js';
+import { initOfflineBanner } from '../modules/offline.js';
 
 import {
     protectRoute,
@@ -753,6 +754,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnSubmit.textContent = originalText;
         }
     }
+
+    initOfflineBanner(() => cargarDatosDelServidor());
 
     init();
 });

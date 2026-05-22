@@ -24,9 +24,8 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-dark);
     font-family: 'Plus Jakarta Sans', 'Nunito', 'Segoe UI', sans-serif;
-    /* height fijo para que la cadena flex propague alturas a los hijos */
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
 }
@@ -41,9 +40,9 @@ body {
 /* ── LAYOUT ── */
 .split-layout {
     display: flex;
-    flex: 1;
-    min-height: 0;        /* permite que el ítem flex se comprima */
-    width: 100%;          /* sin max-width: llena todo el ancho disponible */
+    flex: none;
+    height: calc(100vh - 70px); /* exact height → footer sits naturally below fold */
+    width: 100%;
     padding: 0 0 0 clamp(12px, 2vw, 24px);
     gap: clamp(16px, 2vw, 28px);
     overflow: hidden;
@@ -316,18 +315,14 @@ body {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-    /* en mobile el body puede scrollear normalmente */
     body {
-        height: auto;
-        min-height: 100vh;
         overflow-y: auto;
-        overflow-x: hidden;
     }
 
     .split-layout {
         flex-direction: column;
+        height: auto;
         padding: 14px;
-        min-height: unset;
         overflow: visible;
     }
 

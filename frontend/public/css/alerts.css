@@ -220,3 +220,28 @@
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
 }
+
+/* ── OFFLINE BANNER ── */
+#offline-banner {
+    position: fixed;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a2332;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    z-index: 99999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: bottom 0.35s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+#offline-banner.visible {
+    bottom: 24px;
+}

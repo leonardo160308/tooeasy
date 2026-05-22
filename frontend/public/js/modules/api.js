@@ -1,5 +1,16 @@
 
 const API_BASE_URL = '/api';
+const FETCH_TIMEOUT_MS = 15000;
+
+function fetchWithTimeout(url, options = {}) {
+    if (!navigator.onLine) {
+        return Promise.reject(Object.assign(new Error('Sin conexión a internet.'), { offline: true }));
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    return fetch(url, { ...options, signal: controller.signal })
+        .finally(() => clearTimeout(timer));
+}
 
 // ========================================
 // 1. AUTENTICACIÓN
@@ -119,7 +130,7 @@ export async function deleteUser(userId) {
 // ========================================
 export async function getDashboardFixed(userId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/dashboard-fixed/${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/dashboard-fixed/${userId}`);
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo dashboard fijo:', error);
@@ -143,7 +154,7 @@ export async function updateGoal(userId, goalData) {
 
 export async function getDashboardData(userId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/movements/user/${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/movements/user/${userId}`);
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo movimientos:', error);
@@ -234,7 +245,7 @@ export async function equipSkin(userId, skinId, type) {
 // ========================================
 export async function getChallengesStatus(userId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/challenges/status/${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/challenges/status/${userId}`);
         if (!response.ok) throw new Error('No se pudo obtener el estado de los retos.');
         return await response.json();
     } catch (error) {
@@ -288,7 +299,7 @@ export async function purchaseSkin(userId, skinId, cost, currency) {
 
 export async function getChallengesProgress(userId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/challenges/progress/${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/challenges/progress/${userId}`);
         if (!response.ok) throw new Error('No se pudo obtener el progreso de los retos.');
         return await response.json();
     } catch (error) {
@@ -320,21 +331,21 @@ export async function createTicket(formData, userId) {
 
 export async function getMyTickets(userId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/tickets/my?userId=${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/tickets/my?userId=${userId}`);
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo tickets:', error);
-        return { success: false, data: [] };
+        return { success: false, data: [], offline: !!error.offline };
     }
 }
 
 export async function getMyTicketDetail(userId, ticketId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/tickets/my/${ticketId}?userId=${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/tickets/my/${ticketId}?userId=${userId}`);
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo detalle de ticket:', error);
-        return { success: false, message: 'Error de conexión.' };
+        return { success: false, message: error.offline ? 'Sin conexión.' : 'Error de conexión.' };
     }
 }
 

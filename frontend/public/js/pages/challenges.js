@@ -2,6 +2,7 @@ import { protectRoute, getAuthData } from '../modules/auth.js';
 import { getUserData, getChallengesStatus, getChallengesProgress, completeChallenge } from '../modules/api.js';
 import { challengesData } from '../data/challenges.js';
 import { alertaExito, alertaError, alertaInfo } from '../modules/alerts.js';
+import { initOfflineBanner } from '../modules/offline.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -154,6 +155,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             button.textContent = originalText;
         }
     }
+
+    // ─── OFFLINE DETECTION ───────────────────────────────────────────────
+    initOfflineBanner(() => Promise.all([fetchChallengesData(), updateWoodDisplay()]).then(renderChallenges));
 
     // ─── INICIALIZAR ──────────────────────────────────────────────────────
     await Promise.all([
