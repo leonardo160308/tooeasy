@@ -41,23 +41,24 @@ main { flex: 1; }
 
 /* ── HERO ──────────────────────────────────────────────────────────────────── */
 .soporte-hero {
-    background: linear-gradient(135deg, #1e2e42 0%, #25354d 60%, #1a2738 100%);
-    color: white;
-    padding: 40px;
+    background: #ffffff;
+    color: #1a2332;
+    padding: 36px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .soporte-hero h2 {
     font-size: 1.8rem;
-    color: #f0d5b0;
+    color: #2C405B;
     margin-bottom: 8px;
 }
 
 .soporte-hero p {
-    color: rgba(255,255,255,0.75);
+    color: #4a5568;
     font-size: 0.95rem;
     max-width: 500px;
 }
