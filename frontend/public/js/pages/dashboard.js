@@ -59,7 +59,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let mesVisualizado = fechaActual.getMonth();
     let anioVisualizado = fechaActual.getFullYear();
 
-    let datosFijos = { ingresoFijo: 0, egresoFijo: 0, metaNombre: '', metaCantidad: 0 };
+    let datosFijos = {
+        ingresoFijo: 0, egresoFijo: 0, metaNombre: '', metaCantidad: 0,
+        savingMethod: 'automatic_50_30_20', savingPercentage: null, manualSavingAmount: null
+    };
     let movimientosDB = new Map();
     let chartInstance = null;
     let diaSeleccionado = null;
@@ -96,7 +99,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inpEditMonto   = document.getElementById('edit-trans-amount');
     const formEdicion    = document.getElementById('edit-transaction-form');
     const btnEditEliminar = document.getElementById('edit-btn-delete');
-    const btnLogout = document.getElementById('logout-btn') || document.querySelector('.btn-logout');
+    const btnLogout       = document.getElementById('logout-btn') || document.querySelector('.btn-logout');
+
+    // ── SAVING METHOD UI REFS ────────────────────────────────────────────
+    const inpSavingPct    = document.getElementById('saving-pct');
+    const inpSavingManual = document.getElementById('saving-manual');
+    const savingsLabelEl  = document.getElementById('savings-label-text');
+    const bdNeeds         = document.getElementById('bd-needs');
+    const bdWants         = document.getElementById('bd-wants');
+    const bdSavings       = document.getElementById('bd-savings');
 
     // --- CARGA INICIAL ---
     async function cargarDatosDelServidor() {
@@ -109,12 +120,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (fixedResponse.success) {
                 const data = fixedResponse.data;
                 datosFijos = {
-                    ingresoFijo:   parseFloat(data.ingreso_fijo)  || 0,
-                    egresoFijo:    parseFloat(data.egreso_fijo)   || 0,
-                    metaNombre:    data.meta_nombre               || '',
-                    metaCantidad:  parseFloat(data.meta_cantidad) || 0
+                    ingresoFijo:        parseFloat(data.ingreso_fijo)          || 0,
+                    egresoFijo:         parseFloat(data.egreso_fijo)           || 0,
+                    metaNombre:         data.meta_nombre                       || '',
+                    metaCantidad:       parseFloat(data.meta_cantidad)         || 0,
+                    savingMethod:       data.saving_method                     || 'automatic_50_30_20',
+                    savingPercentage:   data.saving_percentage   != null ? parseFloat(data.saving_percentage)   : null,
+                    manualSavingAmount: data.manual_saving_amount != null ? parseFloat(data.manual_saving_amount) : null,
                 };
                 actualizarInputsFijos();
+                actualizarSavingMethodUI();
             }
             if (movementsResponse.success) {
                 procesarMovimientosParaMap(movementsResponse.history);
@@ -150,16 +165,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function guardarDatosFijos() {
         const payload = {
-            ingreso_fijo:  parseFloat(inpIngreso.value)   || 0,
-            egreso_fijo:   parseFloat(inpEgreso.value)    || 0,
-            meta_nombre:   inpMetaNombre.value             || '',
-            meta_cantidad: parseFloat(inpMetaMonto.value) || 0
+            ingreso_fijo:         parseFloat(inpIngreso.value)   || 0,
+            egreso_fijo:          parseFloat(inpEgreso.value)    || 0,
+            meta_nombre:          inpMetaNombre.value             || '',
+            meta_cantidad:        parseFloat(inpMetaMonto.value) || 0,
+            saving_method:        datosFijos.savingMethod,
+            saving_percentage:    datosFijos.savingPercentage,
+            manual_saving_amount: datosFijos.manualSavingAmount,
         };
         datosFijos = {
-            ingresoFijo:  payload.ingreso_fijo,
-            egresoFijo:   payload.egreso_fijo,
-            metaNombre:   payload.meta_nombre,
-            metaCantidad: payload.meta_cantidad
+            ingresoFijo:        payload.ingreso_fijo,
+            egresoFijo:         payload.egreso_fijo,
+            metaNombre:         payload.meta_nombre,
+            metaCantidad:       payload.meta_cantidad,
+            savingMethod:       payload.saving_method,
+            savingPercentage:   payload.saving_percentage,
+            manualSavingAmount: payload.manual_saving_amount,
         };
         actualizarDashboard();
         try {
@@ -499,6 +520,38 @@ document.addEventListener('DOMContentLoaded', async () => {
                 actualizarGrafica();
             });
         });
+
+        // ── Método de ahorro ─────────────────────────────────────────────
+        document.querySelectorAll('.method-card').forEach(card => {
+            card.addEventListener('click', () => {
+                datosFijos.savingMethod = card.dataset.method;
+                actualizarSavingMethodUI();
+                actualizarDashboard();
+                guardarDatosFijos();
+            });
+        });
+
+        if (inpSavingPct) {
+            inpSavingPct.addEventListener('change', () => {
+                const pct = parseFloat(inpSavingPct.value);
+                if (pct > 0 && pct <= 100) {
+                    datosFijos.savingPercentage = pct;
+                    actualizarDashboard();
+                    guardarDatosFijos();
+                }
+            });
+        }
+
+        if (inpSavingManual) {
+            inpSavingManual.addEventListener('change', () => {
+                const amt = parseFloat(inpSavingManual.value);
+                if (Number.isFinite(amt) && amt >= 0) {
+                    datosFijos.manualSavingAmount = amt;
+                    actualizarDashboard();
+                    guardarDatosFijos();
+                }
+            });
+        }
     }
 
     // --- CALENDARIO ---
@@ -561,6 +614,55 @@ document.addEventListener('DOMContentLoaded', async () => {
         return { totalIngresos, totalEgresos, balance, colorDia, movimientos: data };
     }
 
+    // ─────────────────────────────────────────────────────────────────────
+    // MÉTODOS DE AHORRO
+    // ─────────────────────────────────────────────────────────────────────
+
+    function calcularAhorroObjetivo(ingresoTotal) {
+        const base = Math.max(0, ingresoTotal);
+        switch (datosFijos.savingMethod) {
+            case 'percentage': {
+                const pct = datosFijos.savingPercentage || 20;
+                return base * (pct / 100);
+            }
+            case 'manual':
+                return datosFijos.manualSavingAmount || 0;
+            case 'automatic_50_30_20':
+            default:
+                return base * 0.20;
+        }
+    }
+
+    function mostrarBreakdown5030(ingresoTotal) {
+        const base = Math.max(0, ingresoTotal);
+        if (bdNeeds)   bdNeeds.textContent   = `$${(base * 0.50).toFixed(2)}`;
+        if (bdWants)   bdWants.textContent   = `$${(base * 0.30).toFixed(2)}`;
+        if (bdSavings) bdSavings.textContent = `$${(base * 0.20).toFixed(2)}`;
+    }
+
+    function actualizarSavingMethodUI() {
+        const method = datosFijos.savingMethod;
+
+        document.querySelectorAll('.method-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.method === method);
+        });
+
+        const pctArea    = document.getElementById('method-input-percentage');
+        const manualArea = document.getElementById('method-input-manual');
+        const breakdown  = document.getElementById('breakdown-5030');
+
+        if (pctArea)    pctArea.classList.toggle('hidden', method !== 'percentage');
+        if (manualArea) manualArea.classList.toggle('hidden', method !== 'manual');
+        if (breakdown)  breakdown.classList.toggle('hidden', method !== 'automatic_50_30_20');
+
+        if (inpSavingPct && datosFijos.savingPercentage != null) {
+            inpSavingPct.value = datosFijos.savingPercentage;
+        }
+        if (inpSavingManual && datosFijos.manualSavingAmount != null) {
+            inpSavingManual.value = datosFijos.manualSavingAmount;
+        }
+    }
+
     function actualizarDashboard() {
         let totalIngresosVariables = 0;
         let totalEgresosVariables  = 0;
@@ -573,27 +675,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        const ingresoTotal  = datosFijos.ingresoFijo + totalIngresosVariables;
-        const egresoTotal   = datosFijos.egresoFijo  + totalEgresosVariables;
-        const ahorroMensual = ingresoTotal - egresoTotal;
-        const faltaParaMeta = Math.max(0, datosFijos.metaCantidad - ahorroMensual);
+        const ingresoTotal   = datosFijos.ingresoFijo + totalIngresosVariables;
+        const egresoTotal    = datosFijos.egresoFijo  + totalEgresosVariables;
+        const balanceReal    = ingresoTotal - egresoTotal;
+        const ahorroObjetivo = calcularAhorroObjetivo(ingresoTotal);
+        const faltaParaMeta  = Math.max(0, datosFijos.metaCantidad - ahorroObjetivo);
 
-        txtAhorro.textContent   = `$${ahorroMensual.toFixed(2)}`;
+        // Actualizar label según método activo
+        if (savingsLabelEl) {
+            if (datosFijos.savingMethod === 'percentage') {
+                const pct = datosFijos.savingPercentage || 20;
+                savingsLabelEl.textContent = `Ahorro Sugerido (${pct}%)`;
+            } else if (datosFijos.savingMethod === 'manual') {
+                savingsLabelEl.textContent = 'Ahorro Mensual Fijo';
+            } else {
+                savingsLabelEl.textContent = 'Ahorro Sugerido (20%)';
+            }
+        }
+
+        txtAhorro.textContent   = `$${ahorroObjetivo.toFixed(2)}`;
         txtRestante.textContent = `$${faltaParaMeta.toFixed(2)}`;
 
-        if (ahorroMensual < 0) {
+        if (balanceReal < 0) {
             txtAhorro.classList.remove('txt-surplus');
             txtAhorro.classList.add('txt-deficit');
             txtEstado.textContent = 'Déficit';
+        } else if (balanceReal < ahorroObjetivo) {
+            txtAhorro.classList.remove('txt-deficit');
+            txtAhorro.classList.add('txt-surplus');
+            txtEstado.textContent = 'Por debajo del objetivo';
         } else {
             txtAhorro.classList.remove('txt-deficit');
             txtAhorro.classList.add('txt-surplus');
             txtEstado.textContent = (faltaParaMeta === 0 && datosFijos.metaCantidad > 0)
                 ? '¡Meta Alcanzada!'
-                : 'En progreso';
+                : '¡Bien encaminado!';
         }
 
-        // Actualizar gráfico con datos del mes actual
+        if (datosFijos.savingMethod === 'automatic_50_30_20') {
+            mostrarBreakdown5030(ingresoTotal);
+        }
+
         actualizarGrafica();
     }
 

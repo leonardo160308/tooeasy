@@ -44,6 +44,9 @@ export const getRecommendations = async (req, res) => {
         const egresoFijo    = parseFloat(fixed.egreso_fijo)   || 0;
         const metaCantidad  = parseFloat(fixed.meta_cantidad) || 0;
         const metaNombre    = fixed.meta_nombre || '';
+        const savingMethod  = fixed.saving_method || 'automatic_50_30_20';
+        const savingPct     = parseFloat(fixed.saving_percentage)    || 20;
+        const manualAmount  = parseFloat(fixed.manual_saving_amount) || 0;
 
         const now = new Date();
         // Acepta mes/año del frontend (mes es 1-based); si no se envían, usa el mes actual
@@ -66,6 +69,14 @@ export const getRecommendations = async (req, res) => {
         const curBalance  = curIncome - curExpense;
         const prevExpense = prev.expense + egresoFijo;
 
+        // Objetivo de ahorro según el método configurado
+        function calcSavingsTarget(income) {
+            if (savingMethod === 'percentage') return Math.max(0, income) * (savingPct / 100);
+            if (savingMethod === 'manual')     return manualAmount;
+            return Math.max(0, income) * 0.20; // automatic_50_30_20
+        }
+        const savingsTarget = calcSavingsTarget(curIncome);
+
         const recs = [];
 
         // ── Gastos superan ingresos ──
@@ -86,6 +97,26 @@ export const getRecommendations = async (req, res) => {
                 message: `Tu balance del mes es -$${fmt(Math.abs(curBalance))}. Considera reducir gastos variables.`,
                 priority: 1
             });
+        }
+
+        // ── Objetivo de ahorro mensual vs balance real ──
+        if (curIncome > 0 && savingsTarget > 0 && curMovs.length > 0) {
+            if (curBalance >= savingsTarget) {
+                recs.push({
+                    type: 'success', icon: 'fa-piggy-bank',
+                    title: '¡Cumpliste tu objetivo de ahorro!',
+                    message: `Ahorraste $${fmt(curBalance)}, superando tu meta mensual de $${fmt(savingsTarget)}. ¡Excelente disciplina financiera!`,
+                    priority: 5
+                });
+            } else if (curBalance >= 0 && curBalance < savingsTarget) {
+                const falta = savingsTarget - curBalance;
+                recs.push({
+                    type: 'warning', icon: 'fa-piggy-bank',
+                    title: 'Por debajo de tu objetivo de ahorro',
+                    message: `Tu balance real ($${fmt(curBalance)}) está $${fmt(falta)} por debajo de tu meta mensual de $${fmt(savingsTarget)}. Considera reducir gastos variables.`,
+                    priority: 2
+                });
+            }
         }
 
         // ── Categorías con aumento > 20% vs mes anterior ──

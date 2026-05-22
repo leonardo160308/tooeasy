@@ -80,6 +80,79 @@
 
             </div>
 
+            <!-- ── MÉTODO DE AHORRO ── -->
+            <div class="saving-method-section">
+
+                <div class="method-label-row">
+                    <span class="method-section-label">Método de Ahorro</span>
+                    <span class="tooltip-icon tt-right tt-wide"
+                          data-tooltip="Elige cómo calcular tu ahorro mensual. El método 50/30/20 aplica la regla financiera clásica sobre tus ingresos. El porcentaje o la cantidad fija te dan control total.">ℹ</span>
+                </div>
+
+                <div class="method-cards" role="group" aria-label="Seleccionar método de ahorro">
+                    <button class="method-card active" data-method="automatic_50_30_20" type="button"
+                            title="Regla financiera 50/30/20: 50% necesidades, 30% gustos, 20% ahorro">
+                        <span class="method-icon">⚡</span>
+                        <span class="method-name">Automático 50/30/20</span>
+                        <span class="method-desc">20% de tus ingresos</span>
+                    </button>
+                    <button class="method-card" data-method="percentage" type="button"
+                            title="Elige qué porcentaje de tus ingresos quieres ahorrar cada mes">
+                        <span class="method-icon">%</span>
+                        <span class="method-name">Porcentaje</span>
+                        <span class="method-desc">Tú eliges el %</span>
+                    </button>
+                    <button class="method-card" data-method="manual" type="button"
+                            title="Define una cantidad fija de ahorro mensual sin importar tus ingresos">
+                        <span class="method-icon">$</span>
+                        <span class="method-name">Cantidad Fija</span>
+                        <span class="method-desc">Monto mensual fijo</span>
+                    </button>
+                </div>
+
+                <!-- Input porcentaje personalizado -->
+                <div id="method-input-percentage" class="method-input-area hidden">
+                    <label for="saving-pct">
+                        Porcentaje de ahorro mensual (%)
+                        <span class="tooltip-icon tt-right"
+                              data-tooltip="Indica qué porcentaje de tus ingresos totales quieres ahorrar cada mes. Ejemplo: 15 significa 15%.">ℹ</span>
+                    </label>
+                    <input type="number" id="saving-pct" min="1" max="100" step="1"
+                           placeholder="Ej: 20" inputmode="numeric">
+                </div>
+
+                <!-- Input cantidad manual -->
+                <div id="method-input-manual" class="method-input-area hidden">
+                    <label for="saving-manual">
+                        Monto fijo de ahorro mensual ($)
+                        <span class="tooltip-icon tt-right"
+                              data-tooltip="Escribe la cantidad exacta que quieres ahorrar cada mes sin importar cuánto ganes o gastes.">ℹ</span>
+                    </label>
+                    <input type="number" id="saving-manual" min="0" step="100"
+                           placeholder="Ej: 2000.00" inputmode="decimal" maxlength="11">
+                </div>
+
+                <!-- Desglose 50/30/20 (visible solo con método automático) -->
+                <div id="breakdown-5030" class="breakdown-panel">
+                    <div class="breakdown-item breakdown-needs">
+                        <span class="bd-label">Necesidades (50%)</span>
+                        <span class="bd-amount" id="bd-needs">$0.00</span>
+                        <progress id="bd-needs-bar" max="100" value="50"></progress>
+                    </div>
+                    <div class="breakdown-item breakdown-wants">
+                        <span class="bd-label">Gustos (30%)</span>
+                        <span class="bd-amount" id="bd-wants">$0.00</span>
+                        <progress id="bd-wants-bar" max="100" value="30"></progress>
+                    </div>
+                    <div class="breakdown-item breakdown-savings">
+                        <span class="bd-label">Ahorro (20%)</span>
+                        <span class="bd-amount" id="bd-savings">$0.00</span>
+                        <progress id="bd-savings-bar" max="100" value="20"></progress>
+                    </div>
+                </div>
+
+            </div>
+
             <!-- ── GRID: META ── -->
             <div class="goal-data-grid">
 
@@ -108,9 +181,9 @@
 
                 <div class="result-item">
                     <span>
-                        Ahorro Actual
+                        <span id="savings-label-text">Ahorro Sugerido (20%)</span>
                         <span class="tooltip-icon tt-light tt-right tt-wide"
-                              data-tooltip="Diferencia entre tus ingresos totales (fijos + variables del mes).">ℹ</span>
+                              data-tooltip="Monto calculado según el método de ahorro seleccionado. Compáralo con tu balance real para ver si estás en camino.">ℹ</span>
                     </span>
                     <strong id="calculated-savings">$0.00</strong>
                 </div>
@@ -119,7 +192,7 @@
                     <span>
                         Falta para Meta
                         <span class="tooltip-icon tt-light tt-left tt-wide"
-                              data-tooltip="Cuánto dinero te falta aún para alcanzar tu meta del mes.">ℹ</span>
+                              data-tooltip="Diferencia entre tu meta de ahorro y el monto calculado por el método elegido.">ℹ</span>
                     </span>
                     <strong id="calculated-remaining">$0.00</strong>
                 </div>
