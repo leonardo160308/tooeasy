@@ -54,3 +54,23 @@
 .terms-group label:hover {
     color: #BA8E58;
 }
+
+/* ── FOOTER NAV ── */
+.footer-nav {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    font-size: 0.85rem;
+}
+
+.footer-nav a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-nav a:hover { color: #BA8E58; }
+
+.footer-nav span { color: rgba(255,255,255,0.35); }

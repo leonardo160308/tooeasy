@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return result;
     }
 
-    /** Datos para Gráfico 1: Balance neto diario */
+    /** Datos para Gráfico 1: Balance neto diario (incluye fijos distribuidos por día) */
     function buildChart1Data() {
         const diasEnMes = new Date(anioVisualizado, mesVisualizado + 1, 0).getDate();
         const labels = Array.from({ length: diasEnMes }, (_, i) => String(i + 1));
@@ -212,22 +212,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         const egresos  = new Array(diasEnMes).fill(0);
         const balance  = new Array(diasEnMes).fill(0);
 
+        // Distribuir fijos uniformemente entre todos los días del mes
+        const ingFijoPorDia = (datosFijos.ingresoFijo || 0) / diasEnMes;
+        const egrFijoPorDia = (datosFijos.egresoFijo  || 0) / diasEnMes;
+        for (let i = 0; i < diasEnMes; i++) {
+            ingresos[i] = ingFijoPorDia;
+            egresos[i]  = egrFijoPorDia;
+        }
+
+        // Sumar movimientos variables del mes
         movimientosDB.forEach((data, fecha) => {
             const [y, m, d] = fecha.split('-');
             if (parseInt(y) === anioVisualizado && parseInt(m) === (mesVisualizado + 1)) {
                 const idx = parseInt(d) - 1;
-                const inc = data.ingresos.reduce((s, i) => s + i.monto, 0);
-                const exp = data.egresos.reduce((s, e) => s + e.monto, 0);
-                ingresos[idx] = inc;
-                egresos[idx]  = exp;
-                balance[idx]  = inc - exp;
+                ingresos[idx] += data.ingresos.reduce((s, i) => s + i.monto, 0);
+                egresos[idx]  += data.egresos.reduce((s, e) => s + e.monto, 0);
             }
         });
+
+        for (let i = 0; i < diasEnMes; i++) {
+            balance[i] = ingresos[i] - egresos[i];
+        }
 
         return { labels, ingresos, egresos, balance };
     }
 
-    /** Datos para Gráfico 2: Ingresos por categoría */
+    /** Datos para Gráfico 2: Ingresos por categoría (incluye Ingreso Fijo) */
     function buildChart2Data() {
         const { ingresos } = getMovimientosMesActual();
         const totales = {};
@@ -235,12 +245,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             const cat = mov.categoria || 'Otros ingresos';
             totales[cat] = (totales[cat] || 0) + mov.monto;
         });
+        if (datosFijos.ingresoFijo > 0) {
+            totales['Ingreso Fijo'] = (totales['Ingreso Fijo'] || 0) + datosFijos.ingresoFijo;
+        }
         const labels = Object.keys(totales);
         const values = Object.values(totales);
         return { labels, values };
     }
 
-    /** Datos para Gráfico 3: Egresos por categoría */
+    /** Datos para Gráfico 3: Egresos por categoría (incluye Egreso Fijo) */
     function buildChart3Data() {
         const { egresos } = getMovimientosMesActual();
         const totales = {};
@@ -248,6 +261,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const cat = mov.categoria || 'Otros gastos';
             totales[cat] = (totales[cat] || 0) + mov.monto;
         });
+        if (datosFijos.egresoFijo > 0) {
+            totales['Egreso Fijo'] = (totales['Egreso Fijo'] || 0) + datosFijos.egresoFijo;
+        }
         const labels = Object.keys(totales);
         const values = Object.values(totales);
         return { labels, values };
