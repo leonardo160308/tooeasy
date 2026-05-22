@@ -317,23 +317,31 @@
                     </button>
                 </div>
             </div>
+
+            <!-- CSAT: visible solo cuando el ticket está resuelto/cerrado -->
+            <div class="csat-section" id="csat-section" hidden>
+                <p class="csat-label"><i class="fas fa-star"></i> ¿Cómo calificarías la atención recibida?</p>
+                <div class="csat-stars" id="csat-stars" role="group" aria-label="Calificación de 1 a 5 estrellas">
+                    <button class="star-btn" data-rating="1" type="button" aria-label="1 estrella">★</button>
+                    <button class="star-btn" data-rating="2" type="button" aria-label="2 estrellas">★</button>
+                    <button class="star-btn" data-rating="3" type="button" aria-label="3 estrellas">★</button>
+                    <button class="star-btn" data-rating="4" type="button" aria-label="4 estrellas">★</button>
+                    <button class="star-btn" data-rating="5" type="button" aria-label="5 estrellas">★</button>
+                </div>
+                <textarea id="csat-comment" class="csat-comment" placeholder="Comentario opcional sobre la atención..." maxlength="500"></textarea>
+                <button class="btn-primary btn-small" id="btn-send-csat" type="button">
+                    <i class="fas fa-paper-plane"></i> Enviar calificación
+                </button>
+                <!-- Read-only view when CSAT already submitted -->
+                <div class="csat-submitted-view" id="csat-submitted-view" hidden>
+                    <div class="csat-submitted-stars" id="csat-submitted-stars" aria-label="Calificación enviada"></div>
+                    <p class="csat-submitted-comment" id="csat-submitted-comment"></p>
+                    <span class="csat-submitted-thanks"><i class="fas fa-check-circle"></i> Gracias por tu calificación</span>
+                </div>
+            </div>
         </div>
 
     </div><!-- /soporte-layout -->
-
-    <!-- CSAT: visible solo cuando el ticket está resuelto/cerrado -->
-    <div class="csat-section" id="csat-section" hidden>
-        <p class="csat-label"><i class="fas fa-star"></i> ¿Cómo fue tu experiencia con este ticket?(selecciona un ticket primero)</p>
-        <div class="csat-stars" id="csat-stars" role="group" aria-label="Calificación de 1 a 5 estrellas">
-            <button class="star-btn" data-rating="1" type="button" aria-label="1 estrella">★</button>
-            <button class="star-btn" data-rating="2" type="button" aria-label="2 estrellas">★</button>
-            <button class="star-btn" data-rating="3" type="button" aria-label="3 estrellas">★</button>
-            <button class="star-btn" data-rating="4" type="button" aria-label="4 estrellas">★</button>
-            <button class="star-btn" data-rating="5" type="button" aria-label="5 estrellas">★</button>
-        </div>
-        <textarea id="csat-comment" class="csat-comment" placeholder="Comentario opcional..." maxlength="500"></textarea>
-        <button class="btn-primary btn-small" id="btn-send-csat" type="button">Enviar calificación</button>
-    </div>
 
 </main>
 

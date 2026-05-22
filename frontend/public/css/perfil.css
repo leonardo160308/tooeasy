@@ -140,7 +140,15 @@ body {
 }
 
 /* ── SKIN / EQUIP STATES ── */
-.skin-locked { filter: grayscale(100%); }
+.skin-locked { filter: grayscale(100%); opacity: 0.6; }
+
+/* Beaver has its own filter (drop-shadow) that overrides .skin-locked — must be more specific */
+.house-img.skin-locked,
+.beaver-img.skin-locked {
+    filter: grayscale(100%) brightness(0.75) !important;
+    opacity: 0.55;
+    animation-play-state: paused;
+}
 
 .btn-equip-equipped { background: #4CAF50 !important; color: white !important; }
 .btn-equip-equip    { background: #2c3e50 !important; color: white !important; }

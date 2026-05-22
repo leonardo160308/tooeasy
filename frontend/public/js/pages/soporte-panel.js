@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const { ticket, messages, events } = res.data;
+        const { ticket, messages, events, csat } = res.data;
         activeTicketData = ticket;
 
         dSubject.textContent   = ticket.subject;
@@ -319,6 +319,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         renderMessages(messages);
         renderEvents(events);
+        renderPanelCsat(csat);
 
         btnTake.disabled   = !!(ticket.assigned_to && ticket.assigned_to !== userId) || ticket.status === 'closed';
         statusSelect.value = '';
@@ -373,6 +374,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span class="event-item-date">${formatDate(ev.created_at)}</span>`;
             dEvents.appendChild(item);
         });
+    }
+
+    function renderPanelCsat(csat) {
+        const section = document.getElementById('panel-csat-section');
+        const starsEl = document.getElementById('panel-csat-stars');
+        const commentEl = document.getElementById('panel-csat-comment');
+        if (!section) return;
+
+        if (!csat || !csat.rating) {
+            section.hidden = true;
+            return;
+        }
+
+        section.hidden = false;
+        if (starsEl) {
+            starsEl.innerHTML = Array.from({ length: 5 }, (_, i) =>
+                `<span class="panel-star${i < csat.rating ? ' panel-star-on' : ''}">★</span>`
+            ).join('') + ` <span class="panel-csat-score">${csat.rating}/5</span>`;
+        }
+        if (commentEl) {
+            commentEl.textContent = csat.comment || '';
+            commentEl.hidden = !csat.comment;
+        }
     }
 
     function describeEvent(ev) {

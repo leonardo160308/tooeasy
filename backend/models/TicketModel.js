@@ -269,6 +269,16 @@ class TicketModel {
         return data;
     }
 
+    static async getCsatByTicket(ticketId) {
+        const { data, error } = await supabaseAdmin
+            .from('ticket_csat')
+            .select('rating, comment, created_at')
+            .eq('ticket_id', ticketId)
+            .maybeSingle();
+        if (error) throw error;
+        return data;
+    }
+
     // ========================================
     // MÉTRICAS
     // ========================================

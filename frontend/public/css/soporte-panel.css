@@ -432,6 +432,57 @@ main { flex: 1; padding: 24px 32px; }
 }
 
 /* ── REPLY AREA ──────────────────────────────────────────────────────────────*/
+/* ── CSAT PANEL (admin/support view) ─────────────────────────────────────────*/
+.panel-csat-section {
+    margin: 8px 14px;
+    padding: 10px 14px;
+    background: #fffdf4;
+    border: 1px solid #f0d98a;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.panel-csat-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #b8860b;
+}
+
+.panel-csat-stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.panel-star {
+    font-size: 1.4rem;
+    color: #ddd;
+    line-height: 1;
+}
+
+.panel-star-on { color: #f6c90e; }
+
+.panel-csat-score {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-left: 4px;
+}
+
+.panel-csat-comment {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0;
+}
+
 .detail-reply {
     padding: 12px 14px;
 }

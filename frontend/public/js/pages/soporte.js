@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        const { ticket, messages } = res.data;
+        const { ticket, messages, csat } = res.data;
 
         detailTitle.textContent     = `#${ticket.id.slice(0, 8)}`;
         detailStatusBadge.innerHTML = badgeStatus(ticket.status);
@@ -351,7 +351,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const csatSection = document.getElementById('csat-section');
         if (csatSection) {
-            csatSection.hidden = !(isClosed || isResolved);
+            const willShow = isClosed || isResolved;
+            csatSection.hidden = !willShow;
             if (ticketId !== ratingForTicket) {
                 selectedRating  = 0;
                 ratingForTicket = ticketId;
@@ -359,6 +360,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const csatComment = document.getElementById('csat-comment');
                 if (csatComment) csatComment.value = '';
             }
+            if (willShow) renderCsatState(csat);
         }
 
         replyInput.value = '';
@@ -490,8 +492,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ── CSAT ──────────────────────────────────────────────────────────────────
-    const csatStars   = document.getElementById('csat-stars');
-    const btnSendCsat = document.getElementById('btn-send-csat');
+    const csatStars        = document.getElementById('csat-stars');
+    const btnSendCsat      = document.getElementById('btn-send-csat');
+    const csatSubmittedView = document.getElementById('csat-submitted-view');
+    const csatSubmittedStars = document.getElementById('csat-submitted-stars');
+    const csatSubmittedComment = document.getElementById('csat-submitted-comment');
+
+    function renderCsatState(csat) {
+        const hasSubmitted = !!(csat && csat.rating);
+        const commentEl   = document.getElementById('csat-comment');
+
+        if (csatStars)          csatStars.hidden         = hasSubmitted;
+        if (btnSendCsat)        btnSendCsat.hidden        = hasSubmitted;
+        if (commentEl)          commentEl.hidden          = hasSubmitted;
+        if (csatSubmittedView)  csatSubmittedView.hidden  = !hasSubmitted;
+
+        if (hasSubmitted && csatSubmittedStars) {
+            csatSubmittedStars.innerHTML = Array.from({ length: 5 }, (_, i) =>
+                `<span class="star-static${i < csat.rating ? ' active' : ''}">★</span>`
+            ).join('');
+        }
+        if (csatSubmittedComment) {
+            csatSubmittedComment.textContent = hasSubmitted ? (csat.comment || '') : '';
+            csatSubmittedComment.hidden = !hasSubmitted || !csat.comment;
+        }
+
+        if (!hasSubmitted) {
+            if (csatStars)   csatStars.hidden   = false;
+            if (btnSendCsat) btnSendCsat.hidden  = false;
+            if (commentEl)   commentEl.hidden    = false;
+        }
+    }
 
     if (csatStars) {
         csatStars.addEventListener('click', (e) => {
@@ -518,7 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = await res.json();
                 if (data.success) {
                     alertaExito('¡Gracias por tu calificación!');
-                    document.getElementById('csat-section').hidden = true;
+                    renderCsatState({ rating: selectedRating, comment });
                 } else {
                     alertaError(data.message || 'Error al enviar calificación.');
                 }

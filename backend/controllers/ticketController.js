@@ -174,8 +174,11 @@ export async function getMyTicketDetail(req, res) {
             return res.status(403).json({ success: false, message: 'Acceso denegado' });
         }
 
-        const messages = await TicketModel.getMessages(ticketId, 'user');
-        res.json({ success: true, data: { ticket, messages } });
+        const [messages, csat] = await Promise.all([
+            TicketModel.getMessages(ticketId, 'user'),
+            TicketModel.getCsatByTicket(ticketId)
+        ]);
+        res.json({ success: true, data: { ticket, messages, csat } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al obtener detalle del ticket' });
@@ -346,11 +349,12 @@ export async function getTicketDetail(req, res) {
         const ticket = await TicketModel.getTicketById(ticketId);
         if (!ticket) return res.status(404).json({ success: false, message: 'Ticket no encontrado' });
 
-        const [messages, events] = await Promise.all([
+        const [messages, events, csat] = await Promise.all([
             TicketModel.getMessages(ticketId, 'support'),
-            TicketModel.getEvents(ticketId)
+            TicketModel.getEvents(ticketId),
+            TicketModel.getCsatByTicket(ticketId)
         ]);
-        res.json({ success: true, data: { ticket, messages, events } });
+        res.json({ success: true, data: { ticket, messages, events, csat } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al obtener detalle del ticket' });
