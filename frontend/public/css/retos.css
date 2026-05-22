@@ -463,28 +463,10 @@ body {
 }
 .challenges-list-hint { font-size: 0.72rem; color: #718096; font-weight: 600; }
 
-/* ── FOOTER ──
-   Desktop: fijo en la parte baja, oculto hasta que el usuario hace scroll
-   en la lista de retos. Mobile: flujo normal, siempre visible.
-── */
+/* ── FOOTER ── siempre visible, compacto para no robar espacio al layout */
 #site-footer.footer {
     padding: 10px 20px;
     line-height: 1.5;
     font-size: 0.8rem;
-}
-
-@media (min-width: 769px) {
-    #site-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 600;
-        transform: translateY(100%);
-        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    #site-footer.visible {
-        transform: translateY(0);
-    }
+    flex-shrink: 0;
 }

@@ -41,14 +41,11 @@ main { flex: 1; }
 
 /* ── HERO ──────────────────────────────────────────────────────────────────── */
 .soporte-hero {
-    background: #ffffff;
-    color: #1a2332;
     padding: 36px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    border-bottom: 1px solid #e2e8f0;
 }
 
 .soporte-hero h2 {
