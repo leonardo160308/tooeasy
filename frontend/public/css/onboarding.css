@@ -29,13 +29,13 @@
 }
 .ob-spotlight.ob-visible {
     opacity: 1;
-    animation: ob-pulse-ring 2s ease-in-out infinite;
+    animation: ob-pulse-ring 2.5s ease-in-out infinite;
 }
 
 @keyframes ob-pulse-ring {
-    0%   { outline: 2px solid rgba(182, 130, 62, 0); outline-offset: 0px; }
-    50%  { outline: 2px solid rgba(182, 130, 62, 0.7); outline-offset: 5px; }
-    100% { outline: 2px solid rgba(182, 130, 62, 0); outline-offset: 0px; }
+    0%   { outline: 2px solid rgba(182, 130, 62, 0);   outline-offset: 0px; }
+    50%  { outline: 2px solid rgba(182, 130, 62, 0.75); outline-offset: 6px; }
+    100% { outline: 2px solid rgba(182, 130, 62, 0);   outline-offset: 0px; }
 }
 
 /* ── Caja de paso ── */
@@ -43,13 +43,16 @@
     position: fixed;
     z-index: 99002;
     background: #ffffff;
-    border-radius: 16px;
-    padding: 22px 24px 18px;
-    width: min(340px, calc(100vw - 32px));
-    box-shadow: 0 12px 40px rgba(10,18,30,0.28), 0 2px 8px rgba(10,18,30,0.14);
+    border-radius: 18px;
+    padding: 20px 22px 16px;
+    width: min(360px, calc(100vw - 32px));
+    box-shadow:
+        0 16px 48px rgba(10, 18, 30, 0.22),
+        0 2px 8px rgba(10, 18, 30, 0.10),
+        0 0 0 1px rgba(44, 64, 91, 0.06);
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
-    transition: opacity 0.28s ease, transform 0.28s ease;
+    transform: translateY(10px) scale(0.96);
+    transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: auto;
 }
 .ob-step-box.ob-visible {
@@ -57,7 +60,7 @@
     transform: translateY(0) scale(1);
 }
 
-/* Flecha decorativa del paso */
+/* Flecha decorativa */
 .ob-step-box::before {
     content: '';
     position: absolute;
@@ -66,26 +69,27 @@
     background: #ffffff;
     transform: rotate(45deg);
     z-index: -1;
+    box-shadow: -1px -1px 0 rgba(44, 64, 91, 0.06);
 }
-.ob-step-box.ob-arrow-left::before   { left: -5px; top: 28px; }
-.ob-step-box.ob-arrow-right::before  { right: -5px; top: 28px; }
-.ob-step-box.ob-arrow-top::before    { top: -5px; left: 28px; }
-.ob-step-box.ob-arrow-bottom::before { bottom: -5px; left: 28px; }
+.ob-step-box.ob-arrow-left::before   { left: -5px;    top: 28px; }
+.ob-step-box.ob-arrow-right::before  { right: -5px;   top: 28px; }
+.ob-step-box.ob-arrow-top::before    { top: -5px;     left: 28px; }
+.ob-step-box.ob-arrow-bottom::before { bottom: -5px;  left: 28px; }
 
-/* Encabezado del paso */
+/* ── Encabezado del paso ── */
 .ob-step-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .ob-step-count {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #6585AA;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     background: #eef4fb;
     padding: 3px 10px;
     border-radius: 20px;
@@ -94,97 +98,163 @@
 .ob-btn-skip {
     background: none;
     border: none;
-    font-size: 0.78rem;
-    color: #718096;
+    font-size: 0.76rem;
+    color: #a0aec0;
     cursor: pointer;
     padding: 3px 6px;
     border-radius: 6px;
+    font-family: inherit;
     transition: color 0.2s, background 0.2s;
 }
 .ob-btn-skip:hover { color: #c62828; background: #fff5f5; }
 
-/* Título del paso */
-.ob-step-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #1a2332;
-    margin-bottom: 8px;
-    line-height: 1.3;
-}
-
-/* Texto del paso */
-.ob-step-body {
-    font-size: 0.88rem;
-    color: #4a5568;
-    line-height: 1.65;
-    margin-bottom: 16px;
-}
-
-/* Barra de progreso */
+/* ── Barra de progreso ── */
 .ob-progress-bar {
-    height: 3px;
-    background: #e2e8f0;
-    border-radius: 3px;
-    margin-bottom: 14px;
+    height: 4px;
+    background: #e9eef5;
+    border-radius: 4px;
+    margin-bottom: 16px;
     overflow: hidden;
 }
 .ob-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #6585AA, #2C405B);
-    border-radius: 3px;
-    transition: width 0.4s ease;
+    background: linear-gradient(90deg, #B6823E, #d4a96a);
+    border-radius: 4px;
+    transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Navegación */
+/* ── Área de contenido (animada) ── */
+.ob-step-content {
+    margin-bottom: 16px;
+}
+.ob-content-fade {
+    animation: ob-fade-in 0.22s ease both;
+}
+@keyframes ob-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Ícono + Título ── */
+.ob-step-icon-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.ob-step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #B6823E 0%, #d4a96a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+    box-shadow: 0 4px 12px rgba(182, 130, 62, 0.35);
+}
+
+.ob-step-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1a2332;
+    line-height: 1.3;
+    margin: 0;
+    padding-top: 4px;
+}
+
+/* ── Descripción ── */
+.ob-step-body {
+    font-size: 0.87rem;
+    color: #4a5568;
+    line-height: 1.68;
+    margin-bottom: 10px;
+}
+
+/* ── Tip contextual ── */
+.ob-step-tip {
+    font-size: 0.78rem;
+    color: #5a6a8a;
+    line-height: 1.55;
+    background: #f0f6ff;
+    border-left: 3px solid #6585AA;
+    padding: 6px 10px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 0;
+}
+.ob-step-tip:empty { display: none; }
+
+/* ── Navegación ── */
 .ob-step-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    border-top: 1px solid #f0f4f8;
+    padding-top: 14px;
 }
 
 .ob-btn-prev,
-.ob-btn-next,
-.ob-btn-finish {
-    padding: 8px 16px;
+.ob-btn-next {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
     border-radius: 8px;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     font-weight: 700;
     border: none;
     cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
+    font-family: inherit;
+    transition: background 0.2s, transform 0.15s, opacity 0.2s;
 }
+
 .ob-btn-prev {
     background: #f0f4f8;
     color: #4a5568;
 }
-.ob-btn-prev:hover { background: #e2e8f0; transform: translateX(-1px); }
-.ob-btn-prev:disabled { opacity: 0.4; cursor: default; transform: none; }
+.ob-btn-prev:hover { background: #e2e8f0; transform: translateX(-2px); }
+.ob-btn-prev:disabled { opacity: 0.35; cursor: default; transform: none; }
 
-.ob-btn-next,
-.ob-btn-finish {
+.ob-btn-next {
     background: linear-gradient(135deg, #2C405B, #6585AA);
     color: #ffffff;
 }
-.ob-btn-next:hover  { background: linear-gradient(135deg, #1e2e42, #4a6d99); transform: translateX(1px); }
-.ob-btn-finish:hover { background: linear-gradient(135deg, #1e2e42, #4a6d99); }
+.ob-btn-next:hover { background: linear-gradient(135deg, #1e2e42, #4a6d99); transform: translateX(2px); }
 
-/* Dots de progreso */
+/* Botón Finalizar — dorado */
+.ob-btn-next.ob-btn-finish {
+    background: linear-gradient(135deg, #B6823E, #d4a96a);
+}
+.ob-btn-next.ob-btn-finish:hover {
+    background: linear-gradient(135deg, #96603A, #B6823E);
+    transform: scale(1.02);
+}
+
+/* ── Dots de progreso ── */
 .ob-dots {
     display: flex;
     gap: 5px;
     align-items: center;
 }
 .ob-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #e2e8f0;
-    transition: background 0.25s, transform 0.25s;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: #dde5f0;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.25s ease, width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.ob-dot:hover { background: #b0bdd0; }
 .ob-dot.active {
-    background: #2C405B;
-    transform: scale(1.4);
+    width: 22px;
+    background: linear-gradient(90deg, #2C405B, #6585AA);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -206,13 +276,22 @@
 
 .ob-welcome-modal {
     background: #ffffff;
-    border-radius: 20px;
-    padding: 36px 32px 28px;
-    width: min(440px, 100%);
+    border-radius: 22px;
+    padding: 36px 32px 30px;
+    width: min(460px, 100%);
     text-align: center;
-    box-shadow: 0 20px 60px rgba(10,18,30,0.35);
-    transform: translateY(20px) scale(0.96);
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 24px 64px rgba(10, 18, 30, 0.35);
+    transform: translateY(24px) scale(0.95);
+    transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+.ob-welcome-modal::before {
+    content: '';
+    display: block;
+    height: 5px;
+    background: linear-gradient(90deg, #2C405B 0%, #6585AA 50%, #B6823E 100%);
+    border-radius: 22px 22px 0 0;
+    margin: -36px -32px 30px;
 }
 .ob-welcome-overlay.ob-visible .ob-welcome-modal {
     transform: translateY(0) scale(1);
@@ -222,27 +301,60 @@
     display: inline-block;
     background: linear-gradient(135deg, #2C405B, #6585AA);
     color: #fff;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 5px 14px;
+    padding: 4px 14px;
     border-radius: 20px;
     margin-bottom: 14px;
 }
 
 .ob-welcome-modal h2 {
-    font-size: 1.45rem;
+    font-size: 1.5rem;
     font-weight: 900;
     color: #1a2332;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    line-height: 1.25;
 }
 
-.ob-welcome-modal p {
-    font-size: 0.93rem;
+.ob-welcome-modal > p {
+    font-size: 0.92rem;
     color: #4a5568;
     line-height: 1.7;
-    margin-bottom: 26px;
+    margin-bottom: 20px;
+}
+
+/* Lista de cosas que aprenderás */
+.ob-welcome-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    text-align: left;
+}
+.ob-welcome-bullets li {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 0.87rem;
+    color: #374151;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.ob-bullet-icon {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #2C405B, #6585AA);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    flex-shrink: 0;
 }
 
 .ob-welcome-actions {
@@ -260,12 +372,14 @@
     font-size: 1rem;
     font-weight: 800;
     cursor: pointer;
+    font-family: inherit;
     transition: background 0.2s, transform 0.15s;
-    box-shadow: 0 4px 14px rgba(44, 64, 91, 0.3);
+    box-shadow: 0 6px 18px rgba(44, 64, 91, 0.3);
 }
 .ob-btn-start:hover {
     background: linear-gradient(135deg, #1e2e42, #4a6d99);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(44, 64, 91, 0.35);
 }
 
 .ob-btn-later {
@@ -275,8 +389,9 @@
     border: none;
     border-radius: 10px;
     font-size: 0.9rem;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
+    font-family: inherit;
     transition: background 0.2s;
 }
 .ob-btn-later:hover { background: #e2e8f0; }
@@ -284,16 +399,64 @@
 .ob-btn-never {
     background: none;
     border: none;
-    color: #a0aec0;
-    font-size: 0.78rem;
+    color: #b0bbc9;
+    font-size: 0.76rem;
     cursor: pointer;
     padding: 4px;
+    font-family: inherit;
     transition: color 0.2s;
 }
 .ob-btn-never:hover { color: #718096; }
 
 /* ─────────────────────────────────────────────────────────
-   BOTÓN FLOTANTE "Reiniciar tour"
+   RESPONSIVE — MOBILE BOTTOM SHEET
+   ───────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .ob-step-box {
+        width: calc(100vw - 16px);
+        left: 8px !important;
+        right: 8px !important;
+        bottom: 12px !important;
+        top: auto !important;
+        border-radius: 20px 20px 16px 16px;
+        padding: 28px 18px 16px;
+    }
+
+    /* Indicador de arrastre (handle) */
+    .ob-step-box::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 38px;
+        height: 4px;
+        background: #dde5f0;
+        border-radius: 2px;
+    }
+
+    /* Ocultar flecha decorativa en móvil */
+    .ob-step-box::before { display: none; }
+
+    .ob-step-title  { font-size: 0.95rem; }
+    .ob-step-body   { font-size: 0.84rem; }
+
+    .ob-btn-prev span,
+    .ob-btn-next span { display: none; }
+
+    .ob-btn-prev,
+    .ob-btn-next { padding: 9px 12px; }
+
+    .ob-welcome-modal {
+        padding: 28px 20px 24px;
+        border-radius: 18px;
+    }
+    .ob-welcome-modal::before { margin: -28px -20px 24px; }
+    .ob-welcome-modal h2 { font-size: 1.25rem; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   BOTÓN FLOTANTE "Reiniciar tour" (en footer links)
    ───────────────────────────────────────────────────────── */
 .ob-restart-btn {
     position: fixed;
@@ -308,28 +471,12 @@
     font-weight: 700;
     cursor: pointer;
     z-index: 8000;
-    box-shadow: 0 4px 14px rgba(44,64,91,0.35);
+    box-shadow: 0 4px 14px rgba(44, 64, 91, 0.35);
     display: flex;
     align-items: center;
     gap: 7px;
+    font-family: inherit;
     transition: background 0.2s, transform 0.15s;
     opacity: 0.85;
 }
-.ob-restart-btn:hover { background: #1e2e42; transform: translateY(-1px); opacity: 1; }
-.ob-restart-btn .ob-restart-icon { font-size: 1rem; }
-
-/* ─────────────────────────────────────────────────────────
-   RESPONSIVE
-   ───────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-    .ob-step-box {
-        width: calc(100vw - 24px);
-        padding: 18px 16px 14px;
-        left: 12px !important;
-        right: 12px !important;
-        bottom: 16px !important;
-        top: auto !important;
-    }
-    .ob-step-box::before { display: none; }
-    .ob-welcome-modal { padding: 28px 20px 22px; }
-}
+.ob-restart-btn:hover { background: #1e2e42; transform: translateY(-2px); opacity: 1; }
