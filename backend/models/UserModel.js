@@ -47,7 +47,8 @@ class User {
             'level', 'coins', 'wood', 'dashboard_balance',
             'house_level', 'beaver_level', 'current_appearance', 'current_beaver',
             'email_verified', 'email_verified_at', 'is_active',
-            'failed_login_attempts', 'locked_until', 'last_login_at'
+            'failed_login_attempts', 'locked_until', 'last_login_at',
+            'has_seen_tutorial', 'tutorial_disabled', 'tutorial_completed_at'
         ];
 
         const filteredData = {};

@@ -9,6 +9,8 @@ import {
     deleteMovement
 } from '../modules/api.js';
 import { initOfflineBanner } from '../modules/offline.js';
+import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
+import { alertaAdvertencia, alertaError } from '../modules/alerts.js';
 
 import {
     protectRoute,
@@ -108,6 +110,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     const bdNeeds         = document.getElementById('bd-needs');
     const bdWants         = document.getElementById('bd-wants');
     const bdSavings       = document.getElementById('bd-savings');
+
+    // ─── VALIDACIÓN DE AHORRO VS INGRESOS ────────────────────────────────────
+
+    /**
+     * Calcula el ingreso total del mes actualmente visualizado.
+     */
+    function calcularIngresoTotalActual() {
+        let variableIncome = 0;
+        movimientosDB.forEach((data, fecha) => {
+            const [y, m] = fecha.split('-');
+            if (parseInt(y) === anioVisualizado && parseInt(m) === (mesVisualizado + 1)) {
+                variableIncome += data.ingresos.reduce((s, i) => s + i.monto, 0);
+            }
+        });
+        return datosFijos.ingresoFijo + variableIncome;
+    }
+
+    /**
+     * Valida que el ahorro objetivo no supere los ingresos reales.
+     * @returns {{ tipo: 'ok'|'advertencia'|'error', mensaje: string|null }}
+     */
+    function validarAhorroVsIngresos(ahorroObjetivo, ingresoTotal) {
+        if (ingresoTotal <= 0) return { tipo: 'sin_datos', mensaje: null };
+
+        if (ahorroObjetivo > ingresoTotal) {
+            const exceso = (ahorroObjetivo - ingresoTotal).toFixed(2);
+            return {
+                tipo: 'error',
+                mensaje: `La cantidad de ahorro ($${ahorroObjetivo.toFixed(2)}) no puede ser mayor a tus ingresos disponibles ($${ingresoTotal.toFixed(2)}). Excedente: $${exceso}.`
+            };
+        }
+
+        const porcentaje = (ahorroObjetivo / ingresoTotal) * 100;
+        if (porcentaje > 80) {
+            return {
+                tipo: 'advertencia',
+                mensaje: `Estás destinando el ${Math.round(porcentaje)}% de tus ingresos al ahorro. Asegúrate de que te alcance para tus gastos esenciales.`
+            };
+        }
+
+        return { tipo: 'ok', mensaje: null };
+    }
+
+    /**
+     * Actualiza el elemento visual de validación de ahorro en el DOM.
+     */
+    function mostrarValidacionAhorro(validacion) {
+        const msgEl = document.getElementById('savings-validation-msg');
+        if (!msgEl) return;
+
+        msgEl.className = 'savings-validation-msg';
+        msgEl.textContent = '';
+
+        if (validacion.tipo === 'error') {
+            msgEl.textContent = validacion.mensaje;
+            msgEl.classList.add('sv-error', 'sv-visible');
+        } else if (validacion.tipo === 'advertencia') {
+            msgEl.textContent = validacion.mensaje;
+            msgEl.classList.add('sv-warning', 'sv-visible');
+        }
+    }
 
     // --- CARGA INICIAL ---
     async function cargarDatosDelServidor() {
@@ -534,22 +597,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (inpSavingPct) {
             inpSavingPct.addEventListener('change', () => {
                 const pct = parseFloat(inpSavingPct.value);
-                if (pct > 0 && pct <= 100) {
-                    datosFijos.savingPercentage = pct;
-                    actualizarDashboard();
-                    guardarDatosFijos();
+                if (pct <= 0 || pct > 100) return;
+
+                // Advertir si el porcentaje resulta en un ahorro muy alto
+                const ingresoTotal = calcularIngresoTotalActual();
+                if (ingresoTotal > 0 && pct > 80) {
+                    const montoAhorro = (ingresoTotal * pct / 100).toFixed(2);
+                    alertaAdvertencia(
+                        `Ahorrar el ${pct}% significa apartar $${montoAhorro} de tus ingresos disponibles ($${ingresoTotal.toFixed(2)}). Asegúrate de que te alcance para tus gastos.`,
+                        { duration: 7000, title: 'Porcentaje de ahorro elevado' }
+                    );
                 }
+
+                datosFijos.savingPercentage = pct;
+                actualizarDashboard();
+                guardarDatosFijos();
             });
         }
 
         if (inpSavingManual) {
             inpSavingManual.addEventListener('change', () => {
                 const amt = parseFloat(inpSavingManual.value);
-                if (Number.isFinite(amt) && amt >= 0) {
-                    datosFijos.manualSavingAmount = amt;
-                    actualizarDashboard();
-                    guardarDatosFijos();
+                if (!Number.isFinite(amt) || amt < 0) return;
+
+                // Bloquear si el monto supera los ingresos disponibles
+                const ingresoTotal = calcularIngresoTotalActual();
+                if (ingresoTotal > 0 && amt > ingresoTotal) {
+                    alertaError(
+                        `La cantidad de ahorro ($${amt.toFixed(2)}) no puede ser mayor a tus ingresos disponibles ($${ingresoTotal.toFixed(2)}).`,
+                        { duration: 8000, title: 'Ahorro inválido' }
+                    );
+                    inpSavingManual.value = datosFijos.manualSavingAmount ?? '';
+                    return;
                 }
+
+                datosFijos.manualSavingAmount = amt;
+                actualizarDashboard();
+                guardarDatosFijos();
             });
         }
     }
@@ -695,6 +779,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         txtAhorro.textContent   = `$${ahorroObjetivo.toFixed(2)}`;
         txtRestante.textContent = `$${faltaParaMeta.toFixed(2)}`;
+
+        // ── Validar que el ahorro no supere los ingresos disponibles ──
+        const validacionAhorro = validarAhorroVsIngresos(ahorroObjetivo, ingresoTotal);
+        mostrarValidacionAhorro(validacionAhorro);
 
         if (balanceReal < 0) {
             txtAhorro.classList.remove('txt-surplus');
@@ -880,4 +968,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     initOfflineBanner(() => cargarDatosDelServidor());
 
     init();
+
+    // ── Onboarding ───────────────────────────────────────────────────────────
+    // Iniciar tras la carga de datos para que los elementos del tour ya existan
+    setTimeout(() => {
+        if (window.location.hash === '#tour') {
+            // Viniendo desde otro módulo (ej. perfil) → forzar inicio del tour
+            history.replaceState(null, '', window.location.pathname);
+            restartOnboarding(userId);
+        } else {
+            initOnboarding(userId);
+        }
+    }, 600);
+
+    // Botón de reinicio del tour (ya presente en el HTML con id="ob-restart-dashboard")
+    const btnRestartTour = document.getElementById('ob-restart-dashboard');
+    if (btnRestartTour) {
+        btnRestartTour.addEventListener('click', e => {
+            e.preventDefault();
+            restartOnboarding(userId);
+        });
+    }
 });

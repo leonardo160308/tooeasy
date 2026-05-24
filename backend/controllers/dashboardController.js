@@ -67,6 +67,34 @@ export const updateDashboardFixed = async (req, res) => {
             if (manualNum > 99999999) {
                 return res.status(400).json({ success: false, message: 'El monto excede el máximo permitido.' });
             }
+            // Validate manual saving against total known income.
+            // Query variable income for the current month to get a realistic total.
+            if (manualNum > 0 && ingresoNum > 0) {
+                const now = new Date();
+                const yr  = now.getFullYear();
+                const mo  = String(now.getMonth() + 1).padStart(2, '0');
+                const nextMo = now.getMonth() === 11
+                    ? `${yr + 1}-01-01`
+                    : `${yr}-${String(now.getMonth() + 2).padStart(2, '0')}-01`;
+
+                const { data: varMovs } = await supabase
+                    .from('movements')
+                    .select('monto')
+                    .eq('user_id', userId)
+                    .eq('tipo', 'income')
+                    .gte('fecha', `${yr}-${mo}-01`)
+                    .lt('fecha', nextMo);
+
+                const varIncome = (varMovs || []).reduce((s, m) => s + Number(m.monto), 0);
+                const totalIncome = ingresoNum + varIncome;
+
+                if (manualNum > totalIncome) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `La cantidad de ahorro ($${manualNum.toFixed(2)}) no puede ser mayor a tus ingresos disponibles ($${totalIncome.toFixed(2)}).`
+                    });
+                }
+            }
         }
 
         const { error } = await supabase

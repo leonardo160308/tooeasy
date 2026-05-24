@@ -893,6 +893,41 @@ h2 {
 
 .hidden { display: none !important; }
 
+/* ── VALIDACIÓN DE AHORRO ─────────────────────────────────── */
+.savings-validation-msg {
+    display:       none;
+    padding:       10px 14px;
+    border-radius: 10px;
+    font-size:     0.83rem;
+    font-weight:   600;
+    line-height:   1.55;
+    margin-bottom: 12px;
+    border-left:   4px solid transparent;
+    transition:    opacity 0.25s ease;
+}
+.savings-validation-msg.sv-visible {
+    display: flex;
+    gap:     10px;
+    align-items: flex-start;
+}
+.savings-validation-msg::before {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.savings-validation-msg.sv-error {
+    background:  #fff0f0;
+    border-color: var(--danger);
+    color:       #7f1d1d;
+}
+.savings-validation-msg.sv-error::before   { content: '⚠'; }
+.savings-validation-msg.sv-warning {
+    background:  #fffbeb;
+    border-color: #d97706;
+    color:       #78350f;
+}
+.savings-validation-msg.sv-warning::before { content: 'ℹ'; }
+
 @media (max-width: 600px) {
     .method-cards { grid-template-columns: 1fr; }
 }

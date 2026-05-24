@@ -290,27 +290,104 @@
 }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE
+   SOPORTE TÁCTIL (clase añadida por JS)
+   ───────────────────────────────────────── */
+.tooltip-icon.tt-touch::before {
+    opacity:    1;
+    visibility: visible;
+    transform:  translateX(-50%) translateY(0);
+}
+.tooltip-icon.tt-touch::after {
+    opacity:    1;
+    visibility: visible;
+}
+.tooltip-icon.tt-touch.tt-right::before { transform: translateY(-50%) translateX(0); }
+.tooltip-icon.tt-touch.tt-left::before  { transform: translateY(-50%) translateX(0); }
+.tooltip-icon.tt-touch.tt-bottom::before { transform: translateX(-50%) translateY(0); }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — ≤ 768px (tablets y móvil)
+   Todos los tooltips se comportan como "abajo"
+   para evitar desbordamientos horizontales.
+   ───────────────────────────────────────── */
+@media (max-width: 768px) {
+    /* Ancho reducido */
+    .tooltip-icon::before {
+        width: min(220px, calc(100vw - 40px));
+    }
+
+    /* tt-right en tablet: mover abajo si no cabe */
+    .tooltip-icon.tt-right::before {
+        width: min(220px, calc(100vw - 40px));
+    }
+
+    /* tt-wide reducido */
+    .tooltip-icon.tt-wide::before { width: min(260px, calc(100vw - 40px)); }
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — ≤ 600px (móvil)
    ───────────────────────────────────────── */
 @media (max-width: 600px) {
     .tooltip-icon::before {
-        width:     200px;
+        width:     min(200px, calc(100vw - 32px));
         left:      0;
         transform: translateX(0) translateY(6px);
     }
-    .tooltip-icon:hover::before {
+    .tooltip-icon:hover::before,
+    .tooltip-icon.tt-touch::before {
         transform: translateX(0) translateY(0);
     }
     .tooltip-icon::after { left: 8px; }
 
+    /* tt-right en móvil: se convierte en tooltip abajo alineado a la izquierda */
     .tooltip-icon.tt-right::before {
         bottom:    auto;
         top:       calc(100% + 10px);
         left:      0;
+        right:     auto;
         transform: translateX(0) translateY(-6px);
-        width:     200px;
+        width:     min(200px, calc(100vw - 32px));
     }
-    .tooltip-icon.tt-right:hover::before {
+    .tooltip-icon.tt-right::after {
+        bottom:             auto;
+        top:                calc(100% + 4px);
+        left:               8px;
+        border-top-color:   transparent;
+        border-right-color: transparent;
+        border-bottom-color: var(--tt-bg);
+    }
+    .tooltip-icon.tt-right:hover::before,
+    .tooltip-icon.tt-right.tt-touch::before {
         transform: translateX(0) translateY(0);
+    }
+
+    /* tt-left en móvil: también se convierte en tooltip abajo */
+    .tooltip-icon.tt-left::before {
+        bottom:    auto;
+        top:       calc(100% + 10px);
+        left:      0;
+        right:     auto;
+        transform: translateX(0) translateY(-6px);
+        width:     min(200px, calc(100vw - 32px));
+    }
+    .tooltip-icon.tt-left::after {
+        bottom:            auto;
+        top:               calc(100% + 4px);
+        left:              8px;
+        right:             auto;
+        border-top-color:  transparent;
+        border-left-color: transparent;
+        border-bottom-color: var(--tt-bg);
+    }
+    .tooltip-icon.tt-left:hover::before,
+    .tooltip-icon.tt-left.tt-touch::before {
+        transform: translateX(0) translateY(0);
+    }
+
+    /* tt-wide y tt-narrow normalizados */
+    .tooltip-icon.tt-wide::before,
+    .tooltip-icon.tt-narrow::before {
+        width: min(200px, calc(100vw - 32px));
     }
 }
