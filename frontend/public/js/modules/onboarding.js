@@ -3,14 +3,15 @@
  *
  * Uso:
  *   import { initOnboarding, restartOnboarding } from './onboarding.js';
- *   initOnboarding(userId, 'dashboard');     // llamar al cargar la página
- *   restartOnboarding(userId, 'dashboard');  // llamar desde un botón "ver tour"
+ *   initOnboarding(userId, 'dashboard');
+ *   restartOnboarding(userId, 'dashboard');
  */
 
 import { updateUserData } from './api.js';
 
 const OB_KEY_PREFIX = 'too_easy_ob_';
-const OB_GAP = 10; // px de padding alrededor del spotlight
+const OB_GAP        = 8;   // px de padding alrededor del spotlight
+const NAVBAR_H      = 70;  // altura aproximada del header fijo
 
 // ─── Etiquetas de módulo ──────────────────────────────────────────────────────
 const MODULE_LABELS = {
@@ -114,7 +115,7 @@ const MODULE_STEPS = {
         },
         {
             title: 'Tu Progreso Educativo',
-            body: 'El indicador superior muestra cuántas categorías has completado. Completar todas las categorías de una categoría eleva tu nivel educativo, visible en tu Perfil.',
+            body: 'El indicador superior muestra cuántas categorías has completado. Completar todas las categorías eleva tu nivel educativo, visible en tu Perfil.',
             target: '.edu-progress-banner',
             position: 'bottom'
         },
@@ -198,15 +199,145 @@ function createEl(tag, className, innerHTML = '') {
     return e;
 }
 
-// ─── Tour engine ──────────────────────────────────────────────────────────────
+// ─── Tour state ───────────────────────────────────────────────────────────────
 let currentStep    = 0;
 let tourActive     = false;
 let activeUserId   = null;
 let activeModuleId = null;
 let activeSteps    = [];
+let stepRenderGen  = 0;   // Anti-race counter for async renders
 
 let overlay, spotlight, stepBox;
 
+// ─── Dynamic position management ─────────────────────────────────────────────
+let _liveTarget   = null;
+let _livePosition = null;
+let _scrollFn     = null;
+let _resizeObs    = null;
+
+function attachLiveUpdates(targetEl, position) {
+    _liveTarget   = targetEl;
+    _livePosition = position;
+
+    const tick = () => {
+        if (!_liveTarget || !spotlight) return;
+        const rect = _liveTarget.getBoundingClientRect();
+        _applySpotlight(rect);
+        if (window.innerWidth > 600) _applyStepBox(rect, _livePosition);
+    };
+
+    _scrollFn = tick;
+    window.addEventListener('scroll', _scrollFn, { passive: true });
+
+    if (typeof ResizeObserver !== 'undefined') {
+        _resizeObs = new ResizeObserver(tick);
+        _resizeObs.observe(document.documentElement);
+    } else {
+        // Fallback: window resize event
+        window.addEventListener('resize', tick);
+    }
+}
+
+function detachLiveUpdates() {
+    if (_scrollFn) { window.removeEventListener('scroll', _scrollFn); _scrollFn = null; }
+    if (_resizeObs) { _resizeObs.disconnect(); _resizeObs = null; }
+    else { window.removeEventListener('resize', _scrollFn || (() => {})); }
+    _liveTarget = _livePosition = null;
+}
+
+// ─── Scroll-to-element with scroll-end detection ──────────────────────────────
+function scrollToElement(targetEl) {
+    return new Promise(resolve => {
+        const rect         = targetEl.getBoundingClientRect();
+        const topOk        = rect.top    >= NAVBAR_H + 10;
+        const bottomOk     = rect.bottom <= window.innerHeight - 60;
+        const alreadyInView = topOk && bottomOk;
+
+        if (alreadyInView) { resolve(); return; }
+
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // scrollend: Chrome 109+, Safari 17.4+
+        if ('onscrollend' in window) {
+            const h = () => { window.removeEventListener('scrollend', h); resolve(); };
+            window.addEventListener('scrollend', h, { once: true });
+            setTimeout(() => { window.removeEventListener('scrollend', h); resolve(); }, 1200);
+        } else {
+            // Fallback: resolve when scroll stops (150ms idle)
+            let timer;
+            const h = () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => { window.removeEventListener('scroll', h); resolve(); }, 180);
+            };
+            window.addEventListener('scroll', h, { passive: true });
+            // Hard timeout
+            setTimeout(() => { clearTimeout(timer); window.removeEventListener('scroll', h); resolve(); }, 900);
+        }
+    });
+}
+
+// ─── Spotlight ────────────────────────────────────────────────────────────────
+function _applySpotlight(rect) {
+    // position: fixed uses viewport coords — do NOT add scrollY/scrollX
+    Object.assign(spotlight.style, {
+        top:    `${rect.top    - OB_GAP}px`,
+        left:   `${rect.left   - OB_GAP}px`,
+        width:  `${rect.width  + OB_GAP * 2}px`,
+        height: `${rect.height + OB_GAP * 2}px`
+    });
+}
+
+// ─── Step box positioning (desktop only; mobile uses CSS bottom-fixed) ─────────
+function _applyStepBox(targetRect, position) {
+    const isMobile = window.innerWidth <= 600;
+    if (isMobile) return;  // CSS handles layout on mobile
+
+    const boxW    = stepBox.offsetWidth  || 340;
+    const boxH    = stepBox.offsetHeight || 210;
+    const vw      = window.innerWidth;
+    const vh      = window.innerHeight;
+    const gap     = 18;
+    const minTop  = NAVBAR_H + 8;
+    const maxTop  = vh - boxH - 8;
+    const minLeft = 8;
+    const maxLeft = vw - boxW - 8;
+
+    stepBox.classList.remove('ob-arrow-left', 'ob-arrow-right', 'ob-arrow-top', 'ob-arrow-bottom');
+
+    let top, left, arrowClass;
+    const order = [position, 'bottom', 'right', 'left', 'top'];
+
+    for (const pos of order) {
+        if (pos === 'right') {
+            left = targetRect.right + gap;
+            top  = targetRect.top + (targetRect.height / 2) - (boxH / 2);
+            arrowClass = 'ob-arrow-left';
+        } else if (pos === 'left') {
+            left = targetRect.left - boxW - gap;
+            top  = targetRect.top + (targetRect.height / 2) - (boxH / 2);
+            arrowClass = 'ob-arrow-right';
+        } else if (pos === 'bottom') {
+            left = targetRect.left + (targetRect.width / 2) - (boxW / 2);
+            top  = targetRect.bottom + gap;
+            arrowClass = 'ob-arrow-top';
+        } else {
+            left = targetRect.left + (targetRect.width / 2) - (boxW / 2);
+            top  = targetRect.top - boxH - gap;
+            arrowClass = 'ob-arrow-bottom';
+        }
+        const fits = left >= minLeft && left + boxW <= vw - 8 && top >= minTop && top + boxH <= vh - 8;
+        if (fits) break;
+    }
+
+    left = Math.max(minLeft, Math.min(left, maxLeft));
+    top  = Math.max(minTop,  Math.min(top,  maxTop));
+
+    // position: fixed — no scrollX/scrollY
+    Object.assign(stepBox.style, { left: `${left}px`, top: `${top}px` });
+    if (arrowClass) stepBox.classList.add(arrowClass);
+}
+
+// ─── Tour UI construction ─────────────────────────────────────────────────────
 function buildTourUI() {
     overlay = createEl('div', 'ob-overlay');
     overlay.id = 'ob-overlay';
@@ -219,7 +350,7 @@ function buildTourUI() {
     stepBox.innerHTML = `
         <div class="ob-step-header">
             <span class="ob-step-count" id="ob-count"></span>
-            <button class="ob-btn-skip" id="ob-skip" title="Saltar el tour">Saltar</button>
+            <button class="ob-btn-skip" id="ob-skip">Saltar</button>
         </div>
         <div class="ob-progress-bar"><div class="ob-progress-fill" id="ob-progress"></div></div>
         <h3 class="ob-step-title" id="ob-title"></h3>
@@ -246,73 +377,20 @@ function buildTourUI() {
     });
 }
 
-function positionSpotlight(rect) {
-    const pad = OB_GAP;
-    Object.assign(spotlight.style, {
-        top:    `${rect.top  + window.scrollY - pad}px`,
-        left:   `${rect.left + window.scrollX - pad}px`,
-        width:  `${rect.width  + pad * 2}px`,
-        height: `${rect.height + pad * 2}px`
-    });
-}
-
-function positionStepBox(targetRect, position) {
-    const boxW = stepBox.offsetWidth  || 340;
-    const boxH = stepBox.offsetHeight || 220;
-    const vw   = window.innerWidth;
-    const vh   = window.innerHeight;
-    const gap  = 20;
-
-    stepBox.classList.remove('ob-arrow-left', 'ob-arrow-right', 'ob-arrow-top', 'ob-arrow-bottom');
-
-    let top, left, arrowClass;
-
-    const tryPositions = [position, 'right', 'left', 'bottom', 'top'];
-    for (const pos of tryPositions) {
-        if (pos === 'right') {
-            left = targetRect.right + gap;
-            top  = targetRect.top + (targetRect.height / 2) - (boxH / 2);
-            arrowClass = 'ob-arrow-left';
-        } else if (pos === 'left') {
-            left = targetRect.left - boxW - gap;
-            top  = targetRect.top + (targetRect.height / 2) - (boxH / 2);
-            arrowClass = 'ob-arrow-right';
-        } else if (pos === 'bottom') {
-            left = targetRect.left + (targetRect.width / 2) - (boxW / 2);
-            top  = targetRect.bottom + gap;
-            arrowClass = 'ob-arrow-top';
-        } else {
-            left = targetRect.left + (targetRect.width / 2) - (boxW / 2);
-            top  = targetRect.top - boxH - gap;
-            arrowClass = 'ob-arrow-bottom';
-        }
-        if (left >= 8 && left + boxW <= vw - 8 && top >= 8 && top + boxH <= vh - 8) break;
-    }
-
-    left = Math.max(8, Math.min(left, vw - boxW - 8));
-    top  = Math.max(8, Math.min(top,  vh - boxH - 8));
-
-    Object.assign(stepBox.style, {
-        left: `${left + window.scrollX}px`,
-        top:  `${top  + window.scrollY}px`
-    });
-    stepBox.classList.add(arrowClass);
-}
-
-function renderStep(index) {
+// ─── Step render (async for scroll) ──────────────────────────────────────────
+async function renderStep(index) {
+    const gen   = ++stepRenderGen;
     const step  = activeSteps[index];
     const total = activeSteps.length;
 
     el('ob-count').textContent = `Paso ${index + 1} de ${total}`;
     el('ob-title').textContent = step.title;
     el('ob-body').textContent  = step.body;
-
     el('ob-progress').style.width = `${((index + 1) / total) * 100}%`;
 
-    const prevBtn = el('ob-prev');
-    const nextBtn = el('ob-next');
-    prevBtn.disabled = (index === 0);
+    el('ob-prev').disabled = (index === 0);
 
+    const nextBtn = el('ob-next');
     if (index === total - 1) {
         nextBtn.textContent = 'Finalizar';
         nextBtn.onclick = finishTour;
@@ -325,22 +403,36 @@ function renderStep(index) {
         dot.classList.toggle('active', i === index);
     });
 
+    // Tear down previous position listeners and hide spotlight during scroll
+    detachLiveUpdates();
+    spotlight.classList.remove('ob-visible');
+
     const targetEl = document.querySelector(step.target);
+
     if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        setTimeout(() => {
-            const rect = targetEl.getBoundingClientRect();
-            positionSpotlight(rect);
-            positionStepBox(rect, step.position);
-            spotlight.classList.add('ob-visible');
-        }, 300);
+        // Scroll element into view and wait for scroll to settle
+        await scrollToElement(targetEl);
+
+        // Abort if user navigated to another step while we were waiting
+        if (gen !== stepRenderGen) return;
+
+        // Position spotlight and step box using current viewport coordinates
+        const rect = targetEl.getBoundingClientRect();
+        _applySpotlight(rect);
+        if (window.innerWidth > 600) _applyStepBox(rect, step.position);
+        spotlight.classList.add('ob-visible');
+
+        // Attach real-time position updaters (scroll + resize)
+        attachLiveUpdates(targetEl, step.position);
     } else {
-        const center = {
-            top: window.innerHeight / 2 - 10,
-            left: window.innerWidth / 2 - 10,
-            width: 20, height: 20
-        };
-        positionSpotlight(center);
+        // No target element found: show minimal spotlight in center
+        _applySpotlight({
+            top:    window.innerHeight / 2 - 20,
+            left:   window.innerWidth  / 2 - 20,
+            width:  40,
+            height: 40
+        });
+        spotlight.classList.add('ob-visible');
     }
 }
 
@@ -350,6 +442,7 @@ function goToStep(index) {
     renderStep(currentStep);
 }
 
+// ─── Start / finish tour ──────────────────────────────────────────────────────
 function startTour(uid, moduleId) {
     if (tourActive) return;
     tourActive     = true;
@@ -364,11 +457,12 @@ function startTour(uid, moduleId) {
     setTimeout(() => {
         stepBox.classList.add('ob-visible');
         renderStep(0);
-    }, 100);
+    }, 120);
 }
 
 function finishTour() {
     tourActive = false;
+    detachLiveUpdates();
     setState(activeModuleId, { seen: true, completedAt: new Date().toISOString() });
 
     if (activeUserId) {
@@ -383,20 +477,18 @@ function finishTour() {
     if (stepBox) {
         stepBox.classList.remove('ob-visible');
         setTimeout(() => {
-            overlay?.remove();
-            spotlight?.remove();
-            stepBox?.remove();
+            overlay?.remove(); spotlight?.remove(); stepBox?.remove();
             overlay = spotlight = stepBox = null;
         }, 350);
     }
 }
 
-// ─── Modal de bienvenida ──────────────────────────────────────────────────────
+// ─── Welcome modal ────────────────────────────────────────────────────────────
 function showWelcomeModal(uid, moduleId) {
     const label = MODULE_LABELS[moduleId] || moduleId;
-    const welcomeOverlay = createEl('div', 'ob-welcome-overlay');
-    welcomeOverlay.id = 'ob-welcome';
-    welcomeOverlay.innerHTML = `
+    const modal = createEl('div', 'ob-welcome-overlay');
+    modal.id = 'ob-welcome';
+    modal.innerHTML = `
         <div class="ob-welcome-modal">
             <div class="ob-welcome-badge">${label}</div>
             <h2>Tour del módulo</h2>
@@ -408,37 +500,24 @@ function showWelcomeModal(uid, moduleId) {
             </div>
         </div>
     `;
-    document.body.appendChild(welcomeOverlay);
+    document.body.appendChild(modal);
+    requestAnimationFrame(() => modal.classList.add('ob-visible'));
 
-    requestAnimationFrame(() => welcomeOverlay.classList.add('ob-visible'));
-
-    const closeWelcome = () => {
-        welcomeOverlay.classList.remove('ob-visible');
-        setTimeout(() => welcomeOverlay.remove(), 350);
+    const closeModal = () => {
+        modal.classList.remove('ob-visible');
+        setTimeout(() => modal.remove(), 350);
     };
 
-    el('ob-btn-start').addEventListener('click', () => {
-        closeWelcome();
-        setTimeout(() => startTour(uid, moduleId), 200);
-    });
-
-    el('ob-btn-later').addEventListener('click', () => {
-        setState(moduleId, { seen: true });
-        closeWelcome();
-    });
-
+    el('ob-btn-start').addEventListener('click', () => { closeModal(); setTimeout(() => startTour(uid, moduleId), 200); });
+    el('ob-btn-later').addEventListener('click', () => { setState(moduleId, { seen: true }); closeModal(); });
     el('ob-btn-never').addEventListener('click', () => {
         setState(moduleId, { seen: true, disabled: true });
         if (uid) updateUserData(uid, { has_seen_tutorial: true, tutorial_disabled: true }).catch(() => {});
-        closeWelcome();
+        closeModal();
     });
 }
 
-// ─── API pública ─────────────────────────────────────────────────────────────
-/**
- * Inicializa el onboarding del módulo. Muestra el modal de bienvenida si el
- * usuario no ha visto el tour de este módulo ni lo ha desactivado.
- */
+// ─── Public API ───────────────────────────────────────────────────────────────
 export function initOnboarding(uid, moduleId = 'dashboard') {
     if (!MODULE_STEPS[moduleId]) return;
     const state = getState(moduleId);
@@ -446,12 +525,8 @@ export function initOnboarding(uid, moduleId = 'dashboard') {
     setTimeout(() => showWelcomeModal(uid, moduleId), 1200);
 }
 
-/**
- * Reinicia el tour del módulo desde cualquier lugar (botón en footer/ayuda).
- */
 export function restartOnboarding(uid, moduleId = 'dashboard') {
     setState(moduleId, { seen: false, disabled: false });
-    const existing = el('ob-welcome');
-    if (existing) existing.remove();
+    el('ob-welcome')?.remove();
     startTour(uid || activeUserId, moduleId);
 }

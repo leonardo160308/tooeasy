@@ -23,15 +23,20 @@
     z-index: 99001;
     border-radius: 12px;
     box-shadow: 0 0 0 9999px rgba(10, 18, 30, 0.72);
-    transition: top 0.4s cubic-bezier(0.4,0,0.2,1),
-                left 0.4s cubic-bezier(0.4,0,0.2,1),
-                width 0.4s cubic-bezier(0.4,0,0.2,1),
-                height 0.4s cubic-bezier(0.4,0,0.2,1),
-                opacity 0.25s ease;
+    transition: opacity 0.25s ease;
     pointer-events: none;
     opacity: 0;
 }
-.ob-spotlight.ob-visible { opacity: 1; }
+.ob-spotlight.ob-visible {
+    opacity: 1;
+    animation: ob-pulse-ring 2s ease-in-out infinite;
+}
+
+@keyframes ob-pulse-ring {
+    0%   { outline: 2px solid rgba(182, 130, 62, 0); outline-offset: 0px; }
+    50%  { outline: 2px solid rgba(182, 130, 62, 0.7); outline-offset: 5px; }
+    100% { outline: 2px solid rgba(182, 130, 62, 0); outline-offset: 0px; }
+}
 
 /* ── Caja de paso ── */
 .ob-step-box {
@@ -44,9 +49,7 @@
     box-shadow: 0 12px 40px rgba(10,18,30,0.28), 0 2px 8px rgba(10,18,30,0.14);
     opacity: 0;
     transform: translateY(8px) scale(0.97);
-    transition: opacity 0.28s ease, transform 0.28s ease,
-                top 0.4s cubic-bezier(0.4,0,0.2,1),
-                left 0.4s cubic-bezier(0.4,0,0.2,1);
+    transition: opacity 0.28s ease, transform 0.28s ease;
     pointer-events: auto;
 }
 .ob-step-box.ob-visible {
@@ -324,6 +327,8 @@
         padding: 18px 16px 14px;
         left: 12px !important;
         right: 12px !important;
+        bottom: 16px !important;
+        top: auto !important;
     }
     .ob-step-box::before { display: none; }
     .ob-welcome-modal { padding: 28px 20px 22px; }
