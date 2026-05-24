@@ -352,7 +352,7 @@ button.btn-play {
     min-width: 0;
 }
 
-.epb-icon { font-size: 2rem; flex-shrink: 0; }
+.epb-icon { font-size: 1.5rem; flex-shrink: 0; color: #d4a96a; }
 
 .epb-text {
     display: flex;

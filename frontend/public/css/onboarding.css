@@ -215,10 +215,17 @@
     transform: translateY(0) scale(1);
 }
 
-.ob-welcome-icon {
-    font-size: 3rem;
-    margin-bottom: 12px;
-    display: block;
+.ob-welcome-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #2C405B, #6585AA);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
 }
 
 .ob-welcome-modal h2 {

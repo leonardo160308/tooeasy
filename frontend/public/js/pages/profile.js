@@ -3,6 +3,7 @@
 import { getUserData, upgradeItem, equipSkin, deleteUser, updateUserData } from '../modules/api.js';
 import { protectRoute, getAuthData, logout } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaInfo, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
+import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -536,4 +537,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── Iniciar ───────────────────────────────────────────────────────────
     init();
+
+    // ── Onboarding ────────────────────────────────────────────────────────
+    setTimeout(() => initOnboarding(userId, 'perfil'), 900);
+
+    document.getElementById('ob-restart-perfil')?.addEventListener('click', e => {
+        e.preventDefault();
+        restartOnboarding(userId, 'perfil');
+    });
 });

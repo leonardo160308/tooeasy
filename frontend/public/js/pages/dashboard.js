@@ -973,20 +973,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Iniciar tras la carga de datos para que los elementos del tour ya existan
     setTimeout(() => {
         if (window.location.hash === '#tour') {
-            // Viniendo desde otro módulo (ej. perfil) → forzar inicio del tour
             history.replaceState(null, '', window.location.pathname);
-            restartOnboarding(userId);
+            restartOnboarding(userId, 'dashboard');
         } else {
-            initOnboarding(userId);
+            initOnboarding(userId, 'dashboard');
         }
     }, 600);
 
-    // Botón de reinicio del tour (ya presente en el HTML con id="ob-restart-dashboard")
-    const btnRestartTour = document.getElementById('ob-restart-dashboard');
-    if (btnRestartTour) {
-        btnRestartTour.addEventListener('click', e => {
-            e.preventDefault();
-            restartOnboarding(userId);
-        });
-    }
+    document.getElementById('ob-restart-dashboard')?.addEventListener('click', e => {
+        e.preventDefault();
+        restartOnboarding(userId, 'dashboard');
+    });
 });

@@ -3,6 +3,7 @@ import { getUserData, getChallengesStatus, getChallengesProgress, completeChalle
 import { challengesData } from '../data/challenges.js';
 import { alertaExito, alertaError, alertaInfo } from '../modules/alerts.js';
 import { initOfflineBanner } from '../modules/offline.js';
+import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -165,4 +166,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateWoodDisplay()
     ]);
     renderChallenges();
+
+    // ─── ONBOARDING ──────────────────────────────────────────────────────
+    setTimeout(() => initOnboarding(userId, 'retos'), 800);
+
+    document.getElementById('ob-restart-retos')?.addEventListener('click', e => {
+        e.preventDefault();
+        restartOnboarding(userId, 'retos');
+    });
 });

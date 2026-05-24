@@ -1,6 +1,7 @@
 // frontend/public/js/pages/lessons.js
-import { protectRoute, getAuthData } from '../modules/auth.js';
-import { alertaError }               from '../modules/alerts.js';
+import { protectRoute, getAuthData }              from '../modules/auth.js';
+import { alertaError }                            from '../modules/alerts.js';
+import { initOnboarding, restartOnboarding }      from '../modules/onboarding.js';
 
 const API_URL = '/api';
 
@@ -151,9 +152,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         banner.className = 'edu-progress-banner';
         banner.innerHTML = `
             <div class="epb-left">
-                <span class="epb-icon">🎓</span>
+                <span class="epb-icon" aria-hidden="true"><i class="fas fa-graduation-cap"></i></span>
                 <div class="epb-text">
-                    <span class="epb-title">${completedCats} de ${totalCats} categorías completadas</span>
+                    <span class="epb-title">${completedCats} de ${totalCats} categor${totalCats === 1 ? 'ía' : 'ías'} completada${completedCats !== 1 ? 's' : ''}</span>
                     <span class="epb-sub">${subMsg}</span>
                 </div>
             </div>
@@ -212,8 +213,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div class="lps-edu-msg ${allDone ? 'lps-done' : 'lps-pending'}">
                 ${allDone
-                    ? '🎓 ¡Categoría completada! Esto contribuye a tu nivel educativo.'
-                    : '📚 Al completar todos los niveles de esta categoría aumentarás tu nivel educativo.'}
+                    ? 'Categoría completada. Esto contribuye a tu nivel educativo.'
+                    : 'Al completar todos los niveles de esta categoría aumentarás tu nivel educativo.'}
             </div>`;
         levelsContainer.insertBefore(summaryEl, progressBarEl);
 
@@ -278,10 +279,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadingEl) loadingEl.remove();
         renderCategories();
     } catch (error) {
-        console.error('❌ Error cargando datos:', error);
+        console.error('Error cargando datos:', error);
         alertaError('Error de conexión al cargar lecciones');
         if (loadingEl) {
             loadingEl.innerHTML = '<p class="error-load-msg">Error al cargar. Recarga la página.</p>';
         }
     }
+
+    // ── Onboarding ────────────────────────────────────────────────────────
+    setTimeout(() => initOnboarding(userId, 'lecciones'), 800);
+
+    document.getElementById('ob-restart-lecciones')?.addEventListener('click', e => {
+        e.preventDefault();
+        restartOnboarding(userId, 'lecciones');
+    });
 });

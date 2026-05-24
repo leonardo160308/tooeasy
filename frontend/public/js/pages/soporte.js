@@ -2,6 +2,7 @@
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaExito, alertaError } from '../modules/alerts.js';
 import { initOfflineBanner } from '../modules/offline.js';
+import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
 import {
     createTicket,
     getMyTickets,
@@ -630,4 +631,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── INIT ──────────────────────────────────────────────────────────────────
     await Promise.all([loadMyTickets(), loadTicketQuota()]);
+
+    // ── ONBOARDING ────────────────────────────────────────────────────────────
+    setTimeout(() => initOnboarding(userId, 'soporte'), 800);
+
+    document.getElementById('ob-restart-soporte')?.addEventListener('click', e => {
+        e.preventDefault();
+        restartOnboarding(userId, 'soporte');
+    });
 });
