@@ -13,21 +13,25 @@
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    background: linear-gradient(135deg, #2C405B 0%, #6585AA 100%);
+    /* Color dorado principal de la paleta TOO-EASY */
+    background: linear-gradient(135deg, #BA8E58 0%, #d4a96a 100%);
     color: #fff;
     font-size: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 24px rgba(44, 64, 91, 0.40);
+    box-shadow: 0 6px 24px rgba(186, 142, 88, 0.50);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     outline: none;
     text-decoration: none;
+    /* Borde sutil para mayor definición */
+    border: 2px solid rgba(255,255,255,0.25);
 }
 
 .support-fab:hover {
-    transform: scale(1.08);
-    box-shadow: 0 10px 30px rgba(44, 64, 91, 0.50);
+    transform: scale(1.10);
+    box-shadow: 0 10px 32px rgba(186, 142, 88, 0.65);
+    background: linear-gradient(135deg, #c99a60 0%, #e0b678 100%);
     color: #fff;
 }
 
@@ -37,38 +41,39 @@
 
 .support-fab i {
     pointer-events: none;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
 }
 
 /* Tooltip en hover */
 .support-fab::after {
     content: 'Soporte';
     position: absolute;
-    left: calc(100% + 10px);
+    left: calc(100% + 12px);
     top: 50%;
     transform: translateY(-50%);
-    background: #1e2e42;
+    background: #7c4a03;
     color: #fff;
     font-size: 12px;
     font-weight: 700;
     font-family: 'Plus Jakarta Sans', 'Nunito', sans-serif;
-    padding: 5px 10px;
+    padding: 5px 11px;
     border-radius: 6px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.18s ease;
     letter-spacing: 0.3px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .support-fab:hover::after {
     opacity: 1;
 }
 
-/* Pulso sutil */
+/* Pulso dorado sutil */
 @keyframes supportFabPulse {
-    0%, 100% { box-shadow: 0 4px 18px rgba(44, 64, 91, 0.38); }
-    50%       { box-shadow: 0 4px 22px rgba(44, 64, 91, 0.55); }
+    0%, 100% { box-shadow: 0 4px 18px rgba(186, 142, 88, 0.42); }
+    50%       { box-shadow: 0 6px 26px rgba(186, 142, 88, 0.65); }
 }
 
 .support-fab {
@@ -79,12 +84,22 @@
     animation: none;
 }
 
+@media (max-width: 768px) {
+    .support-fab {
+        bottom: 24px;
+        left: 20px;
+        width: 56px;
+        height: 56px;
+        font-size: 21px;
+    }
+}
+
 @media (max-width: 600px) {
     .support-fab {
-        bottom: 20px;
-        left: 20px;
-        width: 54px;
-        height: 54px;
+        bottom: 18px;
+        left: 16px;
+        width: 52px;
+        height: 52px;
         font-size: 20px;
     }
 

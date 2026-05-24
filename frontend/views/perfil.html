@@ -113,18 +113,30 @@
         </div>
 
         <div class="upgrade-actions">
-            <button id="btn-upgrade-house" class="btn-upgrade btn-wood">
-                <div class="btn-text">
-                    <span>Mejorar Casa</span>
-                    <small>Costo: <span id="cost-house">20</span> 🪵</small>
+            <!-- Casa -->
+            <div class="upgrade-item">
+                <div class="upgrade-level-label">
+                    🏠 Casa &mdash; <span class="upgrade-level-value">Nivel <span id="lbl-house-level">1</span> / 10</span>
                 </div>
-            </button>
-            <button id="btn-upgrade-beaver" class="btn-upgrade btn-coin">
-                <div class="btn-text">
-                    <span>Entrenar Castor</span>
-                    <small>Costo: <span id="cost-beaver">34</span> 🪙</small>
+                <button id="btn-upgrade-house" class="btn-upgrade btn-wood">
+                    <div class="btn-text">
+                        <span>Mejorar Casa</span>
+                        <small>Costo: <span id="cost-house">20</span> 🪵</small>
+                    </div>
+                </button>
+            </div>
+            <!-- Castor -->
+            <div class="upgrade-item">
+                <div class="upgrade-level-label">
+                    🦦 Castor &mdash; <span class="upgrade-level-value">Nivel <span id="lbl-beaver-level">1</span> / 10</span>
                 </div>
-            </button>
+                <button id="btn-upgrade-beaver" class="btn-upgrade btn-coin">
+                    <div class="btn-text">
+                        <span>Entrenar Castor</span>
+                        <small>Costo: <span id="cost-beaver">34</span> 🪙</small>
+                    </div>
+                </button>
+            </div>
         </div>
 
         
@@ -252,9 +264,7 @@
 
 <div class="toast-perfil" id="toastPerfil"></div>
 
-<!-- Hidden elements requeridos por profile.js -->
-<span id="lbl-house-level"></span>
-<span id="lbl-beaver-level"></span>
+<!-- btn-delete-account requería por profile.js (oculto, controlado por perfil-ui.js) -->
 <button id="btn-delete-account"></button>
 <footer class="footer" id="site-footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>

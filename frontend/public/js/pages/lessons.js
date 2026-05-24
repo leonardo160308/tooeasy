@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderCategories() {
         if (!tarjetasContainer) return;
         tarjetasContainer.innerHTML = '';
+        document.querySelector('.edu-progress-banner')?.remove();
 
         if (allCategoriesDB.length === 0) {
             tarjetasContainer.innerHTML = `
@@ -74,11 +75,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        let completedCats = 0;
+        const totalCats = allCategoriesDB.length;
+
         allCategoriesDB.forEach((cat, idx) => {
+            const catId  = Number(cat.id);
             const isD        = idx % 2 === 0;
             const typeClass  = isD ? 'tarjetaD'        : 'tarjetaA';
             const hdrClass   = isD ? 'tarjeta-headerD' : 'tarjeta-headerA';
             const bodyClass  = isD ? 'tarjeta-bodyD'   : 'tarjeta-bodyA';
+
+            // Per-category progress badge
+            const catLevels      = allLevelsDB.filter(l => Number(l.category_id) === catId);
+            const catCompleted   = (progressMap[catId] || []).filter(
+                id => catLevels.some(l => Number(l.id) === id)
+            ).length;
+            const catTotal       = catLevels.length;
+            const isFullyCat     = catTotal > 0 && catCompleted === catTotal;
+            if (isFullyCat) completedCats++;
+
+            const badgeHtml = catTotal > 0
+                ? `<span class="cat-progress-badge ${isFullyCat ? 'cat-badge-done' : ''}">
+                       ${isFullyCat ? '✓ Completada' : `${catCompleted}/${catTotal} niveles`}
+                   </span>`
+                : '';
 
             const card = document.createElement('div');
             card.className       = `${typeClass} category-card`;
@@ -90,6 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="${bodyClass}">
                     <p>${escHtml(cat.descripcion || 'Aprende los conceptos de esta categoría.')}</p>
+                    ${badgeHtml}
                 </div>
                 <div class="levels-container hidden">
                     <div class="progress-bar">
@@ -114,10 +135,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                 levelsContainer.classList.toggle('hidden');
 
                 if (wasHidden) {
-                    renderLevelsForCategory(card, Number(cat.id));
+                    renderLevelsForCategory(card, catId);
                 }
             });
         });
+
+        // Global educational progress banner inserted before the cards grid
+        const pctGlobal = totalCats > 0 ? Math.round((completedCats / totalCats) * 100) : 0;
+        const remaining = totalCats - completedCats;
+        const subMsg = remaining > 0
+            ? `Te ${remaining === 1 ? 'falta' : 'faltan'} ${remaining} categoría${remaining === 1 ? '' : 's'} para completar tu nivel educativo`
+            : '¡Felicidades! Has completado todas las categorías.';
+
+        const banner = document.createElement('div');
+        banner.className = 'edu-progress-banner';
+        banner.innerHTML = `
+            <div class="epb-left">
+                <span class="epb-icon">🎓</span>
+                <div class="epb-text">
+                    <span class="epb-title">${completedCats} de ${totalCats} categorías completadas</span>
+                    <span class="epb-sub">${subMsg}</span>
+                </div>
+            </div>
+            <div class="epb-right">
+                <progress class="epb-progress" max="${totalCats}" value="${completedCats}" title="${pctGlobal}% completado"></progress>
+                <span class="epb-pct">${pctGlobal}%</span>
+            </div>`;
+        tarjetasContainer.parentNode.insertBefore(banner, tarjetasContainer);
     }
 
     // ── Render levels inside a category card ──────────────────────────────
@@ -130,7 +174,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const levelsContainer = card.querySelector('.levels-container');
         const progressBarEl   = levelsContainer.querySelector('.progress-bar');
 
-        // Remove old level rows (keep the progress-bar element)
+        // Remove old level rows and summary (keep the progress-bar element)
         Array.from(levelsContainer.children).forEach(child => {
             if (!child.classList.contains('progress-bar')) child.remove();
         });
@@ -150,7 +194,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // All level IDs completed in this category (already normalised to Number)
         const completedLevelIds = progressMap[categoryId] || [];
-        let completedCount = 0;
+
+        // Pre-compute totals for the summary block
+        const completedCount = completedLevelIds.filter(
+            id => categoryLevels.some(l => Number(l.id) === id)
+        ).length;
+        const allDone = completedCount === categoryLevels.length;
+        const pct     = Math.round((completedCount / categoryLevels.length) * 100);
+
+        // Progress summary + educational message at the top
+        const summaryEl = document.createElement('div');
+        summaryEl.className = 'levels-progress-summary';
+        summaryEl.innerHTML = `
+            <div class="lps-row">
+                <span class="lps-count">${completedCount} de ${categoryLevels.length} niveles completados</span>
+                <span class="lps-pct">${pct}%</span>
+            </div>
+            <div class="lps-edu-msg ${allDone ? 'lps-done' : 'lps-pending'}">
+                ${allDone
+                    ? '🎓 ¡Categoría completada! Esto contribuye a tu nivel educativo.'
+                    : '📚 Al completar todos los niveles de esta categoría aumentarás tu nivel educativo.'}
+            </div>`;
+        levelsContainer.insertBefore(summaryEl, progressBarEl);
 
         categoryLevels.forEach((nivel, idx) => {
             const prevLevel = idx > 0 ? categoryLevels[idx - 1] : null;
@@ -162,8 +227,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 || completedLevelIds.includes(Number(prevLevel.id));
 
             const isLocked = !isCompleted && !isAvailable;
-
-            if (isCompleted) completedCount++;
 
             const levelDiv = document.createElement('div');
             levelDiv.classList.add('level-item');
@@ -197,9 +260,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Update progress bar
         const fill = progressBarEl?.querySelector('.progress-fill');
         if (fill) {
-            const pct = categoryLevels.length === 0
-                ? 0
-                : (completedCount / categoryLevels.length) * 100;
             fill.style.setProperty('--fill-w', `${pct}%`);
         }
     }

@@ -394,6 +394,11 @@ h2 {
     to   { transform: translateY(0) scale(1);       opacity: 1; }
 }
 
+@keyframes modalInMobile {
+    from { transform: translateY(100%); opacity: 0.6; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
 .close-btn {
     position: absolute;
     top: 16px;
@@ -647,15 +652,59 @@ h2 {
     .izquierda, .derecha { flex: 1; }
 }
 
+@media (max-width: 768px) {
+    .app-container { width: 97%; margin: 20px auto; gap: 16px; }
+    .card { padding: 22px; margin-bottom: 18px; }
+    .summary-results { flex-direction: column; align-items: center; gap: 8px; padding: 18px 20px; }
+    .result-item strong { font-size: 1.3rem; }
+    .chart-container { height: 180px; }
+    .chart-tab-btn { padding: 8px 12px; font-size: 0.78rem; }
+    .calendar-header button { padding: 7px 12px; min-height: 36px; }
+    .method-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .method-card { padding: 12px 6px; }
+}
+
 @media (max-width: 600px) {
-    .app-container { margin: 16px auto; }
-    .card { padding: 20px; }
-    .fixed-data-grid, .goal-data-grid { grid-template-columns: 1fr; }
+    .app-container { margin: 12px auto; gap: 12px; }
+    .card { padding: 16px; border-radius: var(--radius-md); margin-bottom: 14px; }
+    h2 { font-size: 1rem; }
+
+    .fixed-data-grid,
+    .goal-data-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    .input-group input,
+    .method-input-area input { padding: 13px 14px; font-size: 1rem; min-height: 46px; }
+
+    .summary-results { padding: 14px 16px; border-radius: var(--radius-sm); }
+    .result-item strong { font-size: 1.2rem; }
+    .result-item span { font-size: 0.68rem; }
+
+    .chart-tabs { gap: 4px; padding: 4px; }
+    .chart-tab-btn { padding: 9px 12px; min-height: 38px; flex: 1; text-align: center; }
+    .chart-container { height: 160px; }
+
+    .calendar-header { padding: 10px 12px; }
+    .calendar-header button { padding: 9px 14px; min-height: 40px; font-size: 0.82rem; }
     .calendar-grid { gap: 3px; }
-    .summary-results { padding: 16px; }
-    .modal-content { padding: 24px 20px; }
-    .day-number { font-size: 0.7rem; }
-    .day-balance-preview { font-size: 0.42rem; }
+    .day-number { font-size: 0.68rem; }
+    .day-balance-preview { font-size: 0.4rem; }
+
+    .modal { padding-top: 0; align-items: flex-end; }
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding: 24px 18px 32px;
+        max-height: 90vh;
+        margin-bottom: 0;
+        animation: modalInMobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .method-cards { grid-template-columns: 1fr; gap: 8px; }
+    .method-card { flex-direction: row; padding: 14px 16px; text-align: left; gap: 12px; }
+    .method-icon { font-size: 1.6rem; }
+
+    .savings-validation-msg { font-size: 0.8rem; }
 }
 /* Extracted from inline styles in dashboard.html */
 .legend-dot--green { background: #2e7d32; }
@@ -927,7 +976,3 @@ h2 {
     color:       #78350f;
 }
 .savings-validation-msg.sv-warning::before { content: 'ℹ'; }
-
-@media (max-width: 600px) {
-    .method-cards { grid-template-columns: 1fr; }
-}

@@ -328,13 +328,210 @@ button.btn-play {
     transition: width 0.5s ease;
 }
 
+/* ── EDUCATIONAL PROGRESS BANNER ── */
+.edu-progress-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #1e2e42 0%, #2C405B 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin: 0 auto 20px;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(44,64,91,0.2);
+    width: calc(100% - 40px);
+    max-width: 1060px;
+}
+
+.epb-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+.epb-icon { font-size: 2rem; flex-shrink: 0; }
+
+.epb-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.epb-title {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.epb-sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.4;
+}
+
+.epb-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.epb-progress {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 8px;
+    border-radius: 10px;
+    border: none;
+    overflow: hidden;
+}
+.epb-progress::-webkit-progress-bar {
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+}
+.epb-progress::-webkit-progress-value {
+    background: linear-gradient(90deg, #B6823E, #d4a96a);
+    border-radius: 10px;
+}
+.epb-progress::-moz-progress-bar {
+    background: linear-gradient(90deg, #B6823E, #d4a96a);
+    border-radius: 10px;
+}
+
+.epb-pct {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #d4a96a;
+    min-width: 36px;
+    text-align: right;
+}
+
+/* ── CATEGORY PROGRESS BADGE ── */
+.cat-progress-badge {
+    display: inline-block;
+    background: rgba(44,64,91,0.09);
+    color: var(--primary);
+    border: 1px solid rgba(44,64,91,0.18);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-top: 6px;
+    align-self: flex-start;
+}
+
+.cat-badge-done {
+    background: rgba(46,125,50,0.1);
+    color: #2e7d32;
+    border-color: #a5d6a7;
+}
+
+/* ── LEVELS PROGRESS SUMMARY ── */
+.levels-progress-summary {
+    padding: 10px 14px;
+    background: rgba(44,64,91,0.04);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.lps-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.lps-count {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.lps-pct {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--secondary);
+    flex-shrink: 0;
+}
+
+.lps-edu-msg {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+.lps-done {
+    background: rgba(46,125,50,0.08);
+    color: #2e7d32;
+    border-left: 3px solid #4caf50;
+}
+
+.lps-pending {
+    background: rgba(182,130,62,0.08);
+    color: #7c5000;
+    border-left: 3px solid var(--accent);
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
     .container { flex-direction: column; text-align: center; }
     .pagina-principal { flex-direction: column !important; }
     .tarjetas { gap: 16px; }
     .tarjetaA, .tarjetaD { width: 100%; max-width: 360px; }
+
+    .edu-progress-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .epb-right {
+        width: 100%;
+    }
+    .epb-progress {
+        flex: 1;
+        width: auto;
+    }
 }
+
+@media (max-width: 600px) {
+    .container { padding: 28px 14px; }
+    .pagina-principal h2 { font-size: 1.7rem; }
+    .contenido-principal p { font-size: 0.9rem; }
+
+    .tarjetas { gap: 12px; padding: 10px 12px 48px; }
+    .tarjetaA, .tarjetaD { max-width: 100%; }
+
+    .tarjeta-headerA h3,
+    .tarjeta-headerD h3 { font-size: 0.92rem; }
+
+    .level-item {
+        padding: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .level-item button.btn-play {
+        padding: 9px 16px;
+        font-size: 0.82rem;
+        min-height: 38px;
+        width: 100%;
+    }
+
+    .edu-progress-banner {
+        margin: 0 12px 14px;
+        width: calc(100% - 24px);
+        padding: 14px 16px;
+    }
+}
+
 @keyframes gradientGlow {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }

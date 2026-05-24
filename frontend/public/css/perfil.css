@@ -297,6 +297,39 @@ body {
     width: 100%;
 }
 
+/* Contenedor individual de cada mejora */
+.upgrade-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+/* Etiqueta de nivel actual sobre el botón */
+.upgrade-level-label {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: #f0f4f8;
+    border-radius: 8px;
+    padding: 5px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 1px solid var(--border);
+}
+
+.upgrade-level-value {
+    color: var(--accent);
+    font-weight: 900;
+    font-size: 0.78rem;
+}
+
 .btn-upgrade {
     flex: 1;
     display: flex;
@@ -1031,8 +1064,7 @@ body {
     opacity: 1;
 }
 
-/* ── HIDDEN LABELS ── */
-#lbl-house-level, #lbl-beaver-level { display: none; }
+/* lbl-house-level y lbl-beaver-level son ahora visibles (se muestran en .upgrade-level-label) */
 
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
@@ -1057,6 +1089,23 @@ body {
     .btn-text span { font-size: 0.84rem; }
 }
 
+@media (max-width: 768px) {
+    .main-container { padding: 0 12px 80px; margin: 16px auto; }
+
+    .header-card { padding: 16px 18px; }
+    .header-card h2 { font-size: 1.1rem; }
+
+    .info-card { padding: 16px; gap: 12px; }
+
+    .stats-bar { gap: 14px; padding: 12px 16px; }
+    #coin-count, #wood-count { font-size: 1.1rem; }
+    .stat-icon { width: 28px; height: 28px; }
+
+    .btn-upgrade { padding: 12px 10px; min-height: 52px; }
+    .btn-text span { font-size: 0.82rem; }
+    .btn-text small { font-size: 0.68rem; }
+}
+
 @media (max-width: 600px) {
     .info-card {
         flex-direction: column;
@@ -1069,30 +1118,52 @@ body {
     .value { max-width: none; text-align: center; }
 
     .detail-row {
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        gap: 3px;
-        border-bottom: none;
-        margin-bottom: 10px;
+        justify-content: space-between;
+        gap: 8px;
+        border-bottom: 1px dashed var(--border);
+        padding-bottom: 8px;
+        margin-bottom: 8px;
     }
 
-    .upgrade-actions { flex-direction: column; }
-    .skin-controls-container { flex-direction: column; }
+    .detail-row:last-child { border-bottom: none; margin-bottom: 0; }
 
-    .scene { height: 260px; }
+    /* Upgrade en columna en móvil pequeño */
+    .upgrade-actions { flex-direction: column; }
+    .upgrade-item { width: 100%; }
+    .upgrade-level-label { font-size: 0.75rem; padding: 6px 10px; }
+
+    .skin-controls-container { flex-direction: column; }
+    .skin-controls { padding: 10px 12px; }
+
+    .scene { height: 240px; }
     .house-img { height: auto; max-height: 96%; width: 90%; }
     .beaver-img { width: 23%; max-height: 50%; right: 8%; }
 
-    .modal-perfil { padding: 22px 18px 18px; }
-    .modal-title { font-size: 1rem; }
-    .btn-text span { font-size: 0.8rem; }
-    .btn-text small { font-size: 0.68rem; }
+    /* Modal en móvil */
+    .modal-perfil {
+        padding: 20px 16px 16px;
+        max-height: calc(100dvh - 32px);
+        border-radius: 18px;
+    }
+    .modal-title { font-size: 1rem; padding-right: 40px; }
+    .field-modal input, .field-modal select { padding: 13px 14px; font-size: 1rem; }
+    .btn-accept-modal { padding: 13px; font-size: 0.92rem; min-height: 48px; }
+    .btn-delete-modal { padding: 10px 14px; font-size: 0.82rem; min-height: 48px; }
+
+    /* Avatar modal */
+    .avatar-modal-content { padding: 22px 16px 18px; }
+    .avatar-grid { gap: 10px; }
+    .btn-select-avatar { padding: 13px; min-height: 48px; font-size: 0.95rem; }
+
+    /* Nav buttons más grandes en móvil */
+    .nav-btn { width: 38px; height: 38px; font-size: 15px; }
+    .btn-equip { padding: 7px 14px; font-size: 0.75rem; min-height: 36px; }
 }
 
 /* Initially hidden elements (JS controls visibility) */
 #avatar-modal,
 #house-status,
 #beaver-status,
-#lbl-house-level,
-#lbl-beaver-level,
 #btn-delete-account { display: none; }
