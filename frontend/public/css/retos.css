@@ -335,7 +335,7 @@ body {
 
     .challenges-list-container {
         min-height: unset;
-        max-height: 65vh;  /* en mobile: contenedor con altura máxima y scroll */
+        max-height: 55vh;  /* reducido para que la imagen quede más accesible */
     }
 
     #challenges-container {
@@ -343,10 +343,12 @@ body {
     }
 
     .right-panel-image {
-        height: 220px;
+        height: 300px;           /* aumentado para mostrar el castor completo */
         max-width: 100%;
         flex: unset;
-        background-position: bottom center;
+        background-position: center center;  /* muestra el centro de la imagen */
+        background-size: cover;
+        border-radius: 18px;     /* bordes redondeados igual que las cards */
     }
 }
 

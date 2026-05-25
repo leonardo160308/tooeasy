@@ -35,9 +35,15 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
-main { flex: 1; }
+main {
+    flex: 1;
+    overflow-x: hidden;
+    max-width: 100%;
+}
 
 /* ── HERO ──────────────────────────────────────────────────────────────────── */
 .soporte-hero {
@@ -46,6 +52,8 @@ main { flex: 1; }
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .soporte-hero h2 {
@@ -69,6 +77,8 @@ main { flex: 1; }
     max-width: 1300px;
     margin: 0 auto;
     width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 @media (max-width: 900px) {
@@ -169,7 +179,7 @@ main { flex: 1; }
 
 .tickets-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 16px;
     padding: 20px;
 }
@@ -1020,12 +1030,26 @@ main { flex: 1; }
     .soporte-layout {
         grid-template-columns: 1fr;
         padding: 16px;
+        gap: 16px;
+        overflow-x: hidden;
     }
 
     .soporte-hero {
         flex-direction: column;
         text-align: center;
-        padding: 28px 20px;
+        padding: 24px 16px;
+        overflow-x: hidden;
+    }
+
+    .soporte-hero h2 {
+        font-size: 1.4rem;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .soporte-hero p {
+        max-width: 100%;
+        font-size: 0.88rem;
     }
 
     .soporte-header-minimal {
@@ -1047,4 +1071,40 @@ main { flex: 1; }
     .form-row { grid-template-columns: 1fr; }
 
     .message-bubble { max-width: 90%; }
+
+    /* Reply section: apila el textarea y los botones en móvil */
+    .reply-section {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .reply-section textarea {
+        max-height: 100px;
+    }
+
+    .reply-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-reply,
+    .btn-close-ticket,
+    .btn-delete-ticket {
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+        font-size: 0.78rem;
+        padding: 8px 10px;
+        white-space: nowrap;
+    }
+
+    /* Tickets grid: fuerza columna única en pantallas pequeñas */
+    .tickets-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .card { max-width: 100%; }
 }
