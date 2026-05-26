@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         "skin_2":       "../public/img/CASA_N2.png",
         "skin_3":       "../public/img/casaN2.png",
         "skin_4":       "../public/img/CASA_N3.png",
-        "skin_5":       "../public/img/CASA_6.png",
-        "skin_6":       "../public/img/CASA_N4.png",
-        "skin_7":       "../public/img/CASA_8.png",
-        "skin_8":       "../public/img/casaN4.png",
+        "skin_5":       "../public/img/CASA_N4.png",
+        "skin_6":       "../public/img/CASA_6.png",
+        "skin_7":       "../public/img/casaN4.png",
+        "skin_8":       "../public/img/CASA_8.png",
         "skin_9":       "../public/img/casaN5.png",
     };
 
@@ -46,10 +46,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         "castor_1":       "../public/img/castorN1.png",
         "castor_2":       "../public/img/CASTOR_N2.png",
         "castor_3":       "../public/img/CASTOR_N3.png",
-        "castor_4":       "../public/img/castorN3.png",
+        "castor_4":       "../public/img/CASTOR_N5.png",
         "castor_5":       "../public/img/CASTOR_N6.png",
         "castor_6":       "../public/img/castorN7.png",
-        "castor_7":       "../public/img/CASTOR_N5.png",
+        "castor_7":       "../public/img/castorN3.png",
         "castor_8":       "../public/img/castorN4.png",
         "castor_9":       "../public/img/castorN5.png",
     };
@@ -65,6 +65,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         "castor_7":       "Castor Maestro",
         "castor_8":       "Gran Castor",
         "castor_9":       "Rey Castor",
+    };
+
+    const SKIN_SIZE_CLASSES = {
+        "skin_default": "hs-boost-sm",
+        "skin_1":       "hs-boost-sm",
+        "skin_2":       "",
+        "skin_3":       "hs-boost-sm",
+        "skin_4":       "",
+        "skin_5":       "hs-boost-md",
+        "skin_6":       "",
+        "skin_7":       "hs-boost-lg",
+        "skin_8":       "hs-boost-lg",
+        "skin_9":       "hs-boost-xl",
     };
 
     const UNLOCKS_CASA_LIST   = ["skin_default","skin_1","skin_2","skin_3","skin_4","skin_5","skin_6","skin_7","skin_8","skin_9"];
@@ -254,6 +267,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const houseImg = document.getElementById('house-img');
         houseImg.src = DB_SKINS[skinId];
+        houseImg.classList.remove('hs-boost-sm', 'hs-boost-md', 'hs-boost-lg', 'hs-boost-xl');
+        const sizeClass = SKIN_SIZE_CLASSES[skinId];
+        if (sizeClass) houseImg.classList.add(sizeClass);
         const lblNombre = document.getElementById('house-name-lbl');
         if (estaDesbloqueada) {
             lblNombre.textContent = SKIN_NAMES[skinId];
