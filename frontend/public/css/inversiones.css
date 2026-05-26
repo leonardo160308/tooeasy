@@ -242,7 +242,7 @@ body {
     box-shadow: var(--shadow-xs);
     transition: box-shadow 0.2s ease;
     position: relative;
-    overflow: hidden;
+    /* overflow: visible (default) — permite que los tooltips salgan del contenedor */
 }
 
 .inv-card:hover { box-shadow: var(--shadow-sm); }
@@ -255,6 +255,8 @@ body {
     right: 0;
     height: 3px;
     background: linear-gradient(90deg, var(--secondary), var(--primary));
+    /* border-radius en esquinas superiores para respetar el card sin overflow:hidden */
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
     opacity: 0;
     transition: opacity 0.2s ease;
 }
@@ -466,7 +468,7 @@ body {
     padding: 18px 20px;
     box-shadow: var(--shadow-xs);
     position: relative;
-    overflow: hidden;
+    /* overflow: visible (default) — permite que los tooltips salgan del contenedor */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -482,6 +484,8 @@ body {
     left: 0;
     right: 0;
     height: 3px;
+    /* border-radius en esquinas superiores para respetar el card sin overflow:hidden */
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .summary-card.primary::before  { background: var(--primary); }

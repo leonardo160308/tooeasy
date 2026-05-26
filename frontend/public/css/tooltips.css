@@ -218,20 +218,8 @@
     margin-bottom: 4px;
 }
 
-/* El tooltip dentro de summary-results necesita
-   z-index aún más alto porque está en un stacking
-   context con overflow y transform */
-.summary-results .tooltip-icon::before,
-.summary-results .tooltip-icon::after {
-    z-index: 9999999;
-}
-
-/* Forzar que el pseudo-elemento salga del overflow
-   del contenedor usando position fixed-like trick */
-.summary-results .result-item {
-    position: relative;
-    overflow: visible;
-}
+/* summary-results ya no tiene overflow:hidden,
+   los tooltips flotan libremente — workarounds eliminados */
 
 /* ─────────────────────────────────────────
    HELPER: encabezado con tooltip alineado
