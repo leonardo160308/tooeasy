@@ -3,20 +3,19 @@ import AdminModel from '../models/AdminModel.js';
 import User from '../models/UserModel.js';
 
 // ── Auth middleware ──────────────────────────────────────────────────────────
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 export async function checkAdmin(req, res, next) {
     try {
         const { userId } = req.body;
-        if (!userId || !UUID_RE.test(userId)) {
+        if (!userId) {
             return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
         }
-        const user = await User.findById(userId);
+        const user = await User.findById(String(userId));
         if (!user || user.role !== 'admin') {
             return res.status(403).json({ success: false, message: 'Acceso denegado. Solo administradores.' });
         }
         next();
     } catch (error) {
+        console.error('[checkAdmin] Error:', error);
         res.status(500).json({ success: false, message: 'Error de autenticación' });
     }
 }

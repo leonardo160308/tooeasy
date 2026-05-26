@@ -22,7 +22,16 @@ if (!isAdmin()) {
     throw new Error('not admin');
 }
 const session = getAuthData();
-const userId  = session.id;
+const userId  = session?.id;
+
+if (!userId) {
+    localStorage.removeItem('too_easy_user_data');
+    alertaError('Tu sesión es inválida. Por favor, vuelve a iniciar sesión.', {
+        duration: 3000,
+        onClose: () => { window.location.href = '/login.html'; }
+    });
+    throw new Error('invalid session id');
+}
 
 // ── State ──────────────────────────────────────────────────────────────
 let categories  = [];
