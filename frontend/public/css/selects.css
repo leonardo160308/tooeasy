@@ -1,0 +1,85 @@
+/* ══════════════════════════════════════════
+   GLOBAL CUSTOM SELECT STYLING — TOO-EASY
+   Aplica a todos los <select> sin clase
+   específica de módulo.
+══════════════════════════════════════════ */
+
+/* Arrow SVG reutilizable como propiedad */
+:root {
+    --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236585AA' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: block;
+    width: 100%;
+    padding: 10px 40px 10px 14px;
+    background-color: #ffffff;
+    background-image: var(--select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
+    border: 1.5px solid #dde3ee;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a2332;
+    line-height: 1.4;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.15s ease;
+    box-shadow: 0 1px 4px rgba(44, 64, 91, 0.06);
+}
+
+select:hover:not(:disabled) {
+    border-color: #6585AA;
+    background-color: #f8fafc;
+}
+
+select:focus {
+    border-color: #2C405B;
+    box-shadow: 0 0 0 3px rgba(44, 64, 91, 0.12);
+    background-color: #ffffff;
+    outline: none;
+}
+
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f4f6fa;
+}
+
+select option {
+    background: #ffffff;
+    color: #1a2332;
+    padding: 8px;
+}
+
+select optgroup {
+    font-weight: 700;
+    color: #2C405B;
+}
+
+/* Filter selects: ancho automático para headers de sección */
+select.filter-select {
+    width: auto;
+    min-width: 180px;
+    max-width: 300px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+    select {
+        font-size: 1rem;
+        padding: 12px 40px 12px 14px;
+        min-height: 44px;
+    }
+    select.filter-select {
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+    }
+}

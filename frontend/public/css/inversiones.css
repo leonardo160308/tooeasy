@@ -46,6 +46,7 @@ body {
     font-size: 15px;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 /* ══════════════════════════════════════════
@@ -318,6 +319,15 @@ body {
     color: var(--text-dark);
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.field-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px;
+    background-image: var(--select-arrow, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236585AA' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"));
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
 }
 
 .field-group input:focus,
@@ -950,13 +960,19 @@ button:disabled {
    SELECT (filtro global)
 ══════════════════════════════════════════ */
 .filter-select {
-    padding: 10px 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 10px 40px 10px 16px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-family: inherit;
     color: var(--text-dark);
-    background: var(--bg-card);
+    background-color: var(--bg-card);
+    background-image: var(--select-arrow, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%236585AA' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"));
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px 8px;
     cursor: pointer;
     min-width: 220px;
     outline: none;

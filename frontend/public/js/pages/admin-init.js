@@ -864,7 +864,15 @@ document.querySelectorAll('.modal').forEach(m => {
     initOnboarding(userId, 'admin');
 })();
 
-// ── Tutorial button ────────────────────────────────────────────────────
+// ── Tutorial button (sidebar) ─────────────────────────────────────────
 document.getElementById('btn-admin-tutorial')?.addEventListener('click', () => {
+    closeMobileSidebar();
+    restartOnboarding(userId, 'admin');
+});
+
+// ── Tutorial link (footer) ────────────────────────────────────────────
+document.getElementById('ob-restart-admin')?.addEventListener('click', e => {
+    e.preventDefault();
+    closeMobileSidebar();
     restartOnboarding(userId, 'admin');
 });

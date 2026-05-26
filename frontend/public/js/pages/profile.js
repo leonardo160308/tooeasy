@@ -67,19 +67,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         "castor_9":       "Rey Castor",
     };
 
-    const SKIN_SIZE_CLASSES = {
-        "skin_default": "hs-boost-sm",
-        "skin_1":       "hs-boost-sm",
-        "skin_2":       "",
-        "skin_3":       "hs-boost-sm",
-        "skin_4":       "",
-        "skin_5":       "hs-boost-md",
-        "skin_6":       "",
-        "skin_7":       "hs-boost-lg",
-        "skin_8":       "hs-boost-lg",
-        "skin_9":       "hs-boost-xl",
-    };
-
     const UNLOCKS_CASA_LIST   = ["skin_default","skin_1","skin_2","skin_3","skin_4","skin_5","skin_6","skin_7","skin_8","skin_9"];
     const UNLOCKS_CASTOR_LIST = ["castor_default","castor_1","castor_2","castor_3","castor_4","castor_5","castor_6","castor_7","castor_8","castor_9"];
 
@@ -197,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (txtCostBeaver) txtCostBeaver.textContent = COSTO_CASTOR_BASE;
 
         if (currentUserData.house_level >= MAX_LEVEL) {
-            btnHouse.textContent = '¡Casa al Máximo! 🏠';
+            btnHouse.textContent = '¡Casa al Máximo!';
             btnHouse.disabled = true;
         } else if (currentUserData.wood < COSTO_CASA_BASE) {
             btnHouse.disabled = true;
@@ -231,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (result.success) {
                 currentUserData.wood        = result.new_stats.wood;
                 currentUserData.house_level = result.new_stats.house_level;
-                alertaExito(`¡Casa mejorada a nivel ${result.new_stats.house_level}! 🏠`, { title: '¡Mejora completada!', duration: 4000 });
+                alertaExito(`¡Casa mejorada a nivel ${result.new_stats.house_level}!`, { title: '¡Mejora completada!', duration: 4000 });
                 actualizarUI();
             } else { alertaError(result.message); }
         } catch (error) { console.error(error); alertaError('Error de conexión al mejorar casa.'); }
@@ -267,9 +254,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const houseImg = document.getElementById('house-img');
         houseImg.src = DB_SKINS[skinId];
-        houseImg.classList.remove('hs-boost-sm', 'hs-boost-md', 'hs-boost-lg', 'hs-boost-xl');
-        const sizeClass = SKIN_SIZE_CLASSES[skinId];
-        if (sizeClass) houseImg.classList.add(sizeClass);
         const lblNombre = document.getElementById('house-name-lbl');
         if (estaDesbloqueada) {
             lblNombre.textContent = SKIN_NAMES[skinId];
