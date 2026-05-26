@@ -1,11 +1,12 @@
 // backend/controllers/ticketController.js
-import TicketModel          from '../models/TicketModel.js';
-import KbModel              from '../models/KbModel.js';
-import User                 from '../models/UserModel.js';
-import { supabaseAdmin }    from '../config/supabase.js';
-import path                 from 'path';
-import fs                   from 'fs';
-import { fileURLToPath }    from 'url';
+import TicketModel              from '../models/TicketModel.js';
+import KbModel                  from '../models/KbModel.js';
+import User                     from '../models/UserModel.js';
+import { supabaseAdmin }        from '../config/supabase.js';
+import { sendTicketReplyEmail } from '../utils/emailService.js';
+import path                     from 'path';
+import fs                       from 'fs';
+import { fileURLToPath }        from 'url';
 
 const __filename       = fileURLToPath(import.meta.url);
 const __dirname        = path.dirname(__filename);
@@ -176,7 +177,8 @@ export async function getMyTicketDetail(req, res) {
 
         const [messages, csat] = await Promise.all([
             TicketModel.getMessages(ticketId, 'user'),
-            TicketModel.getCsatByTicket(ticketId)
+            TicketModel.getCsatByTicket(ticketId),
+            TicketModel.markUserRead(ticketId)
         ]);
         res.json({ success: true, data: { ticket, messages, csat } });
     } catch (error) {
@@ -436,10 +438,36 @@ export async function replyAsSupport(req, res) {
             await TicketModel.updateTicketStatus(ticketId, 'waiting_user', userId);
         }
 
+        // Marcar como no leído por el usuario y enviar email de notificación
+        await TicketModel.markUserUnread(ticketId);
+        const ticketUser = ticket.ticket_user;
+        if (ticketUser?.email) {
+            sendTicketReplyEmail(
+                ticketUser.email,
+                ticketUser.nombre || 'Usuario',
+                ticket.subject,
+                message.trim()
+            ).catch(err => console.error('[replyAsSupport] Email error:', err.message));
+        }
+
         res.status(201).json({ success: true, data: msg });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Error al enviar respuesta' });
+    }
+}
+
+export async function getUnreadCount(req, res) {
+    try {
+        const userId = extractUserId(req);
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });
+        }
+        const count = await TicketModel.getUnreadReplyCount(userId);
+        res.json({ success: true, data: { count } });
+    } catch (error) {
+        console.error('[getUnreadCount ERROR]', error);
+        res.status(500).json({ success: false, message: 'Error al obtener notificaciones.' });
     }
 }
 

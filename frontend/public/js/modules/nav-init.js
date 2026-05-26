@@ -1,5 +1,6 @@
 import { logout, isAdmin, getAuthData } from './auth.js';
 import { alertaConfirmacion } from './alerts.js';
+import { getTicketUnreadCount } from './api.js';
 import './nav-active.js';
 
 // ── Inyectar CSS del support FAB ─────────────────────────────────────────────
@@ -23,8 +24,17 @@ import './nav-active.js';
     fab.href       = '/soporte.html';
     fab.title      = 'Centro de Soporte';
     fab.setAttribute('aria-label', 'Abrir Centro de Soporte');
-    fab.innerHTML  = '<i class="fas fa-wrench"></i>';
+    fab.innerHTML  = '<i class="fas fa-wrench"></i><span class="support-fab-badge hidden" aria-label="Tienes respuestas sin leer"></span>';
     document.body.appendChild(fab);
+
+    const _fabAuth = getAuthData();
+    if (_fabAuth?.id) {
+        getTicketUnreadCount(_fabAuth.id).then(res => {
+            if (res?.success && res.data?.count > 0) {
+                fab.querySelector('.support-fab-badge')?.classList.remove('hidden');
+            }
+        }).catch(() => {});
+    }
 })();
 
 const nav        = document.querySelector('.nav');

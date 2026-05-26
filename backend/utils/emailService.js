@@ -152,6 +152,45 @@ export async function sendRecoveryEmail(toEmail, code, userName) {
     });
 }
 
+// ── Email: respuesta de soporte a ticket ─────────────────────────────────────
+export async function sendTicketReplyEmail(toEmail, userName, ticketSubject, replyMessage) {
+    const safeName    = escapeHtml(userName);
+    const safeSubject = escapeHtml(ticketSubject);
+    const safeMessage = escapeHtml(replyMessage).replace(/\n/g, '<br>');
+    const appUrl      = process.env.FRONTEND_URL || 'https://tooeasy-8zct.onrender.com';
+    const content = `
+<p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
+  Hola, <strong style="color:#2C405B;">${safeName}</strong> 👋
+</p>
+<p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 20px;">
+  El equipo de soporte ha respondido tu ticket:
+</p>
+<div style="background:#f0f4f8;border-left:4px solid #2C405B;border-radius:8px;
+            padding:18px 24px;margin:0 0 24px;">
+  <p style="margin:0 0 8px;color:#4a5568;font-size:13px;font-weight:700;
+            text-transform:uppercase;letter-spacing:1px;">Asunto</p>
+  <p style="margin:0 0 16px;color:#2C405B;font-size:15px;font-weight:600;">${safeSubject}</p>
+  <p style="margin:0 0 8px;color:#4a5568;font-size:13px;font-weight:700;
+            text-transform:uppercase;letter-spacing:1px;">Respuesta</p>
+  <p style="margin:0;color:#4a5568;font-size:15px;line-height:1.7;">${safeMessage}</p>
+</div>
+<div style="text-align:center;margin:28px 0;">
+  <a href="${appUrl}/soporte.html"
+     style="background:#2C405B;color:#fff;text-decoration:none;padding:14px 32px;
+            border-radius:30px;font-weight:700;font-size:15px;display:inline-block;">
+    Ver mi ticket →
+  </a>
+</div>
+<p style="margin:0;color:#a0aec0;font-size:13px;">
+  Si ya resolviste tu duda, puedes cerrar el ticket desde la plataforma.
+</p>`;
+    return sendEmail({
+        to:      toEmail,
+        subject: `Too Easy Soporte: Respuesta a tu ticket "${ticketSubject.substring(0, 60)}"`,
+        html:    baseTemplate('Respuesta de Soporte', content),
+    });
+}
+
 // ── Email: bienvenida (post-verificación) ─────────────────────────────────────
 export async function sendWelcomeEmail(toEmail, userName) {
     const safeName = escapeHtml(userName);

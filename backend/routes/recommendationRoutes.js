@@ -1,8 +1,15 @@
 import { Router } from 'express';
-import { getRecommendations } from '../controllers/recommendationController.js';
+import {
+    getRecommendations,
+    markRecommendationsRead,
+    getRecommendationsReadState
+} from '../controllers/recommendationController.js';
 
 const router = Router();
 
-router.get('/recommendations/:userId', getRecommendations);
+// Rutas estáticas primero para evitar conflicto con el parámetro :userId
+router.get('/recommendations/read-state',  getRecommendationsReadState);
+router.post('/recommendations/mark-read',  markRecommendationsRead);
+router.get('/recommendations/:userId',     getRecommendations);
 
 export default router;

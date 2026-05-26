@@ -12,7 +12,8 @@ import {
     getMacros, createMacro,
     serveTicketImage,
     trackFaqClick, getFaqStats,
-    getTicketQuota
+    getTicketQuota,
+    getUnreadCount
 } from '../controllers/ticketController.js';
 
 const router = Router();
@@ -22,6 +23,9 @@ router.get('/tickets/image/:filename',               serveTicketImage);
 
 // ── CUOTA DE TICKETS (sin middleware extra — valida internamente) ─────────────
 router.get('/tickets/quota',                         getTicketQuota);
+
+// ── NOTIFICACIONES NO LEÍDAS (sin middleware — valida userId internamente) ────
+router.get('/tickets/unread-count',                  getUnreadCount);
 
 // ── USUARIO ───────────────────────────────────────────────────────────────────
 // requireAuth ANTES de handleTicketUpload para no procesar archivos de usuarios no autenticados.

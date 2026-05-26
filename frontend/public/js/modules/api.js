@@ -498,6 +498,18 @@ export async function getMacros(userId) {
 }
 
 // ========================================
+// 8b. TICKETS — NOTIFICACIONES
+// ========================================
+export async function getTicketUnreadCount(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/tickets/unread-count?userId=${encodeURIComponent(userId)}`);
+        return await response.json();
+    } catch {
+        return { success: false, data: { count: 0 } };
+    }
+}
+
+// ========================================
 // 9. RECOMENDACIONES INTELIGENTES
 // ========================================
 export async function getRecommendations(userId, month, year) {
@@ -511,6 +523,30 @@ export async function getRecommendations(userId, month, year) {
     } catch (error) {
         console.error('Error obteniendo recomendaciones:', error);
         return { success: false, data: { recommendations: [], summary: {} } };
+    }
+}
+
+export async function getRecReadState(userId, month, year) {
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/recommendations/read-state?userId=${encodeURIComponent(userId)}&month=${month}&year=${year}`
+        );
+        return await response.json();
+    } catch {
+        return { success: false, data: { seen_count: 0 } };
+    }
+}
+
+export async function markRecRead(userId, month, year, count) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/recommendations/mark-read`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ userId, month, year, count })
+        });
+        return await response.json();
+    } catch {
+        return { success: false };
     }
 }
 

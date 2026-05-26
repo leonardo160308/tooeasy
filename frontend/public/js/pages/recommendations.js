@@ -1,5 +1,5 @@
 import { getAuthData } from '../modules/auth.js';
-import { getRecommendations } from '../modules/api.js';
+import { getRecommendations, getRecReadState, markRecRead } from '../modules/api.js';
 
 const TYPE_META = {
     danger:  { label: 'Alerta',          pill: 'Alerta' },
@@ -84,14 +84,19 @@ function showError(list) {
 
 let _recCount = 0;
 
-function getSeenKey(userId, month, year) { return `rec_seen_${userId}_${year}_${month}`; }
-
-function markAsRead(userId, month, year) {
-    localStorage.setItem(getSeenKey(userId, month, year), String(_recCount));
+async function persistMarkAsRead(userId, month, year) {
+    try {
+        await markRecRead(userId, month, year, _recCount);
+    } catch {}
 }
 
-function getSeenCount(userId, month, year) {
-    return parseInt(localStorage.getItem(getSeenKey(userId, month, year)) || '0', 10);
+async function fetchSeenCount(userId, month, year) {
+    try {
+        const res = await getRecReadState(userId, month, year);
+        return res?.success ? (res.data?.seen_count ?? 0) : 0;
+    } catch {
+        return 0;
+    }
 }
 
 async function loadAndRender(userId, month, year) {
@@ -126,7 +131,7 @@ async function loadAndRender(userId, month, year) {
 
         _recCount = recommendations.length;
 
-        const seen = getSeenCount(userId, month, year);
+        const seen = await fetchSeenCount(userId, month, year);
         if (_recCount !== seen) {
             badge.textContent = _recCount;
             badge.classList.remove('hidden');
@@ -154,7 +159,7 @@ function openPanel(userId) {
     document.getElementById('rec-panel').classList.add('open');
     document.documentElement.classList.add('rec-panel-open');
 
-    markAsRead(userId, _panelMonth, _panelYear);
+    persistMarkAsRead(userId, _panelMonth, _panelYear);
     const badge = document.getElementById('rec-badge');
     const fab   = document.getElementById('rec-fab');
     badge.classList.add('hidden');

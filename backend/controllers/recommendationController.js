@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase.js';
+import { supabase, supabaseAdmin } from '../config/supabase.js';
 import Movement from '../models/MovementModel.js';
 
 const HIGH_RISK = [
@@ -282,5 +282,51 @@ export const getRecommendations = async (req, res) => {
     } catch (err) {
         console.error('[Recommendations] Error:', err.message);
         res.status(500).json({ success: false, message: 'Error al generar recomendaciones.' });
+    }
+};
+
+// Guarda (upsert) el estado "visto" de las recomendaciones para un mes dado
+export const markRecommendationsRead = async (req, res) => {
+    try {
+        const { userId, month, year, count } = req.body;
+        if (!userId || !month || !year || count === undefined) {
+            return res.status(400).json({ success: false, message: 'Parámetros requeridos: userId, month, year, count.' });
+        }
+        const { error } = await supabaseAdmin
+            .from('recommendation_reads')
+            .upsert({
+                user_id:    userId,
+                month:      parseInt(month, 10),
+                year:       parseInt(year,  10),
+                seen_count: parseInt(count, 10),
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id,year,month' });
+        if (error) throw error;
+        res.json({ success: true });
+    } catch (err) {
+        console.error('[markRecommendationsRead] Error:', err.message);
+        res.status(500).json({ success: false, message: 'Error al guardar estado de lectura.' });
+    }
+};
+
+// Devuelve cuántas recomendaciones ya vio el usuario en un mes dado
+export const getRecommendationsReadState = async (req, res) => {
+    try {
+        const { userId, month, year } = req.query;
+        if (!userId || !month || !year) {
+            return res.status(400).json({ success: false, message: 'Parámetros requeridos: userId, month, year.' });
+        }
+        const { data, error } = await supabaseAdmin
+            .from('recommendation_reads')
+            .select('seen_count')
+            .eq('user_id', userId)
+            .eq('month', parseInt(month, 10))
+            .eq('year',  parseInt(year,  10))
+            .single();
+        if (error && error.code !== 'PGRST116') throw error;
+        res.json({ success: true, data: { seen_count: data?.seen_count ?? 0 } });
+    } catch (err) {
+        console.error('[getRecommendationsReadState] Error:', err.message);
+        res.status(500).json({ success: false, message: 'Error al obtener estado de lectura.' });
     }
 };

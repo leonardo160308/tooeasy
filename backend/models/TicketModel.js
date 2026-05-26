@@ -91,11 +91,35 @@ class TicketModel {
     static async getTicketsByUser(userId) {
         const { data, error } = await supabaseAdmin
             .from('support_tickets')
-            .select('id, subject, type, priority, status, module, created_at, updated_at')
+            .select('id, subject, type, priority, status, module, created_at, updated_at, user_unread_reply')
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
         if (error) throw error;
         return data || [];
+    }
+
+    static async getUnreadReplyCount(userId) {
+        const { count, error } = await supabaseAdmin
+            .from('support_tickets')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .eq('user_unread_reply', true);
+        if (error) throw error;
+        return count || 0;
+    }
+
+    static async markUserUnread(ticketId) {
+        await supabaseAdmin
+            .from('support_tickets')
+            .update({ user_unread_reply: true })
+            .eq('id', ticketId);
+    }
+
+    static async markUserRead(ticketId) {
+        await supabaseAdmin
+            .from('support_tickets')
+            .update({ user_unread_reply: false })
+            .eq('id', ticketId);
     }
 
     static async getAllTickets(filters = {}) {
