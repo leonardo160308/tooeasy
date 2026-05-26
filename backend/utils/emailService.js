@@ -191,6 +191,40 @@ export async function sendTicketReplyEmail(toEmail, userName, ticketSubject, rep
     });
 }
 
+// ── Email: ticket resuelto ────────────────────────────────────────────────────
+export async function sendTicketResolvedEmail(toEmail, userName, ticketSubject) {
+    const safeName    = escapeHtml(userName);
+    const safeSubject = escapeHtml(ticketSubject);
+    const appUrl      = process.env.FRONTEND_URL || 'https://tooeasy-8zct.onrender.com';
+    const content = `
+<p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
+  Hola, <strong style="color:#2C405B;">${safeName}</strong> 👋
+</p>
+<p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 24px;">
+  Tu ticket ha sido <strong style="color:#16a34a;">resuelto</strong> por nuestro equipo de soporte.
+</p>
+<div style="background:#f0fdf4;border-left:4px solid #16a34a;border-radius:8px;
+            padding:16px 24px;margin:0 0 24px;">
+  <p style="margin:0;color:#166534;font-size:15px;font-weight:600;">${safeSubject}</p>
+</div>
+<p style="color:#718096;font-size:14px;line-height:1.6;margin:0 0 24px;">
+  Si tu problema fue resuelto, puedes calificar la atención desde la plataforma.<br>
+  Si aún tienes dudas, puedes responder el ticket o abrir uno nuevo.
+</p>
+<div style="text-align:center;margin:28px 0;">
+  <a href="${appUrl}/soporte.html"
+     style="background:#16a34a;color:#fff;text-decoration:none;padding:14px 32px;
+            border-radius:30px;font-weight:700;font-size:15px;display:inline-block;">
+    Ver mi ticket →
+  </a>
+</div>`;
+    return sendEmail({
+        to:      toEmail,
+        subject: `Too Easy Soporte: Tu ticket ha sido resuelto`,
+        html:    baseTemplate('Ticket Resuelto', content, '#16a34a'),
+    });
+}
+
 // ── Email: bienvenida (post-verificación) ─────────────────────────────────────
 export async function sendWelcomeEmail(toEmail, userName) {
     const safeName = escapeHtml(userName);

@@ -3,7 +3,7 @@ import TicketModel              from '../models/TicketModel.js';
 import KbModel                  from '../models/KbModel.js';
 import User                     from '../models/UserModel.js';
 import { supabaseAdmin }        from '../config/supabase.js';
-import { sendTicketReplyEmail } from '../utils/emailService.js';
+import { sendTicketReplyEmail, sendTicketResolvedEmail } from '../utils/emailService.js';
 import path                     from 'path';
 import fs                       from 'fs';
 import { fileURLToPath }        from 'url';
@@ -405,6 +405,19 @@ export async function changeTicketStatus(req, res) {
         if (!ticket) return res.status(404).json({ success: false, message: 'Ticket no encontrado' });
 
         const updated = await TicketModel.updateTicketStatus(ticketId, status, userId);
+
+        // Notificar al usuario cuando su ticket queda resuelto
+        if (status === 'resolved') {
+            const ticketUser = ticket.ticket_user;
+            if (ticketUser?.email) {
+                sendTicketResolvedEmail(
+                    ticketUser.email,
+                    ticketUser.nombre || 'Usuario',
+                    ticket.subject
+                ).catch(err => console.error('[changeTicketStatus] Email error:', err.message));
+            }
+        }
+
         res.json({ success: true, data: updated });
     } catch (error) {
         console.error(error);
