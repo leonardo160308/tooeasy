@@ -669,10 +669,62 @@ input.invalid, textarea.invalid, select.invalid {
 /* ID overrides */
 #level-category-name { background: var(--paper); cursor: default; color: var(--ink-muted); }
 
+/* ── HAMBURGER BUTTON ── */
+#admin-menu-btn {
+    display: none;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    align-items: center; justify-content: center;
+    transition: background .2s;
+    flex-shrink: 0;
+}
+#admin-menu-btn:hover { background: rgba(255,255,255,.22); }
+
+/* ── SIDEBAR OVERLAY (fondo al abrir en móvil) ── */
+#admin-sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 199;
+    backdrop-filter: blur(2px);
+}
+#admin-sidebar-overlay.open { display: block; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
-    .admin-sidebar { display: none; }
-    .admin-main    { padding: 1.25rem 1rem; }
+    #admin-menu-btn { display: flex; }
+
+    .admin-sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        height: 100vh;
+        z-index: 200;
+        transform: translateX(-100%);
+        transition: transform .28s cubic-bezier(.4,0,.2,1);
+        box-shadow: 4px 0 24px rgba(0,0,0,.3);
+        overflow-y: auto;
+    }
+    .admin-sidebar.open { transform: translateX(0); }
+
+    .admin-main { padding: 1.25rem 1rem; }
+}
+
+@media (max-width: 600px) {
+    .admin-header { padding: 0 1rem; }
+    .category-grid { grid-template-columns: 1fr; }
+    .stat-chips { flex-direction: column; }
+    .items-grid { grid-template-columns: 1fr; }
+    .field-row  { grid-template-columns: 1fr; }
+    .modal-content { padding: 1.375rem; }
+    .modal-box     { padding: 1.375rem; }
+    .section-header { flex-direction: column; align-items: flex-start; }
+    .admin-tabs { flex-direction: column; }
+    .tab-btn { min-width: auto; }
 }
 
 @media (max-width: 600px) {

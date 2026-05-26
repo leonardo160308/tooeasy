@@ -1,6 +1,7 @@
 // frontend/public/js/pages/soporte-panel.js
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaExito, alertaError } from '../modules/alerts.js';
+import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
 import {
     getSupportTickets,
     getSupportTicketDetail,
@@ -633,4 +634,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadMacros();
     await loadFaqStats();
     startPolling();
+
+    // Tutorial guiado (se muestra solo la primera vez)
+    initOnboarding(userId, 'soporte-panel');
+
+    document.getElementById('btn-soporte-tutorial')?.addEventListener('click', () => {
+        restartOnboarding(userId, 'soporte-panel');
+    });
 });

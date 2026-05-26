@@ -15,12 +15,14 @@ const NAVBAR_H      = 70;
 
 // ─── Etiquetas de módulo ──────────────────────────────────────────────────────
 const MODULE_LABELS = {
-    dashboard:   'Panel de Finanzas',
-    inversiones: 'Inversiones',
-    retos:       'Retos',
-    lecciones:   'Lecciones',
-    perfil:      'Perfil',
-    soporte:     'Soporte'
+    dashboard:     'Panel de Finanzas',
+    inversiones:   'Inversiones',
+    retos:         'Retos',
+    lecciones:     'Lecciones',
+    perfil:        'Perfil',
+    soporte:       'Soporte',
+    admin:         'Panel de Administración',
+    'soporte-panel': 'Panel de Soporte'
 };
 
 // ─── Contenido del modal de bienvenida ───────────────────────────────────────
@@ -77,6 +79,24 @@ const MODULE_WELCOME = {
             'Crea tickets con categoría y descripción detallada',
             'Consulta el estado: Abierto, En revisión o Cerrado',
             'Revisa el FAQ antes de escribir — el 80% ya tiene respuesta'
+        ]
+    },
+    admin: {
+        title:   'Panel de Administración',
+        desc:    'Gestiona todo el contenido educativo de la plataforma: categorías, niveles, flashcards y preguntas.',
+        bullets: [
+            'Crea y edita categorías temáticas con hasta 10 slots disponibles',
+            'Agrega niveles, flashcards y preguntas de quiz por categoría',
+            'Monitorea el contenido activo y elimina lo que ya no sea necesario'
+        ]
+    },
+    'soporte-panel': {
+        title:   'Panel de Soporte',
+        desc:    'Gestiona los tickets de usuarios, asigna prioridades y mantén un flujo de atención claro.',
+        bullets: [
+            'Visualiza tickets por estado en el tablero Kanban',
+            'Toma tickets, responde y cambia estados con un clic',
+            'Consulta métricas de satisfacción y estadísticas de FAQ'
         ]
     }
 };
@@ -296,6 +316,116 @@ const MODULE_STEPS = {
             tip:      'Lo que aprendes en Lecciones se convierte en mejores decisiones financieras aquí en el Dashboard.',
             target:   '.header',
             position: 'bottom'
+        }
+    ],
+
+    admin: [
+        {
+            icon:     'fa-shield-alt',
+            title:    'Panel de Administración',
+            body:     'Bienvenido al panel de administración de TOO-EASY. Desde aquí gestionas todo el contenido educativo de la plataforma. Usa la barra lateral (o el menú hamburguesa en móvil) para navegar entre secciones.',
+            tip:      'Solo los usuarios con rol de administrador pueden acceder a este panel.',
+            target:   '.admin-sidebar',
+            position: 'right'
+        },
+        {
+            icon:     'fa-layer-group',
+            title:    'Gestión de Categorías',
+            body:     'Las categorías organizan el contenido de aprendizaje. Puedes crear hasta 10 categorías activas. Cada categoría define un rango de niveles y agrupa los temas de un área financiera específica.',
+            tip:      'Haz clic en el botón "+" para crear una nueva categoría. Puedes editarla o eliminarla en cualquier momento.',
+            target:   '#section-categories',
+            position: 'right'
+        },
+        {
+            icon:     'fa-graduation-cap',
+            title:    'Niveles por Categoría',
+            body:     'Cada categoría contiene niveles de dificultad progresiva. Los niveles definen el camino de aprendizaje del usuario dentro de esa categoría. Cada nivel puede tener flashcards y un quiz.',
+            tip:      'Los niveles se crean dentro de una categoría — primero crea la categoría, luego agrega sus niveles.',
+            target:   'button[data-section="levels"]',
+            position: 'right'
+        },
+        {
+            icon:     'fa-clone',
+            title:    'Flashcards de Estudio',
+            body:     'Las flashcards son tarjetas de estudio asociadas a un nivel. Cada una tiene una imagen, título y descripción. Los usuarios las ven antes del quiz del nivel para prepararse.',
+            tip:      'Filtra por nivel para ver y gestionar las flashcards de cada sección del contenido.',
+            target:   'button[data-section="flashcards"]',
+            position: 'right'
+        },
+        {
+            icon:     'fa-question-circle',
+            title:    'Preguntas del Quiz',
+            body:     'Las preguntas de opción múltiple son el núcleo de la evaluación. Cada nivel tiene su propio banco de preguntas. Puedes asignar hasta 4 opciones de respuesta e indicar cuál es la correcta.',
+            tip:      'Selecciona el nivel en el filtro para ver o añadir preguntas. La dificultad ayuda a ordenar el contenido.',
+            target:   'button[data-section="questions"]',
+            position: 'right'
+        },
+        {
+            icon:     'fa-tachometer-alt',
+            title:    'Estadísticas de Contenido',
+            body:     'Los chips en la sección de Categorías te muestran de un vistazo: cuántas categorías tienes activas, cuántos espacios quedan disponibles y el límite máximo de la plataforma.',
+            tip:      'Si alcanzas el límite de 10 categorías, elimina una antes de crear una nueva.',
+            target:   '#cat-stats-strip',
+            position: 'bottom'
+        }
+    ],
+
+    'soporte-panel': [
+        {
+            icon:     'fa-headset',
+            title:    'Panel de Soporte — Vista General',
+            body:     'Este es el tablero de gestión de tickets. El panel superior muestra estadísticas en tiempo real y el tablero Kanban organiza todos los tickets según su estado actual.',
+            tip:      'Usa el botón "Actualizar" para recargar los datos más recientes.',
+            target:   '.panel-toolbar',
+            position: 'bottom'
+        },
+        {
+            icon:     'fa-inbox',
+            title:    'Cola — Tickets sin Asignar',
+            body:     'Aquí aparecen los tickets nuevos que nadie ha tomado aún. Son solicitudes pendientes de ser atendidas. Haz clic en un ticket y presiona "Tomar" para asignártelo a ti mismo.',
+            tip:      'Atender los tickets de la cola lo antes posible mejora el tiempo de respuesta del equipo.',
+            target:   '#col-open',
+            position: 'right'
+        },
+        {
+            icon:     'fa-folder-open',
+            title:    'Abiertos — Tickets Asignados',
+            body:     'Los tickets que ya tienen un agente asignado aparecen aquí. Están esperando ser trabajados activamente. Cámbialos a "En Progreso" cuando comiences a investigar.',
+            tip:      'Un ticket "Abierto" con asignado significa que ya fue reclamado pero aún no hay avance activo.',
+            target:   '#col-assigned-open',
+            position: 'right'
+        },
+        {
+            icon:     'fa-spinner',
+            title:    'En Progreso — Trabajo Activo',
+            body:     'Tickets donde el agente está investigando o trabajando en la solución. El usuario sabe que su caso está siendo atendido. Cuando tengas una respuesta, cámbialo a "Esperando Usuario".',
+            tip:      'Este estado indica trabajo activo — úsalo cuando realmente estés investigando el ticket.',
+            target:   '#col-in-progress',
+            position: 'right'
+        },
+        {
+            icon:     'fa-clock',
+            title:    'Esperando Usuario — Respuesta Enviada',
+            body:     'Cuando respondes un ticket (o agregas un comentario), pasa automáticamente a este estado. El usuario recibe una notificación por email. Si el usuario responde, el ticket vuelve a "En Progreso".',
+            tip:      'El usuario recibe un correo automático cada vez que un ticket entra en este estado.',
+            target:   '#col-waiting',
+            position: 'left'
+        },
+        {
+            icon:     'fa-check-circle',
+            title:    'Resueltos — Pendiente de Cierre',
+            body:     'Tickets marcados como resueltos. El usuario puede calificar la atención con estrellas (CSAT). Si el usuario no cierra el ticket en un tiempo razonable, puedes cerrarlo tú manualmente.',
+            tip:      'La calificación CSAT (1–5 estrellas) del usuario se muestra en el panel de detalle del ticket.',
+            target:   '#col-resolved',
+            position: 'left'
+        },
+        {
+            icon:     'fa-reply',
+            title:    'Panel de Detalle y Respuesta',
+            body:     'Al hacer clic en cualquier ticket, el panel derecho muestra todo su historial: descripción original, mensajes, eventos y la sección de respuesta. Puedes responder públicamente o agregar una nota interna.',
+            tip:      'Las notas internas (pestaña amarilla) solo las ve el equipo de soporte, nunca el usuario.',
+            target:   '.detail-panel',
+            position: 'left'
         }
     ],
 

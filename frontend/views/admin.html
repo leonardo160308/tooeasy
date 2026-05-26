@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../public/css/footer.css">
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/admin.css">
+    <link rel="stylesheet" href="../public/css/onboarding.css">
     <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
 
 </head>
@@ -18,6 +19,9 @@
 
 <!-- ── HEADER ── -->
 <header class="header">
+    <button id="admin-menu-btn" title="Abrir menú" aria-label="Abrir menú de administración">
+        <i class="fas fa-bars"></i>
+    </button>
     <div class="logo">
         <h1>TOO-EASY</h1>
         <p>JUEGA HOY, TRIUNFA MAÑANA</p>
@@ -33,6 +37,8 @@
         </a>
     </nav>
 </header>
+<!-- Overlay para cerrar sidebar en móvil -->
+<div id="admin-sidebar-overlay"></div>
 
 <script type="module" src="/public/js/modules/nav-init.js"></script>
 
@@ -47,6 +53,8 @@
         <button class="nav-btn" data-section="levels"><i class="fas fa-graduation-cap"></i> Niveles</button>
         <button class="nav-btn" data-section="flashcards"><i class="fas fa-clone"></i> Flashcards</button>
         <button class="nav-btn" data-section="questions"><i class="fas fa-question-circle"></i> Preguntas</button>
+        <div class="sidebar-section-label" style="margin-top:auto;padding-top:24px;">Ayuda</div>
+        <button class="nav-btn" id="btn-admin-tutorial"><i class="fas fa-graduation-cap"></i> Tutorial</button>
     </nav>
 
     <!-- ── MAIN ── -->

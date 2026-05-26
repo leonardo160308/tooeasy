@@ -225,6 +225,84 @@ export async function sendTicketResolvedEmail(toEmail, userName, ticketSubject) 
     });
 }
 
+// ── Email: cambio de estado de ticket ────────────────────────────────────────
+const STATUS_INFO = {
+    open: {
+        label:      'En Cola',
+        desc:       'Tu ticket ha sido recibido y está en la cola de atención. Nuestro equipo lo tomará pronto.',
+        accentColor:'#3498db',
+        icon:       '📥',
+    },
+    in_progress: {
+        label:      'En Progreso',
+        desc:       'Un agente de soporte está trabajando activamente en tu solicitud en este momento.',
+        accentColor:'#e67e22',
+        icon:       '⚙️',
+    },
+    waiting_user: {
+        label:      'Esperando tu Respuesta',
+        desc:       'Hemos respondido tu ticket. Por favor revisa nuestra respuesta y escríbenos si necesitas algo más.',
+        accentColor:'#f39c12',
+        icon:       '⏳',
+    },
+    resolved: {
+        label:      'Resuelto',
+        desc:       'Tu ticket ha sido marcado como resuelto. Puedes calificar la atención o reabrir el ticket si el problema persiste.',
+        accentColor:'#27ae60',
+        icon:       '✅',
+    },
+    closed: {
+        label:      'Cerrado',
+        desc:       'Tu ticket ha sido cerrado y archivado. Si tienes una nueva duda, puedes abrir un nuevo ticket en cualquier momento.',
+        accentColor:'#95a5a6',
+        icon:       '🔒',
+    },
+};
+
+export async function sendTicketStatusChangeEmail(toEmail, userName, ticketSubject, newStatus) {
+    const safeName    = escapeHtml(userName);
+    const safeSubject = escapeHtml(ticketSubject);
+    const appUrl      = process.env.FRONTEND_URL || 'https://tooeasy-8zct.onrender.com';
+    const info        = STATUS_INFO[newStatus] || {
+        label:      newStatus,
+        desc:       'El estado de tu ticket ha cambiado.',
+        accentColor:'#2C405B',
+        icon:       '📋',
+    };
+
+    const content = `
+<p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
+  Hola, <strong style="color:#2C405B;">${safeName}</strong> 👋
+</p>
+<p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 20px;">
+  Tu ticket ha cambiado de estado. Aquí tienes el resumen:
+</p>
+<div style="background:#f0f4f8;border-radius:14px;padding:22px 28px;margin:0 0 24px;">
+  <p style="margin:0 0 6px;color:#718096;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Asunto del ticket</p>
+  <p style="margin:0 0 18px;color:#2C405B;font-size:15px;font-weight:600;">${safeSubject}</p>
+  <p style="margin:0 0 6px;color:#718096;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Nuevo estado</p>
+  <p style="margin:0 0 4px;font-size:18px;font-weight:800;color:${info.accentColor};">
+    ${info.icon} ${info.label}
+  </p>
+</div>
+<div style="background:#fff8f0;border-left:4px solid ${info.accentColor};border-radius:8px;padding:16px 20px;margin:0 0 24px;">
+  <p style="margin:0;color:#4a5568;font-size:14px;line-height:1.7;">${info.desc}</p>
+</div>
+<div style="text-align:center;margin:28px 0;">
+  <a href="${appUrl}/soporte.html"
+     style="background:${info.accentColor};color:#fff;text-decoration:none;padding:14px 32px;
+            border-radius:30px;font-weight:700;font-size:15px;display:inline-block;">
+    Ver mi ticket →
+  </a>
+</div>`;
+
+    return sendEmail({
+        to:      toEmail,
+        subject: `Too Easy Soporte: Tu ticket está "${info.label}"`,
+        html:    baseTemplate(`Estado del ticket: ${info.label}`, content, info.accentColor),
+    });
+}
+
 // ── Email: bienvenida (post-verificación) ─────────────────────────────────────
 export async function sendWelcomeEmail(toEmail, userName) {
     const safeName = escapeHtml(userName);

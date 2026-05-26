@@ -1,5 +1,6 @@
 ﻿import { protectRoute, getAuthData, isAdmin } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
+import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
 
 const API = '/api';
 const MAX_CATS = 10;
@@ -62,11 +63,34 @@ document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
         btn.classList.add('active');
         document.getElementById(`section-${btn.dataset.section}`).classList.add('active');
         if (btn.dataset.section === 'levels') {
-            // Reload fresh data when switching to levels tab
             loadAll().then(() => renderCategoryLevelsPage());
         }
+        closeMobileSidebar();
     });
 });
+
+// ── Hamburger menu (móvil) ─────────────────────────────────────────────
+const adminSidebar  = document.querySelector('.admin-sidebar');
+const menuBtn       = document.getElementById('admin-menu-btn');
+const sidebarOverlay = document.getElementById('admin-sidebar-overlay');
+
+function openMobileSidebar() {
+    adminSidebar?.classList.add('open');
+    sidebarOverlay?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeMobileSidebar() {
+    adminSidebar?.classList.remove('open');
+    sidebarOverlay?.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+menuBtn?.addEventListener('click', () => {
+    adminSidebar?.classList.contains('open') ? closeMobileSidebar() : openMobileSidebar();
+});
+
+sidebarOverlay?.addEventListener('click', closeMobileSidebar);
 
 // ── Validation helpers ─────────────────────────────────────────────────
 function showErr(id, msg) {
@@ -836,4 +860,11 @@ document.querySelectorAll('.modal').forEach(m => {
 (async () => {
     await loadAll();
     renderCategories();
+    // Tutorial guiado (se muestra solo la primera vez)
+    initOnboarding(userId, 'admin');
 })();
+
+// ── Tutorial button ────────────────────────────────────────────────────
+document.getElementById('btn-admin-tutorial')?.addEventListener('click', () => {
+    restartOnboarding(userId, 'admin');
+});
