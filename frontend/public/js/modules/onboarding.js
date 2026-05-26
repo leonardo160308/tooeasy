@@ -157,6 +157,14 @@ const MODULE_STEPS = {
             title:    'Interpreta tus Resultados',
             body:     'Cada simulación entrega: valor esperado (P50), escenario optimista (P90) y pesimista (P10), Sharpe Ratio, VaR 95% y probabilidad de ganancia. Úsalos para tomar decisiones de inversión fundamentadas.',
             tip:      'Un Sharpe Ratio mayor a 1.0 indica que el retorno obtenido justifica el nivel de riesgo asumido.',
+            target:   '#section-inicio .inv-card',
+            position: 'top'
+        },
+        {
+            icon:     'fa-compass',
+            title:    'Explora Todo el Ecosistema',
+            body:     'Desde la barra superior accedes a Inversiones para simular portafolios, Retos para ganar recursos, Lecciones para aprender finanzas y tu Perfil para personalizar toda tu experiencia.',
+            tip:      'Lo que aprendes en Lecciones se convierte en mejores decisiones financieras aquí en el Dashboard.',
             target:   '.header',
             position: 'bottom'
         }
@@ -192,6 +200,14 @@ const MODULE_STEPS = {
             title:    'Conectado con el Dashboard',
             body:     'Los retos detectan automáticamente tus movimientos registrados en el Dashboard. Sin registros activos, el progreso no avanza. Ingresa tus ingresos y gastos a diario para completar los retos más rápido.',
             tip:      'Registra un movimiento hoy en el Dashboard y regresa aquí para ver cómo avanza tu progreso.',
+            target:   '.challenges-list-container',
+            position: 'right'
+        },
+        {
+            icon:     'fa-compass',
+            title:    'Explora Todo el Ecosistema',
+            body:     'Desde la barra superior accedes a Inversiones para simular portafolios, Retos para ganar recursos, Lecciones para aprender finanzas y tu Perfil para personalizar toda tu experiencia.',
+            tip:      'Lo que aprendes en Lecciones se convierte en mejores decisiones financieras aquí en el Dashboard.',
             target:   '.header',
             position: 'bottom'
         }
@@ -221,6 +237,14 @@ const MODULE_STEPS = {
             tip:      'Las Monedas que acumulas aquí se usan en el Perfil para entrenar a tu Castor hasta nivel 10.',
             target:   '.tarjetas',
             position: 'top'
+        },
+        {
+            icon:     'fa-compass',
+            title:    'Explora Todo el Ecosistema',
+            body:     'Desde la barra superior accedes a Inversiones para simular portafolios, Retos para ganar recursos, Lecciones para aprender finanzas y tu Perfil para personalizar toda tu experiencia.',
+            tip:      'Lo que aprendes en Lecciones se convierte en mejores decisiones financieras aquí en el Dashboard.',
+            target:   '.header',
+            position: 'bottom'
         }
     ],
 
@@ -264,6 +288,14 @@ const MODULE_STEPS = {
             tip:      'Sigue completando Lecciones y Retos para desbloquear más skins y hacer tuya esta escena.',
             target:   '.profile-visual-zone',
             position: 'left'
+        },
+        {
+            icon:     'fa-compass',
+            title:    'Explora Todo el Ecosistema',
+            body:     'Desde la barra superior accedes a Inversiones para simular portafolios, Retos para ganar recursos, Lecciones para aprender finanzas y tu Perfil para personalizar toda tu experiencia.',
+            tip:      'Lo que aprendes en Lecciones se convierte en mejores decisiones financieras aquí en el Dashboard.',
+            target:   '.header',
+            position: 'bottom'
         }
     ],
 
@@ -297,6 +329,14 @@ const MODULE_STEPS = {
             title:    'Preguntas Frecuentes',
             body:     'Antes de crear un ticket, revisa el FAQ del módulo de soporte. El 80% de las consultas más comunes ya tienen respuesta detallada ahí y puedes resolverlas en segundos sin necesidad de esperar.',
             tip:      'Si no encuentras tu respuesta en el FAQ, crea un ticket y el equipo te atenderá pronto.',
+            target:   '#faq-card',
+            position: 'left'
+        },
+        {
+            icon:     'fa-compass',
+            title:    'Explora Todo el Ecosistema',
+            body:     'Desde la barra superior accedes a Inversiones para simular portafolios, Retos para ganar recursos, Lecciones para aprender finanzas y tu Perfil para personalizar toda tu experiencia.',
+            tip:      'Lo que aprendes en Lecciones se convierte en mejores decisiones financieras aquí en el Dashboard.',
             target:   '.header',
             position: 'bottom'
         }

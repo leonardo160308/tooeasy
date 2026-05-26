@@ -968,14 +968,68 @@ button:disabled {
    RESPONSIVE
 ══════════════════════════════════════════ */
 @media (max-width: 960px) {
+    /* Sidebar → barra de tabs horizontal scrollable */
+    .inv-layout {
+        flex-direction: column;
+    }
+
     .inv-sidebar {
-        display: none;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        min-height: 0;
+        position: sticky;
+        top: 70px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 8px 12px;
+        gap: 6px;
+        background: linear-gradient(90deg, #1a2738 0%, #2C405B 100%);
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+        z-index: 999;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .inv-sidebar::-webkit-scrollbar { display: none; }
+
+    .sidebar-logo { display: none; }
+
+    .nav-item {
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding: 7px 16px;
+        font-size: 0.82rem;
+        border-radius: 20px;
+        width: auto;
+        min-width: 0;
+        margin-bottom: 0;
+        border: 1px solid transparent;
+    }
+
+    .nav-item.active {
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        border-color: rgba(255,255,255,0.25);
     }
 
     .inv-main {
         padding: 20px 18px;
         height: auto;
     }
+}
+
+@media (max-width: 900px) {
+    /* Ajustar top del sidebar al cambio de altura del header */
+    .inv-sidebar { top: 60px; }
+}
+
+@media (max-width: 600px) {
+    .inv-sidebar { top: 56px; }
 }
 
 @media (max-width: 700px) {

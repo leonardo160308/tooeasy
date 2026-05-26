@@ -1067,6 +1067,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('btn-paso3-ant')?.addEventListener('click', () => irAPaso(2));
     $('btn-guardar')?.addEventListener('click', guardarSimulacion);
     $('btn-nueva-sim')?.addEventListener('click', () => { resetSimulationState(); navegarA('nueva'); irAPaso(1); });
+    $('btn-nueva-desde-resultado')?.addEventListener('click', () => { resetSimulationState(); navegarA('nueva'); irAPaso(1); });
     $('btn-comparar-sel')?.addEventListener('click', iniciarComparacion);
     $('cfg-num')?.addEventListener('change', () => { state.config.numInversiones = parseInt($('cfg-num').value, 10) || 1; });
 
