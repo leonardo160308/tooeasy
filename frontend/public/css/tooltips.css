@@ -331,20 +331,21 @@
 @media (max-width: 600px) {
     .tooltip-icon::before {
         width:     min(200px, calc(100vw - 32px));
-        left:      0;
+        left:      var(--tt-mobile-x, 0px);
         transform: translateX(0) translateY(6px);
     }
     .tooltip-icon:hover::before,
     .tooltip-icon.tt-touch::before {
         transform: translateX(0) translateY(0);
     }
-    .tooltip-icon::after { left: 8px; }
+    /* Flecha centrada sobre el icono (JS actualiza --tt-arrow-x) */
+    .tooltip-icon::after { left: var(--tt-arrow-x, 8px); }
 
-    /* tt-right en móvil: se convierte en tooltip abajo alineado a la izquierda */
+    /* tt-right en móvil: se convierte en tooltip abajo */
     .tooltip-icon.tt-right::before {
         bottom:    auto;
         top:       calc(100% + 10px);
-        left:      0;
+        left:      var(--tt-mobile-x, 0px);
         right:     auto;
         transform: translateX(0) translateY(-6px);
         width:     min(200px, calc(100vw - 32px));
@@ -352,7 +353,7 @@
     .tooltip-icon.tt-right::after {
         bottom:             auto;
         top:                calc(100% + 4px);
-        left:               8px;
+        left:               var(--tt-arrow-x, 8px);
         border-top-color:   transparent;
         border-right-color: transparent;
         border-bottom-color: var(--tt-bg);
@@ -366,7 +367,7 @@
     .tooltip-icon.tt-left::before {
         bottom:    auto;
         top:       calc(100% + 10px);
-        left:      0;
+        left:      var(--tt-mobile-x, 0px);
         right:     auto;
         transform: translateX(0) translateY(-6px);
         width:     min(200px, calc(100vw - 32px));
@@ -374,7 +375,7 @@
     .tooltip-icon.tt-left::after {
         bottom:            auto;
         top:               calc(100% + 4px);
-        left:              8px;
+        left:              var(--tt-arrow-x, 8px);
         right:             auto;
         border-top-color:  transparent;
         border-left-color: transparent;

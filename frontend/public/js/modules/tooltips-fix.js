@@ -114,6 +114,7 @@
             activeTouchIcon = null;
         } else {
             fixPosition(icon);
+            fixMobileX(icon);
             icon.classList.add('tt-touch');
             activeTouchIcon = icon;
         }
@@ -127,12 +128,37 @@
         }
     }
 
+    // ── Corrección horizontal en móvil (evita que el tooltip salga del viewport) ──
+    function fixMobileX(icon) {
+        if (window.innerWidth > 600) {
+            icon.style.removeProperty('--tt-mobile-x');
+            icon.style.removeProperty('--tt-arrow-x');
+            return;
+        }
+        const rect = icon.getBoundingClientRect();
+        const vw   = window.innerWidth;
+        const ttW  = Math.min(200, vw - 32);
+
+        // left: 0 en CSS alinea el borde izquierdo del tooltip con el borde
+        // izquierdo del icono (posición rect.left en viewport).
+        // Queremos que el tooltip quede dentro de [8px, vw-8px].
+        const minLeft = 8 - rect.left;                    // evita salir por la izquierda
+        const maxLeft = (vw - 8 - ttW) - rect.left;       // evita salir por la derecha
+        const clamped = Math.max(minLeft, Math.min(0, maxLeft));
+
+        // La flecha debe apuntar al centro del icono, independiente del desplazamiento
+        const arrowX = rect.width / 2 - clamped;
+
+        icon.style.setProperty('--tt-mobile-x', `${Math.round(clamped)}px`);
+        icon.style.setProperty('--tt-arrow-x',  `${Math.round(arrowX)}px`);
+    }
+
     // ── Init ─────────────────────────────────────────────────────────────────
     function init() {
         const icons = document.querySelectorAll('.tooltip-icon[data-tooltip]');
 
         icons.forEach(icon => {
-            icon.addEventListener('mouseenter', () => fixPosition(icon));
+            icon.addEventListener('mouseenter', () => { fixPosition(icon); fixMobileX(icon); });
             icon.addEventListener('mouseleave', () => restoreClass(icon));
             icon.addEventListener('touchstart', onTouchStart, { passive: true });
         });
