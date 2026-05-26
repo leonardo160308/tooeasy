@@ -665,8 +665,7 @@ function openQuestionModal(qId = null, preLevel = null) {
     const optContainer = document.getElementById('options-container');
     optContainer.innerHTML = `
         <div class="option-row"><input type="text" class="option-input" data-key="A" placeholder="Opción A" required></div>
-        <div class="option-row"><input type="text" class="option-input" data-key="B" placeholder="Opción B" required></div>
-        <div class="option-row"><input type="text" class="option-input" data-key="C" placeholder="Opción C" required></div>`;
+        <div class="option-row"><input type="text" class="option-input" data-key="B" placeholder="Opción B" required></div>`;
 
     if (qId) {
         const q = questions.find(x => String(x.id) === String(qId));
@@ -689,7 +688,7 @@ function openQuestionModal(qId = null, preLevel = null) {
             const row = document.createElement('div');
             row.className = 'option-row';
             row.innerHTML = `<input type="text" class="option-input" data-key="${key}" placeholder="Opción ${key}" value="${escHtml(q.opciones[key])}" required>
-                ${idx >= 3 ? '<button type="button" class="btn-remove-option">&times;</button>' : ''}`;
+                ${idx >= 2 ? '<button type="button" class="btn-remove-option">&times;</button>' : ''}`;
             optContainer.appendChild(row);
         });
 
@@ -722,7 +721,7 @@ document.getElementById('btn-add-option').addEventListener('click', () => {
     const row = document.createElement('div');
     row.className = 'option-row';
     row.innerHTML = `<input type="text" class="option-input" data-key="${nextKey}" placeholder="Opción ${nextKey}" required>
-        <button type="button" class="btn-remove-option">&times;</button>`;
+        <button type="button" class="btn-remove-option" aria-label="Eliminar opción">&times;</button>`;
     cnt.appendChild(row);
     attachRemoveOptionEvents();
     updateCorrectaOptions('');
@@ -732,7 +731,7 @@ function attachRemoveOptionEvents() {
     document.querySelectorAll('.btn-remove-option').forEach(btn => {
         btn.onclick = () => {
             const cnt = document.getElementById('options-container');
-            if (cnt.children.length <= 3) { alertaAdvertencia('Mínimo 3 opciones'); return; }
+            if (cnt.children.length <= 2) { alertaAdvertencia('Mínimo 2 opciones'); return; }
             btn.closest('.option-row').remove();
             updateCorrectaOptions('');
         };
@@ -756,7 +755,7 @@ formQuestion.addEventListener('submit', async e => {
     let valid = true;
     if (!levelId)  { markInvalid('question-level','err-q-level','Selecciona un nivel'); valid = false; }
     if (!pregunta) { markInvalid('question-pregunta','err-q-pregunta','La pregunta es obligatoria'); valid = false; }
-    if (Object.keys(opciones).length < 3) { showErr('err-q-opciones','Necesitas al menos 3 opciones'); valid = false; }
+    if (Object.keys(opciones).length < 2) { showErr('err-q-opciones','Necesitas al menos 2 opciones'); valid = false; }
     if (!correcta) { markInvalid('question-correcta','err-q-correcta','Selecciona la respuesta correcta'); valid = false; }
     if (correcta && !opciones[correcta]) { showErr('err-q-correcta','La respuesta correcta no coincide con ninguna opción'); valid = false; }
     if (!valid) return;

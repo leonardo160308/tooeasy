@@ -314,6 +314,15 @@
 }
 
 /* ─────────────────────────────────────────
+   PORTAL OVERRIDE
+   tooltips-fix.js renders via a body-level
+   portal (position:fixed) — suppress the CSS
+   pseudo-element bubbles to avoid duplicates.
+   ───────────────────────────────────────── */
+.tooltip-icon::before,
+.tooltip-icon::after { display: none !important; }
+
+/* ─────────────────────────────────────────
    RESPONSIVE — ≤ 600px (móvil)
    ───────────────────────────────────────── */
 @media (max-width: 600px) {

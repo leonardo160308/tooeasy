@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sessionUser = getAuthData();
 
     const urlParams   = new URLSearchParams(window.location.search);
-    const nivelActual = parseInt(urlParams.get('level')) || 1;  // educational_levels.id
+    const nivelActual = parseInt(urlParams.get('level')) || 1;  // educational_levels.id (used for API calls)
+    const levelNum    = parseInt(urlParams.get('levelNum')) || nivelActual; // sequential display number
 
     let preguntas = [];
 
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalFinal    = document.getElementById('modal-final');
     const modalBody     = document.getElementById('modal-body');
 
-    if (nivelLabel)    nivelLabel.textContent    = nivelActual;
+    if (nivelLabel)    nivelLabel.textContent    = levelNum;
     if (totalLbl)      totalLbl.textContent      = preguntas.length;
     if (contadorLabel) contadorLabel.textContent = `1 / ${preguntas.length}`;
 

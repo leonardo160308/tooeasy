@@ -567,12 +567,25 @@ input.invalid, textarea.invalid, select.invalid {
 .option-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
 .option-input { flex: 1; margin-bottom: 0 !important; }
 .btn-remove-option {
-    background: var(--red); color: #fff; border: none;
-    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
-    font-size: 1rem; display: flex; align-items: center; justify-content: center;
-    transition: all .2s; flex-shrink: 0; font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+    font-family: inherit;
+    transition: filter .2s, transform .2s;
 }
-.btn-remove-option:hover { filter: brightness(1.1); transform: scale(1.1); }
+.btn-remove-option:hover { filter: brightness(1.12); transform: scale(1.08); }
 .btn-add-option { margin-bottom: 14px; }
 
 /* ── IMAGE SELECTOR ── */
