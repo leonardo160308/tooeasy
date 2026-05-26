@@ -42,16 +42,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const DB_CASTORES = {
-        "castor_default": "../public/img/mapacheBase.png",
-        "castor_1":       "../public/img/mapacheN1.png",
+        "castor_default": "../public/img/castorBase.png",
+        "castor_1":       "../public/img/castorN1.png",
         "castor_2":       "../public/img/CASTOR_N2.png",
         "castor_3":       "../public/img/CASTOR_N3.png",
-        "castor_4":       "../public/img/mapacheN2.png",
-        "castor_5":       "../public/img/CASTOR_N4.png",
-        "castor_6":       "../public/img/CASTOR_N7.png",
+        "castor_4":       "../public/img/castorN3.png",
+        "castor_5":       "../public/img/CASTOR_N6.png",
+        "castor_6":       "../public/img/castorN7.png",
         "castor_7":       "../public/img/CASTOR_N5.png",
-        "castor_8":       "../public/img/mapacheN4.png",
-        "castor_9":       "../public/img/mapacheN5.png",
+        "castor_8":       "../public/img/castorN4.png",
+        "castor_9":       "../public/img/castorN5.png",
     };
 
     const CASTOR_NAMES = {

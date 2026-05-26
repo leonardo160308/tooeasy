@@ -46,12 +46,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!challengesContainer) return;
         challengesContainer.innerHTML = '';
 
-        // Completados al fondo, activos arriba
-        const sorted = [...challengesData].sort((a, b) => {
-            const aComp = completedChallengesIds.includes(a.id) ? 1 : 0;
-            const bComp = completedChallengesIds.includes(b.id) ? 1 : 0;
-            return aComp - bComp;
-        });
+        // 0=reclamables arriba, 1=en progreso, 2=ya reclamados abajo
+        const priority = (ch) => {
+            if (completedChallengesIds.includes(ch.id)) return 2;
+            const pct = (challengeProgress[ch.id] || {}).percentage || 0;
+            return pct >= 100 ? 0 : 1;
+        };
+        const sorted = [...challengesData].sort((a, b) => priority(a) - priority(b));
 
         sorted.forEach(challenge => {
             const isCompleted = completedChallengesIds.includes(challenge.id);

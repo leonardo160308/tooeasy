@@ -274,7 +274,7 @@ export async function createQuestion(req, res) {
         const { levelId, pregunta, opciones, correcta, dificultad, imagen } = req.body;
         if (!levelId || !pregunta || !opciones || !correcta) return res.status(400).json({ success: false, message: 'Faltan campos obligatorios' });
         const numOpciones = Object.keys(opciones).length;
-        if (numOpciones < 3 || numOpciones > 5) return res.status(400).json({ success: false, message: 'Debes tener entre 3 y 5 opciones' });
+        if (numOpciones < 2 || numOpciones > 5) return res.status(400).json({ success: false, message: 'Debes tener entre 2 y 5 opciones' });
         if (!opciones[correcta]) return res.status(400).json({ success: false, message: 'La opción correcta no existe en las opciones' });
 
         const [okLevel, okTotal] = await Promise.all([
@@ -298,7 +298,7 @@ export async function updateQuestion(req, res) {
         const { pregunta, opciones, correcta, dificultad, imagen } = req.body;
         if (!pregunta || !opciones || !correcta) return res.status(400).json({ success: false, message: 'Pregunta, opciones y correcta son obligatorios' });
         const numOpciones = Object.keys(opciones).length;
-        if (numOpciones < 3 || numOpciones > 5) return res.status(400).json({ success: false, message: 'Debes tener entre 3 y 5 opciones' });
+        if (numOpciones < 2 || numOpciones > 5) return res.status(400).json({ success: false, message: 'Debes tener entre 2 y 5 opciones' });
         if (!opciones[correcta]) return res.status(400).json({ success: false, message: 'La opción correcta no existe' });
         const updated = await AdminModel.updateQuestion(id, pregunta, opciones, correcta, dificultad, imagen);
         res.json({ success: true, data: updated });
