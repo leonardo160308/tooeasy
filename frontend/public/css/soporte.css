@@ -26,12 +26,13 @@
     --priority-urgent: #9b2335;
 }
 
-html {
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
     overflow-x: hidden;
     max-width: 100%;
+    width: 100%;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background: var(--bg-page);
@@ -40,16 +41,13 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    max-width: 100%;
-    width: 100%;
 }
 
 main {
     flex: 1;
     overflow-x: hidden;
-    max-width: 100%;
     width: 100%;
+    min-width: 0;
 }
 
 /* ── HERO ──────────────────────────────────────────────────────────────────── */
@@ -59,8 +57,11 @@ main {
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    width: 100%;
     max-width: 100%;
+    min-width: 0;
     overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .soporte-hero h2 {
@@ -73,24 +74,36 @@ main {
     color: #4a5568;
     font-size: 0.95rem;
     max-width: 500px;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* ── LAYOUT ──────────────────────────────────────────────────────────────────*/
 .soporte-layout {
     display: grid;
-    grid-template-columns: minmax(280px, 380px) 1fr;
+    grid-template-columns: minmax(0, 380px) 1fr;
     gap: 24px;
     padding: 32px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
     overflow-x: hidden;
     box-sizing: border-box;
 }
 
+/* Todos los hijos del grid no pueden desbordarse */
+.soporte-layout > * {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 @media (max-width: 900px) {
-    .soporte-layout { grid-template-columns: 1fr; padding: 20px; }
+    .soporte-layout {
+        grid-template-columns: 1fr;
+        padding: 16px;
+        gap: 16px;
+    }
 }
 
 /* ── CARD BASE ───────────────────────────────────────────────────────────────*/
@@ -235,6 +248,9 @@ main {
     font-size: 0.9rem;
     flex: 1;
     line-height: 1.3;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 
 .ticket-card-meta {
@@ -307,6 +323,8 @@ main {
     color: var(--text-main);
     padding: 0 20px 12px;
     margin-top: 16px;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .detail-description {
@@ -315,6 +333,8 @@ main {
     font-size: 0.9rem;
     border-bottom: 1px solid var(--border);
     line-height: 1.6;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* ── MESSAGES ────────────────────────────────────────────────────────────────*/
@@ -334,6 +354,9 @@ main {
     font-size: 0.88rem;
     line-height: 1.5;
     position: relative;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 
 .message-bubble.from-user {
@@ -905,6 +928,8 @@ main {
     line-height: 1.65;
     background: #fdf8f1;
     animation: faqOpen 0.18s ease;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 @keyframes faqOpen {
@@ -1047,24 +1072,16 @@ main {
 
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────────*/
 @media (max-width: 768px) {
-    .soporte-layout {
-        grid-template-columns: 1fr;
-        padding: 16px;
-        gap: 16px;
-        overflow-x: hidden;
-    }
-
     .soporte-hero {
         flex-direction: column;
         text-align: center;
-        padding: 24px 16px;
-        overflow-x: hidden;
+        padding: 20px 16px;
     }
 
     .soporte-hero h2 {
         font-size: 1.4rem;
-        overflow-wrap: break-word;
         word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .soporte-hero p {
@@ -1090,17 +1107,14 @@ main {
 
     .form-row { grid-template-columns: 1fr; }
 
-    .message-bubble { max-width: 90%; }
+    .message-bubble { max-width: 88%; }
 
-    /* Reply section: apila el textarea y los botones en móvil */
     .reply-section {
         flex-direction: column;
         gap: 12px;
     }
 
-    .reply-section textarea {
-        max-height: 100px;
-    }
+    .reply-section textarea { max-height: 100px; }
 
     .reply-actions {
         flex-direction: row;
@@ -1119,7 +1133,6 @@ main {
         white-space: nowrap;
     }
 
-    /* Tickets grid: fuerza columna única en pantallas pequeñas */
     .tickets-grid {
         grid-template-columns: 1fr;
         padding: 12px;
@@ -1128,19 +1141,8 @@ main {
 
     .card { max-width: 100%; }
 
-    /* Texto largo sin espacios: no debe romper el layout */
-    .message-bubble {
-        max-width: 90%;
-        overflow-wrap: break-word;
-        word-break: break-word;
-        hyphens: auto;
-    }
+    .messages-thread { overflow-x: hidden; }
 
-    .messages-thread {
-        overflow-x: hidden;
-    }
-
-    /* Formulario: campos al 100% sin desbordar */
     .form-group input,
     .form-group textarea,
     .form-group select {
@@ -1149,23 +1151,27 @@ main {
     }
 }
 
-/* ── Anti-overflow global para soporte en cualquier ancho ─────────────────── */
-.message-bubble {
-    overflow-wrap: break-word;
-    word-break: break-word;
+/* ── Contención global anti-overflow ────────────────────────────────────────*/
+.soporte-hero,
+.card,
+.card-body,
+.card-header,
+.ticket-list-panel,
+.tickets-grid,
+.ticket-detail,
+.messages-thread,
+.reply-section,
+.detail-meta,
+.faq-body {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .messages-thread {
     overflow-x: hidden;
 }
 
-.soporte-layout,
-.soporte-hero,
-.card,
-.card-body,
-.ticket-list-panel,
-.tickets-grid,
-.ticket-detail {
-    min-width: 0;
-    max-width: 100%;
+.faq-question {
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
