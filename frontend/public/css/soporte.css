@@ -1127,4 +1127,45 @@ main {
     }
 
     .card { max-width: 100%; }
+
+    /* Texto largo sin espacios: no debe romper el layout */
+    .message-bubble {
+        max-width: 90%;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
+    }
+
+    .messages-thread {
+        overflow-x: hidden;
+    }
+
+    /* Formulario: campos al 100% sin desbordar */
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+/* ── Anti-overflow global para soporte en cualquier ancho ─────────────────── */
+.message-bubble {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.messages-thread {
+    overflow-x: hidden;
+}
+
+.soporte-layout,
+.soporte-hero,
+.card,
+.card-body,
+.ticket-list-panel,
+.tickets-grid,
+.ticket-detail {
+    min-width: 0;
+    max-width: 100%;
 }

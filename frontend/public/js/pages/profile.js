@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         "skin_5":       "../public/img/CASA_N4.png",
         "skin_6":       "../public/img/CASA_6.png",
         "skin_7":       "../public/img/casaN4.png",
-        "skin_8":       "../public/img/CASA_8.png",
-        "skin_9":       "../public/img/casaN5.png",
+        "skin_8":       "../public/img/casaN5.png",
+        "skin_9":       "../public/img/CASA_8.png",
     };
 
     const SKIN_NAMES = {
@@ -55,15 +55,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const CASTOR_NAMES = {
-        "castor_default": "Castor Bebé",
-        "castor_1":       "Castor Aprendiz",
-        "castor_2":       "Castor Novato",
-        "castor_3":       "Castor Obrero",
-        "castor_4":       "Castor Artesano",
-        "castor_5":       "Castor Experto",
-        "castor_6":       "Castor Ingeniero",
-        "castor_7":       "Castor Maestro",
-        "castor_8":       "Gran Castor",
+        "castor_default": "Castor sin nada / Homeless",
+        "castor_1":       "Castor indigente",
+        "castor_2":       "Castor sobreviviente",
+        "castor_3":       "Castor desempleado",
+        "castor_4":       "Castor principiante",
+        "castor_5":       "Castor godín",
+        "castor_6":       "Castor ejecutivo",
+        "castor_7":       "Castor magnate",
+        "castor_8":       "Castor millonario",
         "castor_9":       "Rey Castor",
     };
 

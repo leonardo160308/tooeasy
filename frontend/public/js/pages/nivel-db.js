@@ -6,6 +6,52 @@ const API_URL = '/api';
 let flashcards = [];
 let currentIndex = 0;
 
+// Convierte markdown básico a HTML seguro (escapa HTML primero)
+function markdownToHtml(raw) {
+    if (!raw) return '';
+
+    // 1. Escapar caracteres HTML para prevenir XSS
+    const escaped = raw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    // 2. Procesar línea a línea para soporte de listas
+    const lines = escaped.split('\n');
+    const parts = [];
+    let inList = false;
+
+    for (const line of lines) {
+        const listMatch = line.match(/^[-*•]\s+(.+)/);
+        if (listMatch) {
+            if (!inList) { parts.push('<ul>'); inList = true; }
+            parts.push(`<li>${applyInlineFmt(listMatch[1])}</li>`);
+        } else {
+            if (inList) { parts.push('</ul>'); inList = false; }
+            if (line.trim() === '') {
+                parts.push('<br>');
+            } else {
+                parts.push(applyInlineFmt(line) + '<br>');
+            }
+        }
+    }
+    if (inList) parts.push('</ul>');
+
+    // Quitar <br> redundante al final
+    let html = parts.join('');
+    html = html.replace(/(<br>)+$/, '');
+    return html;
+}
+
+function applyInlineFmt(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.*?)__/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/_(.*?)_/g, '<em>$1</em>');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     if (!protectRoute()) return;
 
@@ -71,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         titleFront.textContent = current.titulo;
         titleBack.textContent  = current.titulo;
-        content.textContent    = current.contenido;
+        content.innerHTML      = markdownToHtml(current.contenido);
         counter.textContent    = `Tarjeta ${currentIndex + 1} de ${flashcards.length}`;
 
         if (current.imagen && current.imagen.trim() !== '') {

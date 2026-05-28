@@ -988,7 +988,7 @@ function renderComparacion(sims) {
         { label: 'Riesgo global',           key: s => `<span class="risk-badge ${s.riesgo_global}">${RIESGO_META[s.riesgo_global]?.emoji} ${RIESGO_META[s.riesgo_global]?.label}</span>` }
     ];
 
-    const enc = `<tr><th>Métrica</th>${sims.map((s, i) => `<th>Sim ${i + 1}: ${s.nombre}</th>`).join('')}</tr>`;
+    const enc = `<tr><th>Métrica</th>${sims.map(s => `<th>${s.nombre}</th>`).join('')}</tr>`;
     const cuerpo = filas.map(f =>
         `<tr><td>${f.label}</td>${sims.map(s => `<td>${f.key(s)}</td>`).join('')}</tr>`
     ).join('');
@@ -1011,7 +1011,7 @@ function renderComparacion(sims) {
     state.compareChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: sims.map((s, i) => `Sim ${i + 1}`),
+            labels: sims.map(s => s.nombre),
             datasets: [
                 { label: 'Capital final P50', data: sims.map(s => s.capital_final || 0), backgroundColor: colors.map(c => c + 'CC'), borderColor: colors, borderWidth: 2, borderRadius: 6 },
                 { label: 'Capital invertido',  data: sims.map(s => s.total_aportado || s.capital_inicial), backgroundColor: '#b2bec350', borderColor: '#b2bec3', borderWidth: 2, borderRadius: 6 }

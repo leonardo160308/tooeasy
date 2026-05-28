@@ -437,7 +437,16 @@ body {
     padding: 10px;
 }
 #lesson-subtitle { color: #666; font-size: 1.1rem; }
-#prevCard,
-#nextCard { display: none; }
 .card-counter-wrap { text-align: center; margin-top: 20px; }
 #card-counter { font-size: 1.1rem; color: #666; }
+
+/* ── Formato enriquecido en el reverso de la flashcard ── */
+.card-text ul {
+    list-style: disc;
+    padding-left: 1.4em;
+    margin: 0.4em 0;
+    text-align: left;
+}
+.card-text li { margin-bottom: 0.3em; line-height: 1.6; }
+.card-text strong { font-weight: 700; }
+.card-text em { font-style: italic; }
