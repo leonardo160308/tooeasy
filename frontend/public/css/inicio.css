@@ -235,3 +235,5 @@ body {
 
 /* CSP-safe */
 #start-button { display: none; }
+
+.footer-apk-wrap { margin-top: 12px; }

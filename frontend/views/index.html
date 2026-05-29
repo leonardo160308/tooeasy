@@ -13,6 +13,7 @@
 
     <!-- Font Awesome y Google Fonts -->
     <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="../public/css/app-download.css">
     
     
     <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
@@ -37,6 +38,10 @@
                 <a href="login.html"><button class="btn-iniciar-sesion">Iniciar Sesión</button></a>
                 <br><br>
                 <a href="registro.html"><button class="btn-crear-cuenta">Crear Cuenta</button></a>
+                <br><br>
+                <button class="btn-app-download" data-app-download type="button">
+                    <i class="fas fa-download"></i> Descargar aplicación móvil
+                </button>
             </div>
             
             <div id="start-button">
@@ -81,24 +86,29 @@
 
 <footer class="footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
-    <p>        
-        <a href="mailto:tooeasycontactanos@gmail.com">        Contacto: tooeasycontactanos@gmail.com</a>  
-        <div class="terms-group">
-    <!-- Checkbox oculto (solo para JS y validación) -->
-    <input type="checkbox" id="terminos" required hidden>
-
-    <!-- Texto clickeable -->
-    <label for="terminos">
-        <span class="terms-link">Términos y Condiciones</span>
-    </label>
-</div>
-
+    <p>
+        <a href="mailto:tooeasycontactanos@gmail.com">Contacto: tooeasycontactanos@gmail.com</a>
     </p>
+    <div class="terms-group">
+        <input type="checkbox" id="terminos" required hidden>
+        <label for="terminos">
+            <span class="terms-link">Términos y Condiciones</span>
+        </label>
+    </div>
+    <div class="footer-apk-wrap">
+        <button class="btn-app-download-footer" data-app-download type="button">
+            <i class="fas fa-download"></i> Descargar aplicación móvil
+        </button>
+    </div>
 </footer>
 
 
 
 <script src="../public/js/data/terminos.js"></script>
+<script type="module">
+    import { initAppDownload } from '../public/js/modules/app-download.js';
+    initAppDownload();
+</script>
 </body>
 
 </html>

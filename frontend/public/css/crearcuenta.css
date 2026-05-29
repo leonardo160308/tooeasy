@@ -216,3 +216,5 @@ button:active {
 /* Extracted from inline styles in login.html */
 .login-tagline { text-align: center; margin-bottom: 20px; }
 #auth-message { color: red; margin-top: 10px; text-align: center; }
+
+.login-apk-btn { margin-top: 8px; width: 100%; }

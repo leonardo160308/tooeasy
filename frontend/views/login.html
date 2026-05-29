@@ -9,6 +9,8 @@
     <!-- ✅ RUTA CORREGIDA -->
     <link rel="stylesheet" href="../public/css/crearcuenta.css">
     <link rel="stylesheet" href="../public/css/alerts.css">
+    <link rel="stylesheet" href="/public/css/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="../public/css/app-download.css">
 </head>
 <body>
     <div class="container">
@@ -32,12 +34,19 @@
         </form>
         <a href="recuperar-cuenta.html" class="login-link">¿Olvidaste tu contraseña?</a>
         <a href="registro.html" class="login-link">¿No tienes cuenta? Regístrate aquí</a>
-        
+        <br>
+        <button class="btn-app-download login-apk-btn" data-app-download type="button">
+            <i class="fas fa-download"></i> Descargar aplicación móvil
+        </button>
     </div>
  <div class="footer-navigation">
             <a href="./index.html" class="btn-back">Regresar</a>
         </div>
     <!-- ✅ RUTA CORREGIDA -->
     <script type="module" src="../public/js/pages/auth.js"></script>
+    <script type="module">
+        import { initAppDownload } from '../public/js/modules/app-download.js';
+        initAppDownload();
+    </script>
 </body>
 </html>

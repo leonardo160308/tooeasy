@@ -20,6 +20,7 @@ import inversionRoutes     from './backend/routes/inversionRoutes.js';
 import progressRoutes      from './backend/routes/progressRoutes.js';
 import ticketRoutes           from './backend/routes/ticketRoutes.js';
 import recommendationRoutes   from './backend/routes/recommendationRoutes.js';
+import appRoutes              from './backend/routes/appRoutes.js';
 import TicketModel            from './backend/models/TicketModel.js';
 
 dotenv.config();
@@ -118,6 +119,7 @@ app.use('/api', inversionRoutes);
 app.use('/api', progressRoutes);
 app.use('/api', ticketRoutes);
 app.use('/api', recommendationRoutes);
+app.use('/api', appRoutes);
 
 // =====================
 // LIMPIEZA AUTOMÁTICA DE TICKETS (cada 24 h)
