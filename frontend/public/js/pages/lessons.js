@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!isLocked) {
                 levelDiv.querySelector('button').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    window.location.href = `/nivel.html?level=${nivel.id}&levelNum=${nivel.orden}`;
+                    window.location.href = `/nivel.html?level=${nivel.id}`;
                 });
             }
 

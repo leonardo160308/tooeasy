@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const nivelId   = parseLevelId(urlParams.get('level'));
-    const levelNum  = parseLevelNum(urlParams.get('levelNum'), nivelId);
+    // levelNum de la URL se ignora completamente — el número real viene del backend.
 
     if (!nivelId) {
         alertaError('Parámetros de nivel inválidos.');
@@ -92,8 +92,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     const authHeaders = { 'Authorization': `Bearer ${sessionToken}` };
 
-    // Cargar flashcards: endpoint protegido con auth + verificación de acceso al nivel.
-    // Si el nivel está bloqueado, el backend devuelve 403 y se redirige automáticamente.
+    // Cargar flashcards y metadatos del nivel.
+    // La respuesta incluye level.orden — fuente de verdad para la UI, nunca la URL.
+    let levelMeta = null;
     try {
         const response = await fetch(`${API_URL}/progress/level/${nivelId}/flashcards`, {
             headers: authHeaders
@@ -105,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (response.status === 403) {
             alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
-            setTimeout(() => window.location.href = 'lecciones.html', 2500);
+            setTimeout(() => window.location.href = '/lecciones.html', 2500);
             return;
         }
 
@@ -113,17 +114,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (data.success && data.data.length > 0) {
             flashcards = data.data;
+            levelMeta  = data.level; // { orden, nombre } — del backend, no de la URL
         } else {
             alertaError('Este nivel no tiene flashcards aún. Volviendo...', {
                 duration: 3000,
-                onClose: () => window.location.href = 'lecciones.html'
+                onClose: () => window.location.href = '/lecciones.html'
             });
             return;
         }
     } catch (error) {
         console.error('Error cargando flashcards:', error);
         alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
-        setTimeout(() => window.location.href = 'lecciones.html', 2500);
+        setTimeout(() => window.location.href = '/lecciones.html', 2500);
         return;
     }
 
@@ -149,7 +151,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     card.querySelector('.card-front').appendChild(flipHint);
 
     lessonTitle.textContent = flashcards[0].titulo;
-    lessonSub.textContent   = `Nivel ${levelNum}`;
+    // Número de nivel tomado del backend (levelMeta.orden), nunca de la URL.
+    lessonSub.textContent   = levelMeta ? `Nivel ${levelMeta.orden}` : 'Nivel';
 
     // ── Renderizar tarjeta ───────────────────────────────────────────────
     let isFlipping = false;
@@ -217,7 +220,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     btnQuiz.addEventListener('click', () => {
-        window.location.href = `quiz.html?level=${nivelId}&levelNum=${levelNum}`;
+        // levelNum eliminado de la URL — quiz.js lee el número del nivel del backend.
+        window.location.href = `quiz.html?level=${nivelId}`;
     });
 
     renderCard();

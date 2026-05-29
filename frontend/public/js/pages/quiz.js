@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const urlParams   = new URLSearchParams(window.location.search);
     const nivelActual = parseLevelId(urlParams.get('level'));
-    const levelNum    = parseLevelNum(urlParams.get('levelNum'), nivelActual);
+    // levelNum de la URL se ignora completamente — el número real viene del backend.
 
     // Parámetro inválido → redirigir, sin fallback silencioso a nivel 1
     if (!nivelActual) {
@@ -42,10 +42,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     const authHeaders = { 'Authorization': `Bearer ${sessionToken}` };
 
-    let preguntas = [];
+    let preguntas  = [];
+    let levelMeta  = null; // { orden, nombre } — del backend, nunca de la URL
 
-    // ── Cargar preguntas — endpoint protegido con auth + acceso al nivel ──────
-    // Si el nivel está bloqueado, el backend devuelve 403 directamente.
+    // ── Cargar preguntas y metadatos del nivel ────────────────────────────────
+    // La respuesta incluye level.orden — fuente de verdad para mostrar "Nivel N".
     try {
         const res = await fetch(`${API_URL}/progress/level/${nivelActual}/questions`, {
             headers: authHeaders
@@ -70,6 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         preguntas = data.data;
+        levelMeta = data.level; // { orden, nombre }
     } catch (err) {
         console.error('Error cargando preguntas:', err);
         alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
@@ -104,7 +106,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalFinal    = document.getElementById('modal-final');
     const modalBody     = document.getElementById('modal-body');
 
-    if (nivelLabel)    nivelLabel.textContent    = levelNum;
+    // Número de nivel tomado del backend (levelMeta.orden), nunca de la URL.
+    if (nivelLabel)    nivelLabel.textContent    = levelMeta?.orden ?? '';
     if (pregActualLbl) pregActualLbl.textContent = 1;
     if (totalLbl)      totalLbl.textContent      = preguntas.length;
     if (contadorLabel) contadorLabel.textContent = `1 / ${preguntas.length}`;

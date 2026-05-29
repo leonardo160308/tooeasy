@@ -52,17 +52,33 @@ export async function checkLevelAccess(req, res) {
 }
 
 // ── GET /api/progress/level/:levelId/flashcards  [requireLevelAccess]
+// Incluye metadatos del nivel (orden, nombre) para que la UI nunca dependa de la URL.
 export async function getLevelFlashcards(req, res) {
     try {
-        const { levelId } = req.params;
-        const { data: flashcards, error } = await supabase
-            .from('flashcards')
-            .select('id, titulo, contenido, imagen')
-            .eq('level_id', Number(levelId))
-            .order('id', { ascending: true });
+        const lvlId = sanitizeLevelId(req.params.levelId);
 
-        if (error) throw error;
-        res.json({ success: true, data: flashcards || [] });
+        const [metaResult, contentResult] = await Promise.all([
+            supabase
+                .from('educational_levels')
+                .select('orden, nombre')
+                .eq('id', lvlId)
+                .single(),
+            supabase
+                .from('flashcards')
+                .select('id, titulo, contenido, imagen')
+                .eq('level_id', lvlId)
+                .order('id', { ascending: true }),
+        ]);
+
+        if (contentResult.error) throw contentResult.error;
+
+        res.json({
+            success: true,
+            data:    contentResult.data || [],
+            level:   metaResult.data
+                ? { orden: metaResult.data.orden, nombre: metaResult.data.nombre }
+                : null,
+        });
     } catch (error) {
         console.error('Error in getLevelFlashcards:', error);
         res.status(500).json({ success: false, message: 'Error al obtener flashcards.' });
@@ -70,18 +86,33 @@ export async function getLevelFlashcards(req, res) {
 }
 
 // ── GET /api/progress/level/:levelId/questions  [requireLevelAccess]
-// Incluye el campo "correcta" porque el acceso ya fue verificado por el middleware.
+// Incluye metadatos del nivel y el campo "correcta" (acceso ya verificado por el middleware).
 export async function getLevelQuestions(req, res) {
     try {
-        const { levelId } = req.params;
-        const { data: questions, error } = await supabase
-            .from('quiz_questions')
-            .select('id, pregunta, opciones, correcta, dificultad, imagen')
-            .eq('level_id', Number(levelId))
-            .order('id', { ascending: true });
+        const lvlId = sanitizeLevelId(req.params.levelId);
 
-        if (error) throw error;
-        res.json({ success: true, data: questions || [] });
+        const [metaResult, contentResult] = await Promise.all([
+            supabase
+                .from('educational_levels')
+                .select('orden, nombre')
+                .eq('id', lvlId)
+                .single(),
+            supabase
+                .from('quiz_questions')
+                .select('id, pregunta, opciones, correcta, dificultad, imagen')
+                .eq('level_id', lvlId)
+                .order('id', { ascending: true }),
+        ]);
+
+        if (contentResult.error) throw contentResult.error;
+
+        res.json({
+            success: true,
+            data:    contentResult.data || [],
+            level:   metaResult.data
+                ? { orden: metaResult.data.orden, nombre: metaResult.data.nombre }
+                : null,
+        });
     } catch (error) {
         console.error('Error in getLevelQuestions:', error);
         res.status(500).json({ success: false, message: 'Error al obtener preguntas.' });
