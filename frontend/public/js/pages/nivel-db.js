@@ -68,6 +68,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Verificar que el usuario tiene acceso a este nivel (anti-skip por URL)
+    try {
+        const accessRes  = await fetch(`${API_URL}/progress/check-access/${nivelId}?userId=${userId}`);
+        const accessData = await accessRes.json();
+        if (!accessData.success || !accessData.canAccess) {
+            alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
+            setTimeout(() => window.location.href = 'lecciones.html', 2500);
+            return;
+        }
+    } catch {
+        // Si el check falla por red, dejamos continuar (no penalizar por error de conexión)
+    }
+
     try {
         const response = await fetch(`${API_URL}/admin/flashcards/level/${nivelId}`);
         const data = await response.json();
@@ -112,6 +125,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     lessonSub.textContent   = `Nivel ${levelNum}`;
 
     // ── Renderizar tarjeta ───────────────────────────────────────────────
+    let isFlipping = false;
+
     function renderCard() {
         const current = flashcards[currentIndex];
 
@@ -131,21 +146,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnNext.classList.toggle('hidden', !(currentIndex < flashcards.length - 1));
         btnQuiz.classList.toggle('hidden', !(currentIndex === flashcards.length - 1));
 
-        // Volver a la cara frontal al cambiar tarjeta
+        // Volver a la cara frontal al cambiar tarjeta y liberar el guard
         cardInner.classList.remove('flipped');
+        isFlipping = false;
     }
 
     // ── EVENTO DE VOLTEO — solo clic, nunca hover ────────────────────────
     card.addEventListener('click', (e) => {
         // Ignorar si el clic viene de las flechas
         if (e.target.closest('.arrow-btn')) return;
+        // Guard: evitar clics durante la animación de volteo (previene bugs en móvil)
+        if (isFlipping) return;
 
+        isFlipping = true;
         cardInner.classList.toggle('flipped');
 
         // Marcar que ya fue volteada al menos una vez → oculta el hint
         if (!card.classList.contains('has-been-flipped')) {
             card.classList.add('has-been-flipped');
         }
+
+        // Liberar el guard cuando termina la transición CSS (0.6s + margen)
+        setTimeout(() => { isFlipping = false; }, 650);
     });
 
     // ── Navegación ───────────────────────────────────────────────────────

@@ -125,6 +125,7 @@ body {
 /* ── FLASHCARD ── */
 .card {
     perspective: 1500px;
+    -webkit-perspective: 1500px;
     width: 100%;
     max-width: 560px;
     height: 440px;
@@ -143,11 +144,13 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-    /* Curva elástica para el giro */
-    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* ease-in-out estable: evita overshoot en Safari/iOS/Chrome Android */
+    transition: transform 0.6s ease-in-out;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     box-shadow: var(--shadow-card);
     border-radius: var(--card-radius);
+    will-change: transform;
 }
 
 .card:hover .card-inner {
@@ -155,9 +158,9 @@ body {
     /* SIN transform aquí para no confundir con el flip */
 }
 
-/* Estado de giro (se combina con el hover translation si se desea por JS) */
-.card-inner.flipped { 
-    transform: rotateY(180deg) scale(1.02); 
+/* Estado de giro: sin scale para evitar artifacts en transformaciones compuestas en móvil */
+.card-inner.flipped {
+    transform: rotateY(180deg);
     box-shadow: var(--shadow-hover);
 }
 .flip-hint {
@@ -206,6 +209,7 @@ body {
     position: absolute;
     inset: 0;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     border-radius: var(--card-radius);
     padding: 36px;
     display: flex;
@@ -231,6 +235,9 @@ body {
     background: linear-gradient(145deg, var(--primary-dark) 0%, var(--primary) 100%);
     border: 1px solid rgba(255,255,255,0.1);
     position: relative;
+    /* Fuerza capa GPU separada: previene parpadeos en Safari/WebView */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 /* Patrón sutil de fondo para la cara frontal */
@@ -272,7 +279,9 @@ body {
 /* ── BACK ── */
 .card-back {
     background: var(--card-bg);
-    transform: rotateY(180deg);
+    /* translateZ(0) fuerza GPU; el rotateY(180deg) posiciona la cara trasera */
+    transform: rotateY(180deg) translateZ(0);
+    -webkit-transform: rotateY(180deg) translateZ(0);
     gap: 24px;
     border: 1px solid rgba(101,133,170,0.2);
     /* Borde inferior acentuado */

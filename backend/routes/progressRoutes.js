@@ -3,10 +3,14 @@ import { Router } from 'express';
 import {
     getAllProgress,
     getCategoryProgress,
-    completeLevel
+    completeLevel,
+    checkLevelAccess
 } from '../controllers/progressController.js';
 
 const router = Router();
+
+// Verificar si el usuario puede acceder a un nivel (DEBE ir antes de /:userId)
+router.get('/progress/check-access/:levelId', checkLevelAccess);
 
 // All progress for a user (used by lessons page on load)
 router.get('/progress/:userId', getAllProgress);

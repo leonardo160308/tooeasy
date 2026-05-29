@@ -14,6 +14,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let preguntas = [];
 
+    // ── Verificar acceso al nivel (anti-skip por URL) ──────────────────────
+    try {
+        const accessRes  = await fetch(`${API_URL}/progress/check-access/${nivelActual}?userId=${sessionUser.id}`);
+        const accessData = await accessRes.json();
+        if (!accessData.success || !accessData.canAccess) {
+            alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
+            setTimeout(() => window.location.href = '/lecciones.html', 2500);
+            return;
+        }
+    } catch {
+        // Si el check falla por red, dejamos continuar
+    }
+
     // ── Load questions from DB ─────────────────────────────────────────────
     try {
         const res  = await fetch(`${API_URL}/admin/questions/${nivelActual}`);
@@ -57,8 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalBody     = document.getElementById('modal-body');
 
     if (nivelLabel)    nivelLabel.textContent    = levelNum;
+    if (pregActualLbl) pregActualLbl.textContent = 1;
     if (totalLbl)      totalLbl.textContent      = preguntas.length;
     if (contadorLabel) contadorLabel.textContent = `1 / ${preguntas.length}`;
+    if (barraProgreso) barraProgreso.style.setProperty('--fill-w', `${(1 / preguntas.length) * 100}%`);
 
     ocultarFeedback();
 
@@ -78,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (pregActualLbl)  pregActualLbl.textContent  = numActual;
         if (contadorLabel)  contadorLabel.textContent  = `${numActual} / ${preguntas.length}`;
-        barraProgreso.style.setProperty('--fill-w', `${(numActual / preguntas.length) * 100}%`);
+        if (barraProgreso)  barraProgreso.style.setProperty('--fill-w', `${(numActual / preguntas.length) * 100}%`);
 
         divOpciones.innerHTML = '';
         Object.keys(p.opciones).forEach((key, idx) => {

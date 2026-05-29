@@ -5,6 +5,53 @@ import { supabase }  from '../config/supabase.js';
 
 const COINS_PER_LEVEL = 20;
 
+// Verifica si un usuario puede acceder a un nivel dado.
+// Regla: el primer nivel de cada categoría siempre está disponible.
+// Cualquier nivel posterior requiere que el nivel anterior (por orden) esté completado.
+async function canAccessLevel(userId, levelId) {
+    const { data: level, error } = await supabase
+        .from('educational_levels')
+        .select('id, category_id, orden')
+        .eq('id', Number(levelId))
+        .maybeSingle();
+
+    if (error || !level) return false;
+
+    // Buscar el nivel inmediatamente anterior en la misma categoría
+    const { data: prevLevel } = await supabase
+        .from('educational_levels')
+        .select('id')
+        .eq('category_id', level.category_id)
+        .lt('orden', level.orden)
+        .order('orden', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+    // Si no hay nivel anterior es el primero → siempre accesible
+    if (!prevLevel) return true;
+
+    const completedLevels = await ProgressModel.getCategoryProgress(userId, level.category_id);
+    return completedLevels.includes(Number(prevLevel.id));
+}
+
+// ── GET /api/progress/check-access/:levelId?userId=X ────────────────────────
+export async function checkLevelAccess(req, res) {
+    try {
+        const { levelId } = req.params;
+        const { userId }  = req.query;
+
+        if (!userId || !levelId) {
+            return res.status(400).json({ success: false, message: 'userId y levelId son requeridos.' });
+        }
+
+        const canAccess = await canAccessLevel(userId, levelId);
+        res.json({ success: true, canAccess });
+    } catch (error) {
+        console.error('Error in checkLevelAccess:', error);
+        res.status(500).json({ success: false, message: 'Error al verificar acceso.' });
+    }
+}
+
 // ── GET /api/progress/:userId ────────────────────────────────────────────────
 // Returns a map: { categoryId: [levelId, ...], ... }
 export async function getAllProgress(req, res) {
@@ -61,6 +108,15 @@ export async function completeLevel(req, res) {
             return res.status(400).json({
                 success: false,
                 message: `Necesitas al menos 80% de aciertos para completar el nivel. Tu puntuación: ${scoreNum.toFixed(0)}%`
+            });
+        }
+
+        // Anti-trampas: verificar que el usuario realmente puede acceder a este nivel
+        const canAccess = await canAccessLevel(userId, levelId);
+        if (!canAccess) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes acceso a este nivel. Completa los niveles anteriores primero.'
             });
         }
 
