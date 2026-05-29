@@ -5,10 +5,10 @@ import { supabase }  from '../config/supabase.js';
 
 const COINS_PER_LEVEL = 20;
 
-// Verifica si un usuario puede acceder a un nivel dado.
-// Regla: el primer nivel de cada categoría siempre está disponible.
-// Cualquier nivel posterior requiere que el nivel anterior (por orden) esté completado.
-async function canAccessLevel(userId, levelId) {
+// Exportada para ser usada por requireLevelAccess middleware.
+// Regla: primer nivel de cada categoría siempre accesible.
+// Cualquier nivel posterior requiere que el anterior (por orden) esté completado.
+export async function canAccessLevel(userId, levelId) {
     const { data: level, error } = await supabase
         .from('educational_levels')
         .select('id, category_id, orden')
@@ -17,7 +17,6 @@ async function canAccessLevel(userId, levelId) {
 
     if (error || !level) return false;
 
-    // Buscar el nivel inmediatamente anterior en la misma categoría
     const { data: prevLevel } = await supabase
         .from('educational_levels')
         .select('id')
@@ -27,18 +26,17 @@ async function canAccessLevel(userId, levelId) {
         .limit(1)
         .maybeSingle();
 
-    // Si no hay nivel anterior es el primero → siempre accesible
     if (!prevLevel) return true;
 
     const completedLevels = await ProgressModel.getCategoryProgress(userId, level.category_id);
     return completedLevels.includes(Number(prevLevel.id));
 }
 
-// ── GET /api/progress/check-access/:levelId  [requiere token — userId viene de req.userId]
+// ── GET /api/progress/check-access/:levelId  [requireAuth]
 export async function checkLevelAccess(req, res) {
     try {
         const { levelId } = req.params;
-        const userId      = req.userId; // inyectado por requireAuth middleware
+        const userId      = req.userId;
 
         const canAccess = await canAccessLevel(userId, levelId);
         res.json({ success: true, canAccess });
@@ -48,15 +46,53 @@ export async function checkLevelAccess(req, res) {
     }
 }
 
-// ── GET /api/progress/:userId ────────────────────────────────────────────────
-// Returns a map: { categoryId: [levelId, ...], ... }
+// ── GET /api/progress/level/:levelId/flashcards  [requireLevelAccess]
+export async function getLevelFlashcards(req, res) {
+    try {
+        const { levelId } = req.params;
+        const { data: flashcards, error } = await supabase
+            .from('flashcards')
+            .select('id, titulo, contenido, imagen')
+            .eq('level_id', Number(levelId))
+            .order('id', { ascending: true });
+
+        if (error) throw error;
+        res.json({ success: true, data: flashcards || [] });
+    } catch (error) {
+        console.error('Error in getLevelFlashcards:', error);
+        res.status(500).json({ success: false, message: 'Error al obtener flashcards.' });
+    }
+}
+
+// ── GET /api/progress/level/:levelId/questions  [requireLevelAccess]
+// Incluye el campo "correcta" porque el acceso ya fue verificado por el middleware.
+export async function getLevelQuestions(req, res) {
+    try {
+        const { levelId } = req.params;
+        const { data: questions, error } = await supabase
+            .from('quiz_questions')
+            .select('id, pregunta, opciones, correcta, dificultad, imagen')
+            .eq('level_id', Number(levelId))
+            .order('id', { ascending: true });
+
+        if (error) throw error;
+        res.json({ success: true, data: questions || [] });
+    } catch (error) {
+        console.error('Error in getLevelQuestions:', error);
+        res.status(500).json({ success: false, message: 'Error al obtener preguntas.' });
+    }
+}
+
+// ── GET /api/progress/:userId  [requireAuth — solo el propio usuario]
 export async function getAllProgress(req, res) {
     try {
-        const { userId } = req.params;
+        const requestedUserId = Number(req.params.userId);
+        if (requestedUserId !== req.userId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado.' });
+        }
 
-        const rows = await ProgressModel.getAllProgressForUser(userId);
+        const rows = await ProgressModel.getAllProgressForUser(requestedUserId);
 
-        // Convert array to map keyed by category_id (as numbers)
         const progress = {};
         rows.forEach(r => {
             progress[Number(r.category_id)] = (r.completed_levels || []).map(Number);
@@ -69,11 +105,16 @@ export async function getAllProgress(req, res) {
     }
 }
 
-// ── GET /api/progress/:userId/category/:categoryId ───────────────────────────
+// ── GET /api/progress/:userId/category/:categoryId  [requireAuth — solo el propio usuario]
 export async function getCategoryProgress(req, res) {
     try {
-        const { userId, categoryId } = req.params;
-        const completedLevels = await ProgressModel.getCategoryProgress(userId, categoryId);
+        const requestedUserId = Number(req.params.userId);
+        if (requestedUserId !== req.userId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado.' });
+        }
+
+        const { categoryId } = req.params;
+        const completedLevels = await ProgressModel.getCategoryProgress(requestedUserId, categoryId);
         res.json({ success: true, completedLevels });
     } catch (error) {
         console.error('Error in getCategoryProgress:', error);
@@ -81,34 +122,25 @@ export async function getCategoryProgress(req, res) {
     }
 }
 
-// ── POST /api/progress/complete-level  [requiere token — userId viene de req.userId]
-// Body: { levelId, score }   (userId ya NO viene del cliente — viene del token)
+// ── POST /api/progress/complete-level  [requireAuth]
+// Body: { levelId, answers: { "[questionId]": "A" | "B" | ... } }
+// El score se calcula en el backend — nunca se confía en el cliente.
 export async function completeLevel(req, res) {
     try {
-        const userId             = req.userId; // inyectado por requireAuth middleware
-        const { levelId, score } = req.body;
+        const userId               = req.userId;
+        const { levelId, answers } = req.body;
 
-        if (!levelId || score === undefined) {
+        if (!levelId) {
+            return res.status(400).json({ success: false, message: 'levelId es requerido.' });
+        }
+        if (!answers || typeof answers !== 'object' || Array.isArray(answers)) {
             return res.status(400).json({
                 success: false,
-                message: 'levelId y score son requeridos.'
+                message: 'answers debe ser un objeto { questionId: respuesta }.'
             });
         }
 
-        const scoreNum = Number(score);
-        if (isNaN(scoreNum) || scoreNum < 0 || scoreNum > 100) {
-            return res.status(400).json({ success: false, message: 'score debe ser 0–100.' });
-        }
-
-        // Must pass with ≥80% to count as completed
-        if (scoreNum < 80) {
-            return res.status(400).json({
-                success: false,
-                message: `Necesitas al menos 80% de aciertos para completar el nivel. Tu puntuación: ${scoreNum.toFixed(0)}%`
-            });
-        }
-
-        // Anti-trampas: verificar que el usuario realmente puede acceder a este nivel
+        // Anti-trampas: verificar que el usuario puede acceder a este nivel
         const canAccess = await canAccessLevel(userId, levelId);
         if (!canAccess) {
             return res.status(403).json({
@@ -117,10 +149,42 @@ export async function completeLevel(req, res) {
             });
         }
 
-        // Look up the level to get its category_id
+        // Obtener preguntas con respuestas correctas desde la BD
+        const { data: questions, error: qErr } = await supabase
+            .from('quiz_questions')
+            .select('id, correcta')
+            .eq('level_id', Number(levelId));
+
+        if (qErr) {
+            console.error('Error fetching questions for scoring:', qErr);
+            return res.status(500).json({ success: false, message: 'Error al obtener preguntas.' });
+        }
+
+        if (!questions || questions.length === 0) {
+            return res.status(400).json({ success: false, message: 'Este nivel no tiene preguntas.' });
+        }
+
+        // Calcular score en el backend — ignora cualquier dato del cliente
+        let aciertos = 0;
+        for (const q of questions) {
+            if (String(answers[String(q.id)]) === String(q.correcta)) aciertos++;
+        }
+        const scoreNum = (aciertos / questions.length) * 100;
+
+        if (scoreNum < 80) {
+            return res.status(400).json({
+                success:  false,
+                message:  `Necesitas al menos 80% de aciertos para completar el nivel. Tu puntuación: ${scoreNum.toFixed(0)}%`,
+                score:    scoreNum,
+                aciertos,
+                total:    questions.length,
+            });
+        }
+
+        // Obtener categoría del nivel
         const { data: level, error: lvlError } = await supabase
             .from('educational_levels')
-            .select('id, category_id, orden')
+            .select('id, category_id')
             .eq('id', Number(levelId))
             .single();
 
@@ -130,14 +194,13 @@ export async function completeLevel(req, res) {
 
         const { category_id: categoryId } = level;
 
-        // Mark the level complete (idempotent)
+        // Marcar nivel como completado (operación idempotente)
         const result = await ProgressModel.completeLevel(userId, categoryId, levelId);
 
         let coinsAwarded = 0;
         let newCoins     = null;
 
         if (!result.alreadyCompleted) {
-            // Award coins only on first-time completion
             const user = await User.findById(userId);
             if (user) {
                 newCoins = (user.coins || 0) + COINS_PER_LEVEL;
@@ -152,7 +215,10 @@ export async function completeLevel(req, res) {
             coinsAwarded,
             newCoins,
             completedLevels:  result.completedLevels,
-            categoryId:       Number(categoryId)
+            categoryId:       Number(categoryId),
+            score:            scoreNum,
+            aciertos,
+            total:            questions.length,
         });
 
     } catch (error) {

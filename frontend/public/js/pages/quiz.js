@@ -9,40 +9,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sessionUser = getAuthData();
 
     const urlParams   = new URLSearchParams(window.location.search);
-    const nivelActual = parseInt(urlParams.get('level')) || 1;  // educational_levels.id (used for API calls)
-    const levelNum    = parseInt(urlParams.get('levelNum')) || nivelActual; // sequential display number
+    const nivelActual = parseInt(urlParams.get('level')) || 1;
+    const levelNum    = parseInt(urlParams.get('levelNum')) || nivelActual;
+
+    const sessionToken = getSessionToken();
+    if (!sessionToken) {
+        window.location.href = '/login.html';
+        return;
+    }
+    const authHeaders = { 'Authorization': `Bearer ${sessionToken}` };
 
     let preguntas = [];
 
-    // ── Verificar acceso al nivel (anti-skip por URL) ──────────────────────
-    const sessionToken = getSessionToken();
+    // ── Cargar preguntas — endpoint protegido con auth + acceso al nivel ──────
+    // Si el nivel está bloqueado, el backend devuelve 403 directamente.
     try {
-        const accessRes = await fetch(`${API_URL}/progress/check-access/${nivelActual}`, {
-            headers: sessionToken ? { 'Authorization': `Bearer ${sessionToken}` } : {}
+        const res = await fetch(`${API_URL}/progress/level/${nivelActual}/questions`, {
+            headers: authHeaders
         });
 
-        if (accessRes.status === 401) {
+        if (res.status === 401) {
             window.location.href = '/login.html';
             return;
         }
-
-        const accessData = await accessRes.json();
-        if (!accessData.success || !accessData.canAccess) {
+        if (res.status === 403) {
             alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
             setTimeout(() => window.location.href = '/lecciones.html', 2500);
             return;
         }
-    } catch {
-        // Error de red — denegar por seguridad
-        alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
-        setTimeout(() => window.location.href = '/lecciones.html', 2500);
-        return;
-    }
-
-    // ── Load questions from DB ─────────────────────────────────────────────
-    try {
-        const res  = await fetch(`${API_URL}/admin/questions/${nivelActual}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const data = await res.json();
 
         if (!data.success || data.data.length === 0) {
@@ -53,7 +49,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         preguntas = data.data;
     } catch (err) {
         console.error('Error cargando preguntas:', err);
-        alertaError('Error de conexión. Intenta de nuevo.');
+        alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
+        setTimeout(() => window.location.href = '/lecciones.html', 2500);
         return;
     }
 
@@ -62,6 +59,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     let aciertos         = 0;
     let seleccionUsuario = null;
     let preguntaEvaluada = false;
+    // Registro de respuestas del usuario: { "[questionId]": "A" }
+    // Enviado al backend para que calcule el score de forma independiente.
+    const userAnswers = {};
 
     // ── DOM refs ───────────────────────────────────────────────────────────
     const txtPregunta   = document.getElementById('textoPregunta');
@@ -144,6 +144,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const esCorrecta = seleccionUsuario === p.correcta;
         if (esCorrecta) aciertos++;
 
+        // Registrar respuesta para enviar al backend
+        userAnswers[String(p.id)] = seleccionUsuario;
+
         divOpciones.querySelectorAll('.opcion').forEach(opt => {
             const k = opt.dataset.key;
             opt.classList.add('no-interact');
@@ -191,49 +194,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ── Finish level ───────────────────────────────────────────────────────
+    // Envía las respuestas al backend — el score se calcula allá, no aquí.
     async function finalizarNivel() {
-        const porcentaje = (aciertos / preguntas.length) * 100;
-        const aprobado   = porcentaje >= 80;
-
-        if (!aprobado) {
-            // Failed — show retry screen, do NOT call progress API
-            mostrarPantallaFinal(false,
-                `Necesitas al menos ${Math.ceil(preguntas.length * 0.8)} aciertos para aprobar.`
-            );
-            return;
-        }
-
         try {
-            // ── Single source of truth for progress + coins ────────────────
-            // The backend checks if already completed, awards coins only once,
-            // and returns the updated completedLevels for this category.
-            const authHeaders = { 'Content-Type': 'application/json' };
-            if (sessionToken) authHeaders['Authorization'] = `Bearer ${sessionToken}`;
-
             const res = await fetch(`${API_URL}/progress/complete-level`, {
                 method:  'POST',
-                headers: authHeaders,
+                headers: { ...authHeaders, 'Content-Type': 'application/json' },
                 body:    JSON.stringify({
                     levelId: nivelActual,
-                    score:   porcentaje
-                    // userId ya no viene del cliente — el servidor lo lee del token
+                    answers: userAnswers,
                 })
             });
 
             if (res.status === 401) {
-                mostrarPantallaFinal(true, '¡Nivel completado! (sesión expirada — inicia sesión para guardar progreso)');
+                mostrarPantallaFinal(false, 'Sesión expirada — inicia sesión para guardar progreso');
                 return;
             }
 
             const data = await res.json();
 
             if (!data.success) {
-                console.error('Error al guardar progreso:', data.message);
-                mostrarPantallaFinal(true, '¡Nivel completado! (sin recompensa — error al guardar)');
+                // El backend devuelve el score real si no alcanzó el 80%
+                const backendAciertos = data.aciertos ?? aciertos;
+                const backendTotal    = data.total    ?? preguntas.length;
+                mostrarPantallaFinal(false, data.message || 'No pasaste el quiz', 0, backendAciertos, backendTotal);
                 return;
             }
 
-            const { alreadyCompleted, coinsAwarded } = data;
+            const { alreadyCompleted, coinsAwarded, aciertos: bkAciertos, total: bkTotal } = data;
+            const displayAciertos = bkAciertos ?? aciertos;
+            const displayTotal    = bkTotal    ?? preguntas.length;
 
             let mensaje = '¡Nivel completado!';
             if (alreadyCompleted) {
@@ -242,18 +232,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mensaje += ` +${coinsAwarded} monedas 🪙`;
             }
 
-            mostrarPantallaFinal(true, mensaje, coinsAwarded);
+            mostrarPantallaFinal(true, mensaje, coinsAwarded, displayAciertos, displayTotal);
 
         } catch (err) {
             console.error('Error al guardar progreso:', err);
-            // Still show success screen — progress save is best-effort
-            mostrarPantallaFinal(true, '¡Nivel completado! (sin recompensa — error de conexión)');
+            mostrarPantallaFinal(false, 'Error de conexión. Intenta de nuevo.');
         }
     }
 
     // ── Final screen ───────────────────────────────────────────────────────
-    function mostrarPantallaFinal(exito, mensaje, monedas = 0) {
-        const pct = Math.round((aciertos / preguntas.length) * 100);
+    function mostrarPantallaFinal(exito, mensaje, monedas = 0, ac = aciertos, tot = preguntas.length) {
+        const pct = Math.round((ac / tot) * 100);
 
         modalBody.innerHTML = `
             <div class="modal-final-ico">
@@ -263,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${exito ? '¡Felicidades!' : '¡Casi lo logras!'}
             </h2>
             <p class="modal-final-score ${exito ? 'score-success' : 'score-fail'}">
-                ${aciertos} / ${preguntas.length}
+                ${ac} / ${tot}
             </p>
             <p class="modal-final-pct">${pct}% de aciertos</p>
             <p class="modal-final-msg ${exito ? 'msg-success' : 'msg-fail'}">

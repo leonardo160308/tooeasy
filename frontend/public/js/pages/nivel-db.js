@@ -68,34 +68,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Verificar que el usuario tiene acceso a este nivel (anti-skip por URL)
     const sessionToken = getSessionToken();
+    if (!sessionToken) {
+        window.location.href = '/login.html';
+        return;
+    }
+    const authHeaders = { 'Authorization': `Bearer ${sessionToken}` };
+
+    // Cargar flashcards: endpoint protegido con auth + verificación de acceso al nivel.
+    // Si el nivel está bloqueado, el backend devuelve 403 y se redirige automáticamente.
     try {
-        const accessRes = await fetch(`${API_URL}/progress/check-access/${nivelId}`, {
-            headers: sessionToken ? { 'Authorization': `Bearer ${sessionToken}` } : {}
+        const response = await fetch(`${API_URL}/progress/level/${nivelId}/flashcards`, {
+            headers: authHeaders
         });
 
-        if (accessRes.status === 401) {
-            // Sesión inválida — redirigir a login
+        if (response.status === 401) {
             window.location.href = '/login.html';
             return;
         }
-
-        const accessData = await accessRes.json();
-        if (!accessData.success || !accessData.canAccess) {
+        if (response.status === 403) {
             alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
             setTimeout(() => window.location.href = 'lecciones.html', 2500);
             return;
         }
-    } catch {
-        // Error de red — denegar acceso por seguridad
-        alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
-        setTimeout(() => window.location.href = 'lecciones.html', 2500);
-        return;
-    }
 
-    try {
-        const response = await fetch(`${API_URL}/admin/flashcards/level/${nivelId}`);
         const data = await response.json();
 
         if (data.success && data.data.length > 0) {
@@ -109,7 +105,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error('Error cargando flashcards:', error);
-        alertaError('Error de conexión. Intenta de nuevo.');
+        alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
+        setTimeout(() => window.location.href = 'lecciones.html', 2500);
         return;
     }
 

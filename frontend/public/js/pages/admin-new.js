@@ -1,6 +1,14 @@
 // frontend/public/js/pages/admin-new.js
-import { protectRoute, getAuthData, logout, isAdmin } from '../modules/auth.js';
+import { protectRoute, getAuthData, logout, isAdmin, getSessionToken } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
+
+function adminHeaders(json = false) {
+    const token = getSessionToken();
+    const h = {};
+    if (token) h['Authorization'] = `Bearer ${token}`;
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+}
 
 const API_URL = '/api';
 
@@ -255,8 +263,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const method = id ? 'PUT' : 'POST';
             const res    = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, nombre, descripcion, categoryId })
+                headers: adminHeaders(true),
+                body: JSON.stringify({ nombre, descripcion, categoryId })
             });
             const data = await res.json();
 
@@ -282,8 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res  = await fetch(`${API_URL}/admin/levels/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                headers: adminHeaders(),
             });
             const data = await res.json();
             if (data.success) { alertaExito('Nivel eliminado'); loadData(); }
@@ -329,7 +336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadFlashcards(levelId) {
         try {
-            const res  = await fetch(`${API_URL}/admin/flashcards/level/${levelId}`);
+            const res  = await fetch(`${API_URL}/admin/flashcards/level/${levelId}`, { headers: adminHeaders() });
             const data = await res.json();
             if (data.success) { flashcards = data.data; renderFlashcards(levelId); }
         } catch (err) { alertaError('Error al cargar flashcards'); }
@@ -431,8 +438,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const method = id ? 'PUT' : 'POST';
             const res    = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, levelId, titulo, contenido, imagen })
+                headers: adminHeaders(true),
+                body: JSON.stringify({ levelId, titulo, contenido, imagen })
             });
             const data = await res.json();
 
@@ -456,8 +463,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res  = await fetch(`${API_URL}/admin/flashcards/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                headers: adminHeaders(),
             });
             const data = await res.json();
             if (data.success) { alertaExito('Flashcard eliminada'); loadFlashcards(levelId); }
@@ -480,7 +486,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadQuestions(levelId) {
         try {
-            const res  = await fetch(`${API_URL}/admin/questions/${levelId}`);
+            const res  = await fetch(`${API_URL}/admin/questions/${levelId}`, { headers: adminHeaders() });
             const data = await res.json();
             if (data.success) { questions = data.data; renderQuestions(levelId); }
         } catch (err) { alertaError('Error al cargar preguntas'); }
@@ -675,8 +681,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const method = id ? 'PUT' : 'POST';
             const res    = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, levelId, pregunta, opciones, correcta, dificultad, imagen })
+                headers: adminHeaders(true),
+                body: JSON.stringify({ levelId, pregunta, opciones, correcta, dificultad, imagen })
             });
             const data = await res.json();
 
@@ -699,8 +705,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res  = await fetch(`${API_URL}/admin/questions/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                headers: adminHeaders(),
             });
             const data = await res.json();
             if (data.success) { alertaExito('Pregunta eliminada'); loadQuestions(levelId); }

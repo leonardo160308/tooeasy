@@ -1,4 +1,4 @@
-﻿import { protectRoute, getAuthData, isAdmin } from '../modules/auth.js';
+﻿import { protectRoute, getAuthData, isAdmin, getSessionToken } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
 import { initAppDownload } from '../modules/app-download.js';
@@ -44,14 +44,18 @@ let questions   = [];
 let pendingDeleteId = null;
 
 // ── Cache-busting fetch helper ─────────────────────────────────────────
+// Siempre incluye el token de sesión — checkAdmin lo requiere en el header.
 async function fetchFresh(url, options = {}) {
-    const ts = Date.now();
-    const sep = url.includes('?') ? '&' : '?';
+    const ts    = Date.now();
+    const sep   = url.includes('?') ? '&' : '?';
+    const token = getSessionToken();
+    const authH = token ? { 'Authorization': `Bearer ${token}` } : {};
     return fetch(`${url}${sep}_=${ts}`, {
         ...options,
         headers: {
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache',
+            ...authH,
             ...(options.headers || {})
         }
     });
@@ -211,7 +215,7 @@ async function saveInlineEdit(card, cat) {
         const res  = await fetchFresh(`${API}/admin/categories/${cat.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, nombre, descripcion })
+            body: JSON.stringify({ nombre, descripcion })
         });
         const data = await res.json();
         if (data.success) {
@@ -280,7 +284,7 @@ document.getElementById('save-cat-btn').addEventListener('click', async () => {
         const res = await fetchFresh(url, {
             method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, nombre, descripcion, nivel_inicio, nivel_fin })
+            body: JSON.stringify({ nombre, descripcion, nivel_inicio, nivel_fin })
         });
         const data = await res.json();
         if (data.success) {
@@ -312,8 +316,6 @@ document.getElementById('confirm-del-btn').addEventListener('click', async () =>
     try {
         const res  = await fetchFresh(`${API}/admin/categories/${pendingDeleteId}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId })
         });
         const data = await res.json();
         if (data.success) {
@@ -447,7 +449,7 @@ formLevel.addEventListener('submit', async e => {
     try {
         const url    = id ? `${API}/admin/levels/${id}` : `${API}/admin/levels`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, nombre, descripcion, categoryId }) });
+        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre, descripcion, categoryId }) });
         const data   = await res.json();
         if (data.success) {
             alertaExito(id ? 'Nivel actualizado' : 'Nivel creado');
@@ -470,7 +472,7 @@ async function deleteLevel(id) {
 
     if (!await alertaConfirmacion(confirmMsg, '⚠️ Confirmar')) return;
     try {
-        const res  = await fetchFresh(`${API}/admin/levels/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+        const res  = await fetchFresh(`${API}/admin/levels/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
             alertaExito('Nivel eliminado');
@@ -607,7 +609,7 @@ formFlashcard.addEventListener('submit', async e => {
     try {
         const url    = id ? `${API}/admin/flashcards/${id}` : `${API}/admin/flashcards`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, levelId, titulo, contenido, imagen }) });
+        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ levelId, titulo, contenido, imagen }) });
         const data   = await res.json();
         if (data.success) {
             alertaExito(id ? 'Flashcard actualizada' : 'Flashcard creada');
@@ -621,7 +623,7 @@ formFlashcard.addEventListener('submit', async e => {
 async function deleteFlashcard(id, levelId) {
     if (!await alertaConfirmacion('¿Eliminar esta flashcard?', '⚠️ Confirmar')) return;
     try {
-        const res  = await fetchFresh(`${API}/admin/flashcards/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+        const res  = await fetchFresh(`${API}/admin/flashcards/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) { alertaExito('Flashcard eliminada'); loadFlashcards(levelId); }
         else alertaError(data.message);
@@ -796,7 +798,7 @@ formQuestion.addEventListener('submit', async e => {
     try {
         const url    = id ? `${API}/admin/questions/${id}` : `${API}/admin/questions`;
         const method = id ? 'PUT' : 'POST';
-        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, levelId, pregunta, opciones, correcta, dificultad, imagen }) });
+        const res    = await fetchFresh(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ levelId, pregunta, opciones, correcta, dificultad, imagen }) });
         const data   = await res.json();
         if (data.success) {
             alertaExito(id ? 'Pregunta actualizada' : 'Pregunta creada');
@@ -810,7 +812,7 @@ formQuestion.addEventListener('submit', async e => {
 async function deleteQuestion(id, levelId) {
     if (!await alertaConfirmacion('¿Eliminar esta pregunta?', '⚠️ Confirmar')) return;
     try {
-        const res  = await fetchFresh(`${API}/admin/questions/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) });
+        const res  = await fetchFresh(`${API}/admin/questions/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) { alertaExito('Pregunta eliminada'); loadQuestions(levelId); }
         else alertaError(data.message);

@@ -1,15 +1,23 @@
 // frontend/public/js/pages/admin.js
-import { protectRoute, getAuthData, logout, isAdmin } from '../modules/auth.js';
+import { protectRoute, getAuthData, logout, isAdmin, getSessionToken } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
 
 const API_URL = '/api';
 
+// Genera las cabeceras de autenticación para el panel admin.
+// checkAdmin lee el token del header Authorization — nunca del body.
+function adminHeaders(json = false) {
+    const token = getSessionToken();
+    const h = {};
+    if (token) h['Authorization'] = `Bearer ${token}`;
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-    // Seguridad
     if (!protectRoute()) return;
     const sessionUser = getAuthData();
-    const userId = sessionUser.id;
-    if (!isAdmin()) {
+    if (!isAdmin() || !sessionUser) {
         alertaError('Acceso denegado. Solo administradores.', {
             duration: 3000,
             onClose: () => { window.location.href = '/dashboard.html'; }
@@ -48,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadLevels() {
         try {
-            const res = await fetch(`${API_URL}/admin/levels`);
+            const res = await fetch(`${API_URL}/admin/levels`, { headers: adminHeaders() });
             const data = await res.json();
             
             if (data.success) {
@@ -152,12 +160,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const res = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, nombre, descripcion })
+                headers: adminHeaders(true),
+                body: JSON.stringify({ nombre, descripcion })
             });
-            
+
             const data = await res.json();
-            
+
             if (data.success) {
                 alertaExito(id ? 'Nivel actualizado' : 'Nivel creado correctamente');
                 modalLevel.classList.remove('active');
@@ -182,8 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await fetch(`${API_URL}/admin/levels/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                headers: adminHeaders(),
             });
             
             const data = await res.json();
@@ -211,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadFlashcards(levelId) {
         try {
-            const res = await fetch(`${API_URL}/admin/flashcards/level/${levelId}`);
+            const res = await fetch(`${API_URL}/admin/flashcards/level/${levelId}`, { headers: adminHeaders() });
             const data = await res.json();
             
             if (data.success) {
@@ -303,12 +310,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const res = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, levelId, titulo, contenido, imagen })
+                headers: adminHeaders(true),
+                body: JSON.stringify({ levelId, titulo, contenido, imagen })
             });
-            
+
             const data = await res.json();
-            
+
             if (data.success) {
                 alertaExito(id ? 'Flashcard actualizada' : 'Flashcard creada');
                 modalFlashcard.classList.remove('active');
@@ -333,8 +340,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await fetch(`${API_URL}/admin/flashcards/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                headers: adminHeaders(),
             });
             
             const data = await res.json();
@@ -361,7 +367,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function loadQuestions(levelId) {
         try {
-            const res = await fetch(`${API_URL}/admin/questions/${levelId}`);
+            const res = await fetch(`${API_URL}/admin/questions/${levelId}`, { headers: adminHeaders() });
             const data = await res.json();
             
             if (data.success) {
@@ -544,16 +550,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const res = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId,
-                    levelId,
-                    pregunta,
-                    opciones,
-                    correcta,
-                    dificultad,
-                    imagen
-                })
+                headers: adminHeaders(true),
+                body: JSON.stringify({ levelId, pregunta, opciones, correcta, dificultad, imagen })
             });
             
             const data = await res.json();
@@ -582,8 +580,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await fetch(`${API_URL}/admin/questions/${id}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId })
+                headers: adminHeaders(),
             });
             
             const data = await res.json();

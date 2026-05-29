@@ -1,18 +1,26 @@
 // backend/controllers/adminController.js
 import AdminModel from '../models/AdminModel.js';
 import User from '../models/UserModel.js';
+import { verifySessionToken } from '../utils/security.js';
 
 // ── Auth middleware ──────────────────────────────────────────────────────────
+// Verifica el token HMAC del header Authorization — nunca confía en el body.
 export async function checkAdmin(req, res, next) {
     try {
-        const { userId } = req.body;
+        const authHeader = req.headers['authorization'];
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ success: false, message: 'Autenticación requerida.' });
+        }
+        const token  = authHeader.slice(7);
+        const userId = verifySessionToken(token);
         if (!userId) {
-            return res.status(401).json({ success: false, message: 'Usuario no autenticado' });
+            return res.status(401).json({ success: false, message: 'Sesión inválida o expirada.' });
         }
         const user = await User.findById(String(userId));
         if (!user || user.role !== 'admin') {
             return res.status(403).json({ success: false, message: 'Acceso denegado. Solo administradores.' });
         }
+        req.userId = userId;
         next();
     } catch (error) {
         console.error('[checkAdmin] Error:', error);

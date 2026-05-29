@@ -35,14 +35,14 @@ router.get('/admin/levels/:id/delete-stats',       getLevelDeleteStats);
 router.delete('/admin/levels/:id',                 checkAdmin, deleteLevel);
 
 // ── FLASHCARDS ───────────────────────────────────────────────────────────────
-router.get('/admin/flashcards/level/:levelId',     getFlashcardsByLevel);
+router.get('/admin/flashcards/level/:levelId',     checkAdmin, getFlashcardsByLevel);
 router.post('/admin/flashcards',                   checkAdmin, createFlashcard);
 router.put('/admin/flashcards/:id',                checkAdmin, updateFlashcard);
 router.delete('/admin/flashcards/:id',             checkAdmin, deleteFlashcard);
 router.patch('/admin/flashcards/:id/move',         checkAdmin, moveFlashcard);
 
 // ── PREGUNTAS ────────────────────────────────────────────────────────────────
-router.get('/admin/questions/:levelId',            getQuestions);
+router.get('/admin/questions/:levelId',            checkAdmin, getQuestions);
 router.post('/admin/questions',                    checkAdmin, createQuestion);
 router.put('/admin/questions/:id',                 checkAdmin, updateQuestion);
 router.delete('/admin/questions/:id',              checkAdmin, deleteQuestion);

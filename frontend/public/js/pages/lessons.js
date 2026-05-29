@@ -1,5 +1,5 @@
 // frontend/public/js/pages/lessons.js
-import { protectRoute, getAuthData }              from '../modules/auth.js';
+import { protectRoute, getAuthData, getSessionToken } from '../modules/auth.js';
 import { alertaError }                            from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding }      from '../modules/onboarding.js';
 import { initAppDownload } from '../modules/app-download.js';
@@ -25,13 +25,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── Fetch all data fresh (no cache) ───────────────────────────────────
     async function fetchFreshData() {
-        const ts = Date.now();
-        const headers = { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' };
+        const ts    = Date.now();
+        const token = getSessionToken();
+        const cacheH = { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' };
+        const authH  = token
+            ? { ...cacheH, 'Authorization': `Bearer ${token}` }
+            : cacheH;
 
         const [categoriesRes, levelsRes, progressRes] = await Promise.all([
-            fetch(`${API_URL}/admin/categories?_=${ts}`, { headers }),
-            fetch(`${API_URL}/levels?_=${ts}`,            { headers }),
-            fetch(`${API_URL}/progress/${userId}?_=${ts}`,{ headers })
+            fetch(`${API_URL}/admin/categories?_=${ts}`, { headers: cacheH }),
+            fetch(`${API_URL}/levels?_=${ts}`,            { headers: cacheH }),
+            fetch(`${API_URL}/progress/${userId}?_=${ts}`,{ headers: authH })
         ]);
 
         const [categoriesData, levelsData, progressData] = await Promise.all([
