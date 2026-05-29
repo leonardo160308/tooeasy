@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (result.success) {
                 currentUserData.coins        = result.new_stats.coins;
                 currentUserData.beaver_level = result.new_stats.beaver_level;
-                alertaExito(`¡Castor entrenado a nivel ${result.new_stats.beaver_level}! 🦝`, { title: '¡Entrenamiento exitoso!', duration: 4000 });
+                alertaExito(`¡Castor entrenado a nivel ${result.new_stats.beaver_level}!`, { title: '¡Entrenamiento exitoso!', duration: 4000 });
                 actualizarUI();
             } else { alertaError(result.message); }
         } catch (error) { console.error(error); alertaError('Error de conexión al entrenar castor.'); }
