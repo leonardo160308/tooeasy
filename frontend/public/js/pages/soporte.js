@@ -3,6 +3,8 @@ import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaExito, alertaError } from '../modules/alerts.js';
 import { initOfflineBanner } from '../modules/offline.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
+import { initAppDownload } from '../modules/app-download.js';
+initAppDownload();
 import {
     createTicket,
     getMyTickets,

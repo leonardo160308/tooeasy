@@ -1,6 +1,8 @@
 ﻿import { protectRoute, getAuthData, isAdmin } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
+import { initAppDownload } from '../modules/app-download.js';
+initAppDownload();
 
 const API = '/api';
 const MAX_CATS = 10;

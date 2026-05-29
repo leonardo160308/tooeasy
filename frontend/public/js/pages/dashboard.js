@@ -1,5 +1,8 @@
 /* assets/js/pages/dashboard.js */
 
+import { initAppDownload } from '../modules/app-download.js';
+initAppDownload();
+
 import {
     getDashboardFixed,
     updateGoal,

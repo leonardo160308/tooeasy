@@ -2,6 +2,8 @@
 import { protectRoute, getAuthData } from '../modules/auth.js';
 import { alertaExito, alertaError } from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
+import { initAppDownload } from '../modules/app-download.js';
+initAppDownload();
 import {
     getSupportTickets,
     getSupportTicketDetail,

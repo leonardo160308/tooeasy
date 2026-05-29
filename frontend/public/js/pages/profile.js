@@ -4,6 +4,8 @@ import { getUserData, upgradeItem, equipSkin, deleteUser, updateUserData } from 
 import { protectRoute, getAuthData, logout } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaInfo, alertaAdvertencia, alertaConfirmacion } from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
+import { initAppDownload } from '../modules/app-download.js';
+initAppDownload();
 
 document.addEventListener('DOMContentLoaded', async () => {
 

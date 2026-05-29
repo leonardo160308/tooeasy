@@ -2,6 +2,8 @@
 import { protectRoute, getAuthData }              from '../modules/auth.js';
 import { alertaError }                            from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding }      from '../modules/onboarding.js';
+import { initAppDownload } from '../modules/app-download.js';
+initAppDownload();
 
 const API_URL = '/api';
 
