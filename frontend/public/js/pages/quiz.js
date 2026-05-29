@@ -2,15 +2,38 @@
 import { protectRoute, getAuthData, getSessionToken } from '../modules/auth.js';
 import { alertaError } from '../modules/alerts.js';
 
-const API_URL = '/api';
+const API_URL    = '/api';
+const MAX_LVL_ID = 99999;
+
+// Validación estricta: solo enteros positivos sin cero inicial, sin notación
+// científica, sin decimales, en rango 1–99999.
+function parseLevelId(raw) {
+    if (raw === null || raw === undefined) return null;
+    const str = String(raw).trim();
+    if (!/^[1-9]\d{0,4}$/.test(str)) return null;
+    const n = parseInt(str, 10);
+    return (n >= 1 && n <= MAX_LVL_ID) ? n : null;
+}
+
+function parseLevelNum(raw, fallback) {
+    const n = parseLevelId(raw);
+    return n !== null ? n : fallback;
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!protectRoute()) return;
     const sessionUser = getAuthData();
 
     const urlParams   = new URLSearchParams(window.location.search);
-    const nivelActual = parseInt(urlParams.get('level')) || 1;
-    const levelNum    = parseInt(urlParams.get('levelNum')) || nivelActual;
+    const nivelActual = parseLevelId(urlParams.get('level'));
+    const levelNum    = parseLevelNum(urlParams.get('levelNum'), nivelActual);
+
+    // Parámetro inválido → redirigir, sin fallback silencioso a nivel 1
+    if (!nivelActual) {
+        alertaError('Parámetros de nivel inválidos.');
+        setTimeout(() => window.location.href = '/lecciones.html', 2000);
+        return;
+    }
 
     const sessionToken = getSessionToken();
     if (!sessionToken) {

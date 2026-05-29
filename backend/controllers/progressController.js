@@ -1,7 +1,8 @@
 // backend/controllers/progressController.js
-import ProgressModel from '../models/ProgressModel.js';
-import User          from '../models/UserModel.js';
-import { supabase }  from '../config/supabase.js';
+import ProgressModel             from '../models/ProgressModel.js';
+import User                      from '../models/UserModel.js';
+import { supabase }              from '../config/supabase.js';
+import { isValidLevelId, sanitizeLevelId } from '../utils/validators.js';
 
 const COINS_PER_LEVEL = 20;
 
@@ -35,8 +36,12 @@ export async function canAccessLevel(userId, levelId) {
 // ── GET /api/progress/check-access/:levelId  [requireAuth]
 export async function checkLevelAccess(req, res) {
     try {
-        const { levelId } = req.params;
-        const userId      = req.userId;
+        const rawLevelId = req.params.levelId;
+        if (!isValidLevelId(rawLevelId)) {
+            return res.status(400).json({ success: false, message: 'ID de nivel inválido.' });
+        }
+        const levelId = sanitizeLevelId(rawLevelId);
+        const userId  = req.userId;
 
         const canAccess = await canAccessLevel(userId, levelId);
         res.json({ success: true, canAccess });
@@ -130,9 +135,12 @@ export async function completeLevel(req, res) {
         const userId               = req.userId;
         const { levelId, answers } = req.body;
 
-        if (!levelId) {
-            return res.status(400).json({ success: false, message: 'levelId es requerido.' });
+        // Validar formato de levelId antes de cualquier operación
+        if (!isValidLevelId(levelId)) {
+            return res.status(400).json({ success: false, message: 'ID de nivel inválido.' });
         }
+        const cleanLevelId = sanitizeLevelId(levelId);
+
         if (!answers || typeof answers !== 'object' || Array.isArray(answers)) {
             return res.status(400).json({
                 success: false,
@@ -141,7 +149,7 @@ export async function completeLevel(req, res) {
         }
 
         // Anti-trampas: verificar que el usuario puede acceder a este nivel
-        const canAccess = await canAccessLevel(userId, levelId);
+        const canAccess = await canAccessLevel(userId, cleanLevelId);
         if (!canAccess) {
             return res.status(403).json({
                 success: false,
@@ -153,7 +161,7 @@ export async function completeLevel(req, res) {
         const { data: questions, error: qErr } = await supabase
             .from('quiz_questions')
             .select('id, correcta')
-            .eq('level_id', Number(levelId));
+            .eq('level_id', cleanLevelId);
 
         if (qErr) {
             console.error('Error fetching questions for scoring:', qErr);
@@ -185,7 +193,7 @@ export async function completeLevel(req, res) {
         const { data: level, error: lvlError } = await supabase
             .from('educational_levels')
             .select('id, category_id')
-            .eq('id', Number(levelId))
+            .eq('id', cleanLevelId)
             .single();
 
         if (lvlError || !level) {
@@ -195,7 +203,7 @@ export async function completeLevel(req, res) {
         const { category_id: categoryId } = level;
 
         // Marcar nivel como completado (operación idempotente)
-        const result = await ProgressModel.completeLevel(userId, categoryId, levelId);
+        const result = await ProgressModel.completeLevel(userId, categoryId, cleanLevelId);
 
         let coinsAwarded = 0;
         let newCoins     = null;

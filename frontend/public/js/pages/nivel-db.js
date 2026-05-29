@@ -1,7 +1,24 @@
 import { protectRoute, getAuthData, getSessionToken } from '../modules/auth.js';
 import { alertaError } from '../modules/alerts.js';
 
-const API_URL = '/api';
+const API_URL    = '/api';
+const MAX_LVL_ID = 99999;
+
+// Acepta únicamente enteros positivos sin cero inicial, sin notación científica,
+// sin decimales y dentro del rango 1–99999.
+// Ejemplos bloqueados: "3e5", "3.5", "-1", "0", "99999999999", "abc", "3e+25"
+function parseLevelId(raw) {
+    if (raw === null || raw === undefined) return null;
+    const str = String(raw).trim();
+    if (!/^[1-9]\d{0,4}$/.test(str)) return null;
+    const n = parseInt(str, 10);
+    return (n >= 1 && n <= MAX_LVL_ID) ? n : null;
+}
+
+function parseLevelNum(raw, fallback) {
+    const n = parseLevelId(raw);
+    return n !== null ? n : fallback;
+}
 
 let flashcards = [];
 let currentIndex = 0;
@@ -59,12 +76,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userId = sessionUser.id;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const nivelId  = parseInt(urlParams.get('level'));
-    const levelNum = parseInt(urlParams.get('levelNum')) || nivelId;
+    const nivelId   = parseLevelId(urlParams.get('level'));
+    const levelNum  = parseLevelNum(urlParams.get('levelNum'), nivelId);
 
     if (!nivelId) {
-        alertaError('Nivel no especificado');
-        setTimeout(() => window.location.href = 'lecciones.html', 2000);
+        alertaError('Parámetros de nivel inválidos.');
+        setTimeout(() => window.location.href = '/lecciones.html', 2000);
         return;
     }
 
