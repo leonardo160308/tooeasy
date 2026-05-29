@@ -30,6 +30,7 @@
 
 html, body {
     overflow-x: hidden;
+    overscroll-behavior-x: none;
     max-width: 100%;
     width: 100%;
 }
@@ -46,6 +47,8 @@ body {
 main {
     flex: 1;
     overflow-x: hidden;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
     width: 100%;
     min-width: 0;
 }
