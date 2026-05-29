@@ -218,3 +218,29 @@ button:active {
 #auth-message { color: red; margin-top: 10px; text-align: center; }
 
 .login-apk-btn { margin-top: 8px; width: 100%; }
+
+/* Toggle contraseña */
+.password-wrapper {
+    position: relative;
+}
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    padding-right: 50px;
+}
+.toggle-pass {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-65%);
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 0.2s ease;
+    user-select: none;
+    color: var(--title-brown);
+    line-height: 0;
+}
+.toggle-pass:hover { opacity: 0.8; }
+.toggle-pass.active { opacity: 1; }
+.toggle-pass .icon-eye-off { display: none; }
+.toggle-pass.active .icon-eye { display: none; }
+.toggle-pass.active .icon-eye-off { display: block; }

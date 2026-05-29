@@ -156,4 +156,18 @@ if (loginForm) {
 }
 
     // MutationObserver removido: no había lógica implementada y acumulaba referencias DOM.
+
+    // Toggle mostrar/ocultar contraseña
+    function togglePass(inputId, btn) {
+        const inp = document.getElementById(inputId);
+        if (!inp) return;
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        btn.classList.toggle('active', inp.type === 'text');
+    }
+
+    const toggleLogin = document.getElementById('toggle-login-pass');
+    if (toggleLogin) toggleLogin.addEventListener('click', function() { togglePass('contraseña', this); });
+
+    const toggleReg = document.getElementById('toggle-reg-pass');
+    if (toggleReg) toggleReg.addEventListener('click', function() { togglePass('registerContraseña', this); });
 });
