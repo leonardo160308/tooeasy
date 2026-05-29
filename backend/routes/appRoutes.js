@@ -17,11 +17,20 @@ router.get('/app/download', (req, res) => {
         }
 
         const lib = targetUrl.startsWith('https') ? https : http;
-        lib.get(targetUrl, (fileRes) => {
-            if (fileRes.statusCode === 301 || fileRes.statusCode === 302 || fileRes.statusCode === 307 || fileRes.statusCode === 308) {
+        const parsed = new URL(targetUrl);
+        const options = {
+            hostname: parsed.hostname,
+            path: parsed.pathname + parsed.search,
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; TooEasy/1.0)' }
+        };
+
+        lib.get(options, (fileRes) => {
+            if ([301, 302, 307, 308].includes(fileRes.statusCode)) {
+                fileRes.resume();
                 return fetchAndPipe(fileRes.headers.location, redirectCount + 1);
             }
             if (fileRes.statusCode !== 200) {
+                fileRes.resume();
                 return res.status(502).json({ success: false, message: 'Error al obtener el archivo.' });
             }
             res.setHeader('Content-Disposition', 'attachment; filename="too-easy.apk"');
@@ -31,7 +40,9 @@ router.get('/app/download', (req, res) => {
             }
             fileRes.pipe(res);
         }).on('error', () => {
-            res.status(502).json({ success: false, message: 'Error al obtener el archivo.' });
+            if (!res.headersSent) {
+                res.status(502).json({ success: false, message: 'Error al obtener el archivo.' });
+            }
         });
     }
 

@@ -40,7 +40,13 @@ function showDownloadModal() {
 
     overlay.querySelector('.apk-btn-confirm').addEventListener('click', () => {
         close();
-        // Pequeño delay para que se vea el cierre del modal antes de la descarga
-        setTimeout(() => { window.location.href = '/api/app/download'; }, 200);
+        setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = '/api/app/download';
+            a.download = 'too-easy.apk';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }, 200);
     });
 }

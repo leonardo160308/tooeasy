@@ -28,24 +28,31 @@
 
 .btn-app-download i { font-size: 0.9rem; }
 
-/* versión footer (texto pequeño, sin borde) */
+/* versión footer */
 .btn-app-download-footer {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid rgba(182, 130, 62, 0.6);
+    color: #C9AD8B;
     font-family: inherit;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     text-decoration: none;
-    padding: 4px 0;
-    transition: color 0.2s;
+    padding: 8px 20px;
+    border-radius: 40px;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+    margin-top: 4px;
 }
 
-.btn-app-download-footer:hover { color: #BA8E58; }
+.btn-app-download-footer:hover {
+    background: rgba(182, 130, 62, 0.15);
+    border-color: #B6823E;
+    color: #e0c49a;
+    transform: translateY(-1px);
+}
 
 /* ── MODAL OVERLAY ──────────────────────────────────────────────────────── */
 .apk-modal-overlay {
