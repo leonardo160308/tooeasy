@@ -1,9 +1,7 @@
 // frontend/public/js/pages/soporte-panel.js
 import { protectRoute, getAuthData } from '../modules/auth.js';
-import { alertaExito, alertaError } from '../modules/alerts.js';
+import { alertaExito, alertaError, alertaConfirmacion } from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
-import { initAppDownload } from '../modules/app-download.js';
-initAppDownload();
 import {
     getSupportTickets,
     getSupportTicketDetail,
@@ -15,6 +13,9 @@ import {
     deleteSupportTicket,
     getFaqStats
 } from '../modules/api.js';
+import { initAppDownload } from '../modules/app-download.js';
+
+initAppDownload();
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -495,7 +496,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     btnDeleteTicket.addEventListener('click', async () => {
         if (!activeTicketId) return;
-        if (!confirm('¿Seguro que quieres eliminar este ticket? Esta acción es irreversible.')) return;
+        if (!await alertaConfirmacion('¿Seguro que quieres eliminar este ticket? Esta acción es irreversible.')) return;
 
         btnDeleteTicket.disabled = true;
 

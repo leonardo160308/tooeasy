@@ -11,9 +11,8 @@
     width: 62px;
     height: 62px;
     border-radius: 50%;
-    border: none;
+    border: 2px solid rgba(255,255,255,0.25);
     cursor: pointer;
-    /* Color dorado principal de la paleta TOO-EASY */
     background: linear-gradient(135deg, #BA8E58 0%, #d4a96a 100%);
     color: #fff;
     font-size: 24px;
@@ -24,8 +23,6 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     outline: none;
     text-decoration: none;
-    /* Borde sutil para mayor definición */
-    border: 2px solid rgba(255,255,255,0.25);
 }
 
 .support-fab:hover {

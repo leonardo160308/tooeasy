@@ -1,10 +1,8 @@
 // frontend/public/js/pages/soporte.js
 import { protectRoute, getAuthData } from '../modules/auth.js';
-import { alertaExito, alertaError } from '../modules/alerts.js';
+import { alertaExito, alertaError, alertaConfirmacion } from '../modules/alerts.js';
 import { initOfflineBanner } from '../modules/offline.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
-import { initAppDownload } from '../modules/app-download.js';
-initAppDownload();
 import {
     createTicket,
     getMyTickets,
@@ -14,6 +12,9 @@ import {
     deleteMyTicket,
     trackFaqClick
 } from '../modules/api.js';
+import { initAppDownload } from '../modules/app-download.js';
+
+initAppDownload();
 
 // ── IMAGE MODAL (SweetAlert2-style) ─────────────────────────────────────────
 function openImageModal(src) {
@@ -434,7 +435,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── CERRAR TICKET ─────────────────────────────────────────────────────────
     btnCloseTicket.addEventListener('click', async () => {
         if (!activeTicketId) return;
-        if (!confirm('¿Seguro que quieres cerrar este ticket?')) return;
+        if (!await alertaConfirmacion('¿Seguro que quieres cerrar este ticket?')) return;
 
         const res = await closeMyTicket(userId, activeTicketId);
 
@@ -450,7 +451,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── ELIMINAR TICKET ───────────────────────────────────────────────────────
     btnDeleteTicket.addEventListener('click', async () => {
         if (!activeTicketId) return;
-        if (!confirm('¿Seguro que quieres eliminar este ticket? Esta acción es irreversible.')) return;
+        if (!await alertaConfirmacion('¿Seguro que quieres eliminar este ticket? Esta acción es irreversible.')) return;
 
         btnDeleteTicket.disabled = true;
 

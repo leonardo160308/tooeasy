@@ -1,5 +1,6 @@
 // frontend/public/js/pages/quiz.js
 import { protectRoute, getAuthData } from '../modules/auth.js';
+import { alertaError } from '../modules/alerts.js';
 
 const API_URL = '/api';
 
@@ -20,14 +21,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await res.json();
 
         if (!data.success || data.data.length === 0) {
-            alert('Este nivel no tiene preguntas. Volviendo...');
+            alertaError('Este nivel no tiene preguntas. Volviendo...');
             window.location.href = '/lecciones.html';
             return;
         }
         preguntas = data.data;
     } catch (err) {
         console.error('Error cargando preguntas:', err);
-        alert('Error de conexión. Intenta de nuevo.');
+        alertaError('Error de conexión. Intenta de nuevo.');
         return;
     }
 

@@ -26,7 +26,7 @@
 }
 
 .footer a {
-   font-size: 0.85rem;
+    font-size: 0.85rem;
     cursor: pointer;
     color: rgba(255,255,255,0.7);
     transition: color 0.2s;

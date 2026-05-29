@@ -13,7 +13,7 @@ import {
 } from '../modules/api.js';
 import { initOfflineBanner } from '../modules/offline.js';
 import { initOnboarding, restartOnboarding } from '../modules/onboarding.js';
-import { alertaAdvertencia, alertaError } from '../modules/alerts.js';
+import { alertaAdvertencia, alertaError, alertaConfirmacion } from '../modules/alerts.js';
 
 import {
     protectRoute,
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderizarCalendario();
         } catch (error) {
             console.error('Error cargando dashboard:', error);
-            alert('Error al cargar tus datos. Revisa tu conexión.');
+            alertaError('Error al cargar tus datos. Revisa tu conexión.');
         }
     }
 
@@ -882,13 +882,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const categoria = selEditCat.value;
         const montoRaw  = inpEditMonto.value;
 
-        if (!categoria) { alert('Selecciona una categoría.'); return; }
+        if (!categoria) { alertaAdvertencia('Selecciona una categoría.'); return; }
 
         const montoRegex = /^\d{1,8}(\.\d{1,2})?$/;
-        if (!montoRegex.test(montoRaw)) { alert('Monto inválido. Máximo 8 dígitos y 2 decimales.'); return; }
+        if (!montoRegex.test(montoRaw)) { alertaAdvertencia('Monto inválido. Máximo 8 dígitos y 2 decimales.'); return; }
 
         const monto = parseFloat(montoRaw);
-        if (monto <= 0) { alert('El monto debe ser mayor a 0.'); return; }
+        if (monto <= 0) { alertaAdvertencia('El monto debe ser mayor a 0.'); return; }
 
         try {
             const result = await updateMovement(movimientoEnEdicion.id, { tipo, categoria, monto });
@@ -897,17 +897,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await cargarDatosDelServidor();
                 if (diaSeleccionado) actualizarContenidoModal();
             } else {
-                alert(result.message || 'Error al actualizar el movimiento.');
+                alertaError(result.message || 'Error al actualizar el movimiento.');
             }
         } catch (error) {
             console.error('Error guardando edición:', error);
-            alert('Error de conexión al guardar los cambios.');
+            alertaError('Error de conexión al guardar los cambios.');
         }
     }
 
     async function eliminarDesdeEdicion() {
         if (!movimientoEnEdicion) return;
-        if (!confirm('¿Eliminar este movimiento? Esta acción no se puede deshacer.')) return;
+        const confirmed = await alertaConfirmacion('¿Eliminar este movimiento? Esta acción no se puede deshacer.');
+        if (!confirmed) return;
 
         try {
             const result = await deleteMovement(movimientoEnEdicion.id, userId);
@@ -916,11 +917,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await cargarDatosDelServidor();
                 if (diaSeleccionado) actualizarContenidoModal();
             } else {
-                alert(result.message || 'Error al eliminar el movimiento.');
+                alertaError(result.message || 'Error al eliminar el movimiento.');
             }
         } catch (error) {
             console.error('Error eliminando movimiento:', error);
-            alert('Error de conexión al eliminar el movimiento.');
+            alertaError('Error de conexión al eliminar el movimiento.');
         }
     }
 
@@ -936,11 +937,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const montoRaw  = document.getElementById('trans-amount').value;
         const montoRegex = /^\d{1,8}(\.\d{1,2})?$/;
 
-        if (!categoria) { alert('Selecciona una categoría.'); return; }
-        if (!montoRegex.test(montoRaw)) { alert('Monto inválido. Máx 8 dígitos y 2 decimales.'); return; }
+        if (!categoria) { alertaAdvertencia('Selecciona una categoría.'); return; }
+        if (!montoRegex.test(montoRaw)) { alertaAdvertencia('Monto inválido. Máx 8 dígitos y 2 decimales.'); return; }
 
         const monto = parseFloat(montoRaw);
-        if (monto <= 0) { alert('El monto debe ser mayor a 0.'); return; }
+        if (monto <= 0) { alertaAdvertencia('El monto debe ser mayor a 0.'); return; }
 
         const movementData = {
             user_id: userId, fecha: diaSeleccionado,
@@ -960,7 +961,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             actualizarContenidoModal();
         } catch (error) {
             console.error('Error al crear movimiento:', error);
-            alert('No se pudo guardar el movimiento.');
+            alertaError('No se pudo guardar el movimiento.');
         } finally {
             _submittingMovimiento = false;
             btnSubmit.disabled = false;

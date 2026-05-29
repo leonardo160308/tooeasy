@@ -139,6 +139,18 @@ setTimeout(runTicketCleanup, 10_000);
 setInterval(runTicketCleanup, 24 * 60 * 60 * 1000);
 
 // =====================
+// 404 y ERROR HANDLERS
+// =====================
+app.use('/api', (req, res) => {
+    res.status(404).json({ success: false, message: 'Endpoint no encontrado.' });
+});
+
+app.use((err, req, res, next) => {
+    console.error('[Error]', err.message);
+    res.status(err.status || 500).json({ success: false, message: err.message || 'Error interno del servidor.' });
+});
+
+// =====================
 // SERVIDOR
 // =====================
 const PORT = process.env.PORT || 3000;

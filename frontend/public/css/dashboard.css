@@ -747,47 +747,6 @@ h2 {
 .mov-item-cat    { flex: 1; font-size: 0.9rem; color: #555; }
 .mov-item-amount { font-weight: bold; margin-right: 10px; }
 .mov-no-items    { color: #999; font-style: italic; }
-/* ======== PIE DE PÁGINA ======== */
-/* ── FOOTER ── */
-.footer {
-    background: linear-gradient(135deg, #1e2e42 0%, #2C405B 100%);
-    color: rgba(255,255,255,0.8);
-    text-align: center;
-    padding: 36px 20px;
-    font-size: 0.9rem;
-    line-height: 2;
-}
-
-.footer a {
-   font-size: 0.85rem;
-    cursor: pointer;
-    color: rgba(255,255,255,0.7);
-    transition: color 0.2s;
-    text-decoration: none;
-}
-
-.footer a:hover {
-    color: #BA8E58;
-}
-
-.terms-group {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 8px;
-}
-
-.terms-group label {
-    font-size: 0.85rem;
-    cursor: pointer;
-    color: rgba(255,255,255,0.7);
-    transition: color 0.2s;
-}
-
-.terms-group label:hover {
-    color: #BA8E58;
-}
-
 /* ── SAVING METHOD SECTION ── */
 .saving-method-section {
     margin-bottom: 20px;
