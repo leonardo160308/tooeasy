@@ -2,7 +2,8 @@
 import { supabase, supabaseAdmin } from '../config/supabase.js';
 import {
     hashPassword, comparePassword,
-    generateCode, hashCode, safeCompare, generateSessionToken
+    generateCode, hashCode, safeCompare, generateSessionToken,
+    createSessionToken
 } from '../utils/security.js';
 import {
     sendVerificationEmail,
@@ -213,8 +214,9 @@ export const verifyEmail = async (req, res) => {
         sendWelcomeEmail(user.email || req.body.email, user.nombre).catch(console.error);
 
         return res.json({
-            success: true,
-            message: '¡Correo verificado! Bienvenido/a.',
+            success:      true,
+            message:      '¡Correo verificado! Bienvenido/a.',
+            sessionToken: createSessionToken(user.id),
             user: {
                 id:     user.id,
                 nombre: user.nombre,
@@ -352,8 +354,9 @@ export const loginUser = async (req, res) => {
             .eq('id', user.id);
 
         return res.json({
-            success: true,
-            message: 'Bienvenido/a.',
+            success:      true,
+            message:      'Bienvenido/a.',
+            sessionToken: createSessionToken(user.id),
             user: {
                 id:     user.id,
                 nombre: user.nombre,

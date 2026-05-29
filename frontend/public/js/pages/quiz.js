@@ -1,5 +1,5 @@
 // frontend/public/js/pages/quiz.js
-import { protectRoute, getAuthData } from '../modules/auth.js';
+import { protectRoute, getAuthData, getSessionToken } from '../modules/auth.js';
 import { alertaError } from '../modules/alerts.js';
 
 const API_URL = '/api';
@@ -15,8 +15,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     let preguntas = [];
 
     // ── Verificar acceso al nivel (anti-skip por URL) ──────────────────────
+    const sessionToken = getSessionToken();
     try {
-        const accessRes  = await fetch(`${API_URL}/progress/check-access/${nivelActual}?userId=${sessionUser.id}`);
+        const accessRes = await fetch(`${API_URL}/progress/check-access/${nivelActual}`, {
+            headers: sessionToken ? { 'Authorization': `Bearer ${sessionToken}` } : {}
+        });
+
+        if (accessRes.status === 401) {
+            window.location.href = '/login.html';
+            return;
+        }
+
         const accessData = await accessRes.json();
         if (!accessData.success || !accessData.canAccess) {
             alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
@@ -24,7 +33,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
     } catch {
-        // Si el check falla por red, dejamos continuar
+        // Error de red — denegar por seguridad
+        alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
+        setTimeout(() => window.location.href = '/lecciones.html', 2500);
+        return;
     }
 
     // ── Load questions from DB ─────────────────────────────────────────────
@@ -195,15 +207,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             // ── Single source of truth for progress + coins ────────────────
             // The backend checks if already completed, awards coins only once,
             // and returns the updated completedLevels for this category.
+            const authHeaders = { 'Content-Type': 'application/json' };
+            if (sessionToken) authHeaders['Authorization'] = `Bearer ${sessionToken}`;
+
             const res = await fetch(`${API_URL}/progress/complete-level`, {
                 method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: authHeaders,
                 body:    JSON.stringify({
-                    userId:  sessionUser.id,
-                    levelId: nivelActual,   // educational_levels.id
+                    levelId: nivelActual,
                     score:   porcentaje
+                    // userId ya no viene del cliente — el servidor lo lee del token
                 })
             });
+
+            if (res.status === 401) {
+                mostrarPantallaFinal(true, '¡Nivel completado! (sesión expirada — inicia sesión para guardar progreso)');
+                return;
+            }
 
             const data = await res.json();
 

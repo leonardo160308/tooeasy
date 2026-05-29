@@ -4,15 +4,21 @@
 const USER_KEY      = 'too_easy_user_data';
 const SESSION_TTL   = 7 * 24 * 60 * 60 * 1000; // 7 días en ms
 
-export function saveAuthData(userData) {
+export function saveAuthData(userData, sessionToken = null) {
     const sessionData = {
-        id:        userData.id,
-        nombre:    userData.nombre,
-        level:     userData.level || 1,
-        role:      userData.role || 'user',
-        expiresAt: Date.now() + SESSION_TTL,
+        id:           userData.id,
+        nombre:       userData.nombre,
+        level:        userData.level || 1,
+        role:         userData.role || 'user',
+        expiresAt:    Date.now() + SESSION_TTL,
+        sessionToken: sessionToken || null,
     };
     localStorage.setItem(USER_KEY, JSON.stringify(sessionData));
+}
+
+export function getSessionToken() {
+    const data = getAuthData();
+    return data?.sessionToken || null;
 }
 
 export function isAdmin() {

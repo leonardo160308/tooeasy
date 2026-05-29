@@ -132,7 +132,7 @@ if (loginForm) {
             const data = await res.json();
 
             if (data.success) {
-                saveAuthData(data.user);
+                saveAuthData(data.user, data.sessionToken || null);
                 alertaExito('¡Bienvenido/a!', {
                     onClose: () => { window.location.href = '/dashboard.html'; },
                 });

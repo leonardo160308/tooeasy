@@ -34,15 +34,11 @@ async function canAccessLevel(userId, levelId) {
     return completedLevels.includes(Number(prevLevel.id));
 }
 
-// ── GET /api/progress/check-access/:levelId?userId=X ────────────────────────
+// ── GET /api/progress/check-access/:levelId  [requiere token — userId viene de req.userId]
 export async function checkLevelAccess(req, res) {
     try {
         const { levelId } = req.params;
-        const { userId }  = req.query;
-
-        if (!userId || !levelId) {
-            return res.status(400).json({ success: false, message: 'userId y levelId son requeridos.' });
-        }
+        const userId      = req.userId; // inyectado por requireAuth middleware
 
         const canAccess = await canAccessLevel(userId, levelId);
         res.json({ success: true, canAccess });
@@ -85,16 +81,17 @@ export async function getCategoryProgress(req, res) {
     }
 }
 
-// ── POST /api/progress/complete-level ────────────────────────────────────────
-// Body: { userId, levelId, score }   (score = 0–100 percentage)
+// ── POST /api/progress/complete-level  [requiere token — userId viene de req.userId]
+// Body: { levelId, score }   (userId ya NO viene del cliente — viene del token)
 export async function completeLevel(req, res) {
     try {
-        const { userId, levelId, score } = req.body;
+        const userId             = req.userId; // inyectado por requireAuth middleware
+        const { levelId, score } = req.body;
 
-        if (!userId || !levelId || score === undefined) {
+        if (!levelId || score === undefined) {
             return res.status(400).json({
                 success: false,
-                message: 'userId, levelId y score son requeridos.'
+                message: 'levelId y score son requeridos.'
             });
         }
 

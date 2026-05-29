@@ -1,4 +1,4 @@
-import { protectRoute, getAuthData } from '../modules/auth.js';
+import { protectRoute, getAuthData, getSessionToken } from '../modules/auth.js';
 import { alertaError } from '../modules/alerts.js';
 
 const API_URL = '/api';
@@ -69,8 +69,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Verificar que el usuario tiene acceso a este nivel (anti-skip por URL)
+    const sessionToken = getSessionToken();
     try {
-        const accessRes  = await fetch(`${API_URL}/progress/check-access/${nivelId}?userId=${userId}`);
+        const accessRes = await fetch(`${API_URL}/progress/check-access/${nivelId}`, {
+            headers: sessionToken ? { 'Authorization': `Bearer ${sessionToken}` } : {}
+        });
+
+        if (accessRes.status === 401) {
+            // Sesión inválida — redirigir a login
+            window.location.href = '/login.html';
+            return;
+        }
+
         const accessData = await accessRes.json();
         if (!accessData.success || !accessData.canAccess) {
             alertaError('Este nivel está bloqueado. Completa los anteriores primero.');
@@ -78,7 +88,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
     } catch {
-        // Si el check falla por red, dejamos continuar (no penalizar por error de conexión)
+        // Error de red — denegar acceso por seguridad
+        alertaError('No se pudo verificar el acceso. Comprueba tu conexión.');
+        setTimeout(() => window.location.href = 'lecciones.html', 2500);
+        return;
     }
 
     try {

@@ -97,7 +97,7 @@ async function verifyCode() {
             sessionStorage.removeItem('pendingVerificationUserId');
             sessionStorage.removeItem('pendingVerificationEmail');
 
-            saveAuthData(data.user);
+            saveAuthData(data.user, data.sessionToken || null);
 
             document.getElementById('verify-view').classList.add('hidden');
             document.getElementById('success-view').classList.remove('hidden');
