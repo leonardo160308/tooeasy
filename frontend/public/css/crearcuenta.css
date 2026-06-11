@@ -197,6 +197,14 @@ button:active {
     transform: translateX(-3px);
 }
 
+/* Cloudflare Turnstile */
+.turnstile-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 14px;
+}
+.cf-turnstile { max-width: 100%; }
+
 /* Responsive */
 @media (max-width: 480px) {
     .container {

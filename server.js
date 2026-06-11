@@ -24,6 +24,12 @@ import appRoutes              from './backend/routes/appRoutes.js';
 import TicketModel            from './backend/models/TicketModel.js';
 
 dotenv.config();
+
+if (!process.env.SESSION_SECRET) {
+    console.error('FATAL: SESSION_SECRET no está definido. El servidor no puede iniciar de forma segura.');
+    process.exit(1);
+}
+
 const app = express();
 
 // Necesario para que express-rate-limit funcione detrás de Render/Nginx

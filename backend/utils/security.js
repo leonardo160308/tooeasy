@@ -41,6 +41,28 @@ export function safeCompare(a, b) {
     return crypto.timingSafeEqual(bufA, bufB);
 }
 
+// ── HIBP — verificar contraseñas filtradas (k-anonymity) ─────────────────────
+// Fail open: si la API no responde, no bloquea al usuario.
+
+export async function checkPwnedPassword(password) {
+    try {
+        const sha1   = crypto.createHash('sha1').update(password).digest('hex').toUpperCase();
+        const prefix = sha1.slice(0, 5);
+        const suffix = sha1.slice(5);
+
+        const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`, {
+            headers: { 'Add-Padding': 'true', 'User-Agent': 'TooEasy-AuthCheck/1.0' },
+            signal:  AbortSignal.timeout(3000),
+        });
+        if (!res.ok) return false;
+
+        const text = await res.text();
+        return text.split('\n').some(line => line.split(':')[0].trim() === suffix);
+    } catch {
+        return false;
+    }
+}
+
 // ── Token de sesión post-verificación (recovery) ────────────────────────────
 
 export function generateSessionToken() {
@@ -92,7 +114,7 @@ export function verifySessionToken(token) {
         const issuedAt   = parseInt(payload.slice(dotFirst + 1), 10);
         if (isNaN(issuedAt) || Date.now() - issuedAt > SESSION_TTL_MS) return null;
 
-        return Number(userIdStr);
+        return { userId: Number(userIdStr), issuedAt };
     } catch {
         return null;
     }

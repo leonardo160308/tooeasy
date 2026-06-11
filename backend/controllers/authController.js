@@ -3,16 +3,21 @@ import { supabase, supabaseAdmin } from '../config/supabase.js';
 import {
     hashPassword, comparePassword,
     generateCode, hashCode, safeCompare, generateSessionToken,
-    createSessionToken
+    createSessionToken, checkPwnedPassword
 } from '../utils/security.js';
 import {
     sendVerificationEmail,
     sendRecoveryEmail,
-    sendWelcomeEmail
+    sendWelcomeEmail,
+    sendLoginNotificationEmail
 } from '../utils/emailService.js';
+import { verifyTurnstile } from '../utils/turnstile.js';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 const CODE_EXPIRY_MINUTES  = 10;
+
+// Hash dummy para timing attack protection en login (bcrypt 12 rounds, nunca coincide)
+const DUMMY_HASH = '$2b$12$LkQ8EkRWFJ1QFrjhOzjPyO7VE8mWFivBIJFVPCy9pDBQF3Lqgm3Dq';
 const MAX_CODE_ATTEMPTS    = 5;
 const MAX_CODES_PER_WINDOW = 3;    // máx 3 solicitudes cada 15 min
 const RATE_WINDOW_MINUTES  = 15;
@@ -60,7 +65,14 @@ async function checkRateLimit(userId, type) {
 // ═══════════════════════════════════════════════════════════════════════════════
 export const registerUser = async (req, res) => {
     try {
-        const { nombre, email, password, edad, genero } = req.body;
+        const { nombre, email, password, edad, genero, turnstileToken } = req.body;
+
+        // Verificación anti-bot (Cloudflare Turnstile)
+        const ip = req.ip || req.socket?.remoteAddress;
+        const turnstileOk = await verifyTurnstile(turnstileToken, ip);
+        if (!turnstileOk) {
+            return res.status(400).json({ success: false, message: 'Verificación de seguridad fallida. Intenta de nuevo.' });
+        }
 
         // Validaciones básicas
         if (!nombre || !email || !password || edad === undefined) {
@@ -69,8 +81,8 @@ export const registerUser = async (req, res) => {
         if (nombre.length < 3 || nombre.length > 16) {
             return res.status(400).json({ success: false, message: 'El nombre debe tener entre 3 y 16 caracteres.' });
         }
-        if (password.length < 6 || password.length > 16) {
-            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 6 y 16 caracteres.' });
+        if (password.length < 8 || password.length > 64) {
+            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 8 y 64 caracteres.' });
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return res.status(400).json({ success: false, message: 'Correo inválido.' });
@@ -90,6 +102,15 @@ export const registerUser = async (req, res) => {
         if (existing && existing.length > 0) {
             const field = existing[0].email === email.toLowerCase().trim() ? 'correo' : 'nombre de usuario';
             return res.status(409).json({ success: false, message: `Ese ${field} ya está registrado.` });
+        }
+
+        // Verificar contraseña contra base de datos de filtraciones (HIBP)
+        const isPwned = await checkPwnedPassword(password);
+        if (isPwned) {
+            return res.status(400).json({
+                success: false,
+                message: 'Esta contraseña fue filtrada en brechas de datos conocidas. Elige una diferente.',
+            });
         }
 
         // Hashear contraseña con bcrypt
@@ -280,21 +301,29 @@ export const resendVerificationCode = async (req, res) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 export const loginUser = async (req, res) => {
     try {
-        const { nombre, password } = req.body;
-        if (!nombre || !password) {
-            return res.status(400).json({ success: false, message: 'Nombre y contraseña requeridos.' });
+        const { email, password, turnstileToken } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: 'Correo y contraseña requeridos.' });
+        }
+
+        // Verificación anti-bot
+        const ip = req.ip || req.socket?.remoteAddress;
+        const turnstileOk = await verifyTurnstile(turnstileToken, ip);
+        if (!turnstileOk) {
+            return res.status(400).json({ success: false, message: 'Verificación de seguridad fallida. Intenta de nuevo.' });
         }
 
         const { data: users } = await supabase
             .from('users')
-            .select('*')
-            .eq('nombre', nombre.trim())
+            .select('id, nombre, password_hash, email_verified, is_active, failed_login_attempts, locked_until, level, coins, wood, foto, role, last_login_at')
+            .eq('email', email.toLowerCase().trim())
             .limit(1);
 
         const user = users?.[0];
 
-        // Respuesta genérica para no revelar si el usuario existe
+        // Respuesta genérica + bcrypt dummy para prevenir timing attack (enumeración por latencia)
         if (!user || !user.is_active) {
+            await comparePassword(password, DUMMY_HASH);
             return res.status(401).json({ success: false, message: 'Credenciales incorrectas.' });
         }
 
@@ -343,13 +372,23 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        // Login exitoso — resetear intentos fallidos
+        // Notificar si la IP cambió respecto al último login (en background)
+        const currentIp = ip;
+        const currentUa = (req.headers['user-agent'] || '').slice(0, 500);
+        if (user.last_login_at && user.last_login_ip && user.last_login_ip !== currentIp) {
+            sendLoginNotificationEmail(user.email, user.nombre, currentIp, currentUa, new Date())
+                .catch(err => console.error('[Login notify]', err.message));
+        }
+
+        // Login exitoso — resetear intentos fallidos y actualizar tracking
         await supabaseAdmin
             .from('users')
             .update({
                 failed_login_attempts: 0,
                 locked_until:          null,
                 last_login_at:         new Date().toISOString(),
+                last_login_ip:         currentIp,
+                last_login_ua:         currentUa,
             })
             .eq('id', user.id);
 
@@ -543,8 +582,8 @@ export const resetPassword = async (req, res) => {
         if (!userId || !resetId || !sessionToken || !newPassword) {
             return res.status(400).json({ success: false, message: 'Todos los campos son requeridos.' });
         }
-        if (newPassword.length < 6 || newPassword.length > 16) {
-            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 6 y 16 caracteres.' });
+        if (newPassword.length < 8 || newPassword.length > 64) {
+            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 8 y 64 caracteres.' });
         }
 
         // Validar session token
@@ -566,6 +605,15 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Token inválido.' });
         }
 
+        // Verificar nueva contraseña contra filtraciones conocidas
+        const isPwned = await checkPwnedPassword(newPassword);
+        if (isPwned) {
+            return res.status(400).json({
+                success: false,
+                message: 'Esta contraseña fue filtrada en brechas de datos conocidas. Elige una diferente.',
+            });
+        }
+
         // Todo ok — hashear nueva contraseña y guardar
         const hashedNewPassword = await hashPassword(newPassword);
 
@@ -574,7 +622,8 @@ export const resetPassword = async (req, res) => {
                 .from('users')
                 .update({
                     password_hash:         hashedNewPassword,
-                    failed_login_attempts: 0,       // resetear bloqueos
+                    password_changed_at:   new Date().toISOString(),
+                    failed_login_attempts: 0,
                     locked_until:          null,
                 })
                 .eq('id', userId),

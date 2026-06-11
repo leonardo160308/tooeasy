@@ -11,11 +11,12 @@ export async function checkAdmin(req, res, next) {
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ success: false, message: 'Autenticación requerida.' });
         }
-        const token  = authHeader.slice(7);
-        const userId = verifySessionToken(token);
-        if (!userId) {
+        const token   = authHeader.slice(7);
+        const decoded = verifySessionToken(token);
+        if (!decoded) {
             return res.status(401).json({ success: false, message: 'Sesión inválida o expirada.' });
         }
+        const { userId } = decoded;
         const user = await User.findById(String(userId));
         if (!user || user.role !== 'admin') {
             return res.status(403).json({ success: false, message: 'Acceso denegado. Solo administradores.' });

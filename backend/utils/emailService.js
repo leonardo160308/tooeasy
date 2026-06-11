@@ -303,6 +303,55 @@ export async function sendTicketStatusChangeEmail(toEmail, userName, ticketSubje
     });
 }
 
+// ── Email: alerta de nuevo inicio de sesión ──────────────────────────────────
+export async function sendLoginNotificationEmail(toEmail, userName, ip, ua, loginAt) {
+    const safeName = escapeHtml(userName);
+    const safeIp   = escapeHtml(String(ip  || 'desconocida'));
+    const safeUa   = escapeHtml(String(ua  || 'desconocido').slice(0, 120));
+    const time     = new Date(loginAt).toLocaleString('es-MX', {
+        timeZone:     'America/Mexico_City',
+        dateStyle:    'long',
+        timeStyle:    'short',
+    });
+    const appUrl = process.env.FRONTEND_URL || 'https://tooeasy-8zct.onrender.com';
+    const content = `
+<p style="color:#4a5568;font-size:16px;margin:0 0 20px;">
+  Hola, <strong style="color:#2C405B;">${safeName}</strong>
+</p>
+<p style="color:#718096;font-size:15px;line-height:1.6;margin:0 0 24px;">
+  Detectamos un inicio de sesión en tu cuenta desde una nueva IP o dispositivo.
+</p>
+<div style="background:#fff8f0;border-left:4px solid #e67e22;border-radius:8px;
+            padding:20px 24px;margin:0 0 24px;">
+  <p style="margin:0 0 12px;color:#4a5568;font-size:13px;">
+    <strong style="color:#2C405B;">Fecha y hora:</strong><br>${time} (hora de México)
+  </p>
+  <p style="margin:0 0 12px;color:#4a5568;font-size:13px;">
+    <strong style="color:#2C405B;">IP de acceso:</strong><br>
+    <code style="background:#f0f4f8;padding:2px 6px;border-radius:4px;font-size:12px;">${safeIp}</code>
+  </p>
+  <p style="margin:0;color:#4a5568;font-size:13px;">
+    <strong style="color:#2C405B;">Dispositivo / Navegador:</strong><br>
+    <span style="font-size:12px;color:#718096;">${safeUa}</span>
+  </p>
+</div>
+<p style="color:#e53e3e;font-size:14px;font-weight:600;margin:0 0 24px;">
+  Si no fuiste tú, cambia tu contraseña de inmediato.
+</p>
+<div style="text-align:center;margin:0 0 8px;">
+  <a href="${appUrl}/recuperar-cuenta.html"
+     style="background:#e67e22;color:#fff;text-decoration:none;padding:14px 32px;
+            border-radius:30px;font-weight:700;font-size:15px;display:inline-block;">
+    Cambiar contraseña →
+  </a>
+</div>`;
+    return sendEmail({
+        to:      toEmail,
+        subject: 'Alerta: nuevo inicio de sesión en Too Easy',
+        html:    baseTemplate('Nuevo acceso detectado', content, '#e67e22'),
+    });
+}
+
 // ── Email: bienvenida (post-verificación) ─────────────────────────────────────
 export async function sendWelcomeEmail(toEmail, userName) {
     const safeName = escapeHtml(userName);

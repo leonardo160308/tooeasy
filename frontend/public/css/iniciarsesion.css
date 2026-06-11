@@ -223,6 +223,37 @@ input:focus, select:focus {
     transform: translateX(-5px);
 }
 
+/* Cloudflare Turnstile */
+.turnstile-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 14px;
+}
+.cf-turnstile { max-width: 100%; }
+
+/* Indicador de fortaleza de contraseña */
+.strength-bar-wrapper {
+    margin: -6px 0 14px 2px;
+}
+.strength-bar {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+.strength-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
 /* Toggle contraseña */
 .password-wrapper {
     position: relative;

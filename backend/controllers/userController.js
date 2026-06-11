@@ -17,8 +17,8 @@ export const registerUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'El nombre de usuario debe tener entre 3 y 16 caracteres' });
         }
 
-        if (password.length < 6 || password.length > 16) {
-            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 6 y 16 caracteres' });
+        if (password.length < 8 || password.length > 64) {
+            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 8 y 64 caracteres' });
         }
 
         if (email.length < 6 || email.length > 254) {

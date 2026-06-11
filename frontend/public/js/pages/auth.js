@@ -3,7 +3,49 @@ import { login, register } from '../modules/api.js';
 import { saveAuthData } from '../modules/auth.js';
 import { alertaExito, alertaError, alertaInfo, alertaAdvertencia } from '../modules/alerts.js';
 
+// ── Indicador de fortaleza de contraseña ─────────────────────────────────────
+const STRENGTH_LEVELS = [
+    { label: 'Muy débil',  color: '#ef4444', width: '20%' },
+    { label: 'Débil',      color: '#f97316', width: '40%' },
+    { label: 'Regular',    color: '#eab308', width: '60%' },
+    { label: 'Fuerte',     color: '#22c55e', width: '80%' },
+    { label: 'Muy fuerte', color: '#16a34a', width: '100%' },
+];
+
+function calcStrength(pw) {
+    if (!pw) return -1;
+    let score = 0;
+    if (pw.length >= 8)          score++;
+    if (pw.length >= 12)         score++;
+    if (/[A-Z]/.test(pw))        score++;
+    if (/[0-9]/.test(pw))        score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    return Math.min(score - 1, 4); // 0–4
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Indicador de fortaleza (solo en registro) ─────────────────────────────
+    const pwInput       = document.getElementById('registerContraseña');
+    const strengthWrap  = document.getElementById('strength-wrapper');
+    const strengthFill  = document.getElementById('reg-strength-fill');
+    const strengthLabel = document.getElementById('reg-strength-label');
+
+    if (pwInput && strengthWrap && strengthFill && strengthLabel) {
+        pwInput.addEventListener('input', () => {
+            const level = calcStrength(pwInput.value);
+            if (level < 0 || !pwInput.value) {
+                strengthWrap.style.display = 'none';
+                return;
+            }
+            strengthWrap.style.display = 'block';
+            const s = STRENGTH_LEVELS[level];
+            strengthFill.style.width           = s.width;
+            strengthFill.style.backgroundColor = s.color;
+            strengthLabel.textContent          = s.label;
+            strengthLabel.style.color          = s.color;
+        });
+    }
 
     // =========================================================
     // 1. VALIDACIONES EN TIEMPO REAL (LO QUE NO DEJA ESCRIBIR)
@@ -61,12 +103,13 @@ if (registerForm) {
         const nombre   = document.getElementById('registerNombre').value.trim();
         const email    = document.getElementById('registerEmail')?.value.trim();
         const password = document.getElementById('registerContraseña').value;
+        const confirm  = document.getElementById('registerConfirm').value;
         const edadRaw  = document.getElementById('registerEdad').value;
         const genero   = document.getElementById('registerGenero').value;
         const terminos = document.getElementById('terminos').checked;
 
         // Validaciones client-side
-        if (!nombre || !email || !password || !edadRaw || !genero) {
+        if (!nombre || !email || !password || !confirm || !edadRaw || !genero) {
             return alertaError('Por favor completa todos los campos.');
         }
         if (!terminos) {
@@ -75,13 +118,18 @@ if (registerForm) {
         if (nombre.length < 3 || nombre.length > 16) {
             return alertaError('El nombre debe tener entre 3 y 16 caracteres.');
         }
-        if (password.length < 6 || password.length > 16) {
-            return alertaError('La contraseña debe tener entre 6 y 16 caracteres.');
+        if (password.length < 8 || password.length > 64) {
+            return alertaError('La contraseña debe tener entre 8 y 64 caracteres.');
+        }
+        if (password !== confirm) {
+            return alertaError('Las contraseñas no coinciden.');
         }
         const edad = Number(edadRaw);
         if (edad < 15 || edad > 99) {
             return alertaError('Debes tener entre 15 y 99 años.');
         }
+
+        const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
 
         alertaInfo('Creando tu cuenta...', { duration: 3000 });
 
@@ -89,7 +137,7 @@ if (registerForm) {
             const res = await fetch('/api/auth/register', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ nombre, email, password, edad, genero }),
+                body:    JSON.stringify({ nombre, email, password, edad, genero, turnstileToken }),
             });
             const data = await res.json();
 
@@ -118,16 +166,18 @@ if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const nombre   = document.getElementById('Nombre').value.trim();
-        const password = document.getElementById('contraseña').value;
+        const email    = document.getElementById('login-email').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value;
 
-        if (!nombre || !password) return alertaError('Completa todos los campos.');
+        if (!email || !password) return alertaError('Completa todos los campos.');
+
+        const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
 
         try {
             const res = await fetch('/api/auth/login', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ nombre, password }),
+                body:    JSON.stringify({ email, password, turnstileToken }),
             });
             const data = await res.json();
 
@@ -166,8 +216,11 @@ if (loginForm) {
     }
 
     const toggleLogin = document.getElementById('toggle-login-pass');
-    if (toggleLogin) toggleLogin.addEventListener('click', function() { togglePass('contraseña', this); });
+    if (toggleLogin) toggleLogin.addEventListener('click', function() { togglePass('login-password', this); });
 
     const toggleReg = document.getElementById('toggle-reg-pass');
     if (toggleReg) toggleReg.addEventListener('click', function() { togglePass('registerContraseña', this); });
+
+    const toggleConfirm = document.getElementById('toggle-reg-confirm');
+    if (toggleConfirm) toggleConfirm.addEventListener('click', function() { togglePass('registerConfirm', this); });
 });

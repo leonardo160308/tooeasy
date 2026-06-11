@@ -18,9 +18,9 @@ export async function requireLevelAccess(req, res, next) {
         });
     }
 
-    const token  = authHeader.slice(7);
-    const userId = verifySessionToken(token);
-    if (!userId) {
+    const token   = authHeader.slice(7);
+    const decoded = verifySessionToken(token);
+    if (!decoded) {
         return res.status(401).json({
             success: false,
             message: 'Sesión inválida o expirada.',
@@ -28,6 +28,7 @@ export async function requireLevelAccess(req, res, next) {
         });
     }
 
+    const { userId } = decoded;
     req.userId = userId;
 
     // ── 2. Validación de formato del levelId ──────────────────────────────
