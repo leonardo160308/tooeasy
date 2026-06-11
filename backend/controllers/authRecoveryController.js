@@ -319,8 +319,8 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Todos los campos son requeridos.' });
         }
 
-        if (newPassword.length < 6 || newPassword.length > 16) {
-            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 6 y 16 caracteres.' });
+        if (newPassword.length < 8 || newPassword.length > 64) {
+            return res.status(400).json({ success: false, message: 'La contraseña debe tener entre 8 y 64 caracteres.' });
         }
 
         // 2. Validar sesión de recuperación

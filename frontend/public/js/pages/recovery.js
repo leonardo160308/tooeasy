@@ -1,5 +1,4 @@
 import { mostrarAlerta, alertaExito, alertaError, alertaInfo } from '../modules/alerts.js';
-import { saveAuthData } from '../modules/auth.js';
 
 const API = '/api';
 
@@ -175,31 +174,6 @@ async function resendCode() {
     btn.textContent = 'Reenviar código';
 }
 
-async function doLogin() {
-    try {
-        const res = await fetch(`${API}/auth/recovery-login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                userId:            state.userId,
-                resetId:           state.resetId,
-                verificationToken: state.verificationToken
-            })
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            saveAuthData(data.user);
-            alertaExito('¡Bienvenido! Redirigiendo...', { duration: 1500 });
-            setTimeout(() => window.location.href = '/dashboard.html', 1500);
-        } else {
-            alertaError(data.message);
-        }
-    } catch {
-        alertaError('Error de conexión.');
-    }
-}
-
 function checkStrength(pwd) {
     const fill = document.getElementById('strength-fill');
     let strength = 0;
@@ -226,8 +200,8 @@ async function changePassword() {
     const confirmPassword = document.getElementById('confirm-password').value;
 
     if (!newPassword || !confirmPassword) return alertaError('Completa ambos campos.');
-    if (newPassword.length < 6 || newPassword.length > 16)
-        return alertaError('La contraseña debe tener entre 6 y 16 caracteres.');
+    if (newPassword.length < 8 || newPassword.length > 64)
+        return alertaError('La contraseña debe tener entre 8 y 64 caracteres.');
     if (newPassword !== confirmPassword)
         return alertaError('Las contraseñas no coinciden.');
 
@@ -274,8 +248,7 @@ document.getElementById('input-email').addEventListener('keydown', e => {
 document.querySelector('#step-2 .btn-primary').addEventListener('click', verifyCode);
 document.getElementById('btn-resend').addEventListener('click', resendCode);
 document.querySelector('#step-2 .btn-back').addEventListener('click', () => goToStep(1));
-document.querySelectorAll('.action-card')[0].addEventListener('click', doLogin);
-document.querySelectorAll('.action-card')[1].addEventListener('click', () => goToStep(4));
+document.querySelectorAll('.action-card')[0].addEventListener('click', () => goToStep(4));
 document.getElementById('new-password').addEventListener('input', e => checkStrength(e.target.value));
 document.querySelectorAll('.toggle-pass')[0].addEventListener('click', function() { togglePass('new-password', this); });
 document.querySelectorAll('.toggle-pass')[1].addEventListener('click', function() { togglePass('confirm-password', this); });

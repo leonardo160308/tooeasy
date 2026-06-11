@@ -53,9 +53,10 @@ export const updateDashboardFixed = async (req, res) => {
         let pctNum = null;
         if (methodStr === 'percentage') {
             pctNum = Number(saving_percentage);
-            if (!Number.isFinite(pctNum) || pctNum <= 0 || pctNum > 100) {
-                return res.status(400).json({ success: false, message: 'El porcentaje debe estar entre 1 y 100.' });
+            if (!Number.isFinite(pctNum) || pctNum < 0 || pctNum > 100) {
+                return res.status(400).json({ success: false, message: 'El porcentaje debe estar entre 0 y 100.' });
             }
+            pctNum = Math.round(pctNum * 100) / 100;
         }
 
         let manualNum = null;
@@ -64,36 +65,15 @@ export const updateDashboardFixed = async (req, res) => {
             if (!Number.isFinite(manualNum) || manualNum < 0) {
                 return res.status(400).json({ success: false, message: 'El monto de ahorro no puede ser negativo.' });
             }
-            if (manualNum > 99999999) {
-                return res.status(400).json({ success: false, message: 'El monto excede el máximo permitido.' });
+            if (manualNum > 99999999.99) {
+                return res.status(400).json({ success: false, message: 'El monto excede el máximo permitido (8 dígitos enteros y 2 decimales).' });
             }
-            // Validate manual saving against total known income.
-            // Query variable income for the current month to get a realistic total.
-            if (manualNum > 0 && ingresoNum > 0) {
-                const now = new Date();
-                const yr  = now.getFullYear();
-                const mo  = String(now.getMonth() + 1).padStart(2, '0');
-                const nextMo = now.getMonth() === 11
-                    ? `${yr + 1}-01-01`
-                    : `${yr}-${String(now.getMonth() + 2).padStart(2, '0')}-01`;
-
-                const { data: varMovs } = await supabase
-                    .from('movements')
-                    .select('monto')
-                    .eq('user_id', userId)
-                    .eq('tipo', 'income')
-                    .gte('fecha', `${yr}-${mo}-01`)
-                    .lt('fecha', nextMo);
-
-                const varIncome = (varMovs || []).reduce((s, m) => s + Number(m.monto), 0);
-                const totalIncome = ingresoNum + varIncome;
-
-                if (manualNum > totalIncome) {
-                    return res.status(400).json({
-                        success: false,
-                        message: `La cantidad de ahorro ($${manualNum.toFixed(2)}) no puede ser mayor a tus ingresos disponibles ($${totalIncome.toFixed(2)}).`
-                    });
-                }
+            manualNum = Math.round(manualNum * 100) / 100;
+            if (manualNum > 0 && ingresoNum > 0 && manualNum > ingresoNum) {
+                return res.status(400).json({
+                    success: false,
+                    message: `La cantidad de ahorro ($${manualNum.toFixed(2)}) no puede ser mayor a tu ingreso mensual fijo ($${ingresoNum.toFixed(2)}).`
+                });
             }
         }
 

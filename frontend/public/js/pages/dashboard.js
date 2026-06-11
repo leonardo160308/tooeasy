@@ -599,10 +599,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (inpSavingPct) {
             inpSavingPct.addEventListener('change', () => {
-                const pct = parseFloat(inpSavingPct.value);
-                if (pct <= 0 || pct > 100) return;
+                let pct = parseFloat(inpSavingPct.value);
 
-                // Advertir si el porcentaje resulta en un ahorro muy alto
+                if (!Number.isFinite(pct) || pct < 0 || pct > 100) {
+                    alertaError('El porcentaje debe estar entre 0 y 100.', { title: 'Porcentaje inválido' });
+                    inpSavingPct.value = datosFijos.savingPercentage ?? '';
+                    return;
+                }
+
+                pct = Math.round(pct * 100) / 100;
+                inpSavingPct.value = pct;
+
                 const ingresoTotal = calcularIngresoTotalActual();
                 if (ingresoTotal > 0 && pct > 80) {
                     const montoAhorro = (ingresoTotal * pct / 100).toFixed(2);
@@ -620,14 +627,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (inpSavingManual) {
             inpSavingManual.addEventListener('change', () => {
-                const amt = parseFloat(inpSavingManual.value);
-                if (!Number.isFinite(amt) || amt < 0) return;
+                let amt = parseFloat(inpSavingManual.value);
 
-                // Bloquear si el monto supera los ingresos disponibles
-                const ingresoTotal = calcularIngresoTotalActual();
-                if (ingresoTotal > 0 && amt > ingresoTotal) {
+                if (!Number.isFinite(amt) || amt < 0) {
+                    alertaError('El monto de ahorro debe ser un número positivo.', { title: 'Monto inválido' });
+                    inpSavingManual.value = datosFijos.manualSavingAmount ?? '';
+                    return;
+                }
+
+                if (amt > 99999999.99) {
+                    alertaError('El monto excede el máximo permitido (8 dígitos enteros y 2 decimales).', { title: 'Monto inválido' });
+                    inpSavingManual.value = datosFijos.manualSavingAmount ?? '';
+                    return;
+                }
+
+                amt = Math.round(amt * 100) / 100;
+
+                const ingresoFijo = datosFijos.ingresoFijo;
+                if (ingresoFijo > 0 && amt > ingresoFijo) {
                     alertaError(
-                        `La cantidad de ahorro ($${amt.toFixed(2)}) no puede ser mayor a tus ingresos disponibles ($${ingresoTotal.toFixed(2)}).`,
+                        `La cantidad de ahorro ($${amt.toFixed(2)}) no puede ser mayor a tu ingreso mensual fijo ($${ingresoFijo.toFixed(2)}).`,
                         { duration: 8000, title: 'Ahorro inválido' }
                     );
                     inpSavingManual.value = datosFijos.manualSavingAmount ?? '';

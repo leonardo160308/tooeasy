@@ -1,5 +1,5 @@
 // frontend/public/js/pages/lessons.js
-import { protectRoute, getAuthData, getSessionToken } from '../modules/auth.js';
+import { protectRoute, getAuthData, getSessionToken, logout } from '../modules/auth.js';
 import { alertaError }                            from '../modules/alerts.js';
 import { initOnboarding, restartOnboarding }      from '../modules/onboarding.js';
 import { initAppDownload } from '../modules/app-download.js';
@@ -27,16 +27,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function fetchFreshData() {
         const ts    = Date.now();
         const token = getSessionToken();
+
+        if (!token) {
+            const err = new Error('Sin token de sesión');
+            err.requiresLogin = true;
+            throw err;
+        }
+
         const cacheH = { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' };
-        const authH  = token
-            ? { ...cacheH, 'Authorization': `Bearer ${token}` }
-            : cacheH;
+        const authH  = { ...cacheH, 'Authorization': `Bearer ${token}` };
 
         const [categoriesRes, levelsRes, progressRes] = await Promise.all([
             fetch(`${API_URL}/admin/categories?_=${ts}`, { headers: cacheH }),
             fetch(`${API_URL}/levels?_=${ts}`,            { headers: cacheH }),
             fetch(`${API_URL}/progress/${userId}?_=${ts}`,{ headers: authH })
         ]);
+
+        if (progressRes.status === 401) {
+            const err = new Error('Sesión expirada');
+            err.requiresLogin = true;
+            throw err;
+        }
 
         const [categoriesData, levelsData, progressData] = await Promise.all([
             categoriesRes.json(),
@@ -66,8 +77,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 progressMap[Number(catId)] = (levels || []).map(Number);
             });
         }
-        // A failed progress load is non-fatal — the page will show only the
-        // first level of each category as available, which is correct default.
     }
 
     // ── Render category cards ─────────────────────────────────────────────
@@ -285,6 +294,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadingEl) loadingEl.remove();
         renderCategories();
     } catch (error) {
+        if (error.requiresLogin) {
+            logout();
+            return;
+        }
         console.error('Error cargando datos:', error);
         alertaError('Error de conexión al cargar lecciones');
         if (loadingEl) {
