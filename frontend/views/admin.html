@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../public/css/app-download.css">
     <link rel="stylesheet" href="../public/css/header.css">
     <link rel="stylesheet" href="../public/css/admin.css">
+    <link rel="stylesheet" href="../public/css/admin-platform.css">
     <link rel="stylesheet" href="../public/css/onboarding.css">
     <link rel="stylesheet" href="../public/css/selects.css">
     <link rel="stylesheet" href="/public/css/vendor/fonts/fonts.css">
@@ -55,6 +56,9 @@
         <button class="nav-btn" data-section="levels"><i class="fas fa-graduation-cap"></i> Niveles</button>
         <button class="nav-btn" data-section="flashcards"><i class="fas fa-clone"></i> Flashcards</button>
         <button class="nav-btn" data-section="questions"><i class="fas fa-question-circle"></i> Preguntas</button>
+        <div class="sidebar-section-label" style="margin-top:16px;">Plataforma</div>
+        <button class="nav-btn" data-section="platform-stats"><i class="fas fa-chart-bar"></i> Resumen</button>
+        <button class="nav-btn" data-section="platform-users"><i class="fas fa-users"></i> Usuarios</button>
         <div class="sidebar-section-label" style="margin-top:auto;padding-top:24px;">Ayuda</div>
         <button class="nav-btn" id="btn-admin-tutorial"><i class="fas fa-graduation-cap"></i> Tutorial</button>
     </nav>
@@ -128,6 +132,64 @@
                 </div>
             </div>
             <div id="questions-container" class="items-grid"><p class="empty-state">Selecciona un nivel para ver las preguntas</p></div>
+        </div>
+
+        <!-- RESUMEN GENERAL -->
+        <div id="section-platform-stats" class="section-view">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Resumen General</div>
+                    <div class="page-sub">Métricas de uso y actividad de la plataforma</div>
+                </div>
+                <button class="btn btn-ghost btn-sm" id="btn-refresh-stats">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+            </div>
+            <div id="plt-migration-banner" class="plt-migration-banner">
+                <strong>Migración requerida para desactivar usuarios</strong>
+                Para que la desactivación de cuentas funcione, debes ejecutar
+                <code>migrations/enable_soft_deactivation.sql</code>
+                en el Editor SQL de Supabase (una sola vez).
+            </div>
+            <div id="plt-stats-container">
+                <div class="plt-loading"><div class="plt-spinner"></div> Cargando métricas...</div>
+            </div>
+        </div>
+
+        <!-- GESTIÓN DE USUARIOS -->
+        <div id="section-platform-users" class="section-view">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Gestión de Usuarios</div>
+                    <div class="page-sub">Busca, filtra y consulta las cuentas de la plataforma</div>
+                </div>
+            </div>
+            <div class="plt-search-bar">
+                <div class="plt-search-input-wrap">
+                    <i class="fas fa-search plt-search-icon"></i>
+                    <input type="text" id="plt-search-input" placeholder="Buscar por nombre o correo..." class="plt-input">
+                </div>
+                <select id="plt-role-filter" class="filter-select plt-filter-select">
+                    <option value="">Todos los roles</option>
+                    <option value="user">Usuario</option>
+                    <option value="support">Soporte</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <select id="plt-active-filter" class="filter-select plt-filter-select">
+                    <option value="">Cualquier estado</option>
+                    <option value="true">Activos</option>
+                    <option value="false">Inactivos</option>
+                </select>
+                <select id="plt-verified-filter" class="filter-select plt-filter-select">
+                    <option value="">Verificación</option>
+                    <option value="true">Verificados</option>
+                    <option value="false">No verificados</option>
+                </select>
+            </div>
+            <div id="plt-users-container">
+                <div class="plt-loading"><div class="plt-spinner"></div> Cargando usuarios...</div>
+            </div>
+            <div class="plt-pagination" id="plt-pagination"></div>
         </div>
 
     </main>
@@ -277,6 +339,51 @@
         </form>
     </div>
 </div>
+<!-- ══ MODAL: DETALLE DE USUARIO ════════════════════════════════ -->
+<div class="plt-detail-overlay" id="plt-detail-overlay">
+    <div class="plt-detail-box">
+        <button class="modal-close" id="plt-detail-close" title="Cerrar">✕</button>
+
+        <!-- Header dinámico -->
+        <div class="plt-user-header" id="plt-user-header"></div>
+
+        <!-- Tabs -->
+        <div class="plt-detail-tabs" id="plt-detail-tabs">
+            <button class="plt-tab-btn active" data-tab="general"><i class="fas fa-user"></i> Datos</button>
+            <button class="plt-tab-btn" data-tab="progress"><i class="fas fa-graduation-cap"></i> Progreso</button>
+            <button class="plt-tab-btn" data-tab="finances"><i class="fas fa-wallet"></i> Finanzas</button>
+            <button class="plt-tab-btn" data-tab="game"><i class="fas fa-gamepad"></i> Juego</button>
+            <button class="plt-tab-btn" data-tab="support"><i class="fas fa-headset"></i> Soporte</button>
+            <button class="plt-tab-btn" data-tab="investments"><i class="fas fa-chart-line"></i> Inversiones</button>
+        </div>
+
+        <!-- Panels dinámicos -->
+        <div class="plt-tab-panels" id="plt-tab-panels">
+            <div class="plt-loading"><div class="plt-spinner"></div> Cargando...</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ MODAL: CONFIRMAR CAMBIO DE ESTADO ══════════════════════════ -->
+<div class="modal-backdrop" id="plt-status-modal">
+    <div class="modal-box confirm-box">
+        <button class="modal-close" id="plt-status-close">✕</button>
+        <span class="confirm-icon" id="plt-status-icon"></span>
+        <div class="confirm-title" id="plt-status-title"></div>
+        <div class="confirm-text"  id="plt-status-text"></div>
+        <div class="field-group" style="text-align:left;margin-bottom:0;">
+            <label>Motivo (opcional)</label>
+            <textarea id="plt-status-reason" rows="2" placeholder="Descripción interna del motivo..."></textarea>
+        </div>
+        <div class="confirm-actions" style="margin-top:16px;">
+            <button class="btn btn-ghost" id="plt-status-cancel">Cancelar</button>
+            <button class="btn btn-danger" id="plt-status-confirm">
+                <i class="fas fa-check"></i> Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
 <footer class="footer">
     <p>© 2025 For You · Proyecto Too Easy — Juega hoy, triunfa mañana</p>
     <nav class="footer-nav">
@@ -303,5 +410,6 @@
 
 <script src="../public/js/data/terminos.js"></script>
 <script type="module" src="../public/js/pages/admin-init.js"></script>
+<script type="module" src="../public/js/pages/admin-platform.js"></script>
 </body>
 </html>
