@@ -7,6 +7,10 @@ export const getDashboardFixed = async (req, res) => {
     try {
         const { userId } = req.params;
 
+        if (Number(userId) !== req.userId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado.' });
+        }
+
         const { data, error } = await supabase
             .from('dashboard_fixed')
             .select('*')
@@ -31,6 +35,11 @@ export const getDashboardFixed = async (req, res) => {
 export const updateDashboardFixed = async (req, res) => {
     try {
         const { userId } = req.params;
+
+        if (Number(userId) !== req.userId) {
+            return res.status(403).json({ success: false, message: 'Acceso denegado.' });
+        }
+
         const {
             ingreso_fijo, egreso_fijo, meta_nombre, meta_cantidad,
             saving_method, saving_percentage, manual_saving_amount

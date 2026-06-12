@@ -69,7 +69,7 @@ export function getCurrentUserName() {
 
 export function logout() {
     localStorage.removeItem(USER_KEY);
-    window.location.href = '/index.html';
+    window.location.href = '/login.html';
 }
 
 export function protectRoute() {

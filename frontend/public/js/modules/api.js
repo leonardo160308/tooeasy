@@ -1,6 +1,15 @@
 
+import { getSessionToken } from './auth.js';
+
 const API_BASE_URL = '/api';
 const FETCH_TIMEOUT_MS = 15000;
+
+function buildAuthHeaders(extra = {}) {
+    const token = getSessionToken();
+    return token
+        ? { 'Authorization': `Bearer ${token}`, ...extra }
+        : { ...extra };
+}
 
 function fetchWithTimeout(url, options = {}) {
     if (!navigator.onLine) {
@@ -130,7 +139,9 @@ export async function deleteUser(userId) {
 // ========================================
 export async function getDashboardFixed(userId) {
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}/dashboard-fixed/${userId}`);
+        const response = await fetchWithTimeout(`${API_BASE_URL}/dashboard-fixed/${userId}`, {
+            headers: buildAuthHeaders()
+        });
         return await response.json();
     } catch (error) {
         console.error('Error obteniendo dashboard fijo:', error);
@@ -142,7 +153,7 @@ export async function updateGoal(userId, goalData) {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard-fixed/${userId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: buildAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(goalData)
         });
         return await response.json();
