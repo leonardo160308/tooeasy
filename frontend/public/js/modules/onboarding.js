@@ -83,11 +83,11 @@ const MODULE_WELCOME = {
     },
     admin: {
         title:   'Panel de Administración',
-        desc:    'Gestiona todo el contenido educativo de la plataforma: categorías, niveles, flashcards y preguntas.',
+        desc:    'Gestiona el contenido educativo y monitorea toda la actividad de la plataforma desde un solo lugar.',
         bullets: [
-            'Crea y edita categorías temáticas con hasta 10 slots disponibles',
-            'Agrega niveles, flashcards y preguntas de quiz por categoría',
-            'Monitorea el contenido activo y elimina lo que ya no sea necesario'
+            'Crea categorías, niveles, flashcards y preguntas de quiz',
+            'Consulta métricas de usuarios, tickets y actividad en el Resumen General',
+            'Busca, filtra y revisa el detalle completo de cualquier usuario'
         ]
     },
     'soporte-panel': {
@@ -323,7 +323,7 @@ const MODULE_STEPS = {
         {
             icon:     'fa-shield-alt',
             title:    'Panel de Administración',
-            body:     'Bienvenido al panel de administración de TOO-EASY. Desde aquí gestionas todo el contenido educativo de la plataforma. Usa la barra lateral (o el menú hamburguesa en móvil) para navegar entre secciones.',
+            body:     'Bienvenido al panel de administración de TOO-EASY. La barra lateral tiene dos secciones: "Contenido" para gestionar el material educativo, y "Plataforma" para monitorear usuarios y actividad general. Usa el menú hamburguesa en móvil para abrirla.',
             tip:      'Solo los usuarios con rol de administrador pueden acceder a este panel.',
             target:   '.admin-sidebar',
             position: 'right'
@@ -331,42 +331,58 @@ const MODULE_STEPS = {
         {
             icon:     'fa-layer-group',
             title:    'Gestión de Categorías',
-            body:     'Las categorías organizan el contenido de aprendizaje. Puedes crear hasta 10 categorías activas. Cada categoría define un rango de niveles y agrupa los temas de un área financiera específica.',
+            body:     'Las categorías organizan el contenido de aprendizaje. Puedes crear hasta 10 categorías activas. Cada una define un rango de niveles y agrupa los temas de un área financiera específica.',
             tip:      'Haz clic en el botón "+" para crear una nueva categoría. Puedes editarla o eliminarla en cualquier momento.',
             target:   '#section-categories',
             position: 'right'
         },
         {
-            icon:     'fa-graduation-cap',
-            title:    'Niveles por Categoría',
-            body:     'Cada categoría contiene niveles de dificultad progresiva. Los niveles definen el camino de aprendizaje del usuario dentro de esa categoría. Cada nivel puede tener flashcards y un quiz.',
-            tip:      'Los niveles se crean dentro de una categoría — primero crea la categoría, luego agrega sus niveles.',
-            target:   'button[data-section="levels"]',
-            position: 'right'
-        },
-        {
             icon:     'fa-clone',
-            title:    'Flashcards de Estudio',
-            body:     'Las flashcards son tarjetas de estudio asociadas a un nivel. Cada una tiene una imagen, título y descripción. Los usuarios las ven antes del quiz del nivel para prepararse.',
-            tip:      'Filtra por nivel para ver y gestionar las flashcards de cada sección del contenido.',
-            target:   'button[data-section="flashcards"]',
-            position: 'right'
-        },
-        {
-            icon:     'fa-question-circle',
-            title:    'Preguntas del Quiz',
-            body:     'Las preguntas de opción múltiple son el núcleo de la evaluación. Cada nivel tiene su propio banco de preguntas. Puedes asignar hasta 4 opciones de respuesta e indicar cuál es la correcta.',
-            tip:      'Selecciona el nivel en el filtro para ver o añadir preguntas. La dificultad ayuda a ordenar el contenido.',
-            target:   'button[data-section="questions"]',
+            title:    'Niveles, Flashcards y Quizzes',
+            body:     'Cada categoría tiene niveles de dificultad progresiva. Cada nivel incluye flashcards (tarjetas de estudio con imagen y texto) y un banco de preguntas de opción múltiple. Los usuarios deben superar el quiz al 80% para avanzar.',
+            tip:      'El orden es siempre: crea la categoría → agrega niveles → agrega flashcards y preguntas a cada nivel.',
+            target:   'button[data-section="levels"]',
             position: 'right'
         },
         {
             icon:     'fa-tachometer-alt',
             title:    'Estadísticas de Contenido',
-            body:     'Los chips en la sección de Categorías te muestran de un vistazo: cuántas categorías tienes activas, cuántos espacios quedan disponibles y el límite máximo de la plataforma.',
+            body:     'Los chips en la sección de Categorías muestran de un vistazo cuántas categorías tienes activas, cuántos espacios quedan disponibles y el límite máximo de la plataforma.',
             tip:      'Si alcanzas el límite de 10 categorías, elimina una antes de crear una nueva.',
             target:   '#cat-stats-strip',
             position: 'bottom'
+        },
+        {
+            icon:     'fa-chart-bar',
+            title:    'Resumen General de la Plataforma',
+            body:     'En la sección "Resumen" de la barra lateral encontrarás 8 métricas clave: total de usuarios, cuentas habilitadas, usuarios activos en los últimos 30 días, verificados, tickets pendientes y resueltos, simulaciones realizadas y movimientos financieros registrados.',
+            tip:      'Usa el botón "Actualizar" para refrescar las métricas en tiempo real cuando necesites un dato reciente.',
+            target:   'button[data-section="platform-stats"]',
+            position: 'right'
+        },
+        {
+            icon:     'fa-users',
+            title:    'Gestión de Usuarios',
+            body:     'La sección "Usuarios" muestra una tabla paginada con todas las cuentas de la plataforma. Puedes buscar por nombre o correo y filtrar por rol (usuario, soporte, admin), estado (activo/inactivo) y verificación de email.',
+            tip:      'La tabla carga 25 usuarios por página. Los filtros consultan directamente la base de datos, no filtran en cliente.',
+            target:   'button[data-section="platform-users"]',
+            position: 'right'
+        },
+        {
+            icon:     'fa-id-card',
+            title:    'Vista Detalle de Usuario',
+            body:     'Haz clic en cualquier fila para abrir la ficha completa del usuario. Está organizada en 6 pestañas: Datos generales, Progreso educativo, Actividad financiera (totales agregados), Juego y gamificación, Soporte, e Inversiones. Ninguna pestaña expone datos sensibles de autenticación.',
+            tip:      'La pestaña Finanzas muestra totales acumulados (ingresos, egresos, balance neto), no el detalle de cada movimiento.',
+            target:   'button[data-section="platform-users"]',
+            position: 'right'
+        },
+        {
+            icon:     'fa-ban',
+            title:    'Activar y Desactivar Cuentas',
+            body:     'Dentro de la ficha de un usuario, el botón "Desactivar" bloquea el acceso al login sin eliminar ningún dato. El botón "Reactivar" restaura el acceso de inmediato. Ambas acciones requieren confirmación explícita. No puedes desactivar cuentas de administrador ni la tuya propia.',
+            tip:      'Para que esta función opere, ejecuta migrations/enable_soft_deactivation.sql en el Editor SQL de Supabase una sola vez. Si no lo has hecho, el panel te lo indicará con un aviso.',
+            target:   'button[data-section="platform-users"]',
+            position: 'right'
         }
     ],
 

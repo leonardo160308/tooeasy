@@ -15,7 +15,7 @@ const supabaseAdmin = createClient(
 
 async function crearSupport() {
     const nombre   = 'soporte';
-    const email    = 'soporte@tooeasy.com';
+    const email    = 'tooeasysoporte@gmail.com';
     const password = 'support123';
     const edad     = 25;
     const genero   = 'otro';
@@ -24,8 +24,10 @@ async function crearSupport() {
     const password_hash = await bcrypt.hash(password, 12);
     console.log('✅ Hash generado');
 
-    console.log('📝 Insertando usuario support en Supabase...');
+    console.log('📝 Insertando/actualizando usuario support en Supabase...');
 
+    // onConflict: 'nombre' — si ya existe el usuario 'soporte', actualiza su email
+    // (nombre es UNIQUE en la tabla users)
     const { data, error } = await supabaseAdmin
         .from('users')
         .upsert(
@@ -40,7 +42,7 @@ async function crearSupport() {
                 is_active:             true,
                 failed_login_attempts: 0,
             },
-            { onConflict: 'email' }
+            { onConflict: 'nombre' }
         )
         .select('id, nombre, email, role')
         .single();
@@ -54,7 +56,7 @@ async function crearSupport() {
     console.table(data);
     console.log('\n📌 Datos de acceso:');
     console.log('   Usuario:    soporte');
-    console.log('   Correo:     soporte@tooeasy.com');
+    console.log('   Correo:     tooeasysoporte@gmail.com');
     console.log('   Contraseña: support123');
     console.log('\n⚠️  Cambia la contraseña después del primer inicio de sesión.');
 }
