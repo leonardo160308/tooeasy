@@ -23,6 +23,7 @@ import ticketRoutes           from './backend/routes/ticketRoutes.js';
 import recommendationRoutes   from './backend/routes/recommendationRoutes.js';
 import appRoutes              from './backend/routes/appRoutes.js';
 import TicketModel            from './backend/models/TicketModel.js';
+import { supabaseAdmin }      from './backend/config/supabase.js';
 
 dotenv.config();
 
@@ -145,6 +146,60 @@ async function runTicketCleanup() {
 
 setTimeout(runTicketCleanup, 10_000);
 setInterval(runTicketCleanup, 24 * 60 * 60 * 1000);
+
+// =====================
+// LIMPIEZA DE CUENTAS NO VERIFICADAS (cada 24 h)
+// Elimina usuarios que se registraron pero nunca verificaron su correo
+// después de 24 horas — evita acumulación de cuentas zombie en la BD.
+// =====================
+async function runUnverifiedCleanup() {
+    try {
+        const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { data, error } = await supabaseAdmin
+            .from('users')
+            .delete()
+            .eq('email_verified', false)
+            .lt('created_at', cutoff)
+            .select('id');
+
+        if (error) throw error;
+        if (data?.length > 0) {
+            console.log(`[Cleanup] ${data.length} cuenta(s) no verificada(s) eliminada(s).`);
+        }
+    } catch (err) {
+        console.error('[Cleanup] Error al limpiar cuentas no verificadas:', err.message);
+    }
+}
+
+// =====================
+// LIMPIEZA DE CUENTAS INACTIVAS (cada 24 h)
+// Elimina cuentas que llevan más de 90 días con is_active = false
+// (desactivadas por el admin y no reactivadas en ese período).
+// =====================
+async function runInactiveCleanup() {
+    try {
+        const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+        const { data, error } = await supabaseAdmin
+            .from('users')
+            .delete()
+            .eq('is_active', false)
+            .lt('updated_at', cutoff)
+            .select('id');
+
+        if (error) throw error;
+        if (data?.length > 0) {
+            console.log(`[Cleanup] ${data.length} cuenta(s) inactiva(s) eliminada(s) tras 90 días.`);
+        }
+    } catch (err) {
+        console.error('[Cleanup] Error al limpiar cuentas inactivas:', err.message);
+    }
+}
+
+setTimeout(runUnverifiedCleanup, 15_000);
+setInterval(runUnverifiedCleanup, 24 * 60 * 60 * 1000);
+
+setTimeout(runInactiveCleanup, 20_000);
+setInterval(runInactiveCleanup, 24 * 60 * 60 * 1000);
 
 // =====================
 // 404 y ERROR HANDLERS
